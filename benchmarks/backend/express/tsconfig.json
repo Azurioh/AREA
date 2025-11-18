@@ -38,6 +38,6 @@
     "jsx": "react-jsx",
     "isolatedModules": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   }
 }
