@@ -44,7 +44,7 @@ start_benchmark() {
     stop_server $server_name
 }
 
-SERVERS=("express" "nest")
+SERVERS=("express" "fastify" "nest")
 
 for server in ${SERVERS[@]}; do
     echo "--------------------------------"
