@@ -11,7 +11,11 @@ app.get('/data/:nb', (req, _res) => {
   const data = [];
   const { nb } = req.params;
 
-  for (let i = 0; i < nb; i++) {
+  if (!nb || Number.isNaN(Number.parseInt(nb, 10))) {
+    return [];
+  }
+
+  for (let i = 0; i < Number.parseInt(nb, 10); i++) {
     data.push({ id: i, value: v4(), type: Math.random() > 0.5 ? 'A' : 'B' });
   }
 });
