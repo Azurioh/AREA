@@ -1,7 +1,10 @@
+import cors from 'cors';
 import express from 'express';
 import { v4 } from 'uuid';
 
 const app = express();
+
+app.use(cors());
 
 app.get('/ping', (_req, res) => {
   res.json({ ok: true });
