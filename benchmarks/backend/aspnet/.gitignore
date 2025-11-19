@@ -1,0 +1,12 @@
+# Build outputs
+bin/
+obj/
+
+# VS/IDE
+.vs/
+*.user
+*.suo
+
+# Runtime logs / publish
+*.log
+publish/

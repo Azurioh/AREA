@@ -168,8 +168,7 @@ start_cloud_benchmark() {
     echo "Cleaning up $server_name deployment..."
     stop_cloud_server $server_name
 }
-
-LOCAL_SERVERS=("express" "fastify" "nest" "fastapi")
+LOCAL_SERVERS=("express" "fastify" "nest" "fastapi" "aspnet")
 CLOUD_SERVERS=("aws-lambda")
 
 if [ "$SKIP_LOCAL" = false ]; then
