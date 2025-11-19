@@ -13,6 +13,7 @@ export interface Environment {
   BASE_API_URL: string;
   MONGO_URI: string;
   MONGO_DATABASE: string;
+  GITHUB_TOKEN: string;
 }
 
 const variables: Record<string, string | undefined> = {
@@ -21,6 +22,7 @@ const variables: Record<string, string | undefined> = {
   BASE_API_URL: process.env.BASE_API_URL,
   MONGO_URI: process.env.MONGO_URI,
   MONGO_DATABASE: process.env.MONGO_DATABASE,
+  GITHUB_TOKEN: process.env.GITHUB_TOKEN,
 };
 
 for (const [key, value] of Object.entries(variables)) {
@@ -47,4 +49,5 @@ export const environment: Environment = {
   BASE_API_URL: process.env.BASE_API_URL as string,
   MONGO_URI: process.env.MONGO_URI as string,
   MONGO_DATABASE: process.env.MONGO_DATABASE as string,
+  GITHUB_TOKEN: process.env.GITHUB_TOKEN as string,
 };

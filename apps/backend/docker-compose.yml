@@ -25,6 +25,7 @@ services:
       - PORT=${PORT}
       - MONGO_URI=${MONGO_URI}
       - MONGO_DATABASE=${MONGO_INITDB_DATABASE}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
     volumes:
       - ./src:/app/apps/backend/src
       - ../../packages:/app/packages
