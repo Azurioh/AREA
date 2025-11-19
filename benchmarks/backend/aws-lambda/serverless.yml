@@ -1,0 +1,23 @@
+service: ping-api-service
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: eu-west-3
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+          Resource: "arn:aws:logs:*:*:*"
+
+functions:
+  ping:
+    handler: src/handler.pingHandler
+    events:
+      - httpApi:
+          path: /dev/ping
+          method: GET
