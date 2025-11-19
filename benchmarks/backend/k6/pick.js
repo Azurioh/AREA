@@ -3,8 +3,13 @@ import http from 'k6/http';
 import { generateSummary } from './utils/summary.js';
 
 export const options = {
-  vus: 100,
-  duration: '1h',
+  stages: [
+    { duration: '20s', target: 50 },
+    { duration: '1s', target: 2000 },
+    { duration: '20s', target: 50 },
+    { duration: '1s', target: 5000 },
+    { duration: '20s', target: 0 },
+  ],
 };
 
 export default function () {
@@ -14,9 +19,10 @@ export default function () {
   check(response, {
     'status is 200': (r) => r.status === 200,
   });
+
   sleep(1);
 }
 
 export function handleSummary(data) {
-  return generateSummary(data, 'soak');
+  return generateSummary(data, 'stress');
 }
