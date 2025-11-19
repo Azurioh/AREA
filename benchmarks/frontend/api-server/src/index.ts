@@ -7,7 +7,7 @@ app.get('/ping', (_req, res) => {
   res.json({ ok: true });
 });
 
-app.get('/data/:nb', (req, _res) => {
+app.get('/data/:nb', (req, res) => {
   const data = [];
   const { nb } = req.params;
 
@@ -18,6 +18,8 @@ app.get('/data/:nb', (req, _res) => {
   for (let i = 0; i < Number.parseInt(nb, 10); i++) {
     data.push({ id: i, value: v4(), type: Math.random() > 0.5 ? 'A' : 'B' });
   }
+
+  res.status(200).json(data);
 });
 
 app.listen(3000, () => {
