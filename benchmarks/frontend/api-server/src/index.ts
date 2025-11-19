@@ -7,10 +7,11 @@ app.get('/ping', (_req, res) => {
   res.json({ ok: true });
 });
 
-app.get('/data', (_req, _res) => {
+app.get('/data/:nb', (req, _res) => {
   const data = [];
+  const { nb } = req.params;
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < nb; i++) {
     data.push({ id: i, value: v4(), type: Math.random() > 0.5 ? 'A' : 'B' });
   }
 });
