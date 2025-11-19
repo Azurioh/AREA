@@ -1,0 +1,39 @@
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - area-network
+
+  app:
+    build:
+      context: ../../
+      dockerfile: apps/backend/.docker/Dockerfile
+      target: development
+    ports:
+      - "3000:${PORT}"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - BASE_API_URL=${BASE_API_URL}
+      - PORT=${PORT}
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_DATABASE=${MONGO_INITDB_DATABASE}
+    volumes:
+      - ./src:/app/apps/backend/src
+      - ../../packages:/app/packages
+    networks:
+      - area-network
+
+networks:
+  area-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
