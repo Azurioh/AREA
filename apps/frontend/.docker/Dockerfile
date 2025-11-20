@@ -8,7 +8,7 @@ COPY apps/frontend /app/apps/frontend/
 
 RUN npm install
 
-WORKDIR /app/packages
+WORKDIR /app/packages/shared
 
 RUN npm run build
 
