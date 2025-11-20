@@ -32,14 +32,14 @@ FROM node:22-alpine AS production
 
 WORKDIR /app
 
-COPY package.json ./
+COPY package*.json ./
 COPY packages ./packages
-COPY apps/backend/package*.json ./apps/backend
-COPY apps/backend/tsconfig.json ./apps/backend
+COPY apps/backend/package*.json ./apps/backend/
+COPY apps/backend/tsconfig.json ./apps/backend/
 
 RUN npm ci --only=production
 
-COPY --from=builder /app/apps/backend/dist ./app/apps/backend/dist
+COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
 
 WORKDIR /app/apps/backend
 
