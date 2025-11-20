@@ -8,9 +8,12 @@
   },
   "exports": {
     ".": "./dist/index.js",
-    "./*": "./dist/*"
+    "./enums/*": "./dist/enums/*.js",
+    "./types/*": "./dist/types/*.js",
+    "./utils/*": "./dist/utils/*.js"
   },
   "devDependencies": {
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3"
   },
   "publishConfig": {
