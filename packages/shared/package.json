@@ -4,10 +4,14 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc && tsc-alias"
   },
   "exports": {
-    "./*": "./dist/*.js"
+    ".": "./dist/index.js",
+    "./*": "./dist/*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   },
   "publishConfig": {
     "access": "public"
