@@ -4,11 +4,13 @@
  *
  * @property {string} uuid - The UUID of the webhook.
  * @property {string} githubUrl - The URL of the GitHub repository.
+ * @property {string[]} actions - The actions to trigger the webhook.
  * @property {string} discordWebhookUrl - The Discord webhook URL.
  */
 export type Webhook = {
   uuid: string;
   githubUrl: string;
+  actions: string[];
   discordWebhookUrl: string;
 };
 

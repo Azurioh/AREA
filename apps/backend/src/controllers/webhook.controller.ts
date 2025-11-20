@@ -1,4 +1,9 @@
-import type { CreateWebhookBody, DeleteWebhookParams, GetWebhookByUuidParams } from '@area/shared/types/webhook.types';
+import type {
+  CreateWebhookBody,
+  DeleteWebhookParams,
+  GetWebhookByUuidParams,
+  Webhook,
+} from '@area/shared/types/webhook.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { GithubService } from '@/services/github.service';
 import type { WebhookService } from '@/services/webhook.service';
@@ -22,6 +27,7 @@ export class WebhookController {
    *
    * @param {FastifyRequest} _ The Fastify request object.
    * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
    */
   async listWebhooks(_: FastifyRequest, reply: FastifyReply): Promise<void> {
     const webhooks = await this.service.listWebhooks();
@@ -35,6 +41,7 @@ export class WebhookController {
    *
    * @param {FastifyRequest} request The Fastify request object containing the webhook data.
    * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
    */
   async createWebhook(request: FastifyRequest<{ Body: CreateWebhookBody }>, reply: FastifyReply): Promise<void> {
     const body = request.body;
@@ -44,9 +51,16 @@ export class WebhookController {
       ['push', 'pull_request'],
       body.discordWebhookUrl,
     );
-    await this.service.createWebhook({ uuid: this.service.generateUuid(), ...body });
 
-    reply.status(201).send({ message: 'Webhook created successfully.' });
+    const data: Webhook = {
+      ...body,
+      actions: ['push', 'pull_request'],
+      uuid: this.service.generateUuid(),
+    };
+
+    await this.service.createWebhook(data);
+
+    reply.status(201).send({ data });
   }
 
   /**
@@ -55,6 +69,7 @@ export class WebhookController {
    *
    * @param {FastifyRequest} request The Fastify request object containing the UUID parameter.
    * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
    */
   async getWebhookByUuid(
     request: FastifyRequest<{ Params: GetWebhookByUuidParams }>,
@@ -73,6 +88,7 @@ export class WebhookController {
    *
    * @param {FastifyRequest} request The Fastify request object containing the UUID parameter.
    * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
    */
   async deleteWebhook(request: FastifyRequest<{ Params: DeleteWebhookParams }>, reply: FastifyReply): Promise<void> {
     const { uuid } = request.params;
