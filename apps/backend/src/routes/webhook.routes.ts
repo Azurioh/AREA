@@ -30,6 +30,12 @@ export default async (app: FastifyInstance) => {
             properties: {
               uuid: { type: 'string' },
               githubUrl: { type: 'string' },
+              actions: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
               discordWebhookUrl: { type: 'string' },
             },
           },
@@ -50,6 +56,12 @@ export default async (app: FastifyInstance) => {
         type: 'object',
         properties: {
           githubUrl: { type: 'string' },
+          actions: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
           discordWebhookUrl: { type: 'string' },
         },
       },
