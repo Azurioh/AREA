@@ -15,8 +15,7 @@ services:
   app:
     build:
       context: ../../
-      dockerfile: apps/backend/.docker/Dockerfile
-      target: development
+      dockerfile: apps/backend/.docker/Dockerfile.dev
     ports:
       - "3000:${PORT}"
     environment:
