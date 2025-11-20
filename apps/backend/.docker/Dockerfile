@@ -35,7 +35,7 @@ WORKDIR /app
 COPY package.json ./
 COPY packages ./packages
 COPY apps/backend/package*.json ./apps/backend
-COPY apps/backend/tsconfig.json ./apps/backend/tsconfig.json
+COPY apps/backend/tsconfig.json ./apps/backend
 
 RUN npm ci --only=production
 
