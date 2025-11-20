@@ -13,8 +13,8 @@ WORKDIR /app/packages/shared
 RUN npm run build
 
 # Now build the backend
-COPY apps/backend ./apps/backend
 WORKDIR /app/apps/backend
+COPY apps/backend ./
 RUN npm run build
 
 EXPOSE ${PORT}
