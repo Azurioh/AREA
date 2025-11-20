@@ -8,6 +8,10 @@ COPY apps/frontend /app/apps/frontend/
 
 RUN npm install
 
+WORKDIR /app/packages
+
+RUN npm run build
+
 WORKDIR /app/apps/frontend
 
 ARG VITE_BACKEND_URL
