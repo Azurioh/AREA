@@ -1,7 +1,21 @@
 {
   "name": "@area/shared",
-  "types": "index.d.ts",
   "version": "0.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && tsc-alias"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./enums/*": "./dist/enums/*.js",
+    "./types/*": "./dist/types/*.js",
+    "./utils/*": "./dist/utils/*.js"
+  },
+  "devDependencies": {
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.9.3"
+  },
   "publishConfig": {
     "access": "public"
   }

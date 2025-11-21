@@ -46,15 +46,10 @@ export class WebhookController {
   async createWebhook(request: FastifyRequest<{ Body: CreateWebhookBody }>, reply: FastifyReply): Promise<void> {
     const body = request.body;
 
-    await this.githubService.createWebhookOnRepository(
-      body.githubUrl,
-      ['push', 'pull_request'],
-      body.discordWebhookUrl,
-    );
+    await this.githubService.createWebhookOnRepository(body.githubUrl, body.actions, body.discordWebhookUrl);
 
     const data: Webhook = {
       ...body,
-      actions: ['push', 'pull_request'],
       uuid: this.service.generateUuid(),
     };
 
