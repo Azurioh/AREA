@@ -1,3 +1,10 @@
+import {
+  createWebhookBodySchema,
+  createWebhookResponseSchema,
+  getWebhookByUuidParamsSchema,
+  getWebhookByUuidResponseSchema,
+  listWebhooksResponseSchema,
+} from '@area/shared/schemas/webhook.schema';
 import type { FastifyInstance } from 'fastify';
 import { WebhookController } from '@/controllers/webhook.controller';
 import { WebhookRepository } from '@/repositories/webhook.repository';
@@ -23,23 +30,7 @@ export default async (app: FastifyInstance) => {
       description: 'Returns an array of webhooks.',
       tags: ['Webhooks'],
       response: {
-        200: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              uuid: { type: 'string' },
-              githubUrl: { type: 'string' },
-              actions: {
-                type: 'array',
-                items: {
-                  type: 'string',
-                },
-              },
-              discordWebhookUrl: { type: 'string' },
-            },
-          },
-        },
+        200: listWebhooksResponseSchema,
       },
     },
   });
@@ -52,26 +43,9 @@ export default async (app: FastifyInstance) => {
       summary: 'Create a new webhook',
       description: 'Creates a new webhook.',
       tags: ['Webhooks'],
-      body: {
-        type: 'object',
-        properties: {
-          githubUrl: { type: 'string' },
-          actions: {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
-          },
-          discordWebhookUrl: { type: 'string' },
-        },
-      },
+      body: createWebhookBodySchema,
       response: {
-        201: {
-          type: 'object',
-          properties: {
-            message: { type: 'string' },
-          },
-        },
+        201: createWebhookResponseSchema,
       },
     },
   });
@@ -84,21 +58,9 @@ export default async (app: FastifyInstance) => {
       summary: 'Get a webhook by UUID',
       description: 'Returns a webhook by UUID.',
       tags: ['Webhooks'],
-      params: {
-        type: 'object',
-        properties: {
-          uuid: { type: 'string' },
-        },
-      },
+      params: getWebhookByUuidParamsSchema,
       response: {
-        200: {
-          type: 'object',
-          properties: {
-            uuid: { type: 'string' },
-            githubUrl: { type: 'string' },
-            discordWebhookUrl: { type: 'string' },
-          },
-        },
+        200: getWebhookByUuidResponseSchema,
       },
     },
   });
@@ -111,12 +73,7 @@ export default async (app: FastifyInstance) => {
       summary: 'Delete a webhook by UUID',
       description: 'Deletes a webhook by UUID.',
       tags: ['Webhooks'],
-      params: {
-        type: 'object',
-        properties: {
-          uuid: { type: 'string' },
-        },
-      },
+      params: getWebhookByUuidParamsSchema,
     },
   });
 };
