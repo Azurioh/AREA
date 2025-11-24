@@ -1,7 +1,7 @@
 import type { Webhook } from '@area/shared/types/webhook.types';
 import type { WithId } from 'mongodb';
 import { v4 } from 'uuid';
-import type { WebhookRepository } from '@/repositories/webhook.repository';
+import type { WebhookRepository } from './webhook.repository';
 
 /**
  * @class WebhookService

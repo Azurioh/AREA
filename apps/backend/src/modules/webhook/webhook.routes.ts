@@ -6,10 +6,10 @@ import {
   listWebhooksResponseSchema,
 } from '@area/shared/schemas/webhook.schema';
 import type { FastifyInstance } from 'fastify';
-import { WebhookController } from '@/controllers/webhook.controller';
-import { WebhookRepository } from '@/repositories/webhook.repository';
-import { GithubService } from '@/services/github.service';
-import { WebhookService } from '@/services/webhook.service';
+import { GithubService } from '@/modules/github';
+import { WebhookService } from '@/modules/webhook';
+import { WebhookController } from './webhook.controller';
+import { WebhookRepository } from './webhook.repository';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {

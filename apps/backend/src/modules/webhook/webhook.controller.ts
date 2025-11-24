@@ -5,8 +5,8 @@ import type {
 } from '@area/shared/schemas/webhook.schema';
 import type { Webhook } from '@area/shared/types/webhook.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { GithubService } from '@/services/github.service';
-import type { WebhookService } from '@/services/webhook.service';
+import type { GithubService } from '@/modules/github';
+import type { WebhookService } from '@/modules/webhook';
 
 /**
  * @class WebhookController

@@ -1,5 +1,6 @@
+import { uptimeResponseSchema } from '@area/shared/schemas/misc.schema';
 import type { FastifyInstance } from 'fastify';
-import { MiscController } from '@/controllers/misc.controller';
+import { MiscController } from './misc.controller';
 
 export default async (app: FastifyInstance) => {
   const miscController = new MiscController();
@@ -12,12 +13,7 @@ export default async (app: FastifyInstance) => {
       description: 'Returns the uptime of the server in seconds.',
       tags: ['Miscellaneous'],
       response: {
-        200: {
-          type: 'object',
-          properties: {
-            uptime: { type: 'number', description: 'Server uptime in seconds' },
-          },
-        },
+        200: uptimeResponseSchema,
       },
     },
     handler: miscController.uptime.bind(miscController),
