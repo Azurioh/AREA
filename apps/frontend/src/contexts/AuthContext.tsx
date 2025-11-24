@@ -1,6 +1,6 @@
 import type React from 'react';
 import { createContext, type ReactNode, useMemo, useState } from 'react';
-import { WebhookClient } from '@/features/webhook/api/WebhookClient';
+import { WebhookClient } from '@/features/webhook';
 import { TokenManager } from '@/lib/TokenManager';
 
 /**

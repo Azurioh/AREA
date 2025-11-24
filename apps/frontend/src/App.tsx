@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import WebhookPage from '@/features/webhook/routes/WebhookPage';
+import { WebhookPage } from '@/features/webhook';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 

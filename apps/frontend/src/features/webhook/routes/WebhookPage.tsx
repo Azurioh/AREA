@@ -7,7 +7,7 @@ import { CarouselItemCard } from '@/features/webhook/components/CarouselItemCard
 import { useWebhookList } from '@/features/webhook/hooks/useWebhookList';
 import { AccessibilitySettings } from '../components/AccessibilitySettings';
 
-export default function WebhookPage() {
+const WebhookPage = () => {
   const { webhooks, loading } = useWebhookList();
 
   if (loading) {
@@ -49,4 +49,6 @@ export default function WebhookPage() {
       </div>
     </div>
   );
-}
+};
+
+export default WebhookPage;
