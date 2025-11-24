@@ -1,5 +1,3 @@
-// src/features/settings/components/AccessibilitySettings.tsx
-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTheme } from '@/hooks/useTheme';
 

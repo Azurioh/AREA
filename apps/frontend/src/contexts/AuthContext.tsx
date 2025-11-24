@@ -19,7 +19,7 @@ interface User {
  */
 export interface AuthState {
   isAuthenticated: boolean;
-  user: User | null; // User info if authenticated
+  user: User | null;
 }
 
 /**
