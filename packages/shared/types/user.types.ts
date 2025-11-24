@@ -49,8 +49,18 @@ export const accessTokenSchema = z.object({
     description: 'The user id',
     example: '679d3c8b4b8c9d3c8b4b8c9d',
   }),
+  role: userFields.role,
   darkModeEnabled: userFields.darkModeEnabled,
   dyslexiaType: userFields.dyslexiaType,
 });
 
 export type AccessToken = z.infer<typeof accessTokenSchema>;
+
+export const refreshTokenSchema = z.object({
+  _id: z.string().meta({
+    description: 'The user id',
+    example: '679d3c8b4b8c9d3c8b4b8c9d',
+  }),
+});
+
+export type RefreshToken = z.infer<typeof refreshTokenSchema>;

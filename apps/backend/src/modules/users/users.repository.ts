@@ -1,6 +1,7 @@
 import type { User } from '@area/shared/types/user.types';
 import type { MaybeNull } from '@area/shared/utils/common';
 import { type Db, type DeleteResult, type InsertOneResult, ObjectId, type UpdateResult, type WithId } from 'mongodb';
+import { MongoCollections } from '@/enums/mongo-collection';
 
 /**
  * @class UserRepository
@@ -11,6 +12,19 @@ export class UsersRepository {
 
   constructor(db: Db) {
     this.db = db;
+
+    this.createIndex();
+  }
+
+  /**
+   * @function createIndex
+   * @description Creates an index to avoid user duplication.
+   *
+   */
+  async createIndex(): Promise<void> {
+    await this.db
+      .collection<User>(MongoCollections.USERS)
+      .createIndex({ email: 1 }, { unique: true, name: 'no_duplicate_user' });
   }
 
   /**
@@ -21,7 +35,7 @@ export class UsersRepository {
    * @returns {Promise<InsertOneResult<User>>} The created user data.
    */
   async createUser(user: User): Promise<InsertOneResult<User>> {
-    return await this.db.collection<User>('users').insertOne(user);
+    return await this.db.collection<User>(MongoCollections.USERS).insertOne(user);
   }
 
   /**
@@ -32,7 +46,7 @@ export class UsersRepository {
    * @returns {Promise<MaybeNull<WithId<User>>>} The user data.
    */
   async getUserById(id: string): Promise<MaybeNull<WithId<User>>> {
-    return await this.db.collection<User>('users').findOne({ _id: new ObjectId(id) });
+    return await this.db.collection<User>(MongoCollections.USERS).findOne({ _id: new ObjectId(id) });
   }
 
   /**
@@ -43,7 +57,7 @@ export class UsersRepository {
    * @returns {Promise<MaybeNull<WithId<User>>>} The user data.
    */
   async getUserByEmail(email: string): Promise<MaybeNull<WithId<User>>> {
-    return await this.db.collection<User>('users').findOne({ email });
+    return await this.db.collection<User>(MongoCollections.USERS).findOne({ email });
   }
 
   /**
@@ -55,7 +69,7 @@ export class UsersRepository {
    * @returns {Promise<UpdateResult<User>>} The updated user data.
    */
   async updateUser(id: string, user: Partial<User>): Promise<UpdateResult<User>> {
-    return await this.db.collection<User>('users').updateOne({ _id: new ObjectId(id) }, { $set: user });
+    return await this.db.collection<User>(MongoCollections.USERS).updateOne({ _id: new ObjectId(id) }, { $set: user });
   }
 
   /**
@@ -66,6 +80,6 @@ export class UsersRepository {
    * @returns {Promise<DeleteResult>} The result of the deletion.
    */
   async deleteUser(id: string): Promise<DeleteResult> {
-    return await this.db.collection<User>('users').deleteOne({ _id: new ObjectId(id) });
+    return await this.db.collection<User>(MongoCollections.USERS).deleteOne({ _id: new ObjectId(id) });
   }
 }
