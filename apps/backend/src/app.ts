@@ -9,6 +9,7 @@ import { setupSwagger } from './config/swagger';
 import { setupZod } from './config/zod';
 import { githubRoutes } from './modules/github';
 import { miscRoutes } from './modules/misc';
+import { usersRoutes } from './modules/users';
 import { webhookRoutes } from './modules/webhook';
 
 async function build(): Promise<FastifyInstance> {
@@ -29,6 +30,7 @@ async function build(): Promise<FastifyInstance> {
   app.withTypeProvider<ZodTypeProvider>().register(miscRoutes, { prefix: '/misc' });
   app.withTypeProvider<ZodTypeProvider>().register(webhookRoutes, { prefix: '/webhook' });
   app.withTypeProvider<ZodTypeProvider>().register(githubRoutes, { prefix: '/github' });
+  app.withTypeProvider<ZodTypeProvider>().register(usersRoutes, { prefix: '/users' });
 
   return app;
 }
