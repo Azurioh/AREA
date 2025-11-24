@@ -4,12 +4,12 @@ import { User } from "./user.type";
  * @type Tokens
  * @description This type represent the availables token.
  *
- * @property {string} access_token - The access token.
- * @property {string} refresh_token - The refresh token.
+ * @property {string} accessToken - The access token.
+ * @property {string} refreshToken - The refresh token.
  */
 export type Tokens = {
-  access_token: string;
-  refresh_token: string;
+  accessToken: string;
+  refreshToken: string;
 };
 
 /**

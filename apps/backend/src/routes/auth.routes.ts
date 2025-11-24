@@ -24,8 +24,8 @@ export default async (app: FastifyInstance) => {
         201: {
           type: 'object',
           properties: {
-            access_token: { type: 'string' },
-            refresh_token: { type: 'string' }
+            accessToken: { type: 'string' },
+            refreshToken: { type: 'string' }
           }
         },
       },
@@ -44,8 +44,8 @@ export default async (app: FastifyInstance) => {
         200: {
           type: 'object',
           properties: {
-            access_token: { type: 'string' },
-            refresh_token: { type: 'string' }
+            accessToken: { type: 'string' },
+            refreshToken: { type: 'string' }
           }
         },
       },

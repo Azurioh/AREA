@@ -30,16 +30,16 @@ export class AuthController {
       password: body.password,
       role: ""
     };
-    const { access_token, refresh_token } = await this.service.registerUser(data);
+    const { accessToken, refreshToken } = await this.service.registerUser(data);
 
-    reply.setCookie('refresh-token', refresh_token, {
+    reply.setCookie('refresh-token', refreshToken, {
       httpOnly: true,
       secure: environment.NODE_ENV !== 'development',
       sameSite: 'strict',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     });
-    reply.status(201).send({ 'access_token' : access_token });
+    reply.status(201).send({ 'accessToken' : accessToken });
   }
 
   /**
@@ -55,15 +55,15 @@ export class AuthController {
       email: body.email,
       password: body.password
     };
-    const { access_token, refresh_token } = await this.service.loginUser(data);
+    const { accessToken, refreshToken } = await this.service.loginUser(data);
 
-    reply.setCookie('refresh-token', refresh_token, {
+    reply.setCookie('refresh-token', refreshToken, {
       httpOnly: true,
       secure: environment.NODE_ENV !== 'development',
       sameSite: 'strict',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     });
-    reply.status(200).send({ 'access_token' : access_token });
+    reply.status(200).send({ 'accessToken' : accessToken });
   }
 }

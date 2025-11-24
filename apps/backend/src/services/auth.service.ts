@@ -38,10 +38,10 @@ export class AuthService {
         );
       }
 
-      const access_token = generateAccessToken({ id: result.insertedId.toString(), name: data.name, email: data.email, role:data.role });
-      const refresh_token = generateRefreshToken({ id: result.insertedId.toString() });
+      const accessToken = generateAccessToken({ id: result.insertedId.toString(), name: data.name, email: data.email, role:data.role });
+      const refreshToken = generateRefreshToken({ id: result.insertedId.toString() });
 
-      return { access_token, refresh_token };
+      return { accessToken, refreshToken };
     } catch (error: unknown) {
       if (error instanceof MongoServerError && error.code == 11000) { // 11000 is the error code for duplicates
         throw new ApiError(
@@ -70,9 +70,9 @@ export class AuthService {
       throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Password is invalid.');
     }
 
-    const access_token = generateAccessToken({ id: user._id.toString(), name: user.name, email: user.email, role: user.role });
-    const refresh_token = generateRefreshToken({ id: user._id.toString() });
+    const accessToken = generateAccessToken({ id: user._id.toString(), name: user.name, email: user.email, role: user.role });
+    const refreshToken = generateRefreshToken({ id: user._id.toString() });
 
-    return { access_token, refresh_token };
+    return { accessToken, refreshToken };
   }
 }
