@@ -14,6 +14,8 @@ export interface Environment {
   MONGO_URI: string;
   MONGO_DATABASE: string;
   GITHUB_TOKEN: string;
+  JWT_ACCESS_TOKEN_SECRET: string;
+  JWT_REFRESH_TOKEN_SECRET: string;
 }
 
 const variables: Record<string, string | undefined> = {
@@ -50,4 +52,6 @@ export const environment: Environment = {
   MONGO_URI: process.env.MONGO_URI as string,
   MONGO_DATABASE: process.env.MONGO_DATABASE as string,
   GITHUB_TOKEN: process.env.GITHUB_TOKEN as string,
+  JWT_ACCESS_TOKEN_SECRET: process.env.JWT_ACCESS_TOKEN_SECRET as string,
+  JWT_REFRESH_TOKEN_SECRET: process.env.JWT_REFRESH_TOKEN_SECRET as string
 };

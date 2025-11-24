@@ -5,6 +5,7 @@ import { setupMongoDB } from './config/mongo';
 import { setupNotFoundHandler } from './config/not-found';
 import { setupSwagger } from './config/swagger';
 import { router } from './routes';
+import { setupCookie } from './config/cookie';
 
 async function build(): Promise<FastifyInstance> {
   const app: FastifyInstance = fastify({
@@ -14,6 +15,7 @@ async function build(): Promise<FastifyInstance> {
   });
 
   setupCors(app);
+  setupCookie(app);
   setupSwagger(app);
   setupMongoDB(app);
   setupNotFoundHandler(app);

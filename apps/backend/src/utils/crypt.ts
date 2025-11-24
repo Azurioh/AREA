@@ -15,8 +15,9 @@ export async function hashPassword(password: string): Promise<string> {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         return hashedPassword;
-    } catch (err) {
-        throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Error hashing password');
+    } catch (err: unknown) {
+        console.error(`\r\x1b[31mError:\x1b[0m Password hashing went wrong.\n${err}`);
+        throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Unknow error occured');
     }
 }
 
@@ -33,7 +34,8 @@ export async function comparePasswords(password: string, hashedPassword: string)
         const result = await bcrypt.compare(password, hashedPassword);
 
         return result;
-    } catch (err) {
-        throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Error hashing password');
+    } catch (err: unknown) {
+        console.error(`\r\x1b[31mError:\x1b[0m Passwords comparaison went wrong.\n${err}`);
+        throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Unknow error occured');
     }
 }
