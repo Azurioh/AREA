@@ -1,6 +1,4 @@
-import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type { Db, WithId } from 'mongodb';
-import ApiError from '@/utils/api-error';
+import type { Db, InsertOneResult, WithId } from 'mongodb';
 import { User } from '@area/shared/types/user.type';
 
 /**
@@ -12,7 +10,20 @@ export class UserRepository {
 
   constructor(db: Db) {
     this.db = db;
+
+    this.createIndex();
   }
+
+  /**
+   * @function createIndex
+   * @description Creates an index to avoid user duplication.
+   *
+   */
+  private async createIndex(): Promise<void> {
+    if (!await this.db.collection<User>('users').indexExists('no_duplicate_user')) {
+      await this.db.collection<User>('users').createIndex({ email : 1 }, { unique: true, name: 'no_duplicate_user' } )
+    }
+  };
 
   /**
    * @function createUser
@@ -21,12 +32,10 @@ export class UserRepository {
    * @param {User} data - The user data to be inserted.
    * @returns {Promise<boolean>} If the user was created
    */
-  async createUser(data: User): Promise<boolean> {
-    await this.db.collection<User>('users').createIndex({ email : 1 }, { unique: true } )
+  async createUser(data: User): Promise<InsertOneResult<User>> {
+    const result = await this.db.collection<User>('users').insertOne(data);
 
-    const { acknowledged } = await this.db.collection<User>('users').insertOne(data);
-
-    return acknowledged;
+    return result;
   }
 
   /**
@@ -34,9 +43,9 @@ export class UserRepository {
    * @description Retrieves a user by its email.
    *
    * @param {string} email - The email of the user to retrieve.
-   * @returns The webhook data.
+   * @returns {Promise<WithId<User> | null>} The use data.
    */
-  async getUserByEmail(email: string): Promise<WithId<User> | null > {
+  async getUserByEmail(email: string): Promise<WithId<User> | null> {
     const user = await this.db.collection<User>('users').findOne({ email });
 
     return user;

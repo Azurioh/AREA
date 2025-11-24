@@ -2,6 +2,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { AuthService } from '@/services/auth.service';
 import { LoginUserBody, RegisterUserBody } from '@area/shared/types/auth.type';
 import { User } from '@area/shared/types/user.type';
+import { environment } from '@/utils/environment';
 
 /**
  * @class AuthController
@@ -26,17 +27,22 @@ export class AuthController {
     const data: User = {
       name: body.name,
       email: body.email,
-      password: body.password
+      password: body.password,
+      role: ""
     };
     const { access_token, refresh_token } = await this.service.registerUser(data);
 
-    // Set the refresh token as cookie
-    refresh_token;
-
+    reply.setCookie('refresh-token', refresh_token, {
+      httpOnly: true,
+      secure: environment.NODE_ENV !== 'development',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30,
+    });
     reply.status(201).send({ 'access_token' : access_token });
   }
 
-    /**
+  /**
    * @function loginUser
    * @description Handle the login of a user.
    *
@@ -45,15 +51,19 @@ export class AuthController {
    */
   async loginUser(request: FastifyRequest<{ Body: LoginUserBody }>, reply: FastifyReply): Promise<void> {
     const body = request.body;
-    const data: Omit<User, 'name'> = {
+    const data: Omit<User, 'name' | 'role'> = {
       email: body.email,
       password: body.password
     };
     const { access_token, refresh_token } = await this.service.loginUser(data);
 
-    // Set the refresh token as cookie
-    refresh_token;
-
+    reply.setCookie('refresh-token', refresh_token, {
+      httpOnly: true,
+      secure: environment.NODE_ENV !== 'development',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30,
+    });
     reply.status(200).send({ 'access_token' : access_token });
   }
 }

@@ -4,6 +4,8 @@ import { MongoServerError } from 'mongodb';
 import { User } from '@area/shared/types/user.type';
 import ApiError from '@/utils/api-error';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
+import { comparePasswords, hashPassword } from '@/utils/crypt';
+import { generateAccessToken, generateRefreshToken } from '@/utils/token';
 
 /**
  * @class AuthService
@@ -25,23 +27,29 @@ export class AuthService {
    */
   async registerUser(data: User): Promise<Tokens> {
     try {
-        const result = await this.repository.createUser(data);
+      data.password = await hashPassword(data.password);
 
-        if (!result) {
-            throw new ApiError(
-                HttpStatusCode.INTERNAL_SERVER_ERROR,
-                'Failed to create the user, please contact an administrator.',
-            );
-        }
-        return {access_token: "", refresh_token: ""};
+      const result = await this.repository.createUser(data);
+
+      if (!result.acknowledged) {
+        throw new ApiError(
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          'Failed to create the user, please contact an administrator.',
+        );
+      }
+
+      const access_token = generateAccessToken({ id: result.insertedId.toString(), name: data.name, email: data.email, role:data.role });
+      const refresh_token = generateRefreshToken({ id: result.insertedId.toString() });
+
+      return { access_token, refresh_token };
     } catch (error: unknown) {
-        if (error instanceof MongoServerError && error.codeName == 'IndexKeySpecsConflict') {
-            throw new ApiError(
-                HttpStatusCode.CONFLICT,
-                'Failed to create user, user already exists.',
-            );
-        }
-        throw error;
+      if (error instanceof MongoServerError && error.code == 11000) { // 11000 is the error code for duplicates
+        throw new ApiError(
+          HttpStatusCode.CONFLICT,
+          'Failed to create user, user already exists.',
+        );
+      }
+      throw error;
     }
   }
 
@@ -52,12 +60,19 @@ export class AuthService {
    * @param {Omit<User, 'name'>} data - The user to register
    * @returns {Promise<Tokens>} Array of webhooks.
    */
-  async loginUser(data: Omit<User, 'name'>): Promise<Tokens> {
+  async loginUser(data: Omit<User, 'name' | 'role'>): Promise<Tokens> {
     const user = await this.repository.getUserByEmail(data.email)
 
     if (!user) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'User not found.');
     }
-    return {access_token: "", refresh_token: ""};
+    if (!await comparePasswords(data.password, user.password)) {
+      throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Password is invalid.');
+    }
+
+    const access_token = generateAccessToken({ id: user._id.toString(), name: user.name, email: user.email, role: user.role });
+    const refresh_token = generateRefreshToken({ id: user._id.toString() });
+
+    return { access_token, refresh_token };
   }
 }
