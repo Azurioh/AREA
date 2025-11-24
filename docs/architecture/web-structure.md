@@ -80,7 +80,7 @@ We do not fetch data directly in components.
 
 ### How to fetch data in a Feature
 
-1.  Define the fetch function in `features/xgz/api/XyzClient.ts`.
+1.  Define the fetch function in `features/xyz/api/XyzClient.ts`.
 2.  Create a hook in `features/xyz/hooks/useXyz.ts` (using `useEffect`, React Query, or SWR).
 3.  Consume the hook in your component.
 

@@ -1,9 +1,25 @@
+import type { JSX } from 'react';
+
+/**
+ * @interface LoadingScreenProps
+ * @description Props for the LoadingScreen component
+ *
+ * @property {string} [message] - The message to display
+ * @property {React.ReactNode} [children] - The children to display
+ */
 interface LoadingScreenProps {
   message?: string;
   children?: React.ReactNode;
 }
 
-export function LoadingScreen({ message = 'Loading...', children }: LoadingScreenProps) {
+/**
+ * @function LoadingScreen
+ * @description A loading screen component
+ *
+ * @param {LoadingScreenProps} props - The props for the component
+ * @returns {JSX.Element} The loading screen component
+ */
+export function LoadingScreen({ message = 'Loading...', children }: LoadingScreenProps): JSX.Element {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm">
       <div className="flex flex-col items-center justify-center space-y-8">

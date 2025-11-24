@@ -1,13 +1,29 @@
 import React, { createContext, type ReactNode, useEffect, useState } from 'react';
 
-type ColorScheme = 'default' | 'theme-a11y-red-green' | 'theme-a11y-blue-yellow';
-type FontScheme = 'default' | 'theme-dyslexia' | 'theme-high-contrast';
+type ColorScheme = 'default';
+type FontScheme = 'default' | 'theme-dyslexia';
 
+/**
+ * @interface ThemeSettings
+ * @description Theme settings
+ *
+ * @property {ColorScheme} colorScheme - The color scheme
+ * @property {FontScheme} fontScheme - The font scheme
+ */
 interface ThemeSettings {
   colorScheme: ColorScheme;
   fontScheme: FontScheme;
 }
 
+/**
+ * @interface ThemeContextType
+ * @description Theme context type
+ *
+ * @property {ColorScheme} colorScheme - The color scheme
+ * @property {FontScheme} fontScheme - The font scheme
+ * @property {Function} setColorScheme - The function to set the color scheme
+ * @property {Function} setFontScheme - The function to set the font scheme
+ */
 interface ThemeContextType extends ThemeSettings {
   setColorScheme: (scheme: ColorScheme) => void;
   setFontScheme: (scheme: FontScheme) => void;
@@ -15,6 +31,13 @@ interface ThemeContextType extends ThemeSettings {
 
 export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+/**
+ * @function ThemeProvider
+ * @description Theme provider
+ *
+ * @param {ReactNode} children - The children to render
+ * @returns {JSX.Element} The theme provider component
+ */
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<ThemeSettings>(() => {
     const savedSettings = localStorage.getItem('themeSettings');
