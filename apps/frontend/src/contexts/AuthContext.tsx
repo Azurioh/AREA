@@ -1,8 +1,7 @@
 import type React from 'react';
 import { createContext, type ReactNode, useMemo, useState } from 'react';
-import { GithubService } from '@/services/GithubService';
-import { TokenManager } from '@/services/TokenManager';
-import { WebhookService } from '@/services/WebhookService';
+import { WebhookClient } from '@/features/webhook/api/WebhookClient';
+import { TokenManager } from '@/lib/TokenManager';
 
 /**
  * @interface User
@@ -24,12 +23,11 @@ export interface AuthState {
 }
 
 /**
- * @interface ApiContextType
+ * @interface AuthContextType
  * @description Api context type
  */
-export interface ApiContextType {
-  githubService: GithubService;
-  webhookService: WebhookService;
+export interface AuthContextType {
+  webhookClient: WebhookClient;
   authState: AuthState;
   logout: () => void;
 }
@@ -39,27 +37,25 @@ if (!BASE_URL) {
   throw new Error('VITE_BACKEND_URL is not defined.');
 }
 
-export const ApiContext = createContext<ApiContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const ApiProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [authState, setAuthState] = useState<AuthState>({
     isAuthenticated: !!localStorage.getItem('accessToken'),
     user: null,
   });
 
   const tokenManager = useMemo(() => new TokenManager(BASE_URL, setAuthState), []);
-  const githubService = useMemo(() => new GithubService(`${BASE_URL}/github`, tokenManager), [tokenManager]);
-  const webhookService = useMemo(() => new WebhookService(`${BASE_URL}/webhook`, tokenManager), [tokenManager]);
+  const webhookClient = useMemo(() => new WebhookClient(BASE_URL, tokenManager), []);
 
-  const contextValue: ApiContextType = useMemo(
+  const contextValue: AuthContextType = useMemo(
     () => ({
-      githubService,
-      webhookService,
+      webhookClient,
       authState,
       logout: tokenManager.logout.bind(tokenManager),
     }),
-    [githubService, webhookService, authState, tokenManager],
+    [authState, tokenManager],
   );
 
-  return <ApiContext.Provider value={contextValue}>{children}</ApiContext.Provider>;
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };

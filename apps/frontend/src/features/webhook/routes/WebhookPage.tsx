@@ -1,23 +1,29 @@
-import type { Webhook } from '@area/shared/types/webhook.types';
-import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CarouselItemCard } from '@/components/CarouselItemCard';
+import { LoadingScreen } from '@/components/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { useApi } from '@/hooks/useApiHook';
+import { Skeleton } from '@/components/ui/skeleton';
+import { CarouselItemCard } from '@/features/webhook/components/CarouselItemCard';
+import { useWebhookList } from '@/features/webhook/hooks/useWebhookList';
+import { AccessibilitySettings } from '../components/AccessibilitySettings';
 
-export default function Home() {
-  const { webhookService } = useApi();
-  const [webhooks, setWebhooks] = useState<Webhook[]>([]);
+export default function WebhookPage() {
+  const { webhooks, loading } = useWebhookList();
 
-  const loadWebhooks = useCallback(async () => {
-    const response = await webhookService.listWebhooks();
-    setWebhooks(response);
-  }, []);
-
-  useEffect(() => {
-    loadWebhooks();
-  }, []);
+  if (loading) {
+    return (
+      <LoadingScreen message="Loading webhooks...">
+        <Skeleton className="h-8 w-[250px] bg-muted" />
+        <Skeleton className="h-8 w-[200px] bg-muted" />
+        <Skeleton className="h-8 w-[200px] bg-muted" />
+        <Skeleton className="h-8 w-[200px] bg-muted" />
+        <Skeleton className="h-8 w-[200px] bg-muted" />
+        <Skeleton className="h-8 w-[200px] bg-muted" />
+        <Skeleton className="h-8 w-[200px] bg-muted" />
+        <Skeleton className="h-8 w-[200px] bg-muted" />
+      </LoadingScreen>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen w-full">
@@ -39,6 +45,7 @@ export default function Home() {
         <Link to="/other">
           <Button variant="default">Create</Button>
         </Link>
+        <AccessibilitySettings />
       </div>
     </div>
   );

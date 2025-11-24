@@ -1,4 +1,4 @@
-import type { AuthState } from '@/contexts/ApiContext';
+import type { AuthState } from '@/contexts/AuthContext';
 
 /**
  * @class TokenManager
