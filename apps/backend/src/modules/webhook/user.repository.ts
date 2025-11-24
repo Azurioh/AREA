@@ -1,5 +1,5 @@
+import type { User } from '@area/shared/types/user.type';
 import type { Db, InsertOneResult, WithId } from 'mongodb';
-import { User } from '@area/shared/types/user.type';
 import { MongoCollections } from '@/enums/mongo-collection';
 
 /**
@@ -14,17 +14,6 @@ export class UserRepository {
 
     this.createIndex();
   }
-
-  /**
-   * @function createIndex
-   * @description Creates an index to avoid user duplication.
-   *
-   */
-  private async createIndex(): Promise<void> {
-    if (!await this.db.collection<User>(MongoCollections.USERS).indexExists('no_duplicate_user')) {
-      await this.db.collection<User>(MongoCollections.USERS).createIndex({ email : 1 }, { unique: true, name: 'no_duplicate_user' } )
-    }
-  };
 
   /**
    * @function createUser
