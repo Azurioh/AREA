@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface ProfileCardProps {
   username: string;
@@ -32,18 +33,18 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ username, email, img, onEdit,
           alt="Profile"
           className="w-40 h-48 rounded-[20px] object-cover"
         />
-        <div className="flex flex-col flex-1 text-card-foreground gap-2 justify-center h-28">
-          <input
+        <div className="flex flex-col flex-1 text-card-foreground gap-2 justify-center h-28 pt-16">
+          <Input
             type="text"
             value={editedUsername}
             onChange={(e) => setEditedUsername(e.target.value)}
-            className="bg-[var(--input-background)] outline-none rounded-[10px] shadow-[inset_0_0_12px_rgba(0,0,0,0.6)] w-80 h-10 px-3 font-text"
+            className="bg-[var(--input-background)] outline-none rounded-[10px] shadow-[inset_0_0_12px_rgba(0,0,0,0.6)] w-80 h-10 px-3 font-text border-none"
           />
-          <input
+          <Input
             type="email"
             value={editedEmail}
             onChange={(e) => setEditedEmail(e.target.value)}
-            className="bg-[var(--input-background)] outline-none rounded-[10px] shadow-[inset_0_0_12px_rgba(0,0,0,0.6)] w-80 h-10 px-3 font-text"
+            className="bg-[var(--input-background)] outline-none rounded-[10px] shadow-[inset_0_0_12px_rgba(0,0,0,0.6)] w-80 h-10 px-3 font-text border-none"
           />
           <div className="flex gap-4 mt-4">
             <Button

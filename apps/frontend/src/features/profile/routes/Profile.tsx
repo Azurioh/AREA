@@ -29,7 +29,7 @@ const Profile: React.FC = () => {
             />
         </div>
 
-        <h2 className="text-card-foreground text-2xl mt-12 mb-6 self-start w-full pl-48 font-text">
+        <h2 className="text-card-foreground text-2xl mt-12 mb-6 font-text self-start md:ml-0 lg:ml-48">
           Services
         </h2>
       </div>
