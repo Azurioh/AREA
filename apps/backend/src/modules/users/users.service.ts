@@ -1,5 +1,4 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type { UpdateUserMeBody } from '@area/shared/schemas/user.schema';
 import type { User } from '@area/shared/types/user.types';
 import type { InsertOneResult } from 'mongodb';
 import ApiError from '@/utils/api-error';
@@ -85,15 +84,26 @@ export class UsersService {
   }
 
   /**
-   * @function updateUserMe
-   * @description Update the current user
+   * @function updateUser
+   * @description Update a user
    *
    * @param {string} id The id of the user
-   * @param {UpdateUserMeBody} user The user to update
+   * @param {User} user The user to update
    * @returns {Promise<void>} The updated user
    */
-  async updateUserMe(id: string, user: UpdateUserMeBody): Promise<void> {
-    return this.updateUser(id, user);
+  async updateUser(id: string, user: Partial<User>): Promise<void> {
+    const userUpdated = await this.userRepository.updateUser(id, user);
+
+    if (!userUpdated.acknowledged) {
+      throw new ApiError(
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        'Failed to update the user, please contact an administrator',
+      );
+    }
+
+    if (userUpdated.matchedCount === 0) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'User not found');
+    }
   }
 
   /**
@@ -114,29 +124,6 @@ export class UsersService {
     }
 
     if (userDeleted.deletedCount === 0) {
-      throw new ApiError(HttpStatusCode.NOT_FOUND, 'User not found');
-    }
-  }
-
-  /**
-   * @function updateUser
-   * @description Update a user
-   *
-   * @param {string} id The id of the user
-   * @param {User} user The user to update
-   * @returns {Promise<void>} The updated user
-   */
-  private async updateUser(id: string, user: Partial<User>): Promise<void> {
-    const userUpdated = await this.userRepository.updateUser(id, user);
-
-    if (!userUpdated.acknowledged) {
-      throw new ApiError(
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
-        'Failed to update the user, please contact an administrator',
-      );
-    }
-
-    if (userUpdated.matchedCount === 0) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'User not found');
     }
   }

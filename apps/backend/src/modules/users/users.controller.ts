@@ -1,5 +1,11 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type { GetUserByIdParams, UpdateUserMeBody } from '@area/shared/schemas/user.schema';
+import type {
+  DeleteUserByIdParams,
+  GetUserByIdParams,
+  UpdateUserByIdBody,
+  UpdateUserByIdParams,
+  UpdateUserMeBody,
+} from '@area/shared/schemas/user.schema';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { UsersService } from './users.service';
 
@@ -39,7 +45,7 @@ export class UsersController {
    * @returns {Promise<void>} Nothing
    */
   async updateUserMe(request: FastifyRequest<{ Body: UpdateUserMeBody }>, reply: FastifyReply): Promise<void> {
-    await this.service.updateUserMe(request.user._id, request.body);
+    await this.service.updateUser(request.user._id, request.body);
 
     return reply.status(HttpStatusCode.NO_CONTENT).send();
   }
@@ -70,5 +76,36 @@ export class UsersController {
     const user = await this.service.getUserById(request.params.id);
 
     return reply.status(HttpStatusCode.OK).send(user);
+  }
+
+  /**
+   * @function updateUserById
+   * @description Update a user by id
+   *
+   * @param {FastifyRequest<{ Params: UpdateUserByIdParams; Body: UpdateUserByIdBody }>} request The FastifyRequest object
+   * @param {FastifyReply} reply The FastifyReply object
+   * @returns {Promise<void>} Nothing
+   */
+  async updateUserById(
+    request: FastifyRequest<{ Params: UpdateUserByIdParams; Body: UpdateUserByIdBody }>,
+    reply: FastifyReply,
+  ): Promise<void> {
+    await this.service.updateUser(request.params.id, request.body);
+
+    return reply.status(HttpStatusCode.NO_CONTENT).send();
+  }
+
+  /**
+   * @function deleteUserById
+   * @description Delete a user by id
+   *
+   * @param {FastifyRequest<{ Params: DeleteUserByIdParams }>} request The FastifyRequest object
+   * @param {FastifyReply} reply The FastifyReply object
+   * @returns {Promise<void>} Nothing
+   */
+  async deleteUserById(request: FastifyRequest<{ Params: DeleteUserByIdParams }>, reply: FastifyReply): Promise<void> {
+    await this.service.deleteUser(request.params.id);
+
+    return reply.status(HttpStatusCode.NO_CONTENT).send();
   }
 }

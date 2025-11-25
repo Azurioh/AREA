@@ -1,8 +1,13 @@
 import {
+  deleteUserByIdParamsSchema,
+  deleteUserByIdResponseSchema,
   deleteUserMeResponseSchema,
   getUserByIdParamsSchema,
   getUserByIdResponseSchema,
   getUserMeResponseSchema,
+  updateUserByIdBodySchema,
+  updateUserByIdParamsSchema,
+  updateUserByIdResponseSchema,
   updateUserMeBodySchema,
   updateUserMeResponseSchema,
 } from '@area/shared/schemas/user.schema';
@@ -76,5 +81,36 @@ export default async (app: FastifyInstance) => {
       },
     },
     handler: controller.getUserById.bind(controller),
+  });
+
+  app.route({
+    method: 'PUT',
+    url: '/v1/:id',
+    schema: {
+      summary: 'Update user by id',
+      description: 'Updates the user by id.',
+      tags: ['Users'],
+      params: updateUserByIdParamsSchema,
+      body: updateUserByIdBodySchema,
+      response: {
+        204: updateUserByIdResponseSchema,
+      },
+    },
+    handler: controller.updateUserById.bind(controller),
+  });
+
+  app.route({
+    method: 'DELETE',
+    url: '/v1/:id',
+    schema: {
+      summary: 'Delete user by id',
+      description: 'Deletes the user by id.',
+      tags: ['Users'],
+      params: deleteUserByIdParamsSchema,
+      response: {
+        204: deleteUserByIdResponseSchema,
+      },
+    },
+    handler: controller.deleteUserById.bind(controller),
   });
 };
