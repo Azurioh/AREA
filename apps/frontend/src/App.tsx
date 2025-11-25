@@ -1,19 +1,20 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Home from '@/pages/Home';
-import OtherPage from '@/pages/OtherPage';
-import ProfilePage from '@/pages/Profile';
-import { ApiProvider } from './contexts/ApiContext';
+import { WebhookPage } from '@/features/webhook';
+import ProfilePage  from '@/features/profile/routes/Profile';
+import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 export default function App() {
   return (
     <BrowserRouter>
-      <ApiProvider>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/other" element={<OtherPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-        </Routes>
-      </ApiProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<WebhookPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Routes>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

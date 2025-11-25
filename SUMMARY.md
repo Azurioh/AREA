@@ -1,5 +1,8 @@
 # Table of contents
 
+## Architecture
+* [Web Structure (React)](docs/architecture/web-structure.md)
+
 ## Benchmarks
 * [Introduction](docs/benchmarks/introduction.md)
 * [Our results (performance)](docs/benchmarks/our-performance-results.md)
