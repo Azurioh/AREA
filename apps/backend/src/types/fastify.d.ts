@@ -1,3 +1,4 @@
+import { User } from '@area/shared/types/user.type';
 import type { Db, MongoClient } from 'mongodb';
 
 declare module 'fastify' {
@@ -11,5 +12,6 @@ declare module 'fastify' {
   interface FastifyRequest {
     mongoClient: MongoClient;
     db: Db;
+    user?: User
   }
 }
