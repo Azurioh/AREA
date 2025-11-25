@@ -5,11 +5,11 @@ interface FetchOptions extends RequestInit {
 }
 
 /**
- * @class ApiService
- * @description Base class for all API services.
+ * @class ApiClient
+ * @description Base class for all API clients.
  * Handles automatic token addition and refresh token logic.
  */
-export class ApiService {
+export class ApiClient {
   protected baseURL: string;
   protected tokenManager: TokenManager;
 

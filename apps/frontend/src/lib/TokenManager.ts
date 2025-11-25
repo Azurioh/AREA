@@ -1,4 +1,4 @@
-import type { AuthState } from '@/contexts/ApiContext';
+import type { AuthState } from '@/contexts/AuthContext';
 
 /**
  * @class TokenManager
@@ -39,7 +39,7 @@ export class TokenManager {
   setTokens = (access: string, refresh: string) => {
     localStorage.setItem('accessToken', access);
     localStorage.setItem('refreshToken', refresh);
-    this.setAuthState({ isAuthenticated: true, user: null }); // Mettre à jour l'état de l'utilisateur
+    this.setAuthState({ isAuthenticated: true, user: null });
   };
 
   /**

@@ -1,11 +1,11 @@
 import type { CreateWebhookBody, Webhook } from '@area/shared/types/webhook.types';
-import { ApiService } from './ApiService';
+import { ApiClient } from '@/lib/ApiClient';
 
 /**
- * @class WebhookService
+ * @class WebhookClient
  * @description Webhook service
  */
-export class WebhookService extends ApiService {
+export class WebhookClient extends ApiClient {
   /**
    * @function listWebhooks
    * @description List webhooks
