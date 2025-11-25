@@ -1,6 +1,7 @@
+import { listGithubRepositoriesResponseSchema } from '@area/shared/schemas/github.schema';
 import type { FastifyInstance } from 'fastify';
-import { GithubController } from '@/controllers/github.controller';
-import { GithubService } from '@/services/github.service';
+import { GithubController } from './github.controller';
+import { GithubService } from './github.service';
 
 export default async (app: FastifyInstance) => {
   const service = new GithubService();
@@ -15,12 +16,7 @@ export default async (app: FastifyInstance) => {
       description: 'Returns an array of repository names.',
       tags: ['GitHub'],
       response: {
-        200: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
+        200: listGithubRepositoriesResponseSchema,
       },
     },
   });

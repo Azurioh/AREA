@@ -1,5 +1,6 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { ZodError } from 'zod';
 import ApiError from '@/utils/api-error';
 import { environment } from '@/utils/environment';
 
@@ -7,6 +8,10 @@ export const setupErrorHandler = (app: FastifyInstance) => {
   app.setErrorHandler((error: unknown, _: FastifyRequest, reply: FastifyReply) => {
     if (error instanceof ApiError) {
       reply.status(error.httpCode).send({
+        data: error.message,
+      });
+    } else if (error instanceof ZodError) {
+      reply.status(HttpStatusCode.BAD_REQUEST).send({
         data: error.message,
       });
     } else if (error instanceof Error) {

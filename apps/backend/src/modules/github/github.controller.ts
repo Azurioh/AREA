@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { GithubService } from '@/services/github.service';
+import type { GithubService } from './github.service';
 
 /**
  * @class GithubController
