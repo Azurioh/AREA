@@ -41,7 +41,9 @@ export class AuthService {
 
       const accessToken = generateAccessToken({
         _id: result.insertedId.toString(),
-        ...data,
+        role: data.role,
+        darkModeEnabled: data.darkModeEnabled,
+        dyslexiaType: data.dyslexiaType,
       });
       const refreshToken = generateRefreshToken({ _id: result.insertedId.toString() });
 
@@ -73,8 +75,10 @@ export class AuthService {
     }
 
     const accessToken = generateAccessToken({
-      ...user,
       _id: user._id.toString(),
+      role: user.role,
+      darkModeEnabled: user.darkModeEnabled,
+      dyslexiaType: user.dyslexiaType,
     });
     const refreshToken = generateRefreshToken({ _id: user._id.toString() }, data.rememberMe);
 
