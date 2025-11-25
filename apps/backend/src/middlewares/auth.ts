@@ -11,16 +11,16 @@ export const verifyUserAccess =
     const accessToken = request.headers.authorization;
 
     if (!accessToken) {
-      throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'No token was provided');
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'No token was provided');
     }
     if (!accessToken.startsWith('Bearer ')) {
-      throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Invalid authorization format, expected Bearer');
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Invalid authorization format, expected Bearer');
     }
 
     const decoded = verifyToken<AccessToken>(accessToken.replace('Bearer ', ''), environment.JWT_ACCESS_TOKEN_SECRET);
 
     if (!(await userService.checkIfUserExist(decoded._id))) {
-      throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'User not found');
+      throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Unauthorized');
     }
 
     request.user = decoded;
