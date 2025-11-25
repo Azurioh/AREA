@@ -6,13 +6,14 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
+    --background-gradient: linear-gradient(135deg, #373C41 0%, #1B1F24 100%);
     --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card: 220 13% 28%;
+    --card-foreground: 0 0% 100%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 45 97% 58%;
+    --primary-foreground: 0 0% 0%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
@@ -68,4 +69,60 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@font-face {
+  font-family: 'montserrat-Regular';
+  src: url('./assets/fonts/montserrat_regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'montserrat-Medium';
+  src: url('./assets/fonts/montserrat_medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'montserrat-SemiBold';
+  src: url('./assets/fonts/montserrat_semibold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'montserrat-Bold';
+  src: url('./assets/fonts/montserrat_bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'poppins-regular';
+  src: url('./assets/fonts/poppins_regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'poppins-medium';
+  src: url('./assets/fonts/poppins_medium.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'poppins-semibold';
+  src: url('./assets/fonts/poppins_semibold.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'poppins-bold';
+  src: url('./assets/fonts/poppins_bold.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
 }

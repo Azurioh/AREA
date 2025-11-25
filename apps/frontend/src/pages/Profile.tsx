@@ -12,12 +12,13 @@ const Profile: React.FC = () => {
     <div
       className="min-h-screen w-full flex flex-col items-center px-6 py-10"
       style={{
-        background: "linear-gradient(135deg, #373C41 0%, #1B1F24 100%)",
+        background: "var(--background-gradient)",
       }}
     >
       <ProfileCard
         username={mockProfile.username}
         email={mockProfile.email}
+        img={mockProfile.avatar}
         onEdit={() => console.log("edit")}
         onLogout={() => console.log("logout")}
       />
