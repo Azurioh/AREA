@@ -38,6 +38,19 @@ export class UsersService {
   }
 
   /**
+   * @function checkIfUserExist
+   * @description Check if a user exists
+   *
+   * @param {string} id The id of the user
+   * @returns {Promise<boolean>} True if the user exists, false otherwise
+   */
+  async checkIfUserExist(id: string): Promise<boolean> {
+    const user = await this.userRepository.getUserById(id);
+
+    return user !== null;
+  }
+
+  /**
    * @function getUserByEmail
    * @description Get a user by email
    *
