@@ -22,12 +22,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ username, email, img, onEdit,
     <Card className="bg-card p-6 rounded-[20px] shadow-lg w-full max-w-4xl border-none ring-0 outline-none relative">
       <Button
         onClick={onLogout}
-        className="absolute top-6 right-6 px-4 py-2 bg-primary text-primary-foreground font-semibold rounded-[10px]"
-        style={{ fontFamily: 'Poppins-medium' }}
+        className="absolute top-6 right-6 px-4 py-2 bg-primary text-primary-foreground font-semibold rounded-[10px] font-button"
       >
         Disconnect
       </Button>
-      <CardContent className="flex items-center gap-6 p-0" style={{ fontFamily: 'Montserrat-medium' }}>
+      <CardContent className="flex items-center gap-6 p-0 font-text">
         <img
           src={img}
           alt="Profile"
@@ -38,21 +37,18 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ username, email, img, onEdit,
             type="text"
             value={editedUsername}
             onChange={(e) => setEditedUsername(e.target.value)}
-            className="bg-[var(--input-background)] outline-none rounded-[10px] shadow-[inset_0_0_12px_rgba(0,0,0,0.6)] w-80 h-10 px-3"
-            style={{ fontFamily: 'Montserrat-medium' }}
+            className="bg-[var(--input-background)] outline-none rounded-[10px] shadow-[inset_0_0_12px_rgba(0,0,0,0.6)] w-80 h-10 px-3 font-text"
           />
           <input
             type="email"
             value={editedEmail}
             onChange={(e) => setEditedEmail(e.target.value)}
-            className="bg-[var(--input-background)] outline-none rounded-[10px] shadow-[inset_0_0_12px_rgba(0,0,0,0.6)] w-80 h-10 px-3"
-            style={{ fontFamily: 'Montserrat-medium' }}
+            className="bg-[var(--input-background)] outline-none rounded-[10px] shadow-[inset_0_0_12px_rgba(0,0,0,0.6)] w-80 h-10 px-3 font-text"
           />
           <div className="flex gap-4 mt-4">
             <Button
               onClick={handleSave}
-              className="px-4 py-2 bg-primary text-primary-foreground font-semibold rounded-[10px]"
-              style={{ fontFamily: 'Poppins-medium' }}
+              className="px-4 py-2 bg-primary text-primary-foreground font-semibold rounded-[10px] font-button"
             >
               save
             </Button>

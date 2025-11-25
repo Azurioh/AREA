@@ -29,7 +29,7 @@ const Profile: React.FC = () => {
             />
         </div>
 
-        <h2 className="text-card-foreground text-2xl mt-12 mb-6 self-start w-full pl-48" style={{ fontFamily: 'Montserrat-bold' }}>
+        <h2 className="text-card-foreground text-2xl mt-12 mb-6 self-start w-full pl-48 font-text">
           Services
         </h2>
       </div>
