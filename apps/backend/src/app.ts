@@ -9,6 +9,7 @@ import { setupSwagger } from './config/swagger';
 import { setupZod } from './config/zod';
 import { authRoutes } from './modules/auth';
 import { usersRoutes } from './modules/users';
+import { githubRoutes } from './modules/github';
 
 async function build(): Promise<FastifyInstance> {
   const app: FastifyInstance = fastify({
@@ -25,6 +26,7 @@ async function build(): Promise<FastifyInstance> {
   setupErrorHandler(app);
   setupZod(app);
 
+  app.withTypeProvider<ZodTypeProvider>().register(githubRoutes, { prefix: '/github' });
   app.withTypeProvider<ZodTypeProvider>().register(authRoutes, { prefix: '/auth' });
   app.withTypeProvider<ZodTypeProvider>().register(usersRoutes, { prefix: '/users' });
 
