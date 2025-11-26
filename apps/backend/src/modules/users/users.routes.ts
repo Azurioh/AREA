@@ -11,6 +11,7 @@ import {
   updateUserByIdResponseSchema,
   updateUserMeBodySchema,
   updateUserMeResponseSchema,
+  createUserMeStateTokenResponseSchema,
 } from '@area/shared/schemas/user.schema';
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';
@@ -26,6 +27,21 @@ export default async (app: FastifyInstance) => {
   const repository = new UsersRepository(app.mongo.db);
   const service = new UsersService(repository);
   const controller = new UsersController(service);
+
+  app.route({
+    method: 'POST',
+    url: '/v1/me/state-token',
+    schema: {
+      summary: 'Create the current user state token',
+      description: 'Returns the current user state token.',
+      tags: ['Users'],
+      response: {
+        200: createUserMeStateTokenResponseSchema,
+      },
+    },
+    preHandler: [verifyUserAccess(service)],
+    handler: controller.createUserMeState.bind(controller),
+  });
 
   app.route({
     method: 'GET',
