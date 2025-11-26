@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.poc"
+    namespace = "com.example.area"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.poc"
+        applicationId = "com.example.area"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -60,4 +60,5 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+    implementation("androidx.compose.material:material-icons-extended:1.6.0")
 }

@@ -39,12 +39,16 @@ const LoginPage: React.FC = () => {
                                 <Input id='password' type={showPassword ? 'text' : 'password'} placeholder='Enter your password' required/>
                                 <button type='button' onClick={togglePasswordVisibility} className='absolute right-3 top-1/2 -translate-y-1/2'>
                                     {showPassword ? <Eye className='h-4 w-4' /> : <EyeOff className='h-4 w-4' />}
+                                <Input id='password' type="password" required/>
+                                <button type='button' className='absolute right-3 top-1/2 -translate-y-1/2'>
+                                    <EyeOff />
                                 </button>
                             </div>
                         </div>
                         <div className='flex items-center justify-between'>
                             <div className='flex items-center space-x-2'>
                                 <Checkbox id='remember-me' checked={rememberMe} onCheckedChange={toggleRememberMe} />
+                                <Checkbox id='remember-me' />
                                 <Label htmlFor='remember-me'>Remember me</Label>
                             </div>
                             <a href="#" className='text-sm text-blue-600 hover:underline'>Forgot password?</a>
@@ -53,6 +57,7 @@ const LoginPage: React.FC = () => {
                         <div className='text-center text-sm'>
                             Don't have an account ?
                             <Link to={AppRoutesPaths.REGISTER} className='text-blue-600 hover:underline'> Sign up</Link>
+                            Don't have an account ? <a href="#" className='text-blue-600 hover:underline'>Sign up</a>
                         </div>
                     </form>
                 </Card>
