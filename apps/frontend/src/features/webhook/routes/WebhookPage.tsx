@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CarouselItemCard } from '@/features/webhook/components/CarouselItemCard';
 import { useWebhookList } from '@/features/webhook/hooks/useWebhookList';
 import { AccessibilitySettings } from '../components/AccessibilitySettings';
+import { AppRoutesPaths } from '@/enums/routes';
 
 const WebhookPage = () => {
   const { webhooks, loading } = useWebhookList();
@@ -42,7 +43,7 @@ const WebhookPage = () => {
           <CarouselPrevious />
           <CarouselNext />
         </Carousel>
-        <Link to="/other">
+        <Link to={AppRoutesPaths.OTHER}>
           <Button variant="default">Create</Button>
         </Link>
         <AccessibilitySettings />
