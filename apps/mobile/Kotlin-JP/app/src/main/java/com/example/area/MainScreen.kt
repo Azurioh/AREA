@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.example.area.pages.RegisterPage
 import com.example.area.pages.LoginPage
+import com.example.area.pages.ProfilePage
 import com.example.area.ui.theme.Accent
 
 data class NavItemState(
@@ -130,6 +131,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
 fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
     when(selectedIndex) {
         0 -> RegisterPage()
+        2 -> ProfilePage()
         3 -> LoginPage()
     }
 }
