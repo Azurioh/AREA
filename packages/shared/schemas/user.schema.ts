@@ -9,6 +9,18 @@ export const getUserByIdResponseSchema = userSchema.omit({ password: true });
 
 export const getUserMeResponseSchema = userSchema.omit({ password: true });
 
+/*********************
+ * GET USER ME STATE *
+ *********************/
+
+export const createUserMeStateTokenResponseSchema = z.object({
+  stateToken: z.string().meta({
+    description: 'The oauth state token',
+    example:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+  }),
+});
+
 /******************
  * UPDATE USER ME *
  ******************/

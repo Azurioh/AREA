@@ -64,3 +64,5 @@ export const refreshTokenSchema = z.object({
 });
 
 export type RefreshToken = z.infer<typeof refreshTokenSchema>;
+
+export type StateToken = RefreshToken;
