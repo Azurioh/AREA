@@ -24,17 +24,11 @@ export type GitHubAuthentication = GitHubAuthenticationQueryString;
  * @description The content of the github account.
  *
  * @property {string} access_token - The response access token.
- * @property {number} expires_in - The expiration time of the access token.
- * @property {string} refresh_token - The response refresh token.
- * @property {number} refresh_token_expires_in - The expiration time of the refresh token.
  * @property {string} token_type - The type of the token.
  * @property {string} scope - The authentication scope.
  */
 export type GitHubAuthenticationResponse = {
     access_token: string,
-    expires_in: number,
-    refresh_token: string,
-    refresh_token_expires_in: number,
     token_type: string,
     scope: string
 };
@@ -45,10 +39,8 @@ export type GitHubAuthenticationResponse = {
  *
  * @property {string} user_id - The id of the user.
  * @property {string} access_token - The access token related to the user github account.
- * @property {string} refresh_token - The refresh token related to the user github account.
  */
 export type GithubAccount = {
     user_id: string,
     access_token: string,
-    refresh_token: string
 }
