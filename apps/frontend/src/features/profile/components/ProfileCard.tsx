@@ -1,7 +1,7 @@
-import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useSaveProfile } from '@/features/profile/hooks/save';
 
 interface ProfileCardProps {
   username: string;
@@ -12,12 +12,14 @@ interface ProfileCardProps {
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({ username, email, img, onEdit, onLogout }) => {
-  const [editedUsername, setEditedUsername] = useState(username);
-  const [editedEmail, setEditedEmail] = useState(email);
 
-  const handleSave = () => {
-    onEdit(editedUsername, editedEmail);
-  };
+  const {
+    editedUsername,
+    editedEmail,
+    setEditedUsername,
+    setEditedEmail,
+    handleSave,
+  } = useSaveProfile(username, email, onEdit);
 
   return (
     <Card className="bg-card p-6 rounded-[20px] shadow-lg w-full max-w-4xl border-none ring-0 outline-none relative">
