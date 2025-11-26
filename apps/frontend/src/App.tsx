@@ -15,9 +15,7 @@ export default function App() {
             <Route path={AppRoutesPaths.REGISTER} element={<RegisterPage />} />
             <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
             <Route path={AppRoutesPaths.HOME} element={<WebhookPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/" element={<WebhookPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route path={AppRoutesPaths.PROFILE} element={<ProfilePage />} />
           </Routes>
         </AuthProvider>
       </ThemeProvider>
