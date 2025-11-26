@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LoginPage, RegisterPage } from '@/features/Auth';
 import { AppRoutesPaths } from '@/enums/routes';
+import { AdminDashboardPage } from '@/features/AdminDashboard';
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
             <Route path={AppRoutesPaths.REGISTER} element={<RegisterPage />} />
             <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
             <Route path={AppRoutesPaths.HOME} element={<WebhookPage />} />
+            <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
           </Routes>
         </AuthProvider>
       </ThemeProvider>
