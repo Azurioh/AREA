@@ -1,9 +1,10 @@
-import type { UserRepository } from '@/repositories/user.repository';
-import { Tokens } from '@area/shared/types/auth.type';
-import { MongoServerError } from 'mongodb';
-import { User } from '@area/shared/types/user.type';
-import ApiError from '@/utils/api-error';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
+import type { LoginBody } from '@area/shared/schemas/auth.schema';
+import type { Tokens } from '@area/shared/types/auth.types';
+import type { User } from '@area/shared/types/user.types';
+import { MongoServerError } from 'mongodb';
+import type { UsersRepository } from '@/modules/users';
+import ApiError from '@/utils/api-error';
 import { comparePasswords, hashPassword } from '@/utils/crypt';
 import { generateAccessToken, generateRefreshToken } from '@/utils/token';
 
@@ -12,9 +13,9 @@ import { generateAccessToken, generateRefreshToken } from '@/utils/token';
  * @description Service for managing webhooks.
  */
 export class AuthService {
-  private repository: UserRepository;
+  private repository: UsersRepository;
 
-  constructor(repository: UserRepository) {
+  constructor(repository: UsersRepository) {
     this.repository = repository;
   }
 
@@ -38,16 +39,19 @@ export class AuthService {
         );
       }
 
-      const accessToken = generateAccessToken({ id: result.insertedId.toString(), name: data.name, email: data.email, role:data.role });
-      const refreshToken = generateRefreshToken({ id: result.insertedId.toString() });
+      const accessToken = generateAccessToken({
+        _id: result.insertedId.toString(),
+        role: data.role,
+        darkModeEnabled: data.darkModeEnabled,
+        dyslexiaType: data.dyslexiaType,
+      });
+      const refreshToken = generateRefreshToken({ _id: result.insertedId.toString() });
 
       return { accessToken, refreshToken };
     } catch (error: unknown) {
-      if (error instanceof MongoServerError && error.code == 11000) { // 11000 is the error code for duplicates
-        throw new ApiError(
-          HttpStatusCode.CONFLICT,
-          'Failed to create user, user already exists.',
-        );
+      if (error instanceof MongoServerError && error.code === 11000) {
+        // 11000 is the error code for duplicates
+        throw new ApiError(HttpStatusCode.CONFLICT, 'Failed to create user, user already exists.');
       }
       throw error;
     }
@@ -60,18 +64,23 @@ export class AuthService {
    * @param {Omit<User, 'name'>} data - The user to register
    * @returns {Promise<Tokens>} Array of webhooks.
    */
-  async loginUser(data: Omit<User, 'name' | 'role'>): Promise<Tokens> {
-    const user = await this.repository.getUserByEmail(data.email)
+  async loginUser(data: LoginBody): Promise<Tokens> {
+    const user = await this.repository.getUserByEmail(data.email);
 
     if (!user) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'User not found.');
     }
-    if (!await comparePasswords(data.password, user.password)) {
+    if (!(await comparePasswords(data.password, user.password))) {
       throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Password is invalid.');
     }
 
-    const accessToken = generateAccessToken({ id: user._id.toString(), name: user.name, email: user.email, role: user.role });
-    const refreshToken = generateRefreshToken({ id: user._id.toString() });
+    const accessToken = generateAccessToken({
+      _id: user._id.toString(),
+      role: user.role,
+      darkModeEnabled: user.darkModeEnabled,
+      dyslexiaType: user.dyslexiaType,
+    });
+    const refreshToken = generateRefreshToken({ _id: user._id.toString() }, data.rememberMe);
 
     return { accessToken, refreshToken };
   }

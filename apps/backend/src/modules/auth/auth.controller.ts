@@ -1,7 +1,8 @@
+import { DysType, UserRoles } from '@area/shared/enums/user-enums';
+import type { LoginBody, RegisterBody } from '@area/shared/schemas/auth.schema';
+import type { User } from '@area/shared/types/user.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { AuthService } from '@/services/auth.service';
-import { LoginUserBody, RegisterUserBody } from '@area/shared/types/auth.type';
-import { User } from '@area/shared/types/user.type';
+import type { AuthService } from '@/modules/auth/auth.service';
 import { environment } from '@/utils/environment';
 
 /**
@@ -22,14 +23,19 @@ export class AuthController {
    * @param {FastifyRequest} request - The Fastify request object.
    * @param {FastifyReply} reply - The Fastify reply object for sending the response.
    */
-  async registerUser(request: FastifyRequest<{ Body: RegisterUserBody }>, reply: FastifyReply): Promise<void> {
+  async registerUser(request: FastifyRequest<{ Body: RegisterBody }>, reply: FastifyReply): Promise<void> {
     const body = request.body;
     const data: User = {
       name: body.name,
       email: body.email,
       password: body.password,
-      role: ""
+      role: UserRoles.USER,
+      darkModeEnabled: false,
+      dyslexiaType: DysType.NOTHING,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
+
     const { accessToken, refreshToken } = await this.service.registerUser(data);
 
     reply.setCookie('refresh-token', refreshToken, {
@@ -39,7 +45,7 @@ export class AuthController {
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     });
-    reply.status(201).send({ 'accessToken' : accessToken });
+    reply.status(201).send({ accessToken: accessToken });
   }
 
   /**
@@ -49,13 +55,10 @@ export class AuthController {
    * @param {FastifyRequest} request - The Fastify request object.
    * @param {FastifyReply} reply - The Fastify reply object for sending the response.
    */
-  async loginUser(request: FastifyRequest<{ Body: LoginUserBody }>, reply: FastifyReply): Promise<void> {
+  async loginUser(request: FastifyRequest<{ Body: LoginBody }>, reply: FastifyReply): Promise<void> {
     const body = request.body;
-    const data: Omit<User, 'name' | 'role'> = {
-      email: body.email,
-      password: body.password
-    };
-    const { accessToken, refreshToken } = await this.service.loginUser(data);
+
+    const { accessToken, refreshToken } = await this.service.loginUser(body);
 
     reply.setCookie('refresh-token', refreshToken, {
       httpOnly: true,
@@ -64,6 +67,6 @@ export class AuthController {
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     });
-    reply.status(200).send({ 'accessToken' : accessToken });
+    reply.status(200).send({ accessToken: accessToken });
   }
 }

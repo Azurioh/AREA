@@ -1,14 +1,20 @@
+import {
+  loginBodyResponseSchema,
+  loginBodySchema,
+  registerBodyResponseSchema,
+  registerBodySchema,
+} from '@area/shared/schemas/auth.schema';
 import type { FastifyInstance } from 'fastify';
-import { AuthController } from '@/controllers/auth.controller';
-import { AuthService } from '@/services/auth.service';
-import { UserRepository } from '@/repositories/user.repository';
+import { AuthController } from '@/modules/auth/auth.controller';
+import { AuthService } from '@/modules/auth/auth.service';
+import { UsersRepository } from '@/modules/users';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
     throw new Error('MongoDB not initialized');
   }
 
-  const repository = new UserRepository(app.mongo.db);
+  const repository = new UsersRepository(app.mongo.db);
   const service = new AuthService(repository);
   const controller = new AuthController(service);
 
@@ -20,14 +26,9 @@ export default async (app: FastifyInstance) => {
       summary: 'Register a new user',
       description: 'Returns an array with the users token.',
       tags: ['Auth'],
+      body: registerBodySchema,
       response: {
-        201: {
-          type: 'object',
-          properties: {
-            accessToken: { type: 'string' },
-            refreshToken: { type: 'string' }
-          }
-        },
+        201: registerBodyResponseSchema,
       },
     },
   });
@@ -40,14 +41,9 @@ export default async (app: FastifyInstance) => {
       summary: 'Login a user',
       description: 'Returns an array with the users token.',
       tags: ['Auth'],
+      body: loginBodySchema,
       response: {
-        200: {
-          type: 'object',
-          properties: {
-            accessToken: { type: 'string' },
-            refreshToken: { type: 'string' }
-          }
-        },
+        200: loginBodyResponseSchema,
       },
     },
   });
