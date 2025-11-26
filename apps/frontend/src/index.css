@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 
 @layer base {
@@ -35,6 +36,7 @@
     --font-sans: system-ui, sans-serif;
     --font-button: system-ui, sans-serif;
     --font-text: system-ui, sans-serif;
+    --button-disabled-text: 0 0% 100%;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -101,66 +103,10 @@
   }
 }
 
-@font-face {
-  font-family: 'montserrat';
-  src: url('./assets/fonts/montserrat_regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'montserrat';
-  src: url('./assets/fonts/montserrat_medium.ttf') format('truetype');
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'montserrat';
-  src: url('./assets/fonts/montserrat_semibold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'montserrat';
-  src: url('./assets/fonts/montserrat_bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'poppins';
-  src: url('./assets/fonts/poppins_regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'poppins';
-  src: url('./assets/fonts/poppins_medium.ttf') format('truetype');
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'poppins';
-  src: url('./assets/fonts/poppins_semibold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'poppins';
-  src: url('./assets/fonts/poppins_bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-}
-
 .font-button {
-  --font-button: 'poppins', system-ui, sans-serif;
+  --font-button: 'Poppins', system-ui, sans-serif;
 }
 
 .font-text {
-  --font-text: 'montserrat', system-ui, sans-serif;
+  --font-text: 'Montserrat', system-ui, sans-serif;
 }
