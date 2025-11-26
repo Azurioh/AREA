@@ -56,6 +56,20 @@ module.exports = {
           5: 'hsl(var(--chart-5))',
         },
       },
+	  fontFamily: {
+      montserrat: {
+        regular: ['"montserrat-Regular"', 'sans-serif'],
+        medium: ['"montserrat-Medium"', 'sans-serif'],
+        semibold: ['"montserrat-SemiBold"', 'sans-serif'],
+        bold: ['"montserrat-Bold"', 'sans-serif'],
+      },
+      poppins: {
+        regular: ['"poppins-Regular"', 'sans-serif'],
+        medium: ['"poppins-Medium"', 'sans-serif'],
+        semibold: ['"poppins-SemiBold"', 'sans-serif'],
+        bold: ['"poppins-Bold"', 'sans-serif'],
+      },
+	  },
     },
   },
   plugins: [require('tailwindcss-animate')],
