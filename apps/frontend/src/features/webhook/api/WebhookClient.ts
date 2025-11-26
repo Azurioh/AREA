@@ -1,4 +1,4 @@
-import type { CreateWebhookBody, Webhook } from '@area/shared/types/webhook.types';
+import type { Webhook } from '@area/shared/types/webhook.types';
 import { ApiClient } from '@/lib/ApiClient';
 
 /**
@@ -29,7 +29,7 @@ export class WebhookClient extends ApiClient {
    *
    * @returns {Promise<{ message: string }>} The response from the server
    */
-  async createWebhook(webhook: CreateWebhookBody): Promise<{ message: string }> {
+  async createWebhook(webhook: any): Promise<{ message: string }> {
     const response = await this.fetch<{ message: string }>(`/v1`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
