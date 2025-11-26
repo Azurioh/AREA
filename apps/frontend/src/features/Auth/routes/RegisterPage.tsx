@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,7 @@ import { AppRoutesPaths } from '@/enums/routes';
 import { useShowPassword } from '../hooks/SetShowPassword';
 import { useRememberMe } from '../hooks/useRememberMe';
 
-const RegisterPage = () => {
+const RegisterPage: React.FC = () => {
     const { showPassword, showConfirmPassword, togglePasswordVisibility, toggleConfirmPasswordVisibility } = useShowPassword();
     const { rememberMe, toggleRememberMe } = useRememberMe();
 
