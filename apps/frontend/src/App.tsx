@@ -3,7 +3,7 @@ import { WebhookPage } from '@/features/webhook';
 import ProfilePage  from '@/features/profile/routes/Profile';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { LoginPage, RegisterPage } from '@/features/auth';
+import { LoginPage, RegisterPage } from '@/features/Auth';
 import { AppRoutesPaths } from '@/enums/routes';
 
 export default function App() {

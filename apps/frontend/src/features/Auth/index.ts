@@ -1,4 +1,4 @@
-import LoginPage from '@/features/auth/routes/LoginPage';
-import RegisterPage from '@/features/auth/routes/RegisterPage';
+import LoginPage from '@/features/Auth/routes/LoginPage';
+import RegisterPage from '@/features/Auth/routes/RegisterPage';
 
 export { LoginPage, RegisterPage };
