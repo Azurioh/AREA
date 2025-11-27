@@ -5,7 +5,7 @@ import { WithId, type Db } from 'mongodb';
 
 /**
  * @class GithubRepository
- * @description The user repository.
+ * @description The github repository.
  */
 export class GithubRepository {
   private db: Db;
@@ -31,10 +31,10 @@ export class GithubRepository {
    * @function getGithubAccountByUserId
    * @description Get a github account from the databse.
    *
-   * @param {string} user_id The user id related to the github account.
+   * @param {string} userId The user id related to the github account.
    * @returns {Promise<MaybeNull<WithId<GithubAccount>>>} The github account.
    */
-  async getGithubAccountByUserId(user_id: string): Promise<MaybeNull<WithId<GithubAccount>>> {
-    return await this.db.collection<GithubAccount>(MongoCollections.GITHUB_ACCOUNT).findOne({ user_id: user_id })
+  async getGithubAccountByUserId(userId: string): Promise<MaybeNull<WithId<GithubAccount>>> {
+    return await this.db.collection<GithubAccount>(MongoCollections.GITHUB_ACCOUNT).findOne({ userId: userId })
   }
 }

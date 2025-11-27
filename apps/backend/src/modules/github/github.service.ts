@@ -5,15 +5,13 @@ import { verifyToken } from '@/utils/token';
 import { UsersService } from '../users';
 import { StateToken } from '@area/shared/types/user.types';
 import { GithubRepository } from './github.repository';
-import { GithubAccount, GitHubAuthenticationResponse } from '@/types/github';
+import { GithubAccount, GitHubAuthorizationResponse } from '@/types/github';
 import { MaybeNull } from '@area/shared/utils/common';
 import { WithId } from 'mongodb';
 
 /**
- * @function listRepositories
- * @description List all repositories for the authenticated user
- *
- * @returns {Promise<string[]>} Array of repository names
+ * @class GithubService
+ * @description The github service.
  */
 export class GithubService {
   private repository: GithubRepository;
@@ -82,14 +80,14 @@ export class GithubService {
   }
 
   /**
-   * @function authenticateUser
-   * @description Authenticate a user to a github account
+   * @function authorizeUser
+   * @description Authorize a user to a github account
    *
    * @param {string} code - The code provided by github to get the tokens
    * @param {state} state - A string to protect against threats
-   * @returns {Promise<void>} Nothing
+   * @returns {Promise<boolean>} If the autorization was succesful
    */
-  async authenticateUser(code: string, state: string): Promise<void> {
+  async authorizeUser(code: string, state: string): Promise<boolean> {
     const decoded = verifyToken<StateToken>(state, environment.JWT_STATE_TOKEN_SECRET);
 
     if (!(await this.usersService.checkIfUserExist(decoded._id))) {
@@ -97,7 +95,7 @@ export class GithubService {
     }
 
     if (await this.getGithubAccountByUserId(decoded._id) != null) {
-      return;
+      return true;
     }
 
     const response = await fetch('https://github.com/login/oauth/access_token', {
@@ -109,39 +107,37 @@ export class GithubService {
       body: new URLSearchParams({
         client_id: environment.GITHUB_CLIENT_ID,
         client_secret: environment.GITHUB_CLIENT_SECRET,
-        code: code,
+        code: code
       })
     });
 
     if (response.status != HttpStatusCode.OK) {
-      throw new ApiError(response.status, response.statusText);
+      return false;
     }
 
-    const formattedResponse = await response.json() as GitHubAuthenticationResponse;
+    const formattedResponse = await response.json() as GitHubAuthorizationResponse;
 
     const data: GithubAccount = {
-      user_id: decoded._id,
-      access_token: formattedResponse.access_token,
+      userId: decoded._id,
+      accessToken: formattedResponse.access_token,
     }
 
     const acknowledged = await this.repository.createGithubAccount(data);
 
     if (!acknowledged) {
-      throw new ApiError(
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
-        'Failed to create the github account, please contact an administrator.',
-      );
+      return false;
     }
+    return true;
   }
 
   /**
    * @function getGithubAccountByUserId
    * @description Get a gtihub account by a user id
    *
-   * @param {string} user_id - The user id
+   * @param {string} userId - The user id
    * @returns {Promise<MaybeNull<WithId<GithubAccount>>>} The github account
    */
-  async getGithubAccountByUserId(user_id: string): Promise<MaybeNull<WithId<GithubAccount>>> {
-    return await this.repository.getGithubAccountByUserId(user_id);
+  async getGithubAccountByUserId(userId: string): Promise<MaybeNull<WithId<GithubAccount>>> {
+    return await this.repository.getGithubAccountByUserId(userId);
   }
 }

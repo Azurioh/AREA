@@ -1,4 +1,4 @@
-import { githubAuthenticationQueryStringSchema, githubAuthenticationResponseSchema, listGithubRepositoriesResponseSchema } from '@area/shared/schemas/github.schema';
+import { githubAuthorizationQueryStringSchema, githubAuthorizationResponseSchema, listGithubRepositoriesResponseSchema } from '@area/shared/schemas/github.schema';
 import type { FastifyInstance } from 'fastify';
 import { GithubController } from './github.controller';
 import { GithubService } from './github.service';
@@ -31,14 +31,14 @@ export default async (app: FastifyInstance) => {
   app.route({
     method: 'GET',
     url: '/v1/auth',
-    handler: controller.authenticateUser.bind(controller),
+    handler: controller.authorizeUser.bind(controller),
     schema: {
-      summary: 'Authenticate a user to a GitHub account',
+      summary: 'Authorize a user to a GitHub account',
       description: 'Link a user GitHub account to its account',
       tags: ['GitHub'],
-      querystring: githubAuthenticationQueryStringSchema,
+      querystring: githubAuthorizationQueryStringSchema,
       response: {
-        200: githubAuthenticationResponseSchema,
+        200: githubAuthorizationResponseSchema,
       },
     },
   });

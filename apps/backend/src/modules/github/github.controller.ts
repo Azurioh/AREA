@@ -1,7 +1,8 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { GithubService } from './github.service';
-import { GitHubAuthenticationQueryString } from '@/types/github';
+import { GitHubAuthorizationQueryString } from '@/types/github';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
+import { environment } from '@/utils/environment';
 
 /**
  * @class GithubController
@@ -28,16 +29,21 @@ export class GithubController {
   }
 
   /**
-   * @function listRepositories
-   * @description Handles listing all repositories.
+   * @function authorizeUser
+   * @description Authorize a user to its github account.
    *
-   * @param {FastifyRequest} _ The Fastify request object.
+   * @param {FastifyRequest} request The Fastify request object.
    * @param {FastifyReply} reply The Fastify reply object for sending the response.
    */
-  async authenticateUser(request: FastifyRequest<{Querystring: GitHubAuthenticationQueryString}>, reply: FastifyReply): Promise<void> {
+  async authorizeUser(request: FastifyRequest<{Querystring: GitHubAuthorizationQueryString}>, reply: FastifyReply): Promise<void> {
     const query = request.query;
-    await this.service.authenticateUser(query.code, query.state);
 
+    if (!query.code || await this.service.authorizeUser(query.code, query.state)) {
+      reply.redirect(`${environment.FRONTEND_AUTHORIZE_CALLBACK_URL}?error=true`);
+      return reply.status(HttpStatusCode.BAD_REQUEST).send();
+    }
+
+    reply.redirect(`${environment.FRONTEND_AUTHORIZE_CALLBACK_URL}`);
     reply.status(HttpStatusCode.NO_CONTENT).send();
   }
 }
