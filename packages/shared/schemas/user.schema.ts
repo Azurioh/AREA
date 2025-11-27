@@ -1,16 +1,8 @@
 import z from 'zod';
 import { userFields, userSchema } from '../types/user.types';
 
-export const getUserByIdResponseSchema = userSchema.omit({ password: true });
-
-/***************
- * GET USER ME *
- ***************/
-
-export const getUserMeResponseSchema = userSchema.omit({ password: true });
-
 /*********************
- * GET USER ME STATE *
+ * CREATE USER ME STATE *
  *********************/
 
 export const createUserMeStateTokenResponseSchema = z.object({
@@ -20,6 +12,38 @@ export const createUserMeStateTokenResponseSchema = z.object({
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
   }),
 });
+
+/*********************************************
+ * GET USER ME THIRD PARTY AUTHORIZATION URL *
+ *********************************************/
+
+export const getUserMeThirdPartyAuthorizationUrlResponseSchema = z.object({
+  url: z.string().meta({
+    description: 'The name ',
+    example: 'github',
+  }),
+});
+
+export const getUserMeThirdPartyAuthorizationUrlParamsSchema = z.object({
+  third_party_service: z.string().meta({
+    description: 'The name of the third party service',
+    example: 'github',
+  }),
+});
+
+/**
+ * @type GetUserMeThirdPartyAuthorizationUrlParams
+ * @description The params for the get user me third party authorization url endpoint
+ */
+export type GetUserMeThirdPartyAuthorizationUrlParams = z.infer<typeof getUserMeThirdPartyAuthorizationUrlParamsSchema>;
+
+export const getUserByIdResponseSchema = userSchema.omit({ password: true });
+
+/***************
+ * GET USER ME *
+ ***************/
+
+export const getUserMeResponseSchema = userSchema.omit({ password: true });
 
 /******************
  * UPDATE USER ME *

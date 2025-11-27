@@ -7,8 +7,8 @@ export const listGithubRepositoriesResponseSchema = z.array(
   }),
 );
 
-export const githubAuthenticationQueryStringSchema = z.object({
-  code: z.string().meta({
+export const githubAuthorizationQueryStringSchema = z.object({
+  code: z.string().optional().meta({
     description: 'The code provided by Github to authenticate the user',
     example: '679d8c9b3c9b3c9b3c9b3c9b',
   }),
@@ -18,4 +18,4 @@ export const githubAuthenticationQueryStringSchema = z.object({
   })
 });
 
-export const githubAuthenticationResponseSchema = z.object({});
+export const githubAuthorizationResponseSchema = z.object({});
