@@ -2,6 +2,7 @@ import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type {
   DeleteUserByIdParams,
   GetUserByIdParams,
+  GetUserMeThirdPartyAuthorizationUrlParams,
   UpdateUserByIdBody,
   UpdateUserByIdParams,
   UpdateUserMeBody,
@@ -9,6 +10,7 @@ import type {
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { UsersService } from './users.service';
 import { generateStateToken } from '@/utils/token';
+import { ThirdPartyService } from '../third-party';
 
 /**
  * @class UsersController
@@ -16,9 +18,11 @@ import { generateStateToken } from '@/utils/token';
  */
 export class UsersController {
   private readonly service: UsersService;
+  private readonly thirdPartyService: ThirdPartyService;
 
-  constructor(service: UsersService) {
+  constructor(service: UsersService, thirdPartyService: ThirdPartyService) {
     this.service = service;
+    this.thirdPartyService = thirdPartyService;
   }
 
   /**
@@ -33,6 +37,20 @@ export class UsersController {
     const stateToken = generateStateToken({_id: request.user._id});
 
     return reply.status(HttpStatusCode.OK).send({ stateToken: stateToken });
+  }
+
+  /**
+   * @function getUserMeThirdPartyAuthorizationUrl
+   * @description Connect the current user to a thid party service
+   *
+   * @param {FastifyRequest} request The FastifyRequest object
+   * @param {FastifyReply} reply The FastifyReply object
+   * @returns {Promise<void>} Nothing
+   */
+  async getUserMeThirdPartyAuthorizationUrl(request: FastifyRequest<{ Params: GetUserMeThirdPartyAuthorizationUrlParams }>, reply: FastifyReply): Promise<void> {
+    const url = await this.thirdPartyService.getThirdPartyAuthorizationnUrl(request.params.third_party_service, request.user._id);
+
+    reply.status(HttpStatusCode.OK).send({ url: url });
   }
 
   /**
