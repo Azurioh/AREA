@@ -12,7 +12,8 @@ import { environment } from './environment';
  * @returns {string} The created access token.
  */
 export const generateAccessToken = (payload: AccessToken): string => {
-  return jwt.sign(payload, environment.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+  // return jwt.sign(payload, environment.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+  return jwt.sign(payload, environment.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '1d' });
 };
 
 /**
@@ -47,6 +48,7 @@ export const generateStateToken = (payload: StateToken): string => {
  */
 export const verifyToken = <T>(token: string, secret: string) => {
   try {
+    console.log(`verifying token: [${token}] `);
     const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
 
     return decoded as T;

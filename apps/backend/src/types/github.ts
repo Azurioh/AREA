@@ -1,23 +1,23 @@
-import { githubAuthenticationQueryStringSchema } from "@area/shared/schemas/github.schema";
+import { githubAuthorizationQueryStringSchema } from "@area/shared/schemas/github.schema";
 import z from "zod";
 
 /**
- * @type githubAuthenticationQueryStringSchema
+ * @type githubAuthorizationQueryStringSchema
  * @description Query string required to authenticate with github.
  *
  * @property {string} code The code provided by github to authenticate the user
- * @property {string} state A state given by the client when making the authentication request
+ * @property {string} state A state given by the client when making the authorization request
  */
-export type GitHubAuthenticationQueryString = z.infer<typeof githubAuthenticationQueryStringSchema>;
+export type GitHubAuthorizationQueryString = z.infer<typeof githubAuthorizationQueryStringSchema>;
 
 /**
- * @type GitHubAuthentication
- * @description GitHubAuthentication type.
+ * @type GitHubAuthorization
+ * @description GitHubAuthorization type.
  *
  * @property {string} code The code provided by github to authenticate the user
- * @property {string} state A state given by the client when making the authentication request
+ * @property {string} state A state given by the client when making the authorization request
  */
-export type GitHubAuthentication = GitHubAuthenticationQueryString;
+export type GitHubAuthorization = GitHubAuthorizationQueryString;
 
 /**
  * @type GithubAccount
@@ -25,9 +25,9 @@ export type GitHubAuthentication = GitHubAuthenticationQueryString;
  *
  * @property {string} access_token - The response access token.
  * @property {string} token_type - The type of the token.
- * @property {string} scope - The authentication scope.
+ * @property {string} scope - The authorization scope.
  */
-export type GitHubAuthenticationResponse = {
+export type GitHubAuthorizationResponse = {
     access_token: string,
     token_type: string,
     scope: string
@@ -37,10 +37,10 @@ export type GitHubAuthenticationResponse = {
  * @type GithubAccount
  * @description The content of the github account.
  *
- * @property {string} user_id - The id of the user.
- * @property {string} access_token - The access token related to the user github account.
+ * @property {string} userId - The id of the user.
+ * @property {string} accessToken - The access token related to the user github account.
  */
 export type GithubAccount = {
-    user_id: string,
-    access_token: string,
+    userId: string,
+    accessToken: string,
 }
