@@ -8,6 +8,7 @@ import { GithubRepository } from './github.repository';
 import { GithubAccount, GitHubAuthorizationResponse } from '@/types/github';
 import { MaybeNull } from '@area/shared/utils/common';
 import { WithId } from 'mongodb';
+import { encryptString } from '@/utils/crypt';
 
 /**
  * @class GithubService
@@ -94,10 +95,6 @@ export class GithubService {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'User does not exist');
     }
 
-    if (await this.getGithubAccountByUserId(decoded._id) != null) {
-      return true;
-    }
-
     const response = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
       headers: {
@@ -119,15 +116,20 @@ export class GithubService {
 
     const data: GithubAccount = {
       userId: decoded._id,
-      accessToken: formattedResponse.access_token,
+      accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
     }
 
-    const acknowledged = await this.repository.createGithubAccount(data);
+    let success = false;
+    const account = await this.getGithubAccountByUserId(decoded._id);
 
-    if (!acknowledged) {
-      return false;
+    if (account) {
+      const update = await this.repository.updateGithubAccount(account._id.toString(), data);
+
+      success = update.acknowledged && (update.matchedCount > 0);
+    } else {
+      success = await this.repository.createGithubAccount(data);
     }
-    return true;
+    return success;
   }
 
   /**

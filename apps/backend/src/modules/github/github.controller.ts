@@ -38,7 +38,7 @@ export class GithubController {
   async authorizeUser(request: FastifyRequest<{Querystring: GitHubAuthorizationQueryString}>, reply: FastifyReply): Promise<void> {
     const query = request.query;
 
-    if (!query.code || await this.service.authorizeUser(query.code, query.state)) {
+    if (!query.code || !await this.service.authorizeUser(query.code, query.state)) {
       reply.redirect(`${environment.FRONTEND_AUTHORIZE_CALLBACK_URL}?error=true`);
       return reply.status(HttpStatusCode.BAD_REQUEST).send();
     }

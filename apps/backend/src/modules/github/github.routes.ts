@@ -30,7 +30,7 @@ export default async (app: FastifyInstance) => {
 
   app.route({
     method: 'GET',
-    url: '/v1/auth',
+    url: '/v1/authorize',
     handler: controller.authorizeUser.bind(controller),
     schema: {
       summary: 'Authorize a user to a GitHub account',

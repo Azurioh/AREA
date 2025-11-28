@@ -1,7 +1,7 @@
 import { MongoCollections } from '@/enums/mongo-collection';
 import { GithubAccount } from '@/types/github';
 import { MaybeNull } from '@area/shared/utils/common';
-import { WithId, type Db } from 'mongodb';
+import { ObjectId, UpdateResult, WithId, type Db } from 'mongodb';
 
 /**
  * @class GithubRepository
@@ -37,4 +37,17 @@ export class GithubRepository {
   async getGithubAccountByUserId(userId: string): Promise<MaybeNull<WithId<GithubAccount>>> {
     return await this.db.collection<GithubAccount>(MongoCollections.GITHUB_ACCOUNT).findOne({ userId: userId })
   }
+
+  /**
+   * @function updateGithubAccount
+   * @description Updates a github account in the database.
+   *
+   * @param {string} id The if of the document.
+   * @param {Partial<GithubAccount>} account The github account data.
+   * @returns {Promise<UpdateResult<GithubAccount>>} The result of the update.
+   */
+  async updateGithubAccount(id: string, account: Partial<GithubAccount>): Promise<UpdateResult<GithubAccount>> {
+    return await this.db.collection<GithubAccount>(MongoCollections.GITHUB_ACCOUNT).updateOne({ _id: new ObjectId(id) }, { $set: account });
+  }
+
 }
