@@ -1,0 +1,98 @@
+package com.example.area.components
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.area.R
+import com.example.area.ui.theme.poppinsFontFamily
+import com.example.area.viewModel.UserViewModel
+import com.example.area.ui.theme.Secondary
+import com.example.area.ui.theme.Accent
+import com.example.area.ui.theme.montserratFontFamily
+
+@Composable
+fun ConnectionCard() {
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
+        modifier = Modifier
+            .padding(12.dp)
+            .size(width = 350.dp, height = 80.dp)
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.youtube),
+                    contentDescription = "Service Image",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(100.dp)
+                        .padding(12.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                )
+
+                Text(
+                    text = "Youtube",
+                    fontFamily = montserratFontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 15.sp,
+                    color = Color.White,
+                    modifier = Modifier
+                        .weight(1f)
+                )
+
+                Button(
+                    onClick = {
+                        println("Connect button")
+                    },
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .size(width = 90.dp, height = 28.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Accent,
+                        contentColor = Color.Black
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = "Connect",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+        }
+    }
+}

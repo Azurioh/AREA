@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.area.components.ConnectionCard
 import com.example.area.components.LinearGradient
 import com.example.area.components.ProfileCard
 import com.example.area.ui.theme.poppinsFontFamily
@@ -45,5 +46,18 @@ fun ProfilePage(
                 .fillMaxWidth()
         )
         ProfileCard(userViewModel = userViewModel)
+        Text(
+            text = "Services",
+            fontFamily = poppinsFontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            color = Color.White,
+            textAlign = TextAlign.Start,
+            modifier = Modifier
+                .padding(top = 20.dp, start = 32.dp)
+                .fillMaxWidth()
+        )
+        ConnectionCard()
+        ConnectionCard()
     }
 }
