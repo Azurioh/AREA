@@ -1,5 +1,7 @@
 import { generateStateToken } from "@/utils/token";
 import { environment } from "@/utils/environment";
+import ApiError from "@/utils/api-error";
+import { HttpStatusCode } from "@area/shared/enums/http-status";
 
 /**
  * @class ThirdPartyService
@@ -10,7 +12,7 @@ export class ThirdPartyService {
 
   constructor() {
     this.authorizationUrls = new Map([
-      ['github', `https://github.com/login/oauth/authorize?client_id=${environment.GITHUB_CLIENT_ID}&redirect_uri=https://area-dev.loca.lt/github/v1/auth&response_type=code&scope=user%2Crepo&state={state}`]
+      ['github', `https://github.com/login/oauth/authorize?client_id=${environment.GITHUB_CLIENT_ID}&redirect_uri=https://area-dev.loca.lt/github/v1/authorize&response_type=code&scope=user%2Crepo&state={state}`]
     ]);
   }
 
@@ -24,7 +26,7 @@ export class ThirdPartyService {
    */
   async getThirdPartyAuthorizationnUrl(name: string, userId: string): Promise<string> {
     if (!this.authorizationUrls.has(name)) {
-      return "";
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Requested third party service doesn\'t exist')
     }
     const stateToken = generateStateToken({ _id: userId })
     const url = (this.authorizationUrls.get(name) as string).replace('{state}', stateToken);
