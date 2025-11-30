@@ -11,12 +11,17 @@ import {
   updateUserByIdResponseSchema,
   updateUserMeBodySchema,
   updateUserMeResponseSchema,
+  createUserMeStateTokenResponseSchema,
+  GetUserMeThirdPartyAuthorizationUrlParams,
+  getUserMeThirdPartyAuthorizationUrlParamsSchema,
+  getUserMeThirdPartyAuthorizationUrlResponseSchema,
 } from '@area/shared/schemas/user.schema';
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';
 import { UsersController } from './users.controller';
 import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
+import { ThirdPartyService } from '../third-party';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -25,7 +30,38 @@ export default async (app: FastifyInstance) => {
 
   const repository = new UsersRepository(app.mongo.db);
   const service = new UsersService(repository);
-  const controller = new UsersController(service);
+  const controller = new UsersController(service, new ThirdPartyService());
+
+  app.route({
+    method: 'POST',
+    url: '/v1/me/state-token',
+    schema: {
+      summary: 'Create the current user state token',
+      description: 'Returns the current user state token.',
+      tags: ['Users'],
+      response: {
+        200: createUserMeStateTokenResponseSchema,
+      },
+    },
+    preHandler: [verifyUserAccess(service)],
+    handler: controller.createUserMeState.bind(controller),
+  });
+
+  app.route<{ Params: GetUserMeThirdPartyAuthorizationUrlParams }>({
+    method: 'GET',
+    url: '/v1/me/authorization-url/:third_party_service',
+    schema: {
+      summary: 'Get the authorization url for a third pary service',
+      description: 'Returns the authentication url for the specified third party service',
+      tags: ['Users'],
+      params: getUserMeThirdPartyAuthorizationUrlParamsSchema,
+      response: {
+        200: getUserMeThirdPartyAuthorizationUrlResponseSchema,
+      },
+    },
+    preHandler: [verifyUserAccess(service)],
+    handler: controller.getUserMeThirdPartyAuthorizationUrl.bind(controller),
+  });
 
   app.route({
     method: 'GET',

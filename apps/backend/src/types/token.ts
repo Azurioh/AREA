@@ -23,3 +23,11 @@ export type AccessTokenPayload = {
 export type RefreshTokenPayload = {
   id: string;
 };
+
+/**
+ * @type RefreshTokenPayload
+ * @description The payload of the refresh token.
+ *
+ * @property {string} id - The id of the user.
+ */
+export type StateTokenPayload = RefreshTokenPayload;

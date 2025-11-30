@@ -1,5 +1,5 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type { AccessToken, RefreshToken } from '@area/shared/types/user.types';
+import type { AccessToken, RefreshToken, StateToken } from '@area/shared/types/user.types';
 import jwt from 'jsonwebtoken';
 import ApiError from './api-error';
 import { environment } from './environment';
@@ -24,6 +24,17 @@ export const generateAccessToken = (payload: AccessToken): string => {
  */
 export const generateRefreshToken = (payload: RefreshToken, rememberMe: boolean = false): string => {
   return jwt.sign(payload, environment.JWT_REFRESH_TOKEN_SECRET, { expiresIn: rememberMe ? '30d' : '1d' });
+};
+
+/**
+ * @function generateAccessToken
+ * @description Generate the access token.
+ *
+ * @param {AccessToken} payload - The payload to add in the access token
+ * @returns {string} The created access token.
+ */
+export const generateStateToken = (payload: StateToken): string => {
+  return jwt.sign(payload, environment.JWT_STATE_TOKEN_SECRET, { expiresIn: '10m' });
 };
 
 /**
