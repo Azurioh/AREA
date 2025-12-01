@@ -4,7 +4,7 @@ import type { Service } from '@/integrations/_definitions/service.interface';
  * @class ServiceManager
  * @description Gestionnaire des services
  */
-export class ServiceManager {
+class ServiceManager {
   private services: Map<string, Service> = new Map();
 
   /**
@@ -39,3 +39,7 @@ export class ServiceManager {
     return Array.from(this.services.values());
   }
 }
+
+const serviceManager = new ServiceManager();
+
+export default serviceManager;
