@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.area.R
 import com.example.area.components.ConnectionCard
 import com.example.area.components.LinearGradient
 import com.example.area.components.ProfileCard
@@ -57,7 +58,13 @@ fun ProfilePage(
                 .padding(top = 20.dp, start = 32.dp)
                 .fillMaxWidth()
         )
-        ConnectionCard()
-        ConnectionCard()
+        ConnectionCard(
+            serviceImage = R.drawable.github,
+            serviceName = "Github",
+            isConnected = false,
+            onButtonClick = {
+                println("Connect button clicked")
+            }
+        )
     }
 }
