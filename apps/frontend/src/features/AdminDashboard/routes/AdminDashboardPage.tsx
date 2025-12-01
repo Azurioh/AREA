@@ -1,17 +1,19 @@
 import React from "react";
-import { Card } from '@/components/ui/card';
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Card } from '@/components/wrappers/Card';
+import { Input } from "@/components/wrappers/Input";
+import { Button } from "@/components/wrappers/Button";
+import { Checkbox } from "@/components/wrappers/CheckBox";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Search, Trash, Edit2 } from "lucide-react";
+import { Search } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import UserCard from "../components/UserCard";
+import { useUserFilter } from "../hooks/useUserFilter";
 
 const users = [
     { id: 1, name: "John Doe", email: "john.doe@example.com", role: "Admin" },
@@ -27,27 +29,37 @@ const users = [
 ];
 
 const AdminDashboardPage: React.FC = () => {
+    const { searchQuery, setSearchQuery, roleFilter, setRoleFilter, filteredUsers } = useUserFilter(users);
+
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-8">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-background p-8">
             <div className="text-center space-y-2 mb-6">
-                <h1 className='text-3xl font-bold tracking-tighter'>User Management</h1>
-                <p> Manage all users in one place. Control access, assign roles, or delete any users </p>
+                <h1 className='font-bold tracking-tighter text-foreground text-primary'>User Management</h1>
+                <p className='text-foreground'> Manage all users in one place. Control access, assign roles, or delete any users </p>
             </div>
-            <div className="flex gap-4 mb-4">
+            <div className="bg-white flex gap-4 mb-4 p-2 rounded-[var(--large-radius)]">
                 <div className="relative w-64">
-                    <Input type="text" placeholder="Search users..." className="pr-10" />
+                    <Input
+                        type="text"
+                        placeholder="Search users..."
+                        className="pr-10"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                     <Button variant="ghost" size="icon" className="absolute right-0 top-0 h-full">
                         <Search className="h-4 w-4" />
                     </Button>
                 </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline">Filter Users</Button>
+                        <Button variant="outline">
+                            {roleFilter === "All" ? "Filter Users" : roleFilter}
+                        </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <DropdownMenuItem>All Users</DropdownMenuItem>
-                        <DropdownMenuItem>Admins</DropdownMenuItem>
-                        <DropdownMenuItem>Users</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setRoleFilter("All")}>All Users</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setRoleFilter("Admin")}>Admins</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setRoleFilter("User")}>Users</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
@@ -57,36 +69,25 @@ const AdminDashboardPage: React.FC = () => {
                 transition={{ duration: 0.5 }}
                 className='w-full max-w-5xl'
             >
-                <Card className='bg-white p-4 space-y-4'>
-                    <div className='bg-gray-200 p-4 rounded-lg'>
+                <Card className='bg-card p-4 space-y-4'>
+                    <div className='bg-primary p-4 rounded-t-[var(--large-radius)] -mx-4 -mt-4 mb-4'>
                         <div className="grid grid-cols-[10px_1fr_1fr_1fr_1fr] gap-6 items-center">
                             <Checkbox id="select-all" className="ml-4"/>
-                            <Label htmlFor="select-all" className="font-semibold ml-12">Name</Label>
-                            <h2 className="font-semibold ml-5">Email</h2>
-                            <h2 className="font-semibold">Role</h2>
-                            <h2 className="font-semibold">Actions</h2>
+                            <h2 className="font-semibold ml-12 text-white text-xl">Name</h2>
+                            <h2 className="font-semibold ml-5 text-white text-xl">Email</h2>
+                            <h2 className="font-semibold text-white text-xl">Role</h2>
+                            <h2 className="font-semibold text-white text-xl">Actions</h2>
                         </div>
                     </div>
-                    {users.map((user) => (
-                        <Card key={user.id} className="bg-gray-100 p-4">
-                            <div className="grid grid-cols-[40px_1fr_1fr_1fr_1fr] gap-6 items-center">
-                                <Checkbox id={`user-${user.id}`}/>
-                                <Label htmlFor={`user-${user.id}`}>{user.name}</Label>
-                                <Label htmlFor={`user-${user.id}`}>{user.email}</Label>
-                                <Label htmlFor={`user-${user.id}`}>{user.role}</Label>
-                                <div className="flex gap-4 ml-4">
-                                    <Button className="h-8 px-3">
-                                        <Edit2 className="h-4 w-4 mr-2" />
-                                        Edit
-                                    </Button>
-                                    <Button className="h-8 px-3">
-                                        <Trash className="h-4 w-4 mr-2" />
-                                        Delete
-                                    </Button>
-                                </div>
-                            </div>
-                        </Card>
-                    ))}
+                    {filteredUsers.length > 0 ? (
+                        filteredUsers.map((user) => (
+                            <UserCard key={user.id} user={user} />
+                        ))
+                    ) : (
+                        <div className="text-center py-8 text-muted-foreground">
+                            No users found
+                        </div>
+                    )}
                 </Card>
             </motion.div>
         </div>
