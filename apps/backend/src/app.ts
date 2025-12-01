@@ -7,9 +7,9 @@ import { setupMongoDB } from './config/mongo';
 import { setupNotFoundHandler } from './config/not-found';
 import { setupSwagger } from './config/swagger';
 import { setupZod } from './config/zod';
+import { authRoutes } from './modules/auth';
+import { usersRoutes } from './modules/users';
 import { githubRoutes } from './modules/github';
-import { miscRoutes } from './modules/misc';
-import { webhookRoutes } from './modules/webhook';
 
 async function build(): Promise<FastifyInstance> {
   const app: FastifyInstance = fastify({
@@ -26,9 +26,9 @@ async function build(): Promise<FastifyInstance> {
   setupErrorHandler(app);
   setupZod(app);
 
-  app.withTypeProvider<ZodTypeProvider>().register(miscRoutes, { prefix: '/misc' });
-  app.withTypeProvider<ZodTypeProvider>().register(webhookRoutes, { prefix: '/webhook' });
   app.withTypeProvider<ZodTypeProvider>().register(githubRoutes, { prefix: '/github' });
+  app.withTypeProvider<ZodTypeProvider>().register(authRoutes, { prefix: '/auth' });
+  app.withTypeProvider<ZodTypeProvider>().register(usersRoutes, { prefix: '/users' });
 
   return app;
 }

@@ -7,11 +7,11 @@
     "build": "tsc && tsc-alias"
   },
   "exports": {
-    ".": "./index.ts",
-    "./enums/*": "./enums/*.ts",
-    "./schemas/*": "./schemas/*.ts",
-    "./types/*": "./types/*.ts",
-    "./utils/*": "./utils/*.ts"
+    ".": "./dist/index.js",
+    "./enums/*": "./dist/enums/*.js",
+    "./schemas/*": "./dist/schemas/*.js",
+    "./types/*": "./dist/types/*.js",
+    "./utils/*": "./dist/utils/*.js"
   },
   "devDependencies": {
     "tsc-alias": "^1.8.16",

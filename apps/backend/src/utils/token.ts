@@ -1,17 +1,17 @@
-import { AccessTokenPayload, RefreshTokenPayload } from '@/types/token';
-import { environment } from './environment';
+import { HttpStatusCode } from '@area/shared/enums/http-status';
+import type { AccessToken, RefreshToken, StateToken } from '@area/shared/types/user.types';
 import jwt from 'jsonwebtoken';
 import ApiError from './api-error';
-import { HttpStatusCode } from '@area/shared/enums/http-status';
+import { environment } from './environment';
 
 /**
  * @function generateAccessToken
  * @description Generate the access token.
  *
- * @param {AccessTokenPayload} payload - The payload to add in the access token
+ * @param {AccessToken} payload - The payload to add in the access token
  * @returns {string} The created access token.
  */
-export const generateAccessToken = (payload: AccessTokenPayload): string => {
+export const generateAccessToken = (payload: AccessToken): string => {
   return jwt.sign(payload, environment.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
 };
 
@@ -19,11 +19,22 @@ export const generateAccessToken = (payload: AccessTokenPayload): string => {
  * @function generateRefreshToken
  * @description Generate the refresh token.
  *
- * @param {RefreshTokenPayload} payload - The payload to add in the refresh token
+ * @param {RefreshToken} payload - The payload to add in the refresh token
  * @returns {string} The created refresh token.
  */
-export const generateRefreshToken = (payload: RefreshTokenPayload): string => {
-  return jwt.sign(payload, environment.JWT_REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
+export const generateRefreshToken = (payload: RefreshToken, rememberMe: boolean = false): string => {
+  return jwt.sign(payload, environment.JWT_REFRESH_TOKEN_SECRET, { expiresIn: rememberMe ? '30d' : '1d' });
+};
+
+/**
+ * @function generateAccessToken
+ * @description Generate the access token.
+ *
+ * @param {AccessToken} payload - The payload to add in the access token
+ * @returns {string} The created access token.
+ */
+export const generateStateToken = (payload: StateToken): string => {
+  return jwt.sign(payload, environment.JWT_STATE_TOKEN_SECRET, { expiresIn: '10m' });
 };
 
 /**
@@ -41,8 +52,8 @@ export const verifyToken = <T>(token: string, secret: string) => {
     return decoded as T;
   } catch (error: unknown) {
     if (error instanceof jwt.JsonWebTokenError) {
-      throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Provided token is invalid')
+      throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Provided token is invalid');
     }
-    throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Token verification failed')
+    throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Token verification failed');
   }
 };

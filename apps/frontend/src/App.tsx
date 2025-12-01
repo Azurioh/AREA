@@ -1,9 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { AppRoutesPaths } from '@/enums/routes';
+import { LoginPage, RegisterPage } from '@/features/Auth';
+import ProfilePage from '@/features/profile/routes/Profile';
 import { WebhookPage } from '@/features/webhook';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { LoginPage, RegisterPage } from '@/features/Auth';
-import { AppRoutesPaths } from '@/enums/routes';
 import { AdminDashboardPage } from '@/features/AdminDashboard';
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
             <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
             <Route path={AppRoutesPaths.HOME} element={<WebhookPage />} />
             <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
+            <Route path={AppRoutesPaths.PROFILE} element={<ProfilePage />} />
           </Routes>
         </AuthProvider>
       </ThemeProvider>

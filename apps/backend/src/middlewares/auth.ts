@@ -1,24 +1,27 @@
+import { HttpStatusCode } from '@area/shared/enums/http-status';
+import type { AccessToken } from '@area/shared/types/user.types';
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { UsersService } from '@/modules/users';
 import ApiError from '@/utils/api-error';
 import { environment } from '@/utils/environment';
 import { verifyToken } from '@/utils/token';
-import { HttpStatusCode } from '@area/shared/enums/http-status';
-import { User } from '@area/shared/types/user.type';
-import type { FastifyReply, FastifyRequest } from 'fastify';
 
-export async function verifyUserAccess(request: FastifyRequest, _: FastifyReply) {
-    const accessToken = request.headers.authorization;
+export const verifyUserAccess = (userService: UsersService) => async (request: FastifyRequest, _: FastifyReply) => {
+  const accessToken = request.headers.authorization;
 
-    if (!accessToken) {
-        throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'No token was provided');
-    }
-    if (!accessToken.startsWith('Bearer ')) {
-        throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Invalid authorization format, expected Bearer');
-    }
+  if (!accessToken) {
+    throw new ApiError(HttpStatusCode.BAD_REQUEST, 'No token was provided');
+  }
+  if (!accessToken.startsWith('Bearer ')) {
+    throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Invalid authorization format, expected Bearer');
+  }
 
-    const decoded = verifyToken<User>(accessToken.replace('Bearer ', ''), environment.JWT_ACCESS_TOKEN_SECRET);
+  const decoded = verifyToken<AccessToken>(accessToken.replace('Bearer ', ''), environment.JWT_ACCESS_TOKEN_SECRET);
 
-    // Once the user routes will be merged a check will be made to make sure the user exists in the db
+  if (!(await userService.checkIfUserExist(decoded._id))) {
+    throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Unauthorized');
+  }
 
-    request.user = decoded;
-    return;
-}
+  request.user = decoded;
+  return;
+};
