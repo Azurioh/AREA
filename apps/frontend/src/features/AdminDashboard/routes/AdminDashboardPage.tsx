@@ -37,7 +37,7 @@ const AdminDashboardPage: React.FC = () => {
                 <h1 className='font-bold tracking-tighter text-foreground text-primary'>User Management</h1>
                 <p className='text-foreground'> Manage all users in one place. Control access, assign roles, or delete any users </p>
             </div>
-            <div className="bg-white flex gap-4 mb-4 p-2 rounded-[var(--large-radius)]">
+            <div className="bg-card flex gap-4 mb-4 p-2 rounded-[var(--large-radius)]">
                 <div className="relative w-64">
                     <Input
                         type="text"

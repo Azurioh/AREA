@@ -8,8 +8,8 @@ import { Checkbox } from '@/components/wrappers/CheckBox';
 import { Input } from '@/components/wrappers/Input';
 import { Label } from '@/components/ui/label';
 import { AppRoutesPaths } from '@/enums/routes';
-import { useShowPassword } from '@/features/Auth/hooks/SetShowPassword';
-import { useRememberMe } from '@/features/Auth/hooks/useRememberMe';
+import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
+import { useRememberMe } from '@/features/auth/hooks/useRememberMe';
 
 const RegisterPage: React.FC = () => {
   const { showPassword, showConfirmPassword, togglePasswordVisibility, toggleConfirmPasswordVisibility } =

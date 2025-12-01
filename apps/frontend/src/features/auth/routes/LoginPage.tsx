@@ -8,8 +8,8 @@ import { Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { AppRoutesPaths } from '@/enums/routes';
-import { useShowPassword } from '@/features/Auth/hooks/SetShowPassword';
-import { useRememberMe } from '@/features/Auth/hooks/useRememberMe';
+import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
+import { useRememberMe } from '@/features/auth/hooks/useRememberMe';
 
 const LoginPage: React.FC = () => {
     const { showPassword, togglePasswordVisibility } = useShowPassword();
