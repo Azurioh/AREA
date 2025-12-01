@@ -8,7 +8,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { AppRoutesPaths } from '@/enums/routes';
-import { useShowPassword } from '@/features/auth/hooks/SetShowPassword';
+import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
 import { useRememberMe } from '@/features/auth/hooks/useRememberMe';
 
 const LoginPage: React.FC = () => {

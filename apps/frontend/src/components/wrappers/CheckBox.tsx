@@ -12,7 +12,7 @@ const Checkbox = React.forwardRef<
   return (
     <ShadcnCheckbox
       className={cn(
-        "border-primary data-[state=checked]:bg-primary",
+        "bg-card border-primary data-[state=checked]:bg-primary",
         className
       )}
       ref={ref}
