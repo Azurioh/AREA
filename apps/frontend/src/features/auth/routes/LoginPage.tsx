@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from '@/components/wrappers/Card';
 import { Input } from '@/components/wrappers/Input';
 import { Button } from '@/components/wrappers/Button';
-import { Checkbox } from '@/components/wrappers/Checkbox';
+import { Checkbox } from '@/components/wrappers/CheckBox';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
