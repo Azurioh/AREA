@@ -4,7 +4,7 @@ import type React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/wrappers/Button';
 import { Card } from '@/components/wrappers/Card';
-import { Checkbox } from '@/components/wrappers/Checkbox';
+import { Checkbox } from '@/components/wrappers/CheckBox';
 import { Input } from '@/components/wrappers/Input';
 import { Label } from '@/components/ui/label';
 import { AppRoutesPaths } from '@/enums/routes';
