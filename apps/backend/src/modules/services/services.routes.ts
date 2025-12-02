@@ -30,7 +30,7 @@ export default (app: FastifyInstance) => {
 
   app.route({
     method: 'GET',
-    url: '/v1/:serviceName/actions',
+    url: '/v1/:service/actions',
     handler: controller.getServiceActions.bind(controller),
     schema: {
       summary: 'Get all actions for a specific service',
@@ -45,7 +45,7 @@ export default (app: FastifyInstance) => {
 
   app.route<{ Params: GetActionsDetailsParams }>({
     method: 'GET',
-    url: '/v1/:serviceName/actions/:actionName',
+    url: '/v1/:service/actions/:action',
     preHandler: [verifyUserAccess(userService)],
     handler: controller.getActionDetails.bind(controller),
     schema: {
@@ -61,7 +61,7 @@ export default (app: FastifyInstance) => {
 
   app.route({
     method: 'GET',
-    url: '/v1/:serviceName/actions/:actionName/returned-values',
+    url: '/v1/:service/actions/:action/returned-values',
     handler: controller.getActionReturnedValues.bind(controller),
     schema: {
       summary: 'Get returned values of a specific action for a service',
@@ -76,7 +76,7 @@ export default (app: FastifyInstance) => {
 
   app.route({
     method: 'GET',
-    url: '/v1/:serviceName/reactions',
+    url: '/v1/:service/reactions',
     handler: controller.getServiceReactions.bind(controller),
     schema: {
       summary: 'Get all reactions for a specific service',
@@ -91,7 +91,7 @@ export default (app: FastifyInstance) => {
 
   app.route<{ Params: GetReactionDetailsParams }>({
     method: 'GET',
-    url: '/v1/:serviceName/reactions/:reactionName',
+    url: '/v1/:service/reactions/:reaction',
     preHandler: [verifyUserAccess(userService)],
     handler: controller.getReactionDetails.bind(controller),
     schema: {

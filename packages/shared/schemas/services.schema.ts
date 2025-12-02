@@ -5,7 +5,7 @@ import z from 'zod';
  * GET /services/v1/:serviceName/actions
  */
 export const getServiceActionsParamsSchema = z.object({
-  serviceName: z.string().meta({
+  service: z.string().meta({
     description: 'The name of the service',
     example: 'GitHub',
   }),
@@ -30,11 +30,11 @@ export const getServiceActionsResponseSchema = z.array(
  * GET /services/v1/:serviceName/actions/:actionName
  */
 export const getActionDetailsParamsSchema = z.object({
-  serviceName: z.string().meta({
+  service: z.string().meta({
     description: 'The name of the service',
     example: 'GitHub',
   }),
-  actionName: z.string().meta({
+  action: z.string().meta({
     description: 'The name of the action',
     example: 'Create Issue',
   }),
@@ -58,11 +58,11 @@ export const getActionsDetailsResponseSchema = z.object({
  * GET /services/v1/:serviceName/actions/:actionName/returned-values
  */
 export const getActionReturnedValuesParamsSchema = z.object({
-  serviceName: z.string().meta({
+  service: z.string().meta({
     description: 'The name of the service',
     example: 'GitHub',
   }),
-  actionName: z.string().meta({
+  action: z.string().meta({
     description: 'The name of the action',
     example: 'Create Issue',
   }),
@@ -82,7 +82,7 @@ export const getActionReturnedValuesResponseSchema = z.array(
  * GET /services/v1/:serviceName/reactions
  */
 export const getServiceReactionsParamsSchema = z.object({
-  serviceName: z.string().meta({
+  service: z.string().meta({
     description: 'The name of the service',
     example: 'GitHub',
   }),
@@ -107,11 +107,11 @@ export const getServiceReactionsResponseSchema = z.array(
  * GET /services/v1/:serviceName/reactions/:reactionName
  */
 export const getReactionDetailsParamsSchema = z.object({
-  serviceName: z.string().meta({
+  service: z.string().meta({
     description: 'The name of the service',
     example: 'GitHub',
   }),
-  reactionName: z.string().meta({
+  reaction: z.string().meta({
     description: 'The name of the reaction',
     example: 'Post Comment',
   }),

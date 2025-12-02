@@ -31,9 +31,9 @@ export class ServicesController {
     request: FastifyRequest<{ Params: GetServiceActionsParams }>,
     reply: FastifyReply,
   ): Promise<void> {
-    const { serviceName } = request.params;
+    const { service } = request.params;
 
-    const actions = await this.service.getServiceActions(serviceName);
+    const actions = await this.service.getServiceActions(service);
 
     reply.status(200).send(actions);
   }
@@ -50,12 +50,11 @@ export class ServicesController {
     request: FastifyRequest<{ Params: GetActionsDetailsParams }>,
     reply: FastifyReply,
   ): Promise<void> {
-    const { serviceName, actionName } = request.params;
+    const { service, action } = request.params;
     const userId = request.user?._id || '';
 
-    const actionDetails = await this.service.getActionDetails(serviceName, actionName, userId);
+    const actionDetails = await this.service.getActionDetails(service, action, userId);
 
-    console.log(actionDetails);
     reply.status(200).send(actionDetails);
   }
 
@@ -71,9 +70,9 @@ export class ServicesController {
     request: FastifyRequest<{ Params: GetActionReturnedValuesParams }>,
     reply: FastifyReply,
   ): Promise<void> {
-    const { serviceName, actionName } = request.params;
+    const { service, action } = request.params;
 
-    const returnedValues = await this.service.getActionReturnedValues(serviceName, actionName);
+    const returnedValues = await this.service.getActionReturnedValues(service, action);
 
     reply.status(200).send(returnedValues);
   }
@@ -90,9 +89,9 @@ export class ServicesController {
     request: FastifyRequest<{ Params: GetServiceReactionsParams }>,
     reply: FastifyReply,
   ): Promise<void> {
-    const { serviceName } = request.params;
+    const { service } = request.params;
 
-    const reactions = await this.service.getServiceReactions(serviceName);
+    const reactions = await this.service.getServiceReactions(service);
 
     reply.status(200).send(reactions);
   }
@@ -109,12 +108,10 @@ export class ServicesController {
     request: FastifyRequest<{ Params: GetReactionDetailsParams }>,
     reply: FastifyReply,
   ): Promise<void> {
-    const { serviceName, reactionName } = request.params;
+    const { service, reaction } = request.params;
     const userId = request.user?._id || '';
 
-    const reactionDetails = await this.service.getReactionDetails(serviceName, reactionName, userId);
-
-    console.log(reactionDetails);
+    const reactionDetails = await this.service.getReactionDetails(service, reaction, userId);
 
     reply.status(200).send(reactionDetails);
   }
