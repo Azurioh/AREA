@@ -6,7 +6,8 @@ import { MongoServerError } from 'mongodb';
 import type { UsersRepository } from '@/modules/users';
 import ApiError from '@/utils/api-error';
 import { comparePasswords, hashPassword } from '@/utils/crypt';
-import { generateAccessToken, generateRefreshToken } from '@/utils/token';
+import { environment } from '@/utils/environment';
+import { generateAccessToken, generateRefreshToken, verifyToken } from '@/utils/token';
 
 /**
  * @class AuthService
@@ -83,5 +84,23 @@ export class AuthService {
     const refreshToken = generateRefreshToken({ _id: user._id.toString() }, data.rememberMe);
 
     return { accessToken, refreshToken };
+  }
+
+  async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
+    const decoded = verifyToken<{ _id: string }>(refreshToken, environment.JWT_REFRESH_TOKEN_SECRET);
+    const user = await this.repository.getUserById(decoded._id);
+
+    if (!user) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'User not found.');
+    }
+
+    const accessToken = generateAccessToken({
+      _id: user._id.toString(),
+      role: user.role,
+      darkModeEnabled: user.darkModeEnabled,
+      dyslexiaType: user.dyslexiaType,
+    });
+
+    return { accessToken };
   }
 }

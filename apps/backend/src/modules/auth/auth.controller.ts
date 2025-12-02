@@ -69,4 +69,17 @@ export class AuthController {
     });
     reply.status(200).send({ accessToken: accessToken });
   }
+
+  async refreshToken(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    const refreshToken = request.cookies['refresh-token'];
+
+    if (!refreshToken) {
+      reply.status(401).send({ message: 'Refresh token is missing' });
+      return;
+    }
+
+    const { accessToken } = await this.service.refreshToken(refreshToken);
+
+    reply.status(200).send({ accessToken: accessToken });
+  }
 }

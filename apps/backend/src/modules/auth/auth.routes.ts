@@ -1,6 +1,7 @@
 import {
   loginBodyResponseSchema,
   loginBodySchema,
+  refreshTokenResponseSchema,
   registerBodyResponseSchema,
   registerBodySchema,
 } from '@area/shared/schemas/auth.schema';
@@ -44,6 +45,20 @@ export default async (app: FastifyInstance) => {
       body: loginBodySchema,
       response: {
         200: loginBodyResponseSchema,
+      },
+    },
+  });
+
+  app.route({
+    method: 'POST',
+    url: '/v1/refresh',
+    handler: controller.refreshToken.bind(service),
+    schema: {
+      summary: 'Refresh access token',
+      description: 'Generates a new access token using the refresh token.',
+      tags: ['Auth'],
+      response: {
+        200: refreshTokenResponseSchema,
       },
     },
   });
