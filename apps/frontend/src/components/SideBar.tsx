@@ -19,7 +19,7 @@ const SideBar = () => {
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-24 bg-background flex flex-col items-center py-8 gap-4">
-        <div >
+        <div>
             <img src={areaLogo} alt="Area Logo" className="w-16 h-6" />
         </div>
         <div className="flex flex-col items-center pt-6 mb-10">
