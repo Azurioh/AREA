@@ -15,7 +15,7 @@ class ServiceManager {
    * @returns {void} Nothing
    */
   register(service: Service): void {
-    this.services.set(service.name, service);
+    this.services.set(service.name.toLowerCase(), service);
   }
 
   /**
@@ -26,7 +26,7 @@ class ServiceManager {
    * @returns {Service | undefined} Le service trouvé, ou undefined si non trouvé
    */
   get(serviceName: string): Service | undefined {
-    return this.services.get(serviceName);
+    return this.services.get(serviceName.toLowerCase());
   }
 
   /**
