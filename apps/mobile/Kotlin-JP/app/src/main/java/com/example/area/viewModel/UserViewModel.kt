@@ -25,7 +25,9 @@ class UserViewModel : ViewModel() {
                     password = password
                 )
 
-                val response = RetrofitInstance.api.registerUser(request)
+                val token = RetrofitInstance.api.registerUser(request)
+
+                RetrofitInstance.getTokenManager().saveToken(token.accessToken)
 
                 println(">>> User created !")
                 onSuccess()
@@ -50,7 +52,9 @@ class UserViewModel : ViewModel() {
                     password = password
                 )
 
-                val response = RetrofitInstance.api.loginUser(request)
+                val token = RetrofitInstance.api.loginUser(request)
+
+                RetrofitInstance.getTokenManager().saveToken(token.accessToken)
 
                 println(">>> User login !")
                 onSuccess()
