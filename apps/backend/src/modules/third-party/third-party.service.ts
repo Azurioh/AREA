@@ -12,19 +12,20 @@ export class ThirdPartyService {
 
   constructor() {
     this.authorizationUrls = new Map([
-      ['github', `https://github.com/login/oauth/authorize?client_id=${environment.GITHUB_CLIENT_ID}&redirect_uri=https://area-dev.loca.lt/github/v1/authorize&response_type=code&scope=user%2Crepo&state={state}`]
+      ['github', `https://github.com/login/oauth/authorize?client_id=${environment.GITHUB_CLIENT_ID}&redirect_uri=https://area-dev.loca.lt/github/v1/authorize&response_type=code&scope=user%2Crepo&state={state}`],
+      ['discord', `https://discord.com/oauth2/authorize?client_id=${environment.DISCORD_CLIENT_ID}&redirect_uri=https://area-dev.loca.lt/discord/v1/authorize&response_type=code&scope=identify+guilds+bot&state={state}&permissions=536870912`]
     ]);
   }
 
   /**
-   * @function getThirdPartyAuthorizationnUrl
+   * @function getThirdPartyAuthorizationUrl
    * @description Get a third party authorization url
    *
    * @param {string} name - The third party name
    * @param {string} userId - The if of the user authenticating
    * @returns {Promise<string>} The authorization url to the given third party
    */
-  async getThirdPartyAuthorizationnUrl(name: string, userId: string): Promise<string> {
+  async getThirdPartyAuthorizationUrl(name: string, userId: string): Promise<string> {
     if (!this.authorizationUrls.has(name)) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'Requested third party service doesn\'t exist')
     }
