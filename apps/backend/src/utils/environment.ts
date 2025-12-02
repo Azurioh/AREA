@@ -23,6 +23,7 @@ export interface Environment {
   GITHUB_CLIENT_SECRET: string;
   DISCORD_CLIENT_ID: string;
   DISCORD_CLIENT_SECRET: string;
+  DISCORD_BOT_TOKEN: string;
 }
 
 const variables: Record<string, string | undefined> = {
@@ -67,5 +68,6 @@ export const environment: Environment = {
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID as string,
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET as string,
   DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID as string,
-  DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET as string
+  DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET as string,
+  DISCORD_BOT_TOKEN: process.env.DISCORD_BOT_TOKEN as string
 };
