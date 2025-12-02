@@ -5,7 +5,8 @@
   },
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "!apps/mobile"
   ],
   "devDependencies": {
     "@biomejs/biome": "^2.3.6",
