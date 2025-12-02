@@ -2,13 +2,13 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff } from 'lucide-react';
 import type React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/wrappers/Button';
+import { Card } from '@/components/wrappers/Card';
+import { Checkbox } from '@/components/wrappers/CheckBox';
+import { Input } from '@/components/wrappers/Input';
 import { Label } from '@/components/ui/label';
 import { AppRoutesPaths } from '@/enums/routes';
-import { useShowPassword } from '@/features/auth/hooks/SetShowPassword';
+import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
 import { useRememberMe } from '@/features/auth/hooks/useRememberMe';
 
 const RegisterPage: React.FC = () => {
@@ -17,29 +17,29 @@ const RegisterPage: React.FC = () => {
   const { rememberMe, toggleRememberMe } = useRememberMe();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+    <div className="flex min-h-screen items-center justify-center bg-background">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <Card className="bg-white p-8 space-y-6">
+        <Card className="p-8 space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold trackingtighter">Create Account</h1>
-            <p>Sign up to get started with your profile</p>
+            <h1 className="font-bold tracking-tighter text-primary">Create Account</h1>
+            <p className="font-text text-foreground">Sign up to get started with your profile</p>
           </div>
           <form className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="name">Name</label>
+              <label htmlFor="name" className="text-foreground">Name</label>
               <Input id="name" type="text" placeholder="John Doe" required />
             </div>
             <div className="space-y-2">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email" className="text-foreground">Email</label>
               <Input id="email" type="email" placeholder="test@gmail.com" required />
             </div>
             <div className="space-y-2">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password" className="text-foreground">Password</label>
               <div className="relative">
                 <Input
                   id="password"
@@ -57,7 +57,7 @@ const RegisterPage: React.FC = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <label htmlFor="confirm-password">Confirm Password</label>
+              <label htmlFor="confirm-password" className="text-foreground">Confirm Password</label>
               <div className="relative">
                 <Input
                   id="confirm-password"
@@ -83,9 +83,9 @@ const RegisterPage: React.FC = () => {
             <Button type="submit" className="w-full">
               Sign up
             </Button>
-            <div className="text-center text-sm">
+            <div className="text-center text-sm text-foreground">
               Already have an account ?
-              <Link to={AppRoutesPaths.LOGIN} className="text-blue-600 hover:underline">
+              <Link to={AppRoutesPaths.LOGIN} className="text-primary hover:underline">
                 {' '}
                 Sign in
               </Link>

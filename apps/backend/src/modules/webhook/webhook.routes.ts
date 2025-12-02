@@ -7,7 +7,9 @@ import {
 } from '@area/shared/schemas/webhook.schema';
 import type { FastifyInstance } from 'fastify';
 import { GithubService } from '@/modules/github';
+import { GithubRepository } from '@/modules/github/github.repository';
 import { WebhookService } from '@/modules/webhook';
+import { UsersRepository, UsersService } from '../users';
 import { WebhookController } from './webhook.controller';
 import { WebhookRepository } from './webhook.repository';
 
@@ -17,7 +19,10 @@ export default async (app: FastifyInstance) => {
   }
 
   const repository = new WebhookRepository(app.mongo.db);
-  const githubService = new GithubService();
+  const githubRepository = new GithubRepository(app.mongo.db);
+  const userRepository = new UsersRepository(app.mongo.db);
+  const userService = new UsersService(userRepository);
+  const githubService = new GithubService(githubRepository, userService);
   const service = new WebhookService(repository);
   const controller = new WebhookController(service, githubService);
 
