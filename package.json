@@ -10,10 +10,20 @@
   ],
   "devDependencies": {
     "@biomejs/biome": "^2.3.6",
-    "@types/node": "^24.10.1"
+    "@types/node": "^24.10.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7"
   },
   "dependencies": {
     "typescript": "^5.9.3",
     "zod": "^4.1.13"
+  },
+  "scripts": {
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
+      "npx biome format --write --no-errors-on-unmatched"
+    ]
   }
 }
