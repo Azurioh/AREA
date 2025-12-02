@@ -1,4 +1,5 @@
-import type { ActionParams, IAction, ReturnValues } from './action.interface';
-import type { IReaction, ReactionParams } from './reaction.interface';
+import type { Action } from './action.interface';
+import type { Reaction } from './reaction.interface';
+import type { Service } from './service.interface';
 
-export type { ActionParams, ReturnValues, IAction, IReaction, ReactionParams };
+export type { Service, Action, Reaction };
