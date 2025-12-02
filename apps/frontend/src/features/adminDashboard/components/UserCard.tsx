@@ -1,19 +1,19 @@
-import React from "react";
-import { Button } from "@/components/wrappers/Button";
-import { Card } from "@/components/wrappers/Card";
-import { Checkbox } from "@/components/wrappers/CheckBox";
-import { Label } from "@/components/ui/label";
-import { Trash, Edit2 } from "lucide-react";
+import type React from 'react';
+import { Button } from '@/components/wrappers/Button';
+import { Card } from '@/components/wrappers/Card';
+import { Checkbox } from '@/components/wrappers/CheckBox';
+import { Label } from '@/components/ui/label';
+import { Trash, Edit2 } from 'lucide-react';
 
 interface User {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
+  id: number;
+  name: string;
+  email: string;
+  role: string;
 }
 
 interface UserCardProps {
-    user: User;
+  user: User;
 }
 
 const UserCard: React.FC<UserCardProps> = ({ user }) => {

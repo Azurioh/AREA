@@ -1,7 +1,7 @@
-import { generateStateToken } from "@/utils/token";
-import { environment } from "@/utils/environment";
-import ApiError from "@/utils/api-error";
-import { HttpStatusCode } from "@area/shared/enums/http-status";
+import { HttpStatusCode } from '@area/shared/enums/http-status';
+import ApiError from '@/utils/api-error';
+import { environment } from '@/utils/environment';
+import { generateStateToken } from '@/utils/token';
 
 /**
  * @class ThirdPartyService
@@ -27,9 +27,9 @@ export class ThirdPartyService {
    */
   async getThirdPartyAuthorizationUrl(name: string, userId: string): Promise<string> {
     if (!this.authorizationUrls.has(name)) {
-      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Requested third party service doesn\'t exist')
+      throw new ApiError(HttpStatusCode.NOT_FOUND, "Requested third party service doesn't exist");
     }
-    const stateToken = generateStateToken({ _id: userId })
+    const stateToken = generateStateToken({ _id: userId });
     const url = (this.authorizationUrls.get(name) as string).replace('{state}', stateToken);
 
     return url;

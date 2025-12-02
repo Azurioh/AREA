@@ -1,7 +1,7 @@
 import { MongoCollections } from '@/enums/mongo-collection';
-import { GithubAccount } from '@/types/github';
-import { MaybeNull } from '@area/shared/utils/common';
-import { ObjectId, UpdateResult, WithId, type Db } from 'mongodb';
+import type { GithubAccount } from '@/types/github';
+import type { MaybeNull } from '@area/shared/utils/common';
+import { ObjectId, type UpdateResult, type WithId, type Db } from 'mongodb';
 
 /**
  * @class GithubRepository
@@ -22,7 +22,7 @@ export class GithubRepository {
    * @returns {Promise<boolean>} If the data was inserted.
    */
   async createGithubAccount(data: GithubAccount): Promise<boolean> {
-    const { acknowledged } =  await this.db.collection<GithubAccount>(MongoCollections.GITHUB_ACCOUNT).insertOne(data);
+    const { acknowledged } = await this.db.collection<GithubAccount>(MongoCollections.GITHUB_ACCOUNT).insertOne(data);
 
     return acknowledged;
   }
@@ -35,7 +35,7 @@ export class GithubRepository {
    * @returns {Promise<MaybeNull<WithId<GithubAccount>>>} The github account.
    */
   async getGithubAccountByUserId(userId: string): Promise<MaybeNull<WithId<GithubAccount>>> {
-    return await this.db.collection<GithubAccount>(MongoCollections.GITHUB_ACCOUNT).findOne({ userId: userId })
+    return await this.db.collection<GithubAccount>(MongoCollections.GITHUB_ACCOUNT).findOne({ userId: userId });
   }
 
   /**
@@ -47,7 +47,8 @@ export class GithubRepository {
    * @returns {Promise<UpdateResult<GithubAccount>>} The result of the update.
    */
   async updateGithubAccount(id: string, account: Partial<GithubAccount>): Promise<UpdateResult<GithubAccount>> {
-    return await this.db.collection<GithubAccount>(MongoCollections.GITHUB_ACCOUNT).updateOne({ _id: new ObjectId(id) }, { $set: account });
+    return await this.db
+      .collection<GithubAccount>(MongoCollections.GITHUB_ACCOUNT)
+      .updateOne({ _id: new ObjectId(id) }, { $set: account });
   }
-
 }

@@ -1,5 +1,5 @@
-import { githubAuthorizationQueryStringSchema } from "@area/shared/schemas/github.schema";
-import z from "zod";
+import type { githubAuthorizationQueryStringSchema } from '@area/shared/schemas/github.schema';
+import type z from 'zod';
 
 /**
  * @type githubAuthorizationQueryStringSchema
@@ -28,9 +28,9 @@ export type GitHubAuthorization = GitHubAuthorizationQueryString;
  * @property {string} scope - The authorization scope.
  */
 export type GitHubAuthorizationResponse = {
-    access_token: string,
-    token_type: string,
-    scope: string
+  access_token: string;
+  token_type: string;
+  scope: string;
 };
 
 /**
@@ -41,6 +41,6 @@ export type GitHubAuthorizationResponse = {
  * @property {string} accessToken - The access token related to the user github account.
  */
 export type GithubAccount = {
-    userId: string,
-    accessToken: string,
-}
+  userId: string;
+  accessToken: string;
+};

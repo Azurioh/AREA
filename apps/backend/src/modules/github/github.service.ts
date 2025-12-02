@@ -1,15 +1,15 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
+import type { CreateAction, CreateReaction } from '@area/shared/schemas/action-reaction.schema';
+import type { StateToken } from '@area/shared/types/user.types';
+import type { MaybeNull } from '@area/shared/utils/common';
+import type { WithId } from 'mongodb';
+import type { GitHubAuthorizationResponse, GithubAccount } from '@/types/github';
 import ApiError from '@/utils/api-error';
+import { decryptString, encryptString } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
 import { verifyToken } from '@/utils/token';
-import { UsersService } from '../users';
-import { StateToken } from '@area/shared/types/user.types';
-import { GithubRepository } from './github.repository';
-import { GithubAccount, GitHubAuthorizationResponse } from '@/types/github';
-import { MaybeNull } from '@area/shared/utils/common';
-import { WithId } from 'mongodb';
-import { decryptString, encryptString } from '@/utils/crypt';
-import { CreateAction, CreateReaction } from '@area/shared/schemas/action-reaction.schema';
+import type { UsersService } from '../users';
+import type { GithubRepository } from './github.repository';
 
 /**
  * @class GithubService
@@ -19,7 +19,7 @@ export class GithubService {
   private repository: GithubRepository;
   private usersService: UsersService;
 
-  constructor (repository: GithubRepository, usersService: UsersService) {
+  constructor(repository: GithubRepository, usersService: UsersService) {
     this.repository = repository;
     this.usersService = usersService;
   }
@@ -66,7 +66,7 @@ export class GithubService {
         if (!error) {
           continue;
         }
-        if (error.code == 'custom' && error.message == 'Hook already exists on this repository') {
+        if (error.code === 'custom' && error.message === 'Hook already exists on this repository') {
           return trigger;
         }
       }
@@ -128,26 +128,26 @@ export class GithubService {
     const response = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
       headers: {
-        "Accept": "application/json",
-        "Accept-Encoding": "application/json",
+        Accept: 'application/json',
+        'Accept-Encoding': 'application/json',
       },
       body: new URLSearchParams({
         client_id: environment.GITHUB_CLIENT_ID,
         client_secret: environment.GITHUB_CLIENT_SECRET,
-        code: code
-      })
+        code: code,
+      }),
     });
 
-    if (response.status != HttpStatusCode.OK) {
+    if (response.status !== HttpStatusCode.OK) {
       return false;
     }
 
-    const formattedResponse = await response.json() as GitHubAuthorizationResponse;
+    const formattedResponse = (await response.json()) as GitHubAuthorizationResponse;
 
     const data: GithubAccount = {
       userId: decoded._id,
       accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
-    }
+    };
 
     let success = false;
     const account = await this.getGithubAccountByUserId(decoded._id);
@@ -155,7 +155,7 @@ export class GithubService {
     if (account) {
       const update = await this.repository.updateGithubAccount(account._id.toString(), data);
 
-      success = update.acknowledged && (update.matchedCount > 0);
+      success = update.acknowledged && update.matchedCount > 0;
     } else {
       success = await this.repository.createGithubAccount(data);
     }

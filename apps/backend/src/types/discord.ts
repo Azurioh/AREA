@@ -1,5 +1,5 @@
-import { discordAuthorizationQueryStringSchema } from "@area/shared/schemas/discord.schema";
-import z from "zod";
+import type { discordAuthorizationQueryStringSchema } from '@area/shared/schemas/discord.schema';
+import type z from 'zod';
 
 /**
  * @type DiscordAuthorizationQueryString
@@ -26,8 +26,8 @@ export type DiscordAuthorization = DiscordAuthorizationQueryString;
  * @property {string} id - The id of the guild.
  */
 type DiscordGuild = {
-    id: string
-}
+  id: string;
+};
 
 /**
  * @type DiscordAuthorizationResponse
@@ -41,12 +41,12 @@ type DiscordGuild = {
  * @property {DiscordGuild} guild - The authorized guild
  */
 export type DiscordAuthorizationResponse = {
-    access_token: string,
-    token_type: string,
-    expires_in: number,
-    refresh_token: string,
-    scope: string,
-    guild: DiscordGuild
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  refresh_token: string;
+  scope: string;
+  guild: DiscordGuild;
 };
 
 /**
@@ -59,8 +59,8 @@ export type DiscordAuthorizationResponse = {
  * @property {string} guildId - The id of the guild that the user authorize
  */
 export type DiscordAccount = {
-    userId: string,
-    accessToken: string,
-    refreshToken: string,
-    guildId: string
-}
+  userId: string;
+  accessToken: string;
+  refreshToken: string;
+  guildId: string;
+};
