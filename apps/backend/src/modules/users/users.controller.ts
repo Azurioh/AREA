@@ -48,7 +48,7 @@ export class UsersController {
    * @returns {Promise<void>} Nothing
    */
   async getUserMeThirdPartyAuthorizationUrl(request: FastifyRequest<{ Params: GetUserMeThirdPartyAuthorizationUrlParams }>, reply: FastifyReply): Promise<void> {
-    const url = await this.thirdPartyService.getThirdPartyAuthorizationnUrl(request.params.third_party_service, request.user._id);
+    const url = await this.thirdPartyService.getThirdPartyAuthorizationUrl(request.params.third_party_service, request.user._id);
 
     reply.status(HttpStatusCode.OK).send({ url: url });
   }

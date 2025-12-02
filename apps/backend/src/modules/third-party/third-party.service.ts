@@ -18,14 +18,14 @@ export class ThirdPartyService {
   }
 
   /**
-   * @function getThirdPartyAuthorizationnUrl
+   * @function getThirdPartyAuthorizationUrl
    * @description Get a third party authorization url
    *
    * @param {string} name - The third party name
    * @param {string} userId - The if of the user authenticating
    * @returns {Promise<string>} The authorization url to the given third party
    */
-  async getThirdPartyAuthorizationnUrl(name: string, userId: string): Promise<string> {
+  async getThirdPartyAuthorizationUrl(name: string, userId: string): Promise<string> {
     if (!this.authorizationUrls.has(name)) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'Requested third party service doesn\'t exist')
     }
