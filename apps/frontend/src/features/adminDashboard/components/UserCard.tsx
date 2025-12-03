@@ -21,8 +21,8 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
         <Card className="bg-muted p-4">
             <div className="grid grid-cols-[40px_1fr_1fr_1fr_1fr] gap-6 items-center">
                 <Checkbox id={`user-${user.id}`}/>
-                <Label htmlFor={`user-${user.id}`}>{user.name}</Label>
-                <Label htmlFor={`user-${user.id}`}>{user.email}</Label>
+                <Label htmlFor={`user-${user.id}`} className="truncate">{user.name}</Label>
+                <Label htmlFor={`user-${user.id}`} className="truncate">{user.email}</Label>
                 <Label htmlFor={`user-${user.id}`}>{user.role}</Label>
                 <div className="flex gap-4 ml-4">
                     <Button className="h-8 px-3">
