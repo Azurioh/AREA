@@ -1,6 +1,7 @@
 import type React from 'react';
 import { createContext, type ReactNode, useMemo, useState } from 'react';
 import { WebhookClient } from '@/features/webhook';
+import { ServicesClient } from '@/features/workflows';
 import { TokenManager } from '@/lib/TokenManager';
 
 /**
@@ -28,6 +29,7 @@ export interface AuthState {
  */
 export interface AuthContextType {
   webhookClient: WebhookClient;
+  servicesClient: ServicesClient;
   authState: AuthState;
   tokenManager: TokenManager;
   logout: () => void;
@@ -48,10 +50,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const tokenManager = useMemo(() => new TokenManager(BASE_URL, setAuthState), []);
   const webhookClient = useMemo(() => new WebhookClient(BASE_URL, tokenManager), []);
+  const servicesClient = useMemo(() => new ServicesClient(BASE_URL, tokenManager), []);
 
   const contextValue: AuthContextType = useMemo(
     () => ({
       webhookClient,
+      servicesClient,
       authState,
       tokenManager,
       logout: tokenManager.logout.bind(tokenManager),
