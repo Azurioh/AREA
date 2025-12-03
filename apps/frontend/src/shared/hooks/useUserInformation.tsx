@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
-import { UserInformationClient } from '@/shared/api/UserInformation';
+import { UserInformationClient } from '../api/UserInformation';
 
+/**
+ * @function useUserInformation
+ * @description Custom hook to fetch and manage user information
+ *
+ * @returns {object} User information, loading state, and initials getter
+ */
 export const useUserInformation = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -24,7 +30,7 @@ export const useUserInformation = () => {
 
   const getInitials = () => {
     if (!user?.name) {
-        return "??";
+        return '??';
     }
     return user.name.substring(0, 2).toUpperCase();
   };

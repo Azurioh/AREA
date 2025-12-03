@@ -1,5 +1,9 @@
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
+/**
+ * @class UserInformationClient
+ * @description Client to fetch user information
+ */
 export class UserInformationClient {
   private baseURL: string;
 
@@ -7,6 +11,12 @@ export class UserInformationClient {
     this.baseURL = baseURL;
   }
 
+  /**
+   * @function getUserInformation
+   * @description Fetch user information
+   *
+   * @returns {Promise<any>} The user information
+   */
   async getUserInformation(): Promise<any> {
     const url = `${this.baseURL}/users/v1/me`;
     const token = localStorage.getItem('accessToken');
