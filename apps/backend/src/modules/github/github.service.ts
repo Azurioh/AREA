@@ -8,7 +8,8 @@ import { GithubRepository } from './github.repository';
 import { GithubAccount, GitHubAuthorizationResponse } from '@/types/github';
 import { MaybeNull } from '@area/shared/utils/common';
 import { WithId } from 'mongodb';
-import { encryptString } from '@/utils/crypt';
+import { decryptString, encryptString } from '@/utils/crypt';
+import { CreateAction, CreateReaction } from '@area/shared/schemas/action-reaction.schema';
 
 /**
  * @class GithubService
@@ -24,60 +25,91 @@ export class GithubService {
   }
 
   /**
-   * @function listRepositories
-   * @description List all repositories for the authenticated user
+   * @function createAction
+   * @description Create an action with the github service
    *
-   * @returns {Promise<string[]>} Array of repository names
+   * @param {string} userId - The id of the user creating the action
+   * @param {Omit<CreateAction, 'trigger'>} action - The information about the action
+   * @returns {Promise<boolean>} If the action was created
    */
-  async listRepositories(): Promise<string[]> {
-    const response = await fetch('https://api.github.com/user/repos', {
-      headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-        Accept: 'application/vnd.github+json',
-      },
-    });
+  async createAction(userId: string, action: Omit<CreateAction, 'trigger'>): Promise<string> {
+    const githubAccount = await this.getGithubAccountByUserId(userId);
 
-    if (!response.ok) {
-      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Failed to list repositories');
+    if (!githubAccount) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Github account not found');
     }
+    const userName = await this.getUserName(userId, githubAccount);
 
-    const data = await response.json();
-    const repositoryNames = data.map((repo: any) => repo.full_name);
-    return repositoryNames;
-  }
-
-  /**
-   * @function createWebhookOnRepository
-   * @description Create a webhook on a specific repository
-   *
-   * @param {string} repository - The repository name
-   * @param {string[]} actions - The actions to trigger the webhook
-   * @param {string} discordWebhookUrl - The Discord webhook URL
-   *
-   * @returns {Promise<void>}
-   */
-  async createWebhookOnRepository(repository: string, actions: string[], discordWebhookUrl: string): Promise<void> {
-    const response = await fetch(`https://api.github.com/repos/${repository}/hooks`, {
+    const response = await fetch(`https://api.github.com/repos/${userName}/${action.params.repository}/hooks`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        Authorization: `Bearer ${decryptString(githubAccount.accessToken, environment.CRYPT_SECRET_KEY)}`,
         Accept: 'application/vnd.github+json',
       },
       body: JSON.stringify({
         name: 'web',
         active: true,
-        events: actions,
+        events: [action.name],
         config: {
-          url: `${discordWebhookUrl}/github`,
+          url: `${environment.BASE_API_URL}/webhook/v1/github`,
           content_type: 'json',
         },
       }),
     });
 
+    const formattedResponse = await response.json()
+
+    const trigger = `${action.name}/${action.params.repository}`
+
     if (!response.ok) {
-      console.log(response);
-      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Failed to create webhook on repository');
+      console.log(formattedResponse.errors);
+      for (const error of formattedResponse.errors) {
+        if (!error) {
+          continue;
+        }
+        if (error.code == 'custom' && error.message == 'Hook already exists on this repository') {
+          return trigger;
+        }
+      }
+      console.log(formattedResponse);
+      throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Error when creating github webhook');
     }
+    return trigger;
+  }
+
+  /**
+   * @function createReaction
+   * @description Create an action with the github service
+   *
+   * @param {string} userId - The id of the user creating the action
+   * @param {CreateReaction} action - The information about the action
+   * @returns {Promise<boolean>} If the action was created
+   */
+  async createReaction(userId: string, reaction: CreateReaction): Promise<boolean> {
+    const githubAccount = await this.getGithubAccountByUserId(userId);
+
+    if (!githubAccount) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Github account not found');
+    }
+    switch (reaction.name) {
+      case 'issue': {
+        const userName = await this.getUserName(userId, githubAccount);
+
+        const response = await fetch(`https://api.github.com/repos/${userName}/${reaction.params.repository}/issues`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${decryptString(githubAccount.accessToken, environment.CRYPT_SECRET_KEY)}`,
+            Accept: 'application/vnd.github+json',
+          },
+          body: JSON.stringify({
+            title: reaction.params.title,
+            body: reaction.params.body
+          }),
+        });
+        return response.ok
+      }
+    }
+    return false;
   }
 
   /**
@@ -141,5 +173,57 @@ export class GithubService {
    */
   async getGithubAccountByUserId(userId: string): Promise<MaybeNull<WithId<GithubAccount>>> {
     return await this.repository.getGithubAccountByUserId(userId);
+  }
+
+  /**
+   * @function listRepositories
+   * @description List all repositories for the authenticated user
+   *
+   * @returns {Promise<string[]>} Array of repository names
+   */
+  async listRepositories(): Promise<string[]> {
+    const response = await fetch('https://api.github.com/user/repos', {
+      headers: {
+        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github+json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Failed to list repositories');
+    }
+
+    const data = await response.json();
+    const repositoryNames = data.map((repo: any) => repo.full_name);
+    return repositoryNames;
+  }
+
+  /**
+   * @function listRepositories
+   * @description List all repositories for the authenticated user
+   *
+   * @returns {Promise<string>} The name of the user
+   */
+  async getUserName(userId: string, account?: GithubAccount): Promise<string> {
+    const githubAccount = account ?? await this.getGithubAccountByUserId(userId);
+
+    if (!githubAccount) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Github account not found');
+    }
+    const response = await fetch('https://api.github.com/user', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${decryptString(githubAccount.accessToken, environment.CRYPT_SECRET_KEY)}`,
+        Accept: 'application/vnd.github+json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Failed to get github user information');
+    }
+
+    const data = await response.json();
+
+    return data.login || '';
   }
 }
