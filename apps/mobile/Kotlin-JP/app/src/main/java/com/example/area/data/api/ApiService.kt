@@ -1,26 +1,21 @@
 package com.example.area.data.api
 
-import com.example.area.data.models.CreateWebhookRequest
 import com.example.area.data.models.Register
 import com.example.area.data.models.Login
-import com.example.area.data.models.Webhook
+import com.example.area.data.models.AuthResponse
+import com.example.area.data.models.ServicesUrl
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ApiService {
-    @GET("webhook/v1")
-    suspend fun getWebhook() : List<Webhook>
+    @POST("auth/v1/register")
+    suspend fun registerUser(@Body request: Register) : AuthResponse
 
-    @GET("github/v1/repositories")
-    suspend fun getRepositories() : List<String>
+    @POST("auth/v1/login")
+    suspend fun loginUser(@Body request: Login) : AuthResponse
 
-    @POST("webhook/v1")
-    suspend fun createWebhook(@Body request: CreateWebhookRequest) : Webhook
-
-    @POST("register")
-    suspend fun registerUser(@Body request: Register) : String
-
-    @POST("login")
-    suspend fun loginUser(@Body request: Login) : String
+    @GET("users/v1/me/authorization-url/{third_party_service}")
+    suspend fun getAuthorizationUrl(@Path("third_party_service") service: String) : ServicesUrl
 }

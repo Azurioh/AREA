@@ -1,5 +1,4 @@
-import type { IAction } from './action.interface';
-import type { IReaction } from './reaction.interface';
+import type { IAction, IReaction } from '@area/shared/types/services.types';
 
 /**
  * @interface Service

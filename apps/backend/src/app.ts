@@ -10,8 +10,9 @@ import { setupSwagger } from './config/swagger';
 import { setupZod } from './config/zod';
 import { aboutRoutes } from './modules/about';
 import { authRoutes } from './modules/auth';
-import { githubRoutes } from './modules/github';
 import { discordRoutes } from './modules/discord';
+import { githubRoutes } from './modules/github';
+import { servicesRoutes } from './modules/services';
 import { usersRoutes } from './modules/users';
 import { webhookRoutes } from './modules/webhook';
 import { actionsReactionsRoute } from './modules/actions-reactions';
@@ -44,6 +45,7 @@ async function build(): Promise<FastifyInstance> {
   app.withTypeProvider<ZodTypeProvider>().register(authRoutes, { prefix: '/auth' });
   app.withTypeProvider<ZodTypeProvider>().register(usersRoutes, { prefix: '/users' });
   app.withTypeProvider<ZodTypeProvider>().register(actionsReactionsRoute, { prefix: '/actions-reactions' });
+  app.withTypeProvider<ZodTypeProvider>().register(servicesRoutes, { prefix: '/services' });
 
   return app;
 }
