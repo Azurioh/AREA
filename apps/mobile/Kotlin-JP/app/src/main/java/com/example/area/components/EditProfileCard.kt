@@ -23,6 +23,7 @@ import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.UserViewModel
 import com.example.area.ui.theme.Secondary
 import androidx.compose.ui.Alignment
+import com.example.area.ui.theme.CustomBlack
 
 @Composable
 fun EditProfileCard(
@@ -47,7 +48,7 @@ fun EditProfileCard(
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp,
-                color = Color.White,
+                color = CustomBlack,
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .padding(22.dp)

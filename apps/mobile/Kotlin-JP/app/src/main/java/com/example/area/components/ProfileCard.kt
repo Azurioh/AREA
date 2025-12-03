@@ -21,6 +21,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,9 +37,16 @@ import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.UserViewModel
 import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
+import com.example.area.ui.theme.CustomBlack
+import com.example.area.ui.theme.CustomWhite
 
 @Composable
 fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
+    val userProfile by userViewModel.userProfile.collectAsState()
+
+    val userName = userProfile?.name ?: "Loading..."
+    val userEmail = userProfile?.email ?: "Loading..."
+
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
@@ -60,10 +69,10 @@ fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = getInitials("Aymeric"),
+                        text = getInitials(userName),
                         fontSize = 40.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black,
+                        color = CustomWhite,
                         fontFamily = poppinsFontFamily
                     )
                 }
@@ -72,22 +81,22 @@ fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
                     verticalArrangement = Arrangement.Top,
                 ) {
                     Text(
-                        text = "Aymeric",
+                        text = userName,
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 20.sp,
-                        color = Color.White,
+                        color = CustomBlack,
                         modifier = Modifier
                             .padding(top = 20.dp)
                             .fillMaxWidth()
                     )
 
                     Text(
-                        text = "aymeric.bretin62@gmail.com",
+                        text = userEmail,
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Medium,
                         fontSize = 10.sp,
-                        color = Color.White,
+                        color = CustomBlack,
                         modifier = Modifier
                             .padding(top = 10.dp)
                             .fillMaxWidth()
@@ -103,7 +112,7 @@ fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
                     .size(width = 70.dp, height = 28.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Accent,
-                    contentColor = Color.Black
+                    contentColor = CustomWhite
                 ),
                 shape = RoundedCornerShape(8.dp),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)

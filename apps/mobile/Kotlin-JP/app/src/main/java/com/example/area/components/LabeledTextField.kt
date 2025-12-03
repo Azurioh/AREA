@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.TextFieldBackground
 
@@ -39,7 +40,7 @@ fun LabeledTextField(
             fontSize = 14.sp,
             fontFamily = montserratFontFamily,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
+            color = CustomBlack,
             textAlign = TextAlign.Left,
             modifier = Modifier.padding(bottom = 8.dp)
         )
@@ -59,9 +60,9 @@ fun LabeledTextField(
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = TextFieldBackground,
                     unfocusedContainerColor = TextFieldBackground,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedLabelColor = Color.LightGray,
+                    focusedTextColor = CustomBlack,
+                    unfocusedTextColor = CustomBlack,
+                    focusedLabelColor = CustomBlack,
                     unfocusedLabelColor = Color.Gray,
                     focusedPlaceholderColor = Color.Gray,
                     unfocusedPlaceholderColor = Color.Gray,

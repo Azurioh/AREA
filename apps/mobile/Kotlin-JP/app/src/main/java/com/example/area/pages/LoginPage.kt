@@ -11,20 +11,26 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.viewModel.UserViewModel
 
 import com.example.area.components.LoginCard
-import com.example.area.components.LinearGradient
+import com.example.area.ui.theme.Background
 
 @Composable
 fun LoginPage(
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel = viewModel()
+    userViewModel: UserViewModel = viewModel(),
+    onNavigateToRegister: () -> Unit = {},
+    onNavigateToMain: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(brush = LinearGradient()),
+            .background(color = Background),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LoginCard(userViewModel = userViewModel)
+        LoginCard(
+            userViewModel = userViewModel,
+            onNavigateToRegister = onNavigateToRegister,
+            onNavigateToMain = onNavigateToMain
+        )
     }
 }

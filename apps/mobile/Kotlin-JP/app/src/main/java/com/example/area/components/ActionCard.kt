@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.ui.theme.Secondary
 
@@ -30,7 +31,7 @@ fun ActionCard(text: String) {
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 30.sp,
-            color = Color.White,
+            color = CustomBlack,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(top = 18.dp)

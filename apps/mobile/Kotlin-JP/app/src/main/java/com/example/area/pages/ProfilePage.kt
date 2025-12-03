@@ -26,9 +26,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.R
 import com.example.area.components.ConnectionCard
-import com.example.area.components.LinearGradient
 import com.example.area.components.ProfileCard
 import com.example.area.components.EditProfileCard
+import com.example.area.ui.theme.Background
+import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.viewModel.UserViewModel
@@ -45,7 +46,7 @@ fun ProfilePage(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(brush = LinearGradient()),
+            .background(color = Background),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -54,7 +55,7 @@ fun ProfilePage(
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
-            color = Color.White,
+            color = CustomBlack,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(top = 32.dp)
@@ -76,14 +77,14 @@ fun ProfilePage(
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                color = Color.White,
+                color = CustomBlack,
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .padding(top = 20.dp, start = 32.dp)
                     .fillMaxWidth()
             )
             ConnectionCard(
-                serviceImage = R.drawable.github,
+                serviceImage = R.drawable.github_dark,
                 serviceName = "Github",
                 isConnected = false,
                 onButtonClick = {

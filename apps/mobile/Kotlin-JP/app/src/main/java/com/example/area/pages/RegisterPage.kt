@@ -10,20 +10,26 @@ import androidx.compose.ui.Modifier
 import com.example.area.viewModel.UserViewModel
 
 import com.example.area.components.RegisterCard
-import com.example.area.components.LinearGradient
+import com.example.area.ui.theme.Background
 
 @Composable
 fun RegisterPage(
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    userViewModel: UserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    onNavigateToLogin: () -> Unit = {},
+    onNavigateToMain: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(brush = LinearGradient()),
+            .background(color = Background),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        RegisterCard(userViewModel = userViewModel)
+        RegisterCard(
+            userViewModel = userViewModel,
+            onNavigateToLogin = onNavigateToLogin,
+            onNavigateToMain = onNavigateToMain
+        )
     }
 }

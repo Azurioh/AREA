@@ -12,6 +12,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.montserratFontFamily
 
 @Composable
@@ -26,7 +27,7 @@ fun MultiColorText(
 ) {
     val annotatedString = buildAnnotatedString {
         withStyle(style = SpanStyle(
-            color = color1,
+            color = CustomBlack,
             fontWeight = FontWeight.Normal
         )) {
             append(text1)

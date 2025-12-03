@@ -21,11 +21,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.R
-import com.example.area.components.LinearGradient
 import com.example.area.ui.theme.Accent
+import com.example.area.ui.theme.Background
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.components.ActionCard
+import com.example.area.ui.theme.CustomBlack
 
 @Composable
 fun CreatePage(
@@ -34,7 +35,7 @@ fun CreatePage(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(brush = LinearGradient()),
+            .background(color = Background),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -43,7 +44,7 @@ fun CreatePage(
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
-            color = Color.White,
+            color = CustomBlack,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(top = 32.dp)
@@ -65,7 +66,7 @@ fun CreatePage(
             fontSize = 14.sp,
             fontFamily = montserratFontFamily,
             fontWeight = FontWeight.Normal,
-            color = Color.White,
+            color = CustomBlack,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(12.dp)
