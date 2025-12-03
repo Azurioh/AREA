@@ -7,6 +7,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { AdminDashboardPage } from '@/features/adminDashboard';
 import { HomePage } from '@/features/home';
 import { useApp } from './hooks/useApp';
+import { ProtectedRoute } from './contexts/PorectedRoutes';
 
 function AppRoutes() {
   const { authState } = useApp();
@@ -15,18 +16,11 @@ function AppRoutes() {
     <Routes>
       <Route path={AppRoutesPaths.REGISTER} element={<RegisterPage />} />
       <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
-      <Route
-        path={AppRoutesPaths.ADMIN_DASHBOARD}
-        element={authState.isAuthenticated ? <AdminDashboardPage /> : <LoginPage />}
-      />
-      <Route
-        path={AppRoutesPaths.PROFILE}
-        element={authState.isAuthenticated ? <Profile /> : <LoginPage />}
-      />
-      <Route
-        path={AppRoutesPaths.HOME}
-        element={authState.isAuthenticated ? <HomePage /> : <LoginPage />}
-      />
+      <ProtectedRoute isAuthenticated={authState.isAuthenticated}>
+        <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={ <AdminDashboardPage /> } />
+        <Route path={AppRoutesPaths.PROFILE} element={ <Profile /> } />
+        <Route path={AppRoutesPaths.HOME} element={ <HomePage /> } />
+      </ProtectedRoute>
     </Routes>
   );
 }

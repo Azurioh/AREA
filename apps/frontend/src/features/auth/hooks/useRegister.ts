@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LoginClient } from '@/features/auth/api/LoginClient';
+import { LoginClient } from '@/features/auth/api/AuthClient';
 import { AppRoutesPaths } from '@/enums/routes';
 
 export const useRegister = () => {

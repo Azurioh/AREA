@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { UserInformationClient } from '../api/UserInformation';
+import { UserInformationClient } from '../api/UserClient';
 
 /**
  * @function useUserInformation

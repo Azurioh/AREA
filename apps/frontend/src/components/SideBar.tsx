@@ -5,6 +5,7 @@ import { AppRoutesPaths } from "@/enums/routes"
 import areaLogo from "@/assets/area_logo.png"
 import { Avatar} from "@/components/ui/avatar"
 import { useUserInformation } from "@/shared/hooks/useUserInformation"
+import { useEffect } from "react"
 
 const SideBar = () => {
     const navigate = useNavigate()
@@ -12,7 +13,10 @@ const SideBar = () => {
     const { getInitials } = useUserInformation()
     const name = localStorage.getItem('userInitials') || getInitials()
 
-    localStorage.setItem('userInitials', name);
+    useEffect(() => {
+      localStorage.setItem('userInitials', name);
+    }, []);
+
     const menuItems = [
         { icon: House, label: "Home", path: AppRoutesPaths.HOME, name: "Home" },
         { icon: Workflow, label: "Workflows", path: "/test", name: "Workflows" },
