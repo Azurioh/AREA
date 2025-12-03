@@ -4,18 +4,12 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { AppRoutesPaths } from "@/enums/routes"
 import areaLogo from "@/assets/area_logo.png"
 import { Avatar} from "@/components/ui/avatar"
-import { useUserInformation } from "@/shared/hooks/useUserInformation"
-import { useEffect } from "react"
+import { useUserInitials } from "@/shared/hooks/useUserInitials"
 
 const SideBar = () => {
     const navigate = useNavigate()
     const location = useLocation()
-    const { getInitials } = useUserInformation()
-    const name = localStorage.getItem('userInitials') || getInitials()
-
-    useEffect(() => {
-      localStorage.setItem('userInitials', name);
-    }, []);
+    const name = useUserInitials();
 
     const menuItems = [
         { icon: House, label: "Home", path: AppRoutesPaths.HOME, name: "Home" },

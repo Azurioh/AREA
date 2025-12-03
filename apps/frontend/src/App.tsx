@@ -6,31 +6,22 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AdminDashboardPage } from '@/features/adminDashboard';
 import { HomePage } from '@/features/home';
-import { useApp } from './hooks/useApp';
 import { ProtectedRoute } from './contexts/PorectedRoutes';
-
-function AppRoutes() {
-  const { authState } = useApp();
-
-  return (
-    <Routes>
-      <Route path={AppRoutesPaths.REGISTER} element={<RegisterPage />} />
-      <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
-      <ProtectedRoute isAuthenticated={authState.isAuthenticated}>
-        <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={ <AdminDashboardPage /> } />
-        <Route path={AppRoutesPaths.PROFILE} element={ <Profile /> } />
-        <Route path={AppRoutesPaths.HOME} element={ <HomePage /> } />
-      </ProtectedRoute>
-    </Routes>
-  );
-}
 
 export default function App() {
   return (
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
-          <AppRoutes />
+          <Routes>
+            <Route path={AppRoutesPaths.REGISTER} element={<RegisterPage />} />
+            <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={ <AdminDashboardPage /> } />
+              <Route path={AppRoutesPaths.PROFILE} element={ <Profile /> } />
+              <Route path={AppRoutesPaths.HOME} element={ <HomePage /> } />
+            </Route>
+          </Routes>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

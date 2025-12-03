@@ -1,15 +1,13 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { AppRoutesPaths } from '@/enums/routes';
+import { useApp } from '@/hooks/useApp';
 
-type ProtectedRouteProps = {
-  isAuthenticated: boolean;
-  children: React.ReactNode;
-};
+export const ProtectedRoute = () => {
+  const { authState } = useApp();
 
-export const ProtectedRoute = ({ isAuthenticated, children }: ProtectedRouteProps) => {
-  if (!isAuthenticated) {
+  if (!authState.isAuthenticated) {
     return <Navigate to={AppRoutesPaths.LOGIN} replace />;
   }
 
-  return <>{children}</>;
+  return <Outlet />;
 };
