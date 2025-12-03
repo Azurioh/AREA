@@ -1,12 +1,9 @@
 package com.example.area.data.api
 
-<<<<<<< Updated upstream
 import android.content.Context
 import com.example.area.data.auth.TokenManager
 import okhttp3.OkHttpClient
-=======
 import com.example.area.BuildConfig
->>>>>>> Stashed changes
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -38,12 +35,8 @@ object RetrofitInstance {
 
     val api: ApiService by lazy {
         Retrofit.Builder()
-<<<<<<< Updated upstream
-            .baseUrl("http://167.86.110.198:8085/")
             .client(okHttpClient)
-=======
             .baseUrl(BuildConfig.API_BASE_URL)
->>>>>>> Stashed changes
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
