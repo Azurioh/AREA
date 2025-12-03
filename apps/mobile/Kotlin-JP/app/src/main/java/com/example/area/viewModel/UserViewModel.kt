@@ -25,12 +25,12 @@ class UserViewModel : ViewModel() {
                     password = password
                 )
 
-                val response = RetrofitInstance.api.registerUser(request)
+                val token = RetrofitInstance.api.registerUser(request)
 
-                println(">>> User created !")
+                RetrofitInstance.getTokenManager().saveToken(token.accessToken)
+
                 onSuccess()
             } catch (e: Exception) {
-                println(">>> Erreur : $e")
                 onError(e.message ?: "Erreur inconnue")
             }
         }
@@ -50,12 +50,12 @@ class UserViewModel : ViewModel() {
                     password = password
                 )
 
-                val response = RetrofitInstance.api.loginUser(request)
+                val token = RetrofitInstance.api.loginUser(request)
 
-                println(">>> User login !")
+                RetrofitInstance.getTokenManager().saveToken(token.accessToken)
+
                 onSuccess()
             } catch (e: Exception) {
-                println(">>> Erreur : $e")
                 onError(e.message ?: "Erreur inconnue")
             }
         }
