@@ -29,6 +29,7 @@ export interface AuthState {
 export interface AuthContextType {
   webhookClient: WebhookClient;
   authState: AuthState;
+  tokenManager: TokenManager;
   logout: () => void;
 }
 
@@ -52,6 +53,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     () => ({
       webhookClient,
       authState,
+      tokenManager,
       logout: tokenManager.logout.bind(tokenManager),
     }),
     [authState, tokenManager],
