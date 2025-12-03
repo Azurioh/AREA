@@ -1,19 +1,19 @@
+import type React from 'react';
+import { Card, CardContent } from '@/components/wrappers/Card';
+import { Input } from '@/components/wrappers/Input';
+import { Button } from '@/components/wrappers/Button';
+import { Checkbox } from '@/components/wrappers/CheckBox';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
-import type React from 'react';
-import SideBar from '@/components/SideBar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/wrappers/Button';
-import { Card, CardContent } from '@/components/wrappers/Card';
-import { Checkbox } from '@/components/wrappers/CheckBox';
-import { Input } from '@/components/wrappers/Input';
 import UserCard from '../components/UserCard';
 import { useUserFilter } from '../hooks/useUserFilter';
+import SideBar from '@/components/SideBar';
 
 const users = [
   { id: 1, name: 'John Doe', email: 'john.doe@example.com', role: 'Admin' },
@@ -94,39 +94,6 @@ const AdminDashboardPage: React.FC = () => {
           </CardContent>
         </Card>
       </main>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline">{roleFilter === 'All' ? 'Filter Users' : roleFilter}</Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => setRoleFilter('All')}>All Users</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setRoleFilter('Admin')}>Admins</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setRoleFilter('User')}>Users</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-5xl"
-      >
-        <Card className="bg-card p-4 space-y-4">
-          <div className="bg-primary p-4 rounded-t-[var(--large-radius)] -mx-4 -mt-4 mb-4">
-            <div className="grid grid-cols-[10px_1fr_1fr_1fr_1fr] gap-6 items-center">
-              <Checkbox id="select-all" className="ml-4" />
-              <h2 className="font-semibold ml-12 text-white text-xl">Name</h2>
-              <h2 className="font-semibold ml-5 text-white text-xl">Email</h2>
-              <h2 className="font-semibold text-white text-xl">Role</h2>
-              <h2 className="font-semibold text-white text-xl">Actions</h2>
-            </div>
-          </div>
-          {filteredUsers.length > 0 ? (
-            filteredUsers.map((user) => <UserCard key={user.id} user={user} />)
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">No users found</div>
-          )}
-        </Card>
-      </motion.div>
     </div>
   );
 };
