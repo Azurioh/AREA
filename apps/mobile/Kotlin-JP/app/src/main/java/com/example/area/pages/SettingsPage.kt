@@ -1,6 +1,5 @@
 package com.example.area.pages
 
-import android.R.attr.checked
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
