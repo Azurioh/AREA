@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.components.ConnectionCard
 import com.example.area.components.LinearGradient
 import com.example.area.components.ProfileCard
+import com.example.area.components.EditProfileCard
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.UserViewModel
 
@@ -27,6 +32,8 @@ fun ProfilePage(
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel = viewModel()
 ) {
+    var isEditing by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -35,7 +42,7 @@ fun ProfilePage(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Profile page",
+            text = if (isEditing) "Edit Profile" else "Profile page",
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
@@ -45,19 +52,30 @@ fun ProfilePage(
                 .padding(top = 32.dp)
                 .fillMaxWidth()
         )
-        ProfileCard(userViewModel = userViewModel)
-        Text(
-            text = "Services",
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            color = Color.White,
-            textAlign = TextAlign.Start,
-            modifier = Modifier
-                .padding(top = 20.dp, start = 32.dp)
-                .fillMaxWidth()
-        )
-        ConnectionCard()
-        ConnectionCard()
+
+        if (isEditing) {
+            EditProfileCard(
+                userViewModel = userViewModel,
+                onDismiss = { isEditing = false }
+            )
+        } else {
+            ProfileCard(
+                userViewModel = userViewModel,
+                onEditClick = { isEditing = true }
+            )
+            Text(
+                text = "Services",
+                fontFamily = poppinsFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.White,
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .padding(top = 20.dp, start = 32.dp)
+                    .fillMaxWidth()
+            )
+            ConnectionCard()
+            ConnectionCard()
+        }
     }
 }
