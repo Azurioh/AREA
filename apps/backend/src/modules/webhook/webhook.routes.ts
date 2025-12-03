@@ -1,10 +1,3 @@
-// import {
-//   createWebhookBodySchema,
-//   createWebhookResponseSchema,
-//   getWebhookByUuidParamsSchema,
-//   getWebhookByUuidResponseSchema,
-//   listWebhooksResponseSchema,
-// } from '@area/shared/schemas/webhook.schema';
 import type { FastifyInstance } from 'fastify';
 import { GithubService } from '@/modules/github';
 import { GithubRepository } from '@/modules/github/github.repository';

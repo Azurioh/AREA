@@ -1,9 +1,3 @@
-// import type {
-//   CreateWebhookBody,
-//   DeleteWebhookParams,
-//   GetWebhookByUuidParams,
-// } from '@area/shared/schemas/webhook.schema';
-// import type { Webhook } from '@area/shared/types/webhook.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { WebhookService } from '@/modules/webhook';
 import { HttpStatusCode } from '@area/shared/enums/http-status';

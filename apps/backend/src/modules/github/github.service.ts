@@ -62,7 +62,6 @@ export class GithubService {
     const trigger = `${action.name}/${action.params.repository}`
 
     if (!response.ok) {
-      console.log(formattedResponse.errors);
       for (const error of formattedResponse.errors) {
         if (!error) {
           continue;
@@ -71,7 +70,6 @@ export class GithubService {
           return trigger;
         }
       }
-      console.log(formattedResponse);
       throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Error when creating github webhook');
     }
     return trigger;
