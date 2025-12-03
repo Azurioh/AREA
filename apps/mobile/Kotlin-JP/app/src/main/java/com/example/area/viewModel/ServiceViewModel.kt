@@ -14,12 +14,9 @@ class ServiceViewModel : ViewModel() {
     ) {
         viewModelScope.launch {
             try {
-                println(">>> URL for $serviceName...")
                 val url = RetrofitInstance.api.getAuthorizationUrl(serviceName)
-                println(">>> URL received $url")
                 onSuccess(url.url)
             } catch (e: Exception) {
-                println(">>> Error URL ${e.message}")
                 e.printStackTrace()
                 onError(e.message ?: "Erreur inconnue")
             }

@@ -29,10 +29,8 @@ class UserViewModel : ViewModel() {
 
                 RetrofitInstance.getTokenManager().saveToken(token.accessToken)
 
-                println(">>> User created !")
                 onSuccess()
             } catch (e: Exception) {
-                println(">>> Erreur : $e")
                 onError(e.message ?: "Erreur inconnue")
             }
         }
@@ -56,10 +54,8 @@ class UserViewModel : ViewModel() {
 
                 RetrofitInstance.getTokenManager().saveToken(token.accessToken)
 
-                println(">>> User login !")
                 onSuccess()
             } catch (e: Exception) {
-                println(">>> Erreur : $e")
                 onError(e.message ?: "Erreur inconnue")
             }
         }
