@@ -1,12 +1,11 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AppRoutesPaths } from '@/enums/routes';
+import { AdminDashboardPage } from '@/features/adminDashboard';
 import { LoginPage, RegisterPage } from '@/features/auth';
+import { HomePage } from '@/features/home';
 import { Profile } from '@/features/profile';
-import { WebhookPage } from '@/features/webhook';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { AdminDashboardPage } from '@/features/adminDashboard';
-import { HomePage } from '@/features/home';
 
 export default function App() {
   return (
