@@ -1,0 +1,32 @@
+name: Backend build state
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/backend-build.yml
+      - apps/backend/**
+
+jobs:
+    backend-build:
+        name: Backend Build
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Checkout repository
+          uses: actions/checkout@v6
+
+        - name: Set up Node.js
+          uses: actions/setup-node@v6
+          with:
+            node-version: '22'
+
+        - name: Install dependencies
+          run: npm install
+
+        - name: Build shared folder
+          run: npm run build
+          working-directory: ./packages/shared
+
+        - name: Build backend
+          run: npm run build
+          working-directory: ./apps/backend

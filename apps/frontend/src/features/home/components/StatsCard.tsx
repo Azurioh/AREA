@@ -1,6 +1,6 @@
-import { Card, CardContent } from "@/components/ui/card";
-import organizationIcon from '@/assets/organization.png';
 import { motion } from 'framer-motion';
+import organizationIcon from '@/assets/organization.png';
+import { Card } from '@/components/ui/card';
 
 interface StatsCardProps {
   title: string;
