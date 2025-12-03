@@ -2,13 +2,13 @@ import { HttpStatusCode } from '@area/shared/enums/http-status';
 import ApiError from '@/utils/api-error';
 import { environment } from '@/utils/environment';
 import { verifyToken } from '@/utils/token';
-import { UsersService } from '../users';
-import { StateToken } from '@area/shared/types/user.types';
-import { DiscordRepository } from './discord.repository';
-import { MaybeNull } from '@area/shared/utils/common';
-import { WithId } from 'mongodb';
+import type { UsersService } from '../users';
+import type { StateToken } from '@area/shared/types/user.types';
+import type { DiscordRepository } from './discord.repository';
+import type { MaybeNull } from '@area/shared/utils/common';
+import type { WithId } from 'mongodb';
 import { encryptString } from '@/utils/crypt';
-import { DiscordAccount, DiscordAuthorizationResponse } from '@/types/discord';
+import type { DiscordAccount, DiscordAuthorizationResponse } from '@/types/discord';
 
 /**
  * @class DiscordService
@@ -18,7 +18,7 @@ export class DiscordService {
   private repository: DiscordRepository;
   private usersService: UsersService;
 
-  constructor (repository: DiscordRepository, usersService: UsersService) {
+  constructor(repository: DiscordRepository, usersService: UsersService) {
     this.repository = repository;
     this.usersService = usersService;
   }
@@ -41,29 +41,29 @@ export class DiscordService {
     const response = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: {
-        "content-type": "application/x-www-form-urlencoded"
+        'content-type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
         client_id: environment.DISCORD_CLIENT_ID,
         client_secret: environment.DISCORD_CLIENT_SECRET,
         code: code,
         grant_type: 'authorization_code',
-        redirect_uri: "https://area-dev.loca.lt/discord/v1/authorize"
-      })
+        redirect_uri: 'https://area-dev.loca.lt/discord/v1/authorize',
+      }),
     });
 
-    if (response.status != HttpStatusCode.OK) {
+    if (response.status !== HttpStatusCode.OK) {
       return false;
     }
 
-    const formattedResponse = await response.json() as DiscordAuthorizationResponse;
+    const formattedResponse = (await response.json()) as DiscordAuthorizationResponse;
 
     const data: DiscordAccount = {
       userId: decoded._id,
       accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
       refreshToken: encryptString(formattedResponse.refresh_token, environment.CRYPT_SECRET_KEY),
-      guildId: formattedResponse.guild.id
-    }
+      guildId: formattedResponse.guild.id,
+    };
 
     let success = false;
     const account = await this.getDiscordAccountByUserId(decoded._id);
@@ -71,7 +71,7 @@ export class DiscordService {
     if (account) {
       const update = await this.repository.updateDiscordAccount(account._id.toString(), data);
 
-      success = update.acknowledged && (update.matchedCount > 0);
+      success = update.acknowledged && update.matchedCount > 0;
     } else {
       success = await this.repository.createDiscordAccount(data);
     }

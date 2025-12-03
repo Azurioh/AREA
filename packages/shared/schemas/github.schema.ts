@@ -15,7 +15,7 @@ export const githubAuthorizationQueryStringSchema = z.object({
   state: z.string().meta({
     description: 'A random string to protect against attacks',
     example: 'afd8ff98879jkfdkf',
-  })
+  }),
 });
 
 export const githubAuthorizationResponseSchema = z.object({});

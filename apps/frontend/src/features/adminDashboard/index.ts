@@ -1,3 +1,3 @@
-import AdminDashboardPage from "./routes/AdminDashboardPage";
+import AdminDashboardPage from './routes/AdminDashboardPage';
 
 export { AdminDashboardPage };
