@@ -48,9 +48,9 @@ export default function HomePage() {
   return (
     <div className="flex h-screen bg-background">
       <SideBar />
-      <main className="flex-1 ml-24 p-4">
-        <Card className="w-full h-full flex flex-col items-center overflow-y-auto rounded-[var(--large-radius)]">
-          <h1 className="text-card-foreground text-5xl mt-12 mb-32 font-text text-center !font-text">
+      <main className="flex-1 ml-24 pr-4 pt-4">
+        <Card className="w-full h-full flex flex-col items-center overflow-y-auto rounded-[var(--large-radius)] rounded-b-none">
+          <h1 className="text-5xl mt-12 mb-20 font-text text-center !font-text font-bold tracking-tighter text-primary">
             Automate Everything Effortlessly
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -58,8 +58,10 @@ export default function HomePage() {
               <StatsCard key={i} title={stat.title} value={stat.value} />
             ))}
           </div>
-          <h2 className="text-card-foreground text-5xl mt-12 mb-6 text-center font-button">Recents Workflows</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-4 px-4 mb-12">
+          <h1 className="text-5xl mt-28 mb-20 text-center font-button font-bold tracking-tighter text-primary">
+            Recents Workflows
+          </h1>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 px-4 mb-12">
             {workflows.map((wf, idx) => (
               <WorkflowsCard
                 key={idx}
