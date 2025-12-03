@@ -1,6 +1,8 @@
 package com.example.area.components
 
+import android.R.attr.onClick
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,7 +37,7 @@ import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
 
 @Composable
-fun ProfileCard(userViewModel: UserViewModel) {
+fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
@@ -49,16 +51,22 @@ fun ProfileCard(userViewModel: UserViewModel) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.flo),
-                    contentDescription = "Profile Image",
-                    contentScale = ContentScale.Crop,
+                Box(
                     modifier = Modifier
-                        .width(140.dp)
-                        .height(180.dp)
+                        .size(120.dp, 160.dp)
                         .padding(12.dp)
                         .clip(RoundedCornerShape(10.dp))
-                )
+                        .background(Accent),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = getInitials("Aymeric"),
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
+                        fontFamily = poppinsFontFamily
+                    )
+                }
 
                 Column(
                     verticalArrangement = Arrangement.Top,
@@ -88,9 +96,7 @@ fun ProfileCard(userViewModel: UserViewModel) {
             }
 
             Button(
-                onClick = {
-                    println("Edit button")
-                },
+                onClick = onEditClick,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(12.dp)
@@ -109,5 +115,14 @@ fun ProfileCard(userViewModel: UserViewModel) {
                 )
             }
         }
+    }
+}
+
+fun getInitials(name: String): String {
+    val parts = name.trim().split(" ")
+    return when {
+        parts.size >= 2 -> "${parts[0].first()}${parts[1].first()}".uppercase()
+        parts.size == 1 && parts[0].length >= 2 -> parts[0].take(2).uppercase()
+        else -> parts[0].take(1).uppercase()
     }
 }

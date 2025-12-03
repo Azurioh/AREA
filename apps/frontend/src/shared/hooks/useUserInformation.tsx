@@ -10,6 +10,7 @@ export const useUserInformation = () => {
       try {
         const client = new UserInformationClient();
         const data = await client.getUserInformation();
+        localStorage.setItem('userInitials', data.name.substring(0, 2).toUpperCase());
         setUser(data);
       } catch (error) {
         console.error('Failed to fetch user:', error);
@@ -23,7 +24,7 @@ export const useUserInformation = () => {
 
   const getInitials = () => {
     if (!user?.name) {
-        return '??';
+        return "??";
     }
     return user.name.substring(0, 2).toUpperCase();
   };

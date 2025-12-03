@@ -36,7 +36,12 @@ import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.montserratFontFamily
 
 @Composable
-fun ConnectionCard() {
+fun ConnectionCard(
+    serviceImage: Int,
+    serviceName: String,
+    isConnected: Boolean,
+    onButtonClick: () -> Unit
+) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
@@ -52,8 +57,8 @@ fun ConnectionCard() {
                 modifier = Modifier.fillMaxSize()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.youtube),
-                    contentDescription = "Service Image",
+                    painter = painterResource(id = serviceImage),
+                    contentDescription = "$serviceName Image",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .width(100.dp)
@@ -63,31 +68,28 @@ fun ConnectionCard() {
                 )
 
                 Text(
-                    text = "Youtube",
+                    text = serviceName,
                     fontFamily = montserratFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 15.sp,
                     color = Color.White,
-                    modifier = Modifier
-                        .weight(1f)
+                    modifier = Modifier.weight(1f)
                 )
 
                 Button(
-                    onClick = {
-                        println("Connect button")
-                    },
+                    onClick = onButtonClick,
                     modifier = Modifier
                         .padding(12.dp)
                         .size(width = 90.dp, height = 28.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Accent,
-                        contentColor = Color.Black
+                        containerColor = if (isConnected) Color(0xFF5E5E5E) else Accent,
+                        contentColor = if (isConnected) Color.White else Color.Black
                     ),
                     shape = RoundedCornerShape(8.dp),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "Connect",
+                        text = if (isConnected) "Connected" else "Connect",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold
                     )
