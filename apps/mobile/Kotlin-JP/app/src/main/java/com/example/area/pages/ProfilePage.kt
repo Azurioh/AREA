@@ -82,8 +82,23 @@ fun ProfilePage(
                     .padding(top = 20.dp, start = 32.dp)
                     .fillMaxWidth()
             )
-            ConnectionCard()
-            ConnectionCard()
+            ConnectionCard(
+                serviceImage = R.drawable.github,
+                serviceName = "Github",
+                isConnected = false,
+                onButtonClick = {
+                    serviceViewModel.connectToService(
+                        serviceName = "github",
+                        onSuccess = { url ->
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            context.startActivity(intent)
+                        },
+                        onError = { error ->
+                            println(">>> Failed to connect to GitHub: $error")
+                        }
+                    )
+                }
+            )
         }
     }
 }
