@@ -2,21 +2,34 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff } from 'lucide-react';
 import type React from 'react';
 import { Link } from 'react-router-dom';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/wrappers/Button';
 import { Card } from '@/components/wrappers/Card';
 import { Checkbox } from '@/components/wrappers/CheckBox';
 import { Input } from '@/components/wrappers/Input';
-import { Label } from '@/components/ui/label';
 import { AppRoutesPaths } from '@/enums/routes';
-import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
-import { useRememberMe } from '@/features/auth/hooks/useRememberMe';
 import { useRegister } from '@/features/auth/hooks/useRegister';
+import { useRememberMe } from '@/features/auth/hooks/useRememberMe';
+import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
 import { useClearUserData } from '@/shared/hooks/useClearUserData';
 
 const RegisterPage: React.FC = () => {
-  const { showPassword, showConfirmPassword, togglePasswordVisibility, toggleConfirmPasswordVisibility } = useShowPassword();
+  const { showPassword, showConfirmPassword, togglePasswordVisibility, toggleConfirmPasswordVisibility } =
+    useShowPassword();
   const { rememberMe, toggleRememberMe } = useRememberMe();
-  const { name, setName, email, setEmail, password, setPassword, confirmPassword, setConfirmPassword, isLoading, error, handleSubmit } = useRegister();
+  const {
+    name,
+    setName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    isLoading,
+    error,
+    handleSubmit,
+  } = useRegister();
   useClearUserData();
 
   return (
@@ -34,34 +47,40 @@ const RegisterPage: React.FC = () => {
           </div>
           <form className="space-y-4" onSubmit={handleSubmit}>
             {error && (
-              <div className='p-3 rounded-[var(--small-radius)] bg-destructive/10 text-destructive text-sm'>
+              <div className="p-3 rounded-[var(--small-radius)] bg-destructive/10 text-destructive text-sm">
                 {error}
               </div>
             )}
             <div className="space-y-2">
-              <label htmlFor="name" className="text-foreground">Name</label>
-              <Input 
-                id="name" 
-                type="text" 
-                placeholder="John Doe" 
+              <label htmlFor="name" className="text-foreground">
+                Name
+              </label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="John Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                required 
+                required
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="email" className="text-foreground">Email</label>
-              <Input 
-                id="email" 
-                type="email" 
-                placeholder="test@gmail.com" 
+              <label htmlFor="email" className="text-foreground">
+                Email
+              </label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="test@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required 
+                required
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="password" className="text-foreground">Password</label>
+              <label htmlFor="password" className="text-foreground">
+                Password
+              </label>
               <div className="relative">
                 <Input
                   id="password"
@@ -81,7 +100,9 @@ const RegisterPage: React.FC = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <label htmlFor="confirm-password" className="text-foreground">Confirm Password</label>
+              <label htmlFor="confirm-password" className="text-foreground">
+                Confirm Password
+              </label>
               <div className="relative">
                 <Input
                   id="confirm-password"

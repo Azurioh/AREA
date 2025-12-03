@@ -1,9 +1,9 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { MoveRight, Ellipsis, Ghost } from 'lucide-react';
-import { Switch } from "@/components/ui/switch";
-import { useActionsModal } from "@/shared/hooks/useActionsModal";
-import { Button } from '@/components/wrappers/Button';
 import { motion } from 'framer-motion';
+import { Ellipsis, MoveRight } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/wrappers/Button';
+import { useActionsModal } from '@/hooks/useActionsModal';
 
 interface StatsCardProps {
   title: string;
@@ -15,7 +15,15 @@ interface StatsCardProps {
   Service2: string;
 }
 
-export default function WorkflowsCard({ title, Description, Value, Last, Service1, Service2, activated }: StatsCardProps) {
+export default function WorkflowsCard({
+  title,
+  Description,
+  Value,
+  Last,
+  Service1,
+  Service2,
+  activated,
+}: StatsCardProps) {
   const { isModalOpen, openModal, closeModal, modalRef, buttonRef } = useActionsModal();
 
   return (

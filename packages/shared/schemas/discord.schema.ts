@@ -8,7 +8,7 @@ export const discordAuthorizationQueryStringSchema = z.object({
   state: z.string().meta({
     description: 'A random string to protect against attacks',
     example: 'afd8ff98879jkfdkf',
-  })
+  }),
 });
 
 export const discordAuthorizationResponseSchema = z.object({});

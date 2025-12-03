@@ -1,87 +1,105 @@
-import React from 'react';
-import { Card } from '@/components/wrappers/Card';
-import { Input } from '@/components/wrappers/Input';
-import { Button } from '@/components/wrappers/Button';
-import { Checkbox } from '@/components/wrappers/CheckBox';
-import { Label } from '@/components/ui/label';
-import { Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Eye, EyeOff } from 'lucide-react';
+import type React from 'react';
 import { Link } from 'react-router-dom';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/wrappers/Button';
+import { Card } from '@/components/wrappers/Card';
+import { Checkbox } from '@/components/wrappers/CheckBox';
+import { Input } from '@/components/wrappers/Input';
 import { AppRoutesPaths } from '@/enums/routes';
-import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
 import { useLogin } from '@/features/auth/hooks/useLogin';
+import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
 import { useClearUserData } from '@/shared/hooks/useClearUserData';
 
 const LoginPage: React.FC = () => {
-    const { showPassword, togglePasswordVisibility } = useShowPassword();
-    const { email, setEmail, password, setPassword, rememberMe, setRememberMe, isLoading, error, handleSubmit } = useLogin();
-    useClearUserData();
+  const { showPassword, togglePasswordVisibility } = useShowPassword();
+  const { email, setEmail, password, setPassword, rememberMe, setRememberMe, isLoading, error, handleSubmit } =
+    useLogin();
+  useClearUserData();
 
-    return (
-        <div className="flex min-h-screen items-center justify-center bg-background">
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className='w-full max-w-md'
-            >
-                <Card className='p-8 space-y-6'>
-                    <div className='text-center space-y-2'>
-                        <h1 className='font-bold tracking-tighter text-primary'>Welcome Back</h1>
-                        <p className='font-text text-foreground'>Sign in to your account to continue</p>
-                    </div>
-                    <form className='space-y-4' onSubmit={handleSubmit}>
-                        {error && (
-                            <div className='p-3 rounded-[var(--small-radius)] bg-destructive/10 text-destructive text-sm'>
-                                {error}
-                            </div>
-                        )}
-                        <div className='space-y-2'>
-                            <label htmlFor='email' className='text-foreground'>Email</label>
-                            <Input
-                                id='email'
-                                type="email"
-                                placeholder='test@gmail.com'
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div className='space-y-2'>
-                            <label htmlFor='password' className='text-foreground'>Password</label>
-                            <div className='relative'>
-                                <Input
-                                    id='password'
-                                    type={showPassword ? 'text' : 'password'}
-                                    placeholder='Enter your password'
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                />
-                                <button type='button' onClick={togglePasswordVisibility} className='absolute right-3 top-1/2 -translate-y-1/2'>
-                                    {showPassword ? <Eye className='h-4 w-4' /> : <EyeOff className='h-4 w-4' />}
-                                </button>
-                            </div>
-                        </div>
-                        <div className='flex items-center justify-between'>
-                            <div className='flex items-center space-x-2'>
-                                <Checkbox id='remember-me' checked={rememberMe} onCheckedChange={(checked) => setRememberMe(checked as boolean)} />
-                                <Label htmlFor='remember-me'>Remember me</Label>
-                            </div>
-                            <a href="#" className='text-sm text-primary hover:underline'>Forgot password?</a>
-                        </div>
-                        <Button type='submit' className='w-full' disabled={isLoading}>
-                            {isLoading ? 'Signing in...' : 'Sign in'}
-                        </Button>
-                        <div className='text-center text-sm text-foreground'>
-                            Don't have an account ?
-                            <Link to={AppRoutesPaths.REGISTER} className='text-primary hover:underline'> Sign up</Link>
-                        </div>
-                    </form>
-                </Card>
-            </motion.div>
-        </div>
-    );
-}
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md"
+      >
+        <Card className="p-8 space-y-6">
+          <div className="text-center space-y-2">
+            <h1 className="font-bold tracking-tighter text-primary">Welcome Back</h1>
+            <p className="font-text text-foreground">Sign in to your account to continue</p>
+          </div>
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            {error && (
+              <div className="p-3 rounded-[var(--small-radius)] bg-destructive/10 text-destructive text-sm">
+                {error}
+              </div>
+            )}
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-foreground">
+                Email
+              </label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="test@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-foreground">
+                Password
+              </label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                >
+                  {showPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="remember-me"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                />
+                <Label htmlFor="remember-me">Remember me</Label>
+              </div>
+              <a href="/" className="text-sm text-primary hover:underline">
+                Forgot password?
+              </a>
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Signing in...' : 'Sign in'}
+            </Button>
+            <div className="text-center text-sm text-foreground">
+              Don't have an account ?
+              <Link to={AppRoutesPaths.REGISTER} className="text-primary hover:underline">
+                {' '}
+                Sign up
+              </Link>
+            </div>
+          </form>
+        </Card>
+      </motion.div>
+    </div>
+  );
+};
 
 export default LoginPage;

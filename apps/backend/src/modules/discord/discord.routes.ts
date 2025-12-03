@@ -1,4 +1,7 @@
-import { discordAuthorizationQueryStringSchema, discordAuthorizationResponseSchema } from '@area/shared/schemas/discord.schema';
+import {
+  discordAuthorizationQueryStringSchema,
+  discordAuthorizationResponseSchema,
+} from '@area/shared/schemas/discord.schema';
 import type { FastifyInstance } from 'fastify';
 import { DiscordController } from './discord.controller';
 import { DiscordService } from './discord.service';

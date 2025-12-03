@@ -1,7 +1,7 @@
+import type { MaybeNull } from '@area/shared/utils/common';
+import { type Db, ObjectId, type UpdateResult, type WithId } from 'mongodb';
 import { MongoCollections } from '@/enums/mongo-collection';
-import { DiscordAccount } from '@/types/discord';
-import { MaybeNull } from '@area/shared/utils/common';
-import { ObjectId, UpdateResult, WithId, type Db } from 'mongodb';
+import type { DiscordAccount } from '@/types/discord';
 
 /**
  * @class DiscordRepository
@@ -22,7 +22,7 @@ export class DiscordRepository {
    * @returns {Promise<boolean>} If the data was inserted.
    */
   async createDiscordAccount(data: DiscordAccount): Promise<boolean> {
-    const { acknowledged } =  await this.db.collection<DiscordAccount>(MongoCollections.DISCORD_ACCOUNT).insertOne(data);
+    const { acknowledged } = await this.db.collection<DiscordAccount>(MongoCollections.DISCORD_ACCOUNT).insertOne(data);
 
     return acknowledged;
   }
@@ -35,7 +35,7 @@ export class DiscordRepository {
    * @returns {Promise<MaybeNull<WithId<DiscordAccount>>>} The discord account.
    */
   async getDiscordAccountByUserId(userId: string): Promise<MaybeNull<WithId<DiscordAccount>>> {
-    return await this.db.collection<DiscordAccount>(MongoCollections.DISCORD_ACCOUNT).findOne({ userId: userId })
+    return await this.db.collection<DiscordAccount>(MongoCollections.DISCORD_ACCOUNT).findOne({ userId: userId });
   }
 
   /**
@@ -47,7 +47,8 @@ export class DiscordRepository {
    * @returns {Promise<UpdateResult<DiscordAccount>>} The result of the update.
    */
   async updateDiscordAccount(id: string, account: Partial<DiscordAccount>): Promise<UpdateResult<DiscordAccount>> {
-    return await this.db.collection<DiscordAccount>(MongoCollections.DISCORD_ACCOUNT).updateOne({ _id: new ObjectId(id) }, { $set: account });
+    return await this.db
+      .collection<DiscordAccount>(MongoCollections.DISCORD_ACCOUNT)
+      .updateOne({ _id: new ObjectId(id) }, { $set: account });
   }
-
 }
