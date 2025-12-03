@@ -25,11 +25,11 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
                 <Label htmlFor={`user-${user.id}`} className="truncate">{user.email}</Label>
                 <Label htmlFor={`user-${user.id}`}>{user.role}</Label>
                 <div className="flex gap-4 ml-4">
-                    <Button className="h-8 px-3">
+                    <Button className="h-8 px-3 truncate">
                         <Edit2 className="h-4 w-4 mr-2" />
                         Edit
                     </Button>
-                    <Button className="h-8 px-3">
+                    <Button className="h-8 px-3 truncate">
                         <Trash className="h-4 w-4 mr-2" />
                         Delete
                     </Button>

@@ -3,7 +3,6 @@ import { Card, CardContent } from '@/components/wrappers/Card';
 import { Input } from "@/components/wrappers/Input";
 import { Button } from "@/components/wrappers/Button";
 import { Checkbox } from "@/components/wrappers/CheckBox";
-import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import {
