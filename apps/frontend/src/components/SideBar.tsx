@@ -5,11 +5,14 @@ import { AppRoutesPaths } from "@/enums/routes"
 import areaLogo from "@/assets/area_logo.png"
 import react from "@/assets/react.svg"
 import { Avatar} from "@/components/ui/avatar"
+import { useUserInformation } from "@/shared/hooks/useUserInformation"
 
 const SideBar = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const { getInitials } = useUserInformation()
 
+  const name = getInitials()
   const menuItems = [
     { icon: House, label: "Home", path: AppRoutesPaths.HOME, name: "Home" },
     { icon: Workflow, label: "Workflows", path: "/test", name: "Workflows" },
@@ -43,15 +46,15 @@ const SideBar = () => {
             </div>
             )
         })}
-        <div className="mt-auto">
+        <div className="mt-auto bg-primary rounded-[30px] border-border border-2">
             <Button
                 variant="ghost"
                 size="icon"
                 title="avatar"
                 className="hover:bg-border rounded-[30px] w-14 h-14 flex items-center justify-center"
             >
-                <Avatar className="w-10 h-10 border-2 border-border p-0.5 scale-125">
-                    <img src={react} alt="User Avatar" className="rounded-full" />
+                <Avatar className="w-10 h-10 p-1 scale-125 items-center justify-center">
+                    <p className="text-center text-2xl text-card">{name}</p>
                 </Avatar>
             </Button>
         </div>
