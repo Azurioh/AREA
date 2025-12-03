@@ -3,21 +3,24 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 COPY package.json ./
+COPY pnpm-*.yaml ./
 COPY packages ./packages
 COPY apps/frontend /app/apps/frontend/
 
-RUN npm install
+RUN npm install -g pnpm
+
+RUN pnpm install --frozen-lockfile
 
 WORKDIR /app/packages/shared
 
-RUN npm run build
+RUN pnpm run build
 
 WORKDIR /app/apps/frontend
 
 ARG VITE_BACKEND_URL
 ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 
-RUN npm run build
+RUN pnpm run build
 
 # Runtime
 FROM nginx:alpine AS runner
