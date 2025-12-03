@@ -38,8 +38,6 @@ export class DiscordService {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'User does not exist');
     }
 
-    console.log('code: ', code);
-    console.log('state: ', state);
     const response = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: {
@@ -60,7 +58,6 @@ export class DiscordService {
 
     const formattedResponse = await response.json() as DiscordAuthorizationResponse;
 
-    console.log(formattedResponse);
     const data: DiscordAccount = {
       userId: decoded._id,
       accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
