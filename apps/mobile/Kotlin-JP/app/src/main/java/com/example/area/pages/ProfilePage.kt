@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +28,7 @@ import com.example.area.R
 import com.example.area.components.ConnectionCard
 import com.example.area.components.LinearGradient
 import com.example.area.components.ProfileCard
+import com.example.area.components.EditProfileCard
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.viewModel.UserViewModel
@@ -34,6 +39,7 @@ fun ProfilePage(
     userViewModel: UserViewModel = viewModel(),
     serviceViewModel: ServiceViewModel = viewModel()
 ) {
+    var isEditing by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Column(
@@ -44,7 +50,7 @@ fun ProfilePage(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Profile page",
+            text = if (isEditing) "Edit Profile" else "Profile page",
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
@@ -54,34 +60,45 @@ fun ProfilePage(
                 .padding(top = 32.dp)
                 .fillMaxWidth()
         )
-        ProfileCard(userViewModel = userViewModel)
-        Text(
-            text = "Services",
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            color = Color.White,
-            textAlign = TextAlign.Start,
-            modifier = Modifier
-                .padding(top = 20.dp, start = 32.dp)
-                .fillMaxWidth()
-        )
-        ConnectionCard(
-            serviceImage = R.drawable.github,
-            serviceName = "Github",
-            isConnected = false,
-            onButtonClick = {
-                serviceViewModel.connectToService(
-                    serviceName = "github",
-                    onSuccess = { url ->
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                        context.startActivity(intent)
-                    },
-                    onError = { error ->
-                        println(">>> Failed to connect to GitHub: $error")
-                    }
-                )
-            }
-        )
+
+        if (isEditing) {
+            EditProfileCard(
+                userViewModel = userViewModel,
+                onDismiss = { isEditing = false }
+            )
+        } else {
+            ProfileCard(
+                userViewModel = userViewModel,
+                onEditClick = { isEditing = true }
+            )
+            Text(
+                text = "Services",
+                fontFamily = poppinsFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.White,
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .padding(top = 20.dp, start = 32.dp)
+                    .fillMaxWidth()
+            )
+            ConnectionCard(
+                serviceImage = R.drawable.github,
+                serviceName = "Github",
+                isConnected = false,
+                onButtonClick = {
+                    serviceViewModel.connectToService(
+                        serviceName = "github",
+                        onSuccess = { url ->
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            context.startActivity(intent)
+                        },
+                        onError = { error ->
+                            println(">>> Failed to connect to GitHub: $error")
+                        }
+                    )
+                }
+            )
+        }
     }
 }
