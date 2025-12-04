@@ -22,17 +22,23 @@ import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.UserViewModel
 import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
+import com.example.area.ui.theme.CustomBlack
 
 @Composable
-fun LoginCard(userViewModel: UserViewModel) {
+fun LoginCard(
+    userViewModel: UserViewModel,
+    onNavigateToRegister: () -> Unit = {},
+    onNavigateToMain: () -> Unit = {}
+) {
     var textFieldEmail by remember { mutableStateOf("") }
     var textFieldPassword by remember { mutableStateOf("") }
+    var rememberMe by remember { mutableStateOf(false) }
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
         modifier = Modifier
             .padding(12.dp)
-            .size(width = 350.dp, height = 460.dp)
+            .size(width = 350.dp, height = 490.dp)
     ) {
         Text(
             text = "Welcome Back",
@@ -51,7 +57,7 @@ fun LoginCard(userViewModel: UserViewModel) {
             fontSize = 14.sp,
             fontFamily = montserratFontFamily,
             fontWeight = FontWeight.Normal,
-            color = Color.White,
+            color = CustomBlack,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(top = 12.dp)
@@ -74,12 +80,18 @@ fun LoginCard(userViewModel: UserViewModel) {
             modifier = Modifier.padding(top = 18.dp)
         )
 
-        TwoTexts(modifier = Modifier)
+        TwoTexts(
+            modifier = Modifier,
+            checked = rememberMe,
+            onCheckedChange = { rememberMe = it }
+        )
 
         ButtonLoginComponent(
             textFieldEmail = textFieldEmail,
             textFieldPassword = textFieldPassword,
-            userViewModel = userViewModel
+            userViewModel = userViewModel,
+            rememberMe = rememberMe,
+            onSuccess = onNavigateToMain
         )
 
         MultiColorText(
@@ -88,9 +100,7 @@ fun LoginCard(userViewModel: UserViewModel) {
             text2 = "Sign up",
             color2 = Accent,
             fontSize = 14.sp,
-            onText2Click = {
-                println("Sign up clicked!")
-            },
+            onText2Click = onNavigateToRegister,
             modifier = Modifier.fillMaxWidth()
         )
     }
