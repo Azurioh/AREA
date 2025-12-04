@@ -10,6 +10,8 @@ ENV CI="true"
 
 RUN pnpm install --frozen-lockfile
 
+RUN pnpm --filter @area/shared build
+
 RUN pnpm --filter @area/frontend build
 
 FROM nginx:alpine
