@@ -2,9 +2,9 @@ import type { Webhook } from '@area/shared/types/webhook.types';
 import type { WithId } from 'mongodb';
 import { v4 } from 'uuid';
 import type { WebhookRepository } from './webhook.repository';
-import { GithubWebhookPayload } from '@/types/webhook';
-import { ActionPayload } from '@/types/action-reaction';
-import { ActionsReactionsService } from '../actions-reactions';
+import type { GithubWebhookPayload } from '@/types/webhook';
+import type { ActionPayload } from '@/types/action-reaction';
+import type { ActionsReactionsService } from '../actions-reactions';
 
 /**
  * @class WebhookService
@@ -12,7 +12,7 @@ import { ActionsReactionsService } from '../actions-reactions';
  */
 export class WebhookService {
   private repository: WebhookRepository;
-  private actionsReactionsService: ActionsReactionsService
+  private actionsReactionsService: ActionsReactionsService;
 
   constructor(repository: WebhookRepository, actionsReactionsService: ActionsReactionsService) {
     this.repository = repository;
@@ -22,10 +22,10 @@ export class WebhookService {
   async githubCallback(event: string, body: GithubWebhookPayload): Promise<void> {
     const action: ActionPayload = {
       service: 'github',
-      trigger: `${event}/${(body as GithubWebhookPayload).repository.name}`
+      trigger: `${event}/${(body as GithubWebhookPayload).repository.name}`,
     };
 
-    this.actionsReactionsService.handleReactions(action)
+    this.actionsReactionsService.handleReactions(action);
   }
 
   /**

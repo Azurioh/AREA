@@ -57,9 +57,9 @@ export class GithubService {
       }),
     });
 
-    const formattedResponse = await response.json()
+    const formattedResponse = await response.json();
 
-    const trigger = `${action.name}/${action.params.repository}`
+    const trigger = `${action.name}/${action.params.repository}`;
 
     if (!response.ok) {
       for (const error of formattedResponse.errors) {
@@ -101,10 +101,10 @@ export class GithubService {
           },
           body: JSON.stringify({
             title: reaction.params.title,
-            body: reaction.params.body
+            body: reaction.params.body,
           }),
         });
-        return response.ok
+        return response.ok;
       }
     }
     return false;
@@ -203,7 +203,7 @@ export class GithubService {
    * @returns {Promise<string>} The name of the user
    */
   async getUserName(userId: string, account?: GithubAccount): Promise<string> {
-    const githubAccount = account ?? await this.getGithubAccountByUserId(userId);
+    const githubAccount = account ?? (await this.getGithubAccountByUserId(userId));
 
     if (!githubAccount) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'Github account not found');

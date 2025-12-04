@@ -8,12 +8,15 @@ import { Card } from '@/components/wrappers/Card';
 import { Checkbox } from '@/components/wrappers/CheckBox';
 import { Input } from '@/components/wrappers/Input';
 import { AppRoutesPaths } from '@/enums/routes';
-import { useRememberMe } from '@/features/auth/hooks/useRememberMe';
+import { useLogin } from '@/features/auth/hooks/useLogin';
 import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
+import { useClearUserData } from '@/shared/hooks/useClearUserData';
 
 const LoginPage: React.FC = () => {
   const { showPassword, togglePasswordVisibility } = useShowPassword();
-  const { rememberMe, toggleRememberMe } = useRememberMe();
+  const { email, setEmail, password, setPassword, rememberMe, setRememberMe, isLoading, error, handleSubmit } =
+    useLogin();
+  useClearUserData();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
@@ -28,12 +31,24 @@ const LoginPage: React.FC = () => {
             <h1 className="font-bold tracking-tighter text-primary">Welcome Back</h1>
             <p className="font-text text-foreground">Sign in to your account to continue</p>
           </div>
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            {error && (
+              <div className="p-3 rounded-[var(--small-radius)] bg-destructive/10 text-destructive text-sm">
+                {error}
+              </div>
+            )}
             <div className="space-y-2">
               <label htmlFor="email" className="text-foreground">
                 Email
               </label>
-              <Input id="email" type="email" placeholder="test@gmail.com" required />
+              <Input
+                id="email"
+                type="email"
+                placeholder="test@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
             <div className="space-y-2">
               <label htmlFor="password" className="text-foreground">
@@ -44,6 +59,8 @@ const LoginPage: React.FC = () => {
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
                 <button
@@ -57,15 +74,19 @@ const LoginPage: React.FC = () => {
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Checkbox id="remember-me" checked={rememberMe} onCheckedChange={toggleRememberMe} />
+                <Checkbox
+                  id="remember-me"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                />
                 <Label htmlFor="remember-me">Remember me</Label>
               </div>
               <a href="/" className="text-sm text-primary hover:underline">
                 Forgot password?
               </a>
             </div>
-            <Button type="submit" className="w-full">
-              Sign in
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
             <div className="text-center text-sm text-foreground">
               Don't have an account ?

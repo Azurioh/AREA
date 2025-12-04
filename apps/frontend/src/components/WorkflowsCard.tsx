@@ -3,7 +3,7 @@ import { Ellipsis, MoveRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/wrappers/Button';
-import { useActionsModal } from '@/hooks/useActionsModal';
+import { useActionsModal } from '@/shared/hooks/useActionsModal';
 
 interface StatsCardProps {
   title: string;

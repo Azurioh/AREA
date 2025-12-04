@@ -1,4 +1,4 @@
-import { CreateAction, CreateReaction } from "@area/shared/schemas/action-reaction.schema";
+import type { CreateAction, CreateReaction } from '@area/shared/schemas/action-reaction.schema';
 
 /**
  * @type ActionsReactions
@@ -9,9 +9,9 @@ import { CreateAction, CreateReaction } from "@area/shared/schemas/action-reacti
  * @property {CreateReaction} reaction The data to create the reaction
  */
 export type ActionsReactions = {
-    userId: string,
-    action: CreateAction,
-    reaction: CreateReaction
+  userId: string;
+  action: CreateAction;
+  reaction: CreateReaction;
 };
 
 /**
@@ -22,7 +22,6 @@ export type ActionsReactions = {
  * @property {string} trigger The trigger that made the action
  */
 export type ActionPayload = {
-    service: string,
-    trigger: string
+  service: string;
+  trigger: string;
 };
-

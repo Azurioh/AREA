@@ -12,8 +12,14 @@ export class ThirdPartyService {
 
   constructor() {
     this.authorizationUrls = new Map([
-      ['github', `https://github.com/login/oauth/authorize?client_id=${environment.GITHUB_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/github/v1/authorize&response_type=code&scope=user%2Crepo&state={state}`],
-      ['discord', `https://discord.com/oauth2/authorize?client_id=${environment.DISCORD_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/discord/v1/authorize&response_type=code&scope=identify+guilds+bot&state={state}&permissions=536870912`]
+      [
+        'github',
+        `https://github.com/login/oauth/authorize?client_id=${environment.GITHUB_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/github/v1/authorize&response_type=code&scope=user%2Crepo&state={state}`,
+      ],
+      [
+        'discord',
+        `https://discord.com/oauth2/authorize?client_id=${environment.DISCORD_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/discord/v1/authorize&response_type=code&scope=identify+guilds+bot&state={state}&permissions=536870912`,
+      ],
     ]);
   }
 

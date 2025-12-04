@@ -3,19 +3,20 @@ import { Button } from "@/components/wrappers/Button"
 import { useNavigate, useLocation } from "react-router-dom"
 import { AppRoutesPaths } from "@/enums/routes"
 import areaLogo from "@/assets/area_logo.png"
-import react from "@/assets/react.svg"
 import { Avatar} from "@/components/ui/avatar"
+import { useUserInitials } from "@/shared/hooks/useUserInitials"
 
 const SideBar = () => {
-  const navigate = useNavigate()
-  const location = useLocation()
+    const navigate = useNavigate()
+    const location = useLocation()
+    const name = useUserInitials();
 
-  const menuItems = [
-    { icon: House, label: "Home", path: AppRoutesPaths.HOME, name: "Home" },
-    { icon: Workflow, label: "Workflows", path: "/test", name: "Workflows" },
-    { icon: Link, label: "Connections", path: "/test", name: "Connections" },
-    { icon: LayoutDashboard, label: "Dashboard", path: AppRoutesPaths.ADMIN_DASHBOARD, name: "Dashboard" },
-  ]
+    const menuItems = [
+        { icon: House, label: "Home", path: AppRoutesPaths.HOME, name: "Home" },
+        { icon: Workflow, label: "Workflows", path: "/test", name: "Workflows" },
+        { icon: Link, label: "Connections", path: "/test", name: "Connections" },
+        { icon: LayoutDashboard, label: "Dashboard", path: AppRoutesPaths.ADMIN_DASHBOARD, name: "Dashboard" },
+    ]
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-24 bg-background flex flex-col items-center py-8 gap-4">
@@ -46,16 +47,16 @@ const SideBar = () => {
           </div>
         );
       })}
-      <div className="mt-auto">
+      <div className="mt-auto bg-primary p-1 rounded-full hover:bg-bordered-foreground cursor-pointer group border-card border-4">
         <Button
           variant="ghost"
           size="icon"
           title="avatar"
           onClick={() => navigate(AppRoutesPaths.PROFILE)}
-          className="hover:bg-border rounded-[30px] w-14 h-14 flex items-center justify-center"
+          className=" rounded-[30px] w-16 h-16 flex items-center justify-center"
         >
-          <Avatar className="w-10 h-10 border-2 border-border p-0.5 scale-125">
-            <img src={react} alt="User Avatar" className="rounded-full" />
+          <Avatar className="w-10 h-10 p-0.5 scale-125 items-center justify-center">
+            <p className="text-2xl text-primary-foreground group-hover:text-foreground">{name}</p>
           </Avatar>
         </Button>
       </div>

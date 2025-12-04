@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { WebhookService } from '@/modules/webhook';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import ApiError from '@/utils/api-error';
-import { GithubWebhookPayload } from '@/types/webhook';
+import type { GithubWebhookPayload } from '@/types/webhook';
 
 /**
  * @class WebhookController

@@ -1,6 +1,6 @@
-import { MongoCollections } from "@/enums/mongo-collection";
-import { ActionsReactions } from "@/types/action-reaction";
-import { Db } from "mongodb";
+import { MongoCollections } from '@/enums/mongo-collection';
+import type { ActionsReactions } from '@/types/action-reaction';
+import type { Db } from 'mongodb';
 
 /**
  * @class ActionsReactionsRepository
@@ -11,29 +11,34 @@ export class ActionsReactionsRepository {
 
   constructor(db: Db) {
     this.db = db;
-	}
+  }
 
-	/**
-	 * @function createActionReaction
-	 * @description Create a new action reaction
-	 *
-	 * @param {ActionsReactions} data The action reaction to add
-	 * @returns {Promise<boolean>} If the action reaction was added
-	 */
-	async createActionReaction(data: ActionsReactions): Promise<boolean> {
-		const { acknowledged } =  await this.db.collection<ActionsReactions>(MongoCollections.ACTIONS_REACTIONS).insertOne(data);
+  /**
+   * @function createActionReaction
+   * @description Create a new action reaction
+   *
+   * @param {ActionsReactions} data The action reaction to add
+   * @returns {Promise<boolean>} If the action reaction was added
+   */
+  async createActionReaction(data: ActionsReactions): Promise<boolean> {
+    const { acknowledged } = await this.db
+      .collection<ActionsReactions>(MongoCollections.ACTIONS_REACTIONS)
+      .insertOne(data);
 
-		return acknowledged;
-	}
+    return acknowledged;
+  }
 
-	/**
-	 * @function getActionsReactionsByTrigger
-	 * @description Get the list of actions reactions matching the action trigger
-	 *
-	 * @param {string} trigger The trigger of the action
-	 * @returns {Promise<ActionsReactions[]>} The matched actions reactions
-	 */
-	async getActionsReactionsByTrigger(trigger: string): Promise<ActionsReactions[]> {
-		return await this.db.collection<ActionsReactions>(MongoCollections.ACTIONS_REACTIONS).find({ 'action.trigger' : trigger }).toArray()
-	}
+  /**
+   * @function getActionsReactionsByTrigger
+   * @description Get the list of actions reactions matching the action trigger
+   *
+   * @param {string} trigger The trigger of the action
+   * @returns {Promise<ActionsReactions[]>} The matched actions reactions
+   */
+  async getActionsReactionsByTrigger(trigger: string): Promise<ActionsReactions[]> {
+    return await this.db
+      .collection<ActionsReactions>(MongoCollections.ACTIONS_REACTIONS)
+      .find({ 'action.trigger': trigger })
+      .toArray();
+  }
 }

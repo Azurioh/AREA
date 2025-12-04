@@ -1,19 +1,19 @@
-import type React from 'react';
-import { Card, CardContent } from '@/components/wrappers/Card';
-import { Input } from '@/components/wrappers/Input';
-import { Button } from '@/components/wrappers/Button';
-import { Checkbox } from '@/components/wrappers/CheckBox';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
+import type React from 'react';
+import SideBar from '@/components/SideBar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/wrappers/Button';
+import { Card, CardContent } from '@/components/wrappers/Card';
+import { Checkbox } from '@/components/wrappers/CheckBox';
+import { Input } from '@/components/wrappers/Input';
 import UserCard from '../components/UserCard';
 import { useUserFilter } from '../hooks/useUserFilter';
-import SideBar from '@/components/SideBar';
 
 const users = [
   { id: 1, name: 'John Doe', email: 'john.doe@example.com', role: 'Admin' },

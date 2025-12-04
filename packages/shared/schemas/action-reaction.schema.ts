@@ -1,4 +1,4 @@
-import z from "zod";
+import z from 'zod';
 
 export const actionReactionSchema = z.object({
   service: z.string().meta({
@@ -9,12 +9,11 @@ export const actionReactionSchema = z.object({
     description: 'The name of the action/reaction',
     example: 'push',
   }),
-  params: z.object({}).catchall(z.any())
-})
-
+  params: z.object({}).catchall(z.any()),
+});
 
 export type CreateAction = z.infer<typeof actionReactionSchema> & {
-    trigger: string
+  trigger: string;
 };
 
 export type CreateReaction = z.infer<typeof actionReactionSchema>;
@@ -25,7 +24,7 @@ export type CreateReaction = z.infer<typeof actionReactionSchema>;
 
 export const createUserMeActionReactionBodySchema = z.object({
   action: actionReactionSchema,
-  reaction: actionReactionSchema
+  reaction: actionReactionSchema,
 });
 
 export type CreateUserMeActionReactionBody = z.infer<typeof createUserMeActionReactionBodySchema>;

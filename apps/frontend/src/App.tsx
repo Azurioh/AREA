@@ -5,6 +5,7 @@ import { LoginPage, RegisterPage } from '@/features/auth';
 import { HomePage } from '@/features/home';
 import { Profile } from '@/features/profile';
 import { AuthProvider } from './contexts/AuthContext';
+import { ProtectedRoute } from './contexts/PorectedRoutes';
 import { ThemeProvider } from './contexts/ThemeContext';
 
 export default function App() {
@@ -15,9 +16,11 @@ export default function App() {
           <Routes>
             <Route path={AppRoutesPaths.REGISTER} element={<RegisterPage />} />
             <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
-            <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
-            <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
-            <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
+              <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
+              <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
+            </Route>
           </Routes>
         </AuthProvider>
       </ThemeProvider>

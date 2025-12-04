@@ -6,7 +6,7 @@
  * @property {string} repository.name The name of the repository
  */
 export type GithubWebhookPayload = {
-    repository: {
-        name: string
-    }
+  repository: {
+    name: string;
+  };
 };

@@ -1,7 +1,7 @@
 import {
   createUserMeActionReactionBodySchema,
   createUserMeActionReactionResponseSchema,
-  CreateUserMeActionReactionBody,
+  type CreateUserMeActionReactionBody,
 } from '@area/shared/schemas/action-reaction.schema';
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';

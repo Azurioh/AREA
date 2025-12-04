@@ -6,5 +6,5 @@ export enum MongoCollections {
   USERS = 'users',
   GITHUB_ACCOUNT = 'github_account',
   DISCORD_ACCOUNT = 'discord_account',
-  ACTIONS_REACTIONS = 'actions_reactions'
+  ACTIONS_REACTIONS = 'actions_reactions',
 }

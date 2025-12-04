@@ -1,9 +1,7 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type {
-  CreateUserMeActionReactionBody,
-} from '@area/shared/schemas/action-reaction.schema';
+import type { CreateUserMeActionReactionBody } from '@area/shared/schemas/action-reaction.schema';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { ActionsReactionsService } from '../actions-reactions';
+import type { ActionsReactionsService } from '../actions-reactions';
 
 /**
  * @class ActionsReactionsController
@@ -24,7 +22,10 @@ export class ActionsReactionsController {
    * @param {FastifyReply} reply The FastifyReply object
    * @returns {Promise<void>} Nothing
    */
-  async createActionReaction(request: FastifyRequest<{ Body: CreateUserMeActionReactionBody }>, reply: FastifyReply): Promise<void> {
+  async createActionReaction(
+    request: FastifyRequest<{ Body: CreateUserMeActionReactionBody }>,
+    reply: FastifyReply,
+  ): Promise<void> {
     const body = request.body;
     await this.service.createActionReaction(request.user._id, body.action, body.reaction);
 
