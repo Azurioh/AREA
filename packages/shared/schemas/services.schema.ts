@@ -26,6 +26,8 @@ export const getServiceActionsResponseSchema = z.array(
   }),
 );
 
+export type GetServiceActionsResponse = z.infer<typeof getServiceActionsResponseSchema>;
+
 /**
  * GET /services/v1/:serviceName/actions/:actionName
  */
@@ -54,6 +56,8 @@ export const getActionsDetailsResponseSchema = z.object({
   params: z.array(actionParamsSchema),
 });
 
+export type GetActionDetailsResponse = z.infer<typeof getActionsDetailsResponseSchema>;
+
 /**
  * GET /services/v1/:serviceName/actions/:actionName/returned-values
  */
@@ -77,6 +81,8 @@ export const getActionReturnedValuesResponseSchema = z.array(
     type: actionReturnValuesFields.type,
   }),
 );
+
+export type GetActionReturnedValuesResponse = z.infer<typeof getActionReturnedValuesResponseSchema>;
 
 /**
  * GET /services/v1/:serviceName/reactions
@@ -102,6 +108,8 @@ export const getServiceReactionsResponseSchema = z.array(
     }),
   }),
 );
+
+export type GetServiceReactionsResponse = z.infer<typeof getServiceReactionsResponseSchema>;
 
 /**
  * GET /services/v1/:serviceName/reactions/:reactionName
@@ -130,3 +138,5 @@ export const getReactionDetailsResponseSchema = z.object({
   }),
   params: z.array(reactionParamsSchema),
 });
+
+export type GetReactionDetailsResponse = z.infer<typeof getReactionDetailsResponseSchema>;
