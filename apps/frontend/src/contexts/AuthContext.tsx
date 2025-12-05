@@ -1,6 +1,7 @@
 import type React from 'react';
 import { createContext, type ReactNode, useMemo, useState } from 'react';
 import { WebhookClient } from '@/features/webhook';
+import { ActionReactionClient, ServicesClient } from '@/features/workflows';
 import { TokenManager } from '@/lib/TokenManager';
 
 /**
@@ -28,6 +29,8 @@ export interface AuthState {
  */
 export interface AuthContextType {
   webhookClient: WebhookClient;
+  actionReactionClient: ActionReactionClient;
+  servicesClient: ServicesClient;
   authState: AuthState;
   tokenManager: TokenManager;
   logout: () => void;
@@ -38,6 +41,7 @@ if (!BASE_URL) {
   throw new Error('VITE_BACKEND_URL is not defined.');
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -47,16 +51,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   });
 
   const tokenManager = useMemo(() => new TokenManager(BASE_URL, setAuthState), []);
-  const webhookClient = useMemo(() => new WebhookClient(BASE_URL, tokenManager), []);
+  const webhookClient = useMemo(() => new WebhookClient(BASE_URL, tokenManager), [tokenManager]);
+  const servicesClient = useMemo(() => new ServicesClient(BASE_URL, tokenManager), [tokenManager]);
+  const actionReactionClient = useMemo(() => new ActionReactionClient(BASE_URL, tokenManager), [tokenManager]);
 
   const contextValue: AuthContextType = useMemo(
     () => ({
       webhookClient,
+      servicesClient,
       authState,
       tokenManager,
+      actionReactionClient,
       logout: tokenManager.logout.bind(tokenManager),
     }),
-    [authState, tokenManager],
+    [authState, tokenManager, actionReactionClient, servicesClient, webhookClient],
   );
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
