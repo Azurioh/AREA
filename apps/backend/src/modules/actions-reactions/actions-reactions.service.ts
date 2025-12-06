@@ -4,6 +4,7 @@ import type { ActionPayload, ActionsReactions } from '@/types/action-reaction';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import ApiError from '@/utils/api-error';
 import type { GithubService } from '../github';
+import type { DiscordService } from '../discord';
 
 /**
  * @class ActionsReactionsService
@@ -11,13 +12,19 @@ import type { GithubService } from '../github';
  */
 export class ActionsReactionsService {
   private readonly repository: ActionsReactionsRepository;
-  private actionsCreationFunc: Map<string, (userId: string, action: Omit<CreateAction, 'trigger'>) => Promise<string>>;
+  private actionsCreationFunc: Map<string, (userId: string, action: CreateAction) => Promise<string>>;
   private reactionsCreationFunc: Map<string, (userId: string, action: CreateReaction) => Promise<boolean>>;
 
-  constructor(repository: ActionsReactionsRepository, githubService: GithubService) {
+  constructor(repository: ActionsReactionsRepository, githubService: GithubService, discordService: DiscordService) {
     this.repository = repository;
-    this.actionsCreationFunc = new Map([['github', githubService.createAction.bind(githubService)]]);
-    this.reactionsCreationFunc = new Map([['github', githubService.createReaction.bind(githubService)]]);
+    this.actionsCreationFunc = new Map([
+      ['github', githubService.createAction.bind(githubService)],
+      ['discord', discordService.createAction.bind(discordService)],
+    ]);
+    this.reactionsCreationFunc = new Map([
+      ['github', githubService.createReaction.bind(githubService)],
+      ['discord', discordService.createReaction.bind(discordService)],
+    ]);
   }
 
   /**
@@ -25,10 +32,10 @@ export class ActionsReactionsService {
    * @description handle the redirection of action creation
    *
    * @param {string} userId The id of the user creating the action reaction
-   * @param {Omit<CreateAction, 'trigger'>} action The information about the action to be created
+   * @param {CreateAction} action The information about the action to be created
    * @returns {Promise<string>} The trigger action to store in the db
    */
-  async handleActions(userId: string, action: Omit<CreateAction, 'trigger'>): Promise<string> {
+  async handleActions(userId: string, action: CreateAction): Promise<string> {
     const actionCreationFunc = this.actionsCreationFunc.get(action.service);
 
     if (!actionCreationFunc) {
@@ -62,21 +69,18 @@ export class ActionsReactionsService {
    * @description Create a new action reaction
    *
    * @param {string} userId The id of the user creating the action reaction
-   * @param {Omit<CreateAction, 'trigger'>} action The information about the action to be created
+   * @param {CreateAction} action The information about the action to be created
    * @param {CreateReaction} reaction The information about the reaction to be created
    * @returns {Promise<boolean>} If the action and reaction could be created
    */
-  async createActionReaction(
-    userId: string,
-    action: Omit<CreateAction, 'trigger'>,
-    reaction: CreateReaction,
-  ): Promise<void> {
+  async createActionReaction(userId: string, action: CreateAction, reaction: CreateReaction): Promise<void> {
     const trigger = await this.handleActions(userId, action);
 
     const data: ActionsReactions = {
       userId: userId,
-      action: { ...action, trigger },
+      action: action,
       reaction: reaction,
+      trigger: trigger,
     };
     await this.repository.createActionReaction(data);
   }
