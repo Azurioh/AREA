@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { WebhookService } from '@/modules/webhook';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import ApiError from '@/utils/api-error';
-import type { GithubWebhookPayload } from '@/types/webhook';
+import type { DiscordWebhookPayload, GithubWebhookPayload } from '@/types/webhook';
 
 /**
  * @class WebhookController
@@ -16,8 +16,8 @@ export class WebhookController {
   }
 
   /**
-   * @function createWebhook
-   * @description Handles the creation of a new webhook.
+   * @function githubCallback
+   * @description Handles the callback for the github service.
    *
    * @param {FastifyRequest} request The Fastify request object containing the webhook data.
    * @param {FastifyReply} reply The Fastify reply object for sending the response.
@@ -32,6 +32,26 @@ export class WebhookController {
     const event = request.headers['x-github-event'] as string;
 
     this.service.githubCallback(event, body as GithubWebhookPayload);
+    reply.status(HttpStatusCode.NO_CONTENT).send();
+  }
+
+  /**
+   * @function discordCallback
+   * @description Handles the callback for the discord service.
+   *
+   * @param {FastifyRequest} request The Fastify request object containing the webhook data.
+   * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
+   */
+  async discordCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    if (!request.headers['x-discord-event']) {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook informations are missing');
+    }
+
+    const body = request.body;
+    const event = request.headers['x-discord-event'] as string;
+
+    this.service.discordCallback(event, body as DiscordWebhookPayload);
     reply.status(HttpStatusCode.NO_CONTENT).send();
   }
 }
