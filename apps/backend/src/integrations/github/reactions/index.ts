@@ -1,3 +1,3 @@
-import { GithubCreateIssueReaction } from './createIssue.reaction';
+import { GithubCreateIssueReaction } from './create-issue.reaction';
 
 export { GithubCreateIssueReaction };

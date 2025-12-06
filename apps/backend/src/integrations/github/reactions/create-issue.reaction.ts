@@ -6,7 +6,7 @@ import { Reaction } from '@/integrations/_definitions/reaction.interface';
  */
 export class GithubCreateIssueReaction extends Reaction {
   constructor() {
-    super('createIssue', 'Create an issue on GitHub', [
+    super('create_issue', 'Create an issue on GitHub', [
       {
         type: 'select',
         key: 'repository',
