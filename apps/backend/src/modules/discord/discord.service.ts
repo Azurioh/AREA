@@ -9,6 +9,7 @@ import type { MaybeNull } from '@area/shared/utils/common';
 import type { WithId } from 'mongodb';
 import { encryptString } from '@/utils/crypt';
 import type { DiscordAccount, DiscordAuthorizationResponse } from '@/types/discord';
+import type { CreateAction, CreateReaction } from '@area/shared/schemas/action-reaction.schema';
 
 /**
  * @class DiscordService
@@ -21,6 +22,47 @@ export class DiscordService {
   constructor(repository: DiscordRepository, usersService: UsersService) {
     this.repository = repository;
     this.usersService = usersService;
+  }
+
+  /**
+   * @function createAction
+   * @description Create an action with the discord service
+   *
+   * @param {string} _userId - The id of the user creating the action
+   * @param {CreateAction} action - The information about the action
+   * @returns {Promise<boolean>} If the action was created
+   */
+  async createAction(_userId: string, action: CreateAction): Promise<string> {
+    const trigger = `${action.name}/${action.params.channel.id}`;
+
+    return trigger;
+  }
+
+  /**
+   * @function createReaction
+   * @description Create a reaction with the discord service
+   *
+   * @param {string} _userId - The id of the user creating the action
+   * @param {CreateReaction} reaction - The information about the reaction
+   * @returns {Promise<boolean>} If the action was created
+   */
+  async createReaction(_userId: string, reaction: CreateReaction): Promise<boolean> {
+    switch (reaction.name) {
+      case 'send_message': {
+        const response = await fetch(`https://discord.com/api/channels/${reaction.params.channel.id}/messages`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bot ${environment.DISCORD_BOT_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: reaction.params.content,
+          }),
+        });
+        return response.ok;
+      }
+    }
+    return false;
   }
 
   /**
