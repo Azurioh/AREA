@@ -39,6 +39,7 @@ import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.CustomWhite
+import com.example.area.utils.getInitials
 
 @Composable
 fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
@@ -124,14 +125,5 @@ fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
                 )
             }
         }
-    }
-}
-
-fun getInitials(name: String): String {
-    val parts = name.trim().split(" ")
-    return when {
-        parts.size >= 2 -> "${parts[0].first()}${parts[1].first()}".uppercase()
-        parts.size == 1 && parts[0].length >= 2 -> parts[0].take(2).uppercase()
-        else -> parts[0].take(1).uppercase()
     }
 }
