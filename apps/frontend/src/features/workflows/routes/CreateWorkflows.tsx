@@ -61,7 +61,6 @@ const CreateWorkflows: React.FC = () => {
     setSelectedAction(action);
     const details = await servicesClient.getActionDetails(service, action);
     setAction({
-      trigger: '',
       service,
       name: action,
       params: {},
@@ -73,7 +72,6 @@ const CreateWorkflows: React.FC = () => {
     setSelectedReaction(reaction);
     const details = await servicesClient.getReactionDetails(service, reaction);
     setReaction({
-      trigger: '',
       service,
       name: reaction,
       params: {},
