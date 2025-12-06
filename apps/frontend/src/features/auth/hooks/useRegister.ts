@@ -26,6 +26,7 @@ export const useRegister = () => {
     }
 
     try {
+      await loginClient.register(name, email, password);
       navigate(AppRoutesPaths.LOGIN);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
