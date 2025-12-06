@@ -41,4 +41,15 @@ export default async (app: FastifyInstance) => {
       tags: ['Webhooks'],
     },
   });
+
+  app.route({
+    method: 'POST',
+    url: '/v1/discord/',
+    handler: controller.discordCallback.bind(controller),
+    schema: {
+      summary: 'The callback of the discord webhook',
+      description: 'Handle the callback of the discord webhook.',
+      tags: ['Webhooks'],
+    },
+  });
 };
