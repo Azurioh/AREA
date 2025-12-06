@@ -6,6 +6,16 @@ import type { Service } from '@/integrations/_definitions/service.interface';
  */
 class ServiceManager {
   private services: Map<string, Service> = new Map();
+  static #instance: ServiceManager;
+
+  private constructor() {}
+
+  public static get instance(): ServiceManager {
+    if (!ServiceManager.#instance) {
+      ServiceManager.#instance = new ServiceManager();
+    }
+    return ServiceManager.#instance;
+  }
 
   /**
    * @function register
@@ -40,6 +50,6 @@ class ServiceManager {
   }
 }
 
-const serviceManager = new ServiceManager();
+// const serviceManager = new ServiceManager();
 
-export default serviceManager;
+export { ServiceManager };
