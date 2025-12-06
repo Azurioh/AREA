@@ -20,10 +20,7 @@ export class ActionReactionClient extends ApiClient {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          action: { ...body.action, service: body.action.service.toLowerCase() },
-          reaction: { ...body.reaction, service: body.reaction.service.toLowerCase() },
-        }),
+        body: JSON.stringify(body),
       });
     } catch (error) {
       console.error('Error creating workflow:', error);

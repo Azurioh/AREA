@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-export function useSaveProfile(initialUsername: string, initialEmail: string, onEdit: (username: string, email: string) => void) {
+export function useSaveProfile(
+  initialUsername: string,
+  initialEmail: string,
+  onEdit: (username: string, email: string) => void,
+) {
   const [editedUsername, setEditedUsername] = useState(initialUsername);
   const [editedEmail, setEditedEmail] = useState(initialEmail);
 

@@ -12,7 +12,7 @@ import {
   updateUserMeBodySchema,
   updateUserMeResponseSchema,
   createUserMeStateTokenResponseSchema,
-  GetUserMeThirdPartyAuthorizationUrlParams,
+  type GetUserMeThirdPartyAuthorizationUrlParams,
   getUserMeThirdPartyAuthorizationUrlParamsSchema,
   getUserMeThirdPartyAuthorizationUrlResponseSchema,
 } from '@area/shared/schemas/user.schema';

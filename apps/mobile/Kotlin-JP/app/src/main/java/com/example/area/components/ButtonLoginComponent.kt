@@ -1,5 +1,6 @@
 package com.example.area.components
 
+import android.R
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -13,22 +14,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.viewModel.UserViewModel
 import com.example.area.ui.theme.Accent
+import com.example.area.ui.theme.CustomWhite
 
 @Composable
 fun ButtonLoginComponent(
     textFieldEmail: String,
     textFieldPassword: String,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    rememberMe: Boolean = false,
+    onSuccess: () -> Unit = {}
 ) {
     Button(
         onClick = {
-
             userViewModel.loginUser(
                 email = textFieldEmail,
                 password = textFieldPassword,
-                onError = { error ->
-                    println(">>> Erreur lors de la création : $error")
-                }
+                rememberMe = rememberMe,
+                onSuccess = onSuccess
             )
         },
         modifier = Modifier
@@ -42,7 +44,8 @@ fun ButtonLoginComponent(
         Text(
             text = "Sign in",
             fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            color = CustomWhite
         )
     }
 }

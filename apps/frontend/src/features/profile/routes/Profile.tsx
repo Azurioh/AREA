@@ -1,8 +1,7 @@
-import React from 'react';
-import ProfileCard from '@/features/profile/components/ProfileCard';
+import type React from 'react';
 import SideBar from '@/components/SideBar';
 import { Card, CardContent } from '@/components/wrappers/Card';
-import { motion } from 'framer-motion';
+import ProfileCard from '@/features/profile/components/ProfileCard';
 
 const mockProfile = {
   username: 'Ewan',
@@ -17,7 +16,7 @@ const Profile: React.FC = () => {
       <main className="flex-1 ml-24 pr-4 pt-4">
         <Card className="h-full w-full rounded-b-none">
           <CardContent className="p-8 h-full overflow-y-auto flex flex-col items-center">
-              <h1 className="font-bold tracking-tighter text-primary text-center mt-12 mb-12">Profile</h1>
+            <h1 className="font-bold tracking-tighter text-primary text-center mt-12 mb-12">Profile</h1>
 
             <div className="w-full max-w-4xl mb-12">
               <ProfileCard

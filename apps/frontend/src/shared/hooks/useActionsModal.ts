@@ -1,5 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from 'react';
 
+/**
+ * @function useActionsModal
+ * @description Custom hook to manage actions modal state and behavior
+ *
+ * @returns {object} Modal state and handlers
+ */
 export function useActionsModal() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -20,9 +26,9 @@ export function useActionsModal() {
         setIsModalOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isModalOpen]);
 

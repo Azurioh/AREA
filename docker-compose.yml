@@ -1,0 +1,68 @@
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - area-network
+
+  server:
+    build:
+      context: .
+      dockerfile: apps/backend/.docker/Dockerfile.prod
+    depends_on:
+      - mongodb
+    ports:
+      - "8080:${PORT}"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - BASE_API_URL=${BASE_API_URL}
+      - PORT=${PORT}
+      - CRYPT_SECRET_KEY=${CRYPT_SECRET_KEY}
+      - FRONTEND_AUTHORIZE_CALLBACK_URL=${FRONTEND_AUTHORIZE_CALLBACK_URL}
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_DATABASE=${MONGO_INITDB_DATABASE}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
+      - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
+      - JWT_STATE_TOKEN_SECRET=${JWT_STATE_TOKEN_SECRET}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+    networks:
+      - area-network
+
+  client_mobile:
+    build:
+      context: .
+      dockerfile: apps/mobile/Dockerfile
+    volumes:
+      - shared_volume:/shared
+
+  client_web:
+    build:
+      context: .
+      dockerfile: apps/frontend/.docker/Dockerfile.prod
+    ports:
+      - "8081:80"
+    volumes:
+      - shared_volume:/shared
+    depends_on:
+      - client_mobile
+      - server
+
+volumes:
+  shared_volume:
+  mongo_data:
+
+networks:
+  area-network:
+    driver: bridge

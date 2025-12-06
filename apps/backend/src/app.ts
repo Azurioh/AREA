@@ -14,6 +14,8 @@ import { discordRoutes } from './modules/discord';
 import { githubRoutes } from './modules/github';
 import { servicesRoutes } from './modules/services';
 import { usersRoutes } from './modules/users';
+import { webhookRoutes } from './modules/webhook';
+import { actionsReactionsRoute } from './modules/actions-reactions';
 
 const registerServices = () => {
   serviceManager.register(githubService);
@@ -37,10 +39,12 @@ async function build(): Promise<FastifyInstance> {
   registerServices();
 
   app.withTypeProvider<ZodTypeProvider>().register(aboutRoutes);
+  app.withTypeProvider<ZodTypeProvider>().register(webhookRoutes, { prefix: '/webhook' });
   app.withTypeProvider<ZodTypeProvider>().register(githubRoutes, { prefix: '/github' });
   app.withTypeProvider<ZodTypeProvider>().register(discordRoutes, { prefix: '/discord' });
   app.withTypeProvider<ZodTypeProvider>().register(authRoutes, { prefix: '/auth' });
   app.withTypeProvider<ZodTypeProvider>().register(usersRoutes, { prefix: '/users' });
+  app.withTypeProvider<ZodTypeProvider>().register(actionsReactionsRoute, { prefix: '/actions-reactions' });
   app.withTypeProvider<ZodTypeProvider>().register(servicesRoutes, { prefix: '/services' });
 
   return app;

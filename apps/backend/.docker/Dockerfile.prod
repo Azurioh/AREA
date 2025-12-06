@@ -1,0 +1,19 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+COPY . .
+
+ENV CI="true"
+
+RUN pnpm install --frozen-lockfile
+
+RUN pnpm --filter @area/shared build
+
+RUN pnpm --filter area-backend build
+
+EXPOSE 8080
+
+CMD ["node", "apps/backend/dist/index.js"]

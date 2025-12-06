@@ -6,9 +6,6 @@ module.exports = {
   content: ['./index.html', './src/**/*.{ts,tsx,js,jsx}'],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['var(--font-sans)', ...fontFamily.sans],
-      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
@@ -56,20 +53,20 @@ module.exports = {
           5: 'hsl(var(--chart-5))',
         },
       },
-	  fontFamily: {
-      montserrat: {
-        regular: ['"montserrat-Regular"', 'sans-serif'],
-        medium: ['"montserrat-Medium"', 'sans-serif'],
-        semibold: ['"montserrat-SemiBold"', 'sans-serif'],
-        bold: ['"montserrat-Bold"', 'sans-serif'],
+      fontFamily: {
+        montserrat: {
+          regular: ['"montserrat-Regular"', 'sans-serif'],
+          medium: ['"montserrat-Medium"', 'sans-serif'],
+          semibold: ['"montserrat-SemiBold"', 'sans-serif'],
+          bold: ['"montserrat-Bold"', 'sans-serif'],
+        },
+        poppins: {
+          regular: ['"poppins-Regular"', 'sans-serif'],
+          medium: ['"poppins-Medium"', 'sans-serif'],
+          semibold: ['"poppins-SemiBold"', 'sans-serif'],
+          bold: ['"poppins-Bold"', 'sans-serif'],
+        },
       },
-      poppins: {
-        regular: ['"poppins-Regular"', 'sans-serif'],
-        medium: ['"poppins-Medium"', 'sans-serif'],
-        semibold: ['"poppins-SemiBold"', 'sans-serif'],
-        bold: ['"poppins-Bold"', 'sans-serif'],
-      },
-	  },
     },
   },
   plugins: [require('tailwindcss-animate')],

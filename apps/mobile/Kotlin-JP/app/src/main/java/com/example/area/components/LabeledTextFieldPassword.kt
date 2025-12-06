@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.montserratFontFamily
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import com.example.area.ui.theme.CustomBlack
+import com.example.area.ui.theme.TextFieldBackground
 
 @Composable
 fun LabeledTextFieldPassword(
@@ -51,7 +53,7 @@ fun LabeledTextFieldPassword(
             fontSize = 14.sp,
             fontFamily = montserratFontFamily,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
+            color = CustomBlack,
             textAlign = TextAlign.Left,
             modifier = Modifier.padding(bottom = 8.dp)
         )
@@ -82,7 +84,7 @@ fun LabeledTextFieldPassword(
                             } else {
                                 "Show password"
                             },
-                            tint = Color.White
+                            tint = CustomBlack
                         )
                     }
                 },
@@ -91,11 +93,11 @@ fun LabeledTextFieldPassword(
                     .height(56.dp),
                 shape = RoundedCornerShape(10.dp),
                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color(0xFF384047),
-                    unfocusedContainerColor = Color(0xFF384047),
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedLabelColor = Color.LightGray,
+                    focusedContainerColor = TextFieldBackground,
+                    unfocusedContainerColor = TextFieldBackground,
+                    focusedTextColor = CustomBlack,
+                    unfocusedTextColor = CustomBlack,
+                    focusedLabelColor = CustomBlack,
                     unfocusedLabelColor = Color.Gray,
                     focusedPlaceholderColor = Color.Gray,
                     unfocusedPlaceholderColor = Color.Gray,

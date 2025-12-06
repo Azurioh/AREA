@@ -4,7 +4,9 @@
   "main": "dist/index.js",
   "types": "index.ts",
   "scripts": {
-    "build": "tsc && tsc-alias"
+    "build": "tsc && tsc-alias",
+    "lint": "biome lint . --write",
+    "format": "biome format . --write"
   },
   "exports": {
     ".": "./dist/index.js",

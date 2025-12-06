@@ -2,12 +2,19 @@ package com.example.area.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.example.area.data.api.RetrofitInstance
 import com.example.area.data.models.Register
 import com.example.area.data.models.Login
+import com.example.area.data.models.User
 
 class UserViewModel : ViewModel() {
+
+    private val _userProfile = MutableStateFlow<User?>(null)
+    val userProfile: StateFlow<User?> = _userProfile.asStateFlow()
 
     fun registerUser(
         name: String,
@@ -26,9 +33,9 @@ class UserViewModel : ViewModel() {
                 )
 
                 val token = RetrofitInstance.api.registerUser(request)
-
                 RetrofitInstance.getTokenManager().saveToken(token.accessToken)
 
+                fetchUserProfile()
                 onSuccess()
             } catch (e: Exception) {
                 onError(e.message ?: "Erreur inconnue")
@@ -39,22 +46,36 @@ class UserViewModel : ViewModel() {
     fun loginUser(
         email: String,
         password: String,
+        rememberMe: Boolean = false,
         onSuccess: () -> Unit = {},
         onError: (String) -> Unit = {}
     ) {
         viewModelScope.launch {
             try {
-
                 val request = Login(
                     email = email,
-                    password = password
+                    password = password,
+                    rememberMe = rememberMe
                 )
 
                 val token = RetrofitInstance.api.loginUser(request)
-
                 RetrofitInstance.getTokenManager().saveToken(token.accessToken)
 
+                fetchUserProfile()
                 onSuccess()
+            } catch (e: Exception) {
+                onError(e.message ?: "Erreur inconnue")
+            }
+        }
+    }
+
+    fun fetchUserProfile(
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val user = RetrofitInstance.api.getUserProfile()
+                _userProfile.value = user
             } catch (e: Exception) {
                 onError(e.message ?: "Erreur inconnue")
             }
