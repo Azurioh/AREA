@@ -24,7 +24,11 @@ import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
 
 @Composable
-fun RegisterCard(userViewModel: UserViewModel) {
+fun RegisterCard(
+    userViewModel: UserViewModel,
+    onNavigateToLogin: () -> Unit = {},
+    onNavigateToMain: () -> Unit = {}
+) {
     var textFieldName by remember { mutableStateOf("") }
     var textFieldEmail by remember { mutableStateOf("") }
     var textFieldPassword by remember { mutableStateOf("") }
@@ -97,7 +101,8 @@ fun RegisterCard(userViewModel: UserViewModel) {
             textFieldEmail = textFieldEmail,
             textFieldPassword = textFieldPassword,
             textFieldPassword2 = textFieldPassword2,
-            userViewModel = userViewModel
+            userViewModel = userViewModel,
+            onSuccess = onNavigateToMain
         )
 
         MultiColorText(
@@ -106,9 +111,7 @@ fun RegisterCard(userViewModel: UserViewModel) {
             text2 = "Sign in",
             color2 = Accent,
             fontSize = 14.sp,
-            onText2Click = {
-                println("Sign in clicked!")
-            },
+            onText2Click = onNavigateToLogin,
             modifier = Modifier.fillMaxWidth()
         )
     }

@@ -2,15 +2,16 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff } from 'lucide-react';
 import type React from 'react';
 import { Link } from 'react-router-dom';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/wrappers/Button';
 import { Card } from '@/components/wrappers/Card';
 import { Checkbox } from '@/components/wrappers/CheckBox';
 import { Input } from '@/components/wrappers/Input';
-import { Label } from '@/components/ui/label';
 import { AppRoutesPaths } from '@/enums/routes';
-import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
+import { useRegister } from '@/features/auth/hooks/useRegister';
 import { useRememberMe } from '@/features/auth/hooks/useRememberMe';
 import { useRegister } from '@/features/auth/hooks/useRegister';
+import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
 import { useClearUserData } from '@/shared/hooks/useClearUserData';
 
 const RegisterPage: React.FC = () => {
@@ -61,7 +62,9 @@ const RegisterPage: React.FC = () => {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="password" className="text-foreground">Password</label>
+              <label htmlFor="password" className="text-foreground">
+                Password
+              </label>
               <div className="relative">
                 <Input
                   id="password"
@@ -81,7 +84,9 @@ const RegisterPage: React.FC = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <label htmlFor="confirm-password" className="text-foreground">Confirm Password</label>
+              <label htmlFor="confirm-password" className="text-foreground">
+                Confirm Password
+              </label>
               <div className="relative">
                 <Input
                   id="confirm-password"

@@ -1,6 +1,8 @@
 package com.example.area
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,11 +33,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.example.area.pages.RegisterPage
-import com.example.area.pages.LoginPage
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.area.pages.HomePage
 import com.example.area.pages.ProfilePage
 import com.example.area.pages.CreatePage
+import com.example.area.pages.SettingsPage
 import com.example.area.ui.theme.Accent
+import com.example.area.ui.theme.CustomWhite
+import com.example.area.viewModel.UserViewModel
 
 data class NavItemState(
     val title: String,
@@ -46,7 +51,11 @@ data class NavItemState(
 )
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreenWithNav(
+    modifier: Modifier = Modifier,
+    userViewModel: UserViewModel = viewModel(),
+    onLogout: () -> Unit = {}
+) {
 
     val items = listOf(
         NavItemState(
@@ -81,6 +90,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
     var bottomNavState by rememberSaveable { mutableStateOf(0) }
 
     Scaffold(
+        containerColor = Color.Transparent,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             NavigationBar(
                 modifier
@@ -110,10 +121,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
                         },
                         label = { Text(text = item.title) },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color.Black,
-                            unselectedIconColor = Color.Black,
-                            selectedTextColor = Color.Black,
-                            unselectedTextColor = Color.Black,
+                            selectedIconColor = CustomWhite,
+                            unselectedIconColor = CustomWhite,
+                            selectedTextColor = CustomWhite,
+                            unselectedTextColor = CustomWhite,
                             indicatorColor = Accent
                         )
                     )
@@ -121,19 +132,30 @@ fun MainScreen(modifier: Modifier = Modifier) {
             }
         }
     ) { paddingValues ->
-        ContentScreen(
-            modifier = Modifier.padding(paddingValues),
-            selectedIndex = bottomNavState
-        )
+        Box(modifier = Modifier.fillMaxSize()) {
+            ContentScreen(
+                modifier = Modifier.fillMaxSize(),
+                selectedIndex = bottomNavState,
+                userViewModel = userViewModel,
+                onLogout = onLogout,
+                bottomPadding = paddingValues.calculateBottomPadding()
+            )
+        }
     }
 }
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
+fun ContentScreen(
+    modifier: Modifier = Modifier,
+    selectedIndex: Int,
+    userViewModel: UserViewModel,
+    onLogout: () -> Unit = {},
+    bottomPadding: androidx.compose.ui.unit.Dp = 0.dp
+) {
     when(selectedIndex) {
-        0 -> RegisterPage()
-        1 -> CreatePage()
-        2 -> ProfilePage()
-        3 -> LoginPage()
+        0 -> HomePage(modifier = modifier)
+        1 -> CreatePage(modifier = modifier)
+        2 -> ProfilePage(modifier = modifier, userViewModel = userViewModel)
+        3 -> SettingsPage(modifier = modifier, onLogout = onLogout)
     }
 }

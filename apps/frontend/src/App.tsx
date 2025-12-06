@@ -1,8 +1,11 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AppRoutesPaths } from '@/enums/routes';
+import { AdminDashboardPage } from '@/features/adminDashboard';
 import { LoginPage, RegisterPage } from '@/features/auth';
+import { HomePage } from '@/features/home';
 import { Profile } from '@/features/profile';
 import { AuthProvider } from './contexts/AuthContext';
+import { ProtectedRoute } from './contexts/PorectedRoutes';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AdminDashboardPage } from '@/features/adminDashboard';
 import { HomePage } from '@/features/home';
@@ -20,6 +23,9 @@ export default function App() {
               <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={ <AdminDashboardPage /> } />
               <Route path={AppRoutesPaths.PROFILE} element={ <Profile /> } />
               <Route path={AppRoutesPaths.HOME} element={ <HomePage /> } />
+              <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
+              <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
+              <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
             </Route>
           </Routes>
         </AuthProvider>

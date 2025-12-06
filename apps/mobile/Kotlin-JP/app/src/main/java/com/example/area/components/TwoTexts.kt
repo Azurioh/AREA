@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,10 +16,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.Accent
+import com.example.area.ui.theme.CustomBlack
 
 @Composable
-fun TwoTexts(modifier: Modifier = Modifier) {
-    var checked by remember { mutableStateOf(true) }
+fun TwoTexts(
+    modifier: Modifier = Modifier,
+    checked: Boolean = true,
+    onCheckedChange: (Boolean) -> Unit = {}
+) {
     val textStyle = androidx.compose.ui.text.TextStyle(
         fontSize = 14.sp,
         fontFamily = montserratFontFamily
@@ -39,12 +39,12 @@ fun TwoTexts(modifier: Modifier = Modifier) {
         ) {
             Checkbox(
                 checked = checked,
-                onCheckedChange = { checked = it }
+                onCheckedChange = onCheckedChange
             )
             Text(
                 text = "Remember me",
                 style = textStyle.copy(
-                    color = Color.White,
+                    color = CustomBlack,
                 ),
             )
         }

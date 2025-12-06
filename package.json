@@ -1,18 +1,15 @@
 {
   "name": "area",
+  "packageManager": "pnpm@10.24.0",
   "directories": {
     "doc": "docs"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "!apps/mobile"
-  ],
   "devDependencies": {
     "@biomejs/biome": "^2.3.6",
     "@types/node": "^24.10.1",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7"
+    "lint-staged": "^16.2.7",
+    "turbo": "^2.6.1"
   },
   "dependencies": {
     "@radix-ui/react-switch": "^1.2.6",
@@ -20,11 +17,16 @@
     "zod": "^4.1.13"
   },
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "format": "turbo run format",
+    "dev": "turbo run dev"
   },
   "lint-staged": {
     "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
-      "npx biome format --write --no-errors-on-unmatched"
+      "biome format --write",
+      "biome lint --write"
     ]
   }
 }

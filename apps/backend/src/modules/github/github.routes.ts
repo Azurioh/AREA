@@ -1,4 +1,8 @@
-import { githubAuthorizationQueryStringSchema, githubAuthorizationResponseSchema, listGithubRepositoriesResponseSchema } from '@area/shared/schemas/github.schema';
+import {
+  githubAuthorizationQueryStringSchema,
+  githubAuthorizationResponseSchema,
+  listGithubRepositoriesResponseSchema,
+} from '@area/shared/schemas/github.schema';
 import type { FastifyInstance } from 'fastify';
 import { GithubController } from './github.controller';
 import { GithubService } from './github.service';

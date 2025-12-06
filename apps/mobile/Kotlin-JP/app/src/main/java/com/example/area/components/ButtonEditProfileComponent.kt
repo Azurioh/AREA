@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.viewModel.UserViewModel
 import com.example.area.ui.theme.Accent
+import com.example.area.ui.theme.CustomWhite
 
 @Composable
 fun ButtonEditProfileComponent(
@@ -31,7 +32,7 @@ fun ButtonEditProfileComponent(
             .size(width = 170.dp, height = 50.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Accent,
-            contentColor = Color.Black
+            contentColor = CustomWhite
         )
     ) {
         Text(

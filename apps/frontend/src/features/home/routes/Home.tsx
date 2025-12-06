@@ -1,8 +1,7 @@
-import StatsCard from '../components/StatsCard';
-import WorkflowsCard from '../../../components/WorkflowsCard';
-import { Card, CardContent } from '@/components/ui/card';
 import SideBar from '@/components/SideBar';
-
+import { Card } from '@/components/ui/card';
+import WorkflowsCard from '@/components/WorkflowsCard';
+import StatsCard from '@/features/home/components/StatsCard';
 
 export default function HomePage() {
   const stats = [
