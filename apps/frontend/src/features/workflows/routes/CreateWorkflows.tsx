@@ -65,7 +65,7 @@ const CreateWorkflows: React.FC = () => {
       name: action,
       params: {},
     });
-    setActionParams(details?.params?.map((p) => ({ ...p, value: '' })) ?? []);
+    setActionParams(details?.params?.map((p: any) => ({ ...p, value: '' })) ?? []);
   };
 
   const handleSelectReaction = async (service: string, reaction: string) => {
@@ -76,7 +76,7 @@ const CreateWorkflows: React.FC = () => {
       name: reaction,
       params: {},
     });
-    setReactionParams(details?.params?.map((p) => ({ ...p, value: '' })) ?? []);
+    setReactionParams(details?.params?.map((p: any) => ({ ...p, value: '' })) ?? []);
   };
 
   return (
@@ -132,7 +132,7 @@ const CreateWorkflows: React.FC = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-full">
-                        {actions.map((a) => (
+                        {actions.map((a: any) => (
                           <DropdownMenuItem
                             key={a.name}
                             onClick={() => handleSelectAction(selectedActionService!, a.name)}
@@ -249,7 +249,7 @@ const CreateWorkflows: React.FC = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-full">
-                        {reactions.map((r) => (
+                        {reactions.map((r: any) => (
                           <DropdownMenuItem
                             key={r.name}
                             onClick={() => handleSelectReaction(selectedReactionService!, r.name)}
@@ -324,14 +324,20 @@ const CreateWorkflows: React.FC = () => {
               <div className="flex justify-center pt-4 pb-6">
                 <Button
                   onClick={async () => {
-                    setAction((prev) =>
+                    setAction((prev: any) =>
                       prev
-                        ? { ...prev, params: actionParams.reduce((acc, p) => ({ ...acc, [p.key]: p.value }), {}) }
+                        ? {
+                            ...prev,
+                            params: actionParams.reduce((acc: any, p: any) => ({ ...acc, [p.key]: p.value }), {}),
+                          }
                         : prev,
                     );
-                    setReaction((prev) =>
+                    setReaction((prev: any) =>
                       prev
-                        ? { ...prev, params: reactionParams.reduce((acc, p) => ({ ...acc, [p.key]: p.value }), {}) }
+                        ? {
+                            ...prev,
+                            params: reactionParams.reduce((acc: any, p: any) => ({ ...acc, [p.key]: p.value }), {}),
+                          }
                         : prev,
                     );
                     await createActionReaction();
