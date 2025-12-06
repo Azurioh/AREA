@@ -1,6 +1,6 @@
 import { type FastifyInstance, fastify } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { githubService, serviceManager } from '@/integrations';
+import { discordService, githubService, ServiceManager } from '@/integrations';
 import { setupCookie } from './config/cookie';
 import { setupCors } from './config/cors';
 import { setupErrorHandler } from './config/error-handler';
@@ -16,9 +16,11 @@ import { servicesRoutes } from './modules/services';
 import { usersRoutes } from './modules/users';
 import { webhookRoutes } from './modules/webhook';
 import { actionsReactionsRoute } from './modules/actions-reactions';
+import { setupDiscordBot } from './config/discord-bot';
 
 const registerServices = () => {
-  serviceManager.register(githubService);
+  ServiceManager.instance.register(githubService);
+  ServiceManager.instance.register(discordService);
 };
 
 async function build(): Promise<FastifyInstance> {
@@ -35,6 +37,7 @@ async function build(): Promise<FastifyInstance> {
   setupNotFoundHandler(app);
   setupErrorHandler(app);
   setupZod(app);
+  setupDiscordBot();
 
   registerServices();
 
