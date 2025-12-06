@@ -1,15 +1,15 @@
-import React from 'react';
-import { Card } from '@/components/wrappers/Card';
-import { Input } from '@/components/wrappers/Input';
-import { Button } from '@/components/wrappers/Button';
-import { Checkbox } from '@/components/wrappers/CheckBox';
-import { Label } from '@/components/ui/label';
-import { Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Eye, EyeOff } from 'lucide-react';
+import type React from 'react';
 import { Link } from 'react-router-dom';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/wrappers/Button';
+import { Card } from '@/components/wrappers/Card';
+import { Checkbox } from '@/components/wrappers/CheckBox';
+import { Input } from '@/components/wrappers/Input';
 import { AppRoutesPaths } from '@/enums/routes';
-import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
 import { useLogin } from '@/features/auth/hooks/useLogin';
+import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
 import { useClearUserData } from '@/shared/hooks/useClearUserData';
 
 const LoginPage: React.FC = () => {

@@ -33,6 +33,8 @@ import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.UserViewModel
 import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
+import com.example.area.ui.theme.CustomBlack
+import com.example.area.ui.theme.CustomWhite
 import com.example.area.ui.theme.montserratFontFamily
 
 @Composable
@@ -72,7 +74,7 @@ fun ConnectionCard(
                     fontFamily = montserratFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 15.sp,
-                    color = Color.White,
+                    color = CustomBlack,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -83,7 +85,7 @@ fun ConnectionCard(
                         .size(width = 90.dp, height = 28.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (isConnected) Color(0xFF5E5E5E) else Accent,
-                        contentColor = if (isConnected) Color.White else Color.Black
+                        contentColor = CustomWhite
                     ),
                     shape = RoundedCornerShape(8.dp),
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)

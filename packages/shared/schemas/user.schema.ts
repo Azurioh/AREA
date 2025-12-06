@@ -1,9 +1,9 @@
 import z from 'zod';
 import { userFields, userSchema } from '../types/user.types';
 
-/*********************
+/************************
  * CREATE USER ME STATE *
- *********************/
+ ************************/
 
 export const createUserMeStateTokenResponseSchema = z.object({
   stateToken: z.string().meta({
@@ -19,8 +19,8 @@ export const createUserMeStateTokenResponseSchema = z.object({
 
 export const getUserMeThirdPartyAuthorizationUrlResponseSchema = z.object({
   url: z.string().meta({
-    description: 'The name ',
-    example: 'github',
+    description: 'The url to authorize the user ',
+    example: 'https://your-authorization-url.com/',
   }),
 });
 

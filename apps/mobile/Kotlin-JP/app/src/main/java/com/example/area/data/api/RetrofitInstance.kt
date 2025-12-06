@@ -18,9 +18,14 @@ object RetrofitInstance {
         OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val originalRequest = chain.request()
+                val requestUrl = originalRequest.url.encodedPath
+
+                val isAuthRoute = requestUrl.contains("/auth/v1/login") ||
+                                 requestUrl.contains("/auth/v1/register")
+
                 val token = tokenManager?.getToken()
 
-                val newRequest = if (token != null) {
+                val newRequest = if (token != null && !isAuthRoute) {
                     originalRequest.newBuilder()
                         .header("Authorization", "Bearer $token")
                         .build()

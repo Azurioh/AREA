@@ -22,22 +22,22 @@ fun ButtonRegisterComponent(
     textFieldEmail: String,
     textFieldPassword: String,
     textFieldPassword2: String,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    onSuccess: () -> Unit = {}
 ) {
     val context = LocalContext.current
     Button(
         onClick = {
             if (textFieldPassword != textFieldPassword2) {
                 Toast.makeText(context, "Passwords don't match", Toast.LENGTH_SHORT).show()
+            } else {
+                userViewModel.registerUser(
+                    name = textFieldName,
+                    email = textFieldEmail,
+                    password = textFieldPassword,
+                    onSuccess = onSuccess
+                )
             }
-            userViewModel.registerUser(
-                name = textFieldName,
-                email = textFieldEmail,
-                password = textFieldPassword,
-                onError = { error ->
-                    println(">>> Erreur lors de la création : $error")
-                }
-            )
         },
         modifier = Modifier
             .fillMaxWidth()

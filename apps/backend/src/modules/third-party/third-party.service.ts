@@ -1,7 +1,7 @@
-import { generateStateToken } from "@/utils/token";
-import { environment } from "@/utils/environment";
-import ApiError from "@/utils/api-error";
-import { HttpStatusCode } from "@area/shared/enums/http-status";
+import { HttpStatusCode } from '@area/shared/enums/http-status';
+import ApiError from '@/utils/api-error';
+import { environment } from '@/utils/environment';
+import { generateStateToken } from '@/utils/token';
 
 /**
  * @class ThirdPartyService
@@ -12,8 +12,14 @@ export class ThirdPartyService {
 
   constructor() {
     this.authorizationUrls = new Map([
-      ['github', `https://github.com/login/oauth/authorize?client_id=${environment.GITHUB_CLIENT_ID}&redirect_uri=https://area-dev.loca.lt/github/v1/authorize&response_type=code&scope=user%2Crepo&state={state}`],
-      ['discord', `https://discord.com/oauth2/authorize?client_id=${environment.DISCORD_CLIENT_ID}&redirect_uri=https://area-dev.loca.lt/discord/v1/authorize&response_type=code&scope=identify+guilds+bot&state={state}&permissions=536870912`]
+      [
+        'github',
+        `https://github.com/login/oauth/authorize?client_id=${environment.GITHUB_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/github/v1/authorize&response_type=code&scope=user%2Crepo&state={state}`,
+      ],
+      [
+        'discord',
+        `https://discord.com/oauth2/authorize?client_id=${environment.DISCORD_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/discord/v1/authorize&response_type=code&scope=identify+guilds+bot&state={state}&permissions=536870912`,
+      ],
     ]);
   }
 
@@ -27,9 +33,9 @@ export class ThirdPartyService {
    */
   async getThirdPartyAuthorizationUrl(name: string, userId: string): Promise<string> {
     if (!this.authorizationUrls.has(name)) {
-      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Requested third party service doesn\'t exist')
+      throw new ApiError(HttpStatusCode.NOT_FOUND, "Requested third party service doesn't exist");
     }
-    const stateToken = generateStateToken({ _id: userId })
+    const stateToken = generateStateToken({ _id: userId });
     const url = (this.authorizationUrls.get(name) as string).replace('{state}', stateToken);
 
     return url;

@@ -39,6 +39,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import com.example.area.ui.theme.CustomBlack
+import com.example.area.ui.theme.CustomWhite
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.poppinsFontFamily
 
@@ -125,7 +127,7 @@ fun DisplayCard(
                 Icon(
                     imageVector = Icons.Filled.Dehaze,
                     contentDescription = "Menu",
-                    tint = Color.White,
+                    tint = CustomBlack,
                     modifier = Modifier
                         .size(20.dp)
                         .offset(y = 13.dp)
@@ -154,7 +156,7 @@ fun DisplayCard(
                     fontFamily = montserratFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 13.sp,
-                    color = Color.White,
+                    color = CustomBlack,
                     lineHeight = 15.sp,
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
@@ -173,7 +175,7 @@ fun DisplayCard(
                     fontFamily = montserratFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 10.sp,
-                    color = Color.White,
+                    color = CustomBlack,
                     textAlign = TextAlign.End,
                 )
             }
@@ -202,7 +204,7 @@ fun DisplayCard(
                                 fontFamily = poppinsFontFamily,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 12.sp,
-                                color = Color.Black,
+                                color = CustomWhite,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -212,7 +214,7 @@ fun DisplayCard(
                         fontFamily = montserratFontFamily,
                         fontWeight = FontWeight.Medium,
                         fontSize = 10.sp,
-                        color = Color.White,
+                        color = CustomBlack,
                         textAlign = TextAlign.End,
                     )
                 }

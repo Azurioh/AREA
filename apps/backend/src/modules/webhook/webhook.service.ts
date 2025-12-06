@@ -2,6 +2,9 @@ import type { Webhook } from '@area/shared/types/webhook.types';
 import type { WithId } from 'mongodb';
 import { v4 } from 'uuid';
 import type { WebhookRepository } from './webhook.repository';
+import type { GithubWebhookPayload } from '@/types/webhook';
+import type { ActionPayload } from '@/types/action-reaction';
+import type { ActionsReactionsService } from '../actions-reactions';
 
 /**
  * @class WebhookService
@@ -9,9 +12,20 @@ import type { WebhookRepository } from './webhook.repository';
  */
 export class WebhookService {
   private repository: WebhookRepository;
+  private actionsReactionsService: ActionsReactionsService;
 
-  constructor(repository: WebhookRepository) {
+  constructor(repository: WebhookRepository, actionsReactionsService: ActionsReactionsService) {
     this.repository = repository;
+    this.actionsReactionsService = actionsReactionsService;
+  }
+
+  async githubCallback(event: string, body: GithubWebhookPayload): Promise<void> {
+    const action: ActionPayload = {
+      service: 'github',
+      trigger: `${event}/${(body as GithubWebhookPayload).repository.name}`,
+    };
+
+    this.actionsReactionsService.handleReactions(action);
   }
 
   /**

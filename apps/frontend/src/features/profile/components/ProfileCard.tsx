@@ -1,9 +1,9 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useSaveProfile } from '@/features/profile/hooks/useSaveProfile';
 import { motion } from 'framer-motion';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { useSaveProfile } from '@/features/profile/hooks/useSaveProfile';
 
 interface ProfileCardProps {
   username: string;
