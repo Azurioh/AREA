@@ -29,10 +29,10 @@ export class GithubService {
    * @description Create an action with the github service
    *
    * @param {string} userId - The id of the user creating the action
-   * @param {Omit<CreateAction, 'trigger'>} action - The information about the action
+   * @param {CreateAction} action - The information about the action
    * @returns {Promise<boolean>} If the action was created
    */
-  async createAction(userId: string, action: Omit<CreateAction, 'trigger'>): Promise<string> {
+  async createAction(userId: string, action: CreateAction): Promise<string> {
     const githubAccount = await this.getGithubAccountByUserId(userId);
 
     if (!githubAccount) {
@@ -40,7 +40,7 @@ export class GithubService {
     }
     const userName = await this.getUserName(userId, githubAccount);
 
-    const response = await fetch(`https://api.github.com/repos/${userName}/${action.params.repository}/hooks`, {
+    const response = await fetch(`https://api.github.com/repos/${userName}/${action.params.repository.name}/hooks`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${decryptString(githubAccount.accessToken, environment.CRYPT_SECRET_KEY)}`,
@@ -59,7 +59,7 @@ export class GithubService {
 
     const formattedResponse = await response.json();
 
-    const trigger = `${action.name}/${action.params.repository}`;
+    const trigger = `${action.name}/${action.params.repository.id}`;
 
     if (!response.ok) {
       for (const error of formattedResponse.errors) {
@@ -90,20 +90,23 @@ export class GithubService {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'Github account not found');
     }
     switch (reaction.name) {
-      case 'issue': {
+      case 'create_issue': {
         const userName = await this.getUserName(userId, githubAccount);
 
-        const response = await fetch(`https://api.github.com/repos/${userName}/${reaction.params.repository}/issues`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${decryptString(githubAccount.accessToken, environment.CRYPT_SECRET_KEY)}`,
-            Accept: 'application/vnd.github+json',
+        const response = await fetch(
+          `https://api.github.com/repos/${userName}/${reaction.params.repository.name}/issues`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${decryptString(githubAccount.accessToken, environment.CRYPT_SECRET_KEY)}`,
+              Accept: 'application/vnd.github+json',
+            },
+            body: JSON.stringify({
+              title: reaction.params.title,
+              body: reaction.params.body,
+            }),
           },
-          body: JSON.stringify({
-            title: reaction.params.title,
-            body: reaction.params.body,
-          }),
-        });
+        );
         return response.ok;
       }
     }
