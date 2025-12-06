@@ -22,11 +22,24 @@ export type CreateReaction = z.infer<typeof actionReactionSchema>;
  * CREATE ACTION REACTION *
  **********************************/
 
-export const createUserMeActionReactionBodySchema = z.object({
+export const createActionReactionBodySchema = z.object({
   action: actionReactionSchema,
   reaction: actionReactionSchema,
 });
 
-export type CreateUserMeActionReactionBody = z.infer<typeof createUserMeActionReactionBodySchema>;
+export type CreateActionReactionBody = z.infer<typeof createActionReactionBodySchema>;
 
-export const createUserMeActionReactionResponseSchema = z.object({});
+export const createActionReactionResponseSchema = z.object({});
+
+/****************************
+ * GET ME ACTIONS REACTIONS *
+ ****************************/
+
+export const getMeActionsReactionsResponseSchema = z.array(
+  z.object({
+    action: actionReactionSchema,
+    reaction: actionReactionSchema,
+  }),
+);
+
+export type MeActionsReactions = z.infer<typeof getMeActionsReactionsResponseSchema>;

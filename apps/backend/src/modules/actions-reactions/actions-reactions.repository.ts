@@ -41,4 +41,18 @@ export class ActionsReactionsRepository {
       .find({ 'action.trigger': trigger })
       .toArray();
   }
+
+  /**
+   * @function getMeActionsReactions
+   * @description Get the list of actions reactions matching the user id
+   *
+   * @param {string} userId The id of the user
+   * @returns {Promise<ActionsReactions[]>} The matched actions reactions
+   */
+  async getMeActionsReactions(userId: string): Promise<ActionsReactions[]> {
+    return await this.db
+      .collection<ActionsReactions>(MongoCollections.ACTIONS_REACTIONS)
+      .find({ userId: userId })
+      .toArray();
+  }
 }
