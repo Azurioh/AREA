@@ -1,5 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { MoveRight, Ellipsis, Ghost } from 'lucide-react';
+import { Card } from "@/components/ui/card";
+import { MoveRight, Ellipsis } from 'lucide-react';
 import { Switch } from "@/components/ui/switch";
 import { useActionsModal } from "@/shared/hooks/useActionsModal";
 import { Button } from '@/components/wrappers/Button';
