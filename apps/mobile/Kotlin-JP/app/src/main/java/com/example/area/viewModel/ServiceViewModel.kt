@@ -18,7 +18,7 @@ class ServiceViewModel : ViewModel() {
     ) {
         viewModelScope.launch {
             try {
-                val url = RetrofitInstance.api.getAuthorizationUrl(serviceName)
+                val url = RetrofitInstance.api.getAuthorizationUrl(serviceName, "mobile")
                 onSuccess(url.url)
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -96,10 +96,10 @@ class ServiceViewModel : ViewModel() {
     fun createActionReaction(
         actionService: String,
         actionName: String,
-        actionParams: Map<String, String>,
+        actionParams: Map<String, Any>,
         reactionService: String,
         reactionName: String,
-        reactionParams: Map<String, String>,
+        reactionParams: Map<String, Any>,
         onSuccess: () -> Unit = {},
         onError: (String) -> Unit = {}
     ) {

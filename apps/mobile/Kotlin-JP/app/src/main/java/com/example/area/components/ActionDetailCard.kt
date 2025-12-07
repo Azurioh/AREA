@@ -45,9 +45,9 @@ fun ActionDetailCard(
     actionServiceImage: Int,
     actionDetail: ActionDetail,
     onClose: () -> Unit,
-    onValidate: (Map<String, String>) -> Unit
+    onValidate: (Map<String, Any>) -> Unit
 ) {
-    var paramValues by remember { mutableStateOf(mutableMapOf<String, String>()) }
+    var paramValues by remember { mutableStateOf(mutableMapOf<String, Any>()) }
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -117,12 +117,26 @@ fun ActionDetailCard(
             actionDetail.params.forEach { param ->
                 when (param.type) {
                     "select" -> {
+                        val currentValue = when (val stored = paramValues[param.key]) {
+                            is Map<*, *> -> stored["id"]?.toString() ?: ""
+                            else -> stored?.toString() ?: ""
+                        }
+
                         ActionParamSelectField(
                             param = param,
-                            value = paramValues[param.key] ?: "",
-                            onValueChange = { newValue ->
+                            value = currentValue,
+                            onValueChange = { selectedValue ->
                                 paramValues = paramValues.toMutableMap().apply {
-                                    this[param.key] = newValue
+                                    val selectedOption = param.options.find { it.value == selectedValue }
+                                    if (param.key == "repository" && selectedOption != null) {
+                                        val repoMap: Map<String, Any> = mapOf(
+                                            "name" to selectedOption.label,
+                                            "id" to (selectedOption.value.toIntOrNull() ?: selectedOption.value)
+                                        )
+                                        this[param.key] = repoMap
+                                    } else {
+                                        this[param.key] = selectedValue
+                                    }
                                 }
                             }
                         )
@@ -130,7 +144,7 @@ fun ActionDetailCard(
                     else -> {
                         ActionParamTextField(
                             param = param,
-                            value = paramValues[param.key] ?: "",
+                            value = paramValues[param.key]?.toString() ?: "",
                             onValueChange = { newValue ->
                                 paramValues = paramValues.toMutableMap().apply {
                                     this[param.key] = newValue

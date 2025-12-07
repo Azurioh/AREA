@@ -1,5 +1,6 @@
 package com.example.area.pages
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,6 +49,7 @@ fun CreatePage(
     modifier: Modifier = Modifier,
     serviceViewModel: ServiceViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     var onAction by remember { mutableStateOf(false) }
     var onReaction by remember { mutableStateOf(false) }
     var actionSelected by remember { mutableStateOf(false) }
@@ -59,8 +62,8 @@ fun CreatePage(
     var showActionDetail by remember { mutableStateOf(false) }
     var reactionDetail by remember { mutableStateOf<ActionDetail?>(null) }
     var showReactionDetail by remember { mutableStateOf(false) }
-    var actionParams by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
-    var reactionParams by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+    var actionParams by remember { mutableStateOf<Map<String, Any>>(emptyMap()) }
+    var reactionParams by remember { mutableStateOf<Map<String, Any>>(emptyMap()) }
 
     Column(
         modifier = modifier
@@ -116,7 +119,9 @@ fun CreatePage(
                                 showActionDetail = true
                                 onAction = false
                             },
-                            onError = {}
+                            onError = { error ->
+                                Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                            }
                         )
                     }
                 )
@@ -135,7 +140,9 @@ fun CreatePage(
                                 showReactionDetail = true
                                 onReaction = false
                             },
-                            onError = {}
+                            onError = { error ->
+                                Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                            }
                         )
                     }
                 )
@@ -183,6 +190,7 @@ fun CreatePage(
                             reactionName = selectedReaction?.name ?: "",
                             reactionParams = reactionParams,
                             onSuccess = {
+                                Toast.makeText(context, "Action-Reaction created successfully!", Toast.LENGTH_SHORT).show()
                                 actionSelected = false
                                 reactionSelected = false
                                 selectedAction = null
@@ -190,7 +198,9 @@ fun CreatePage(
                                 actionParams = emptyMap()
                                 reactionParams = emptyMap()
                             },
-                            onError = {}
+                            onError = { error ->
+                                Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                            }
                         )
                     }
                 )
@@ -204,7 +214,7 @@ private fun ConfigureDetailView(
     title: String,
     detail: ActionDetail,
     onClose: () -> Unit,
-    onValidate: (Map<String, String>) -> Unit
+    onValidate: (Map<String, Any>) -> Unit
 ) {
     Text(
         text = title,

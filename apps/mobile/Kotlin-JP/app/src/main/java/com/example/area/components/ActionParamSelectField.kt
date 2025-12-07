@@ -33,6 +33,12 @@ fun ActionParamSelectField(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
+    val selectedLabel = if (value.isEmpty()) {
+        ""
+    } else {
+        param.options.find { it.value == value }?.label ?: value
+    }
+
     Column {
         Text(
             text = param.label,
@@ -48,7 +54,7 @@ fun ActionParamSelectField(
             onExpandedChange = { expanded = !expanded }
         ) {
             OutlinedTextField(
-                value = value,
+                value = selectedLabel,
                 onValueChange = {},
                 readOnly = true,
                 placeholder = { Text(param.placeholder) },
@@ -68,9 +74,9 @@ fun ActionParamSelectField(
             ) {
                 param.options.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option) },
+                        text = { Text(option.label) },
                         onClick = {
-                            onValueChange(option)
+                            onValueChange(option.value)
                             expanded = false
                         }
                     )
