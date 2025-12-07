@@ -65,4 +65,15 @@ export const refreshTokenSchema = z.object({
 
 export type RefreshToken = z.infer<typeof refreshTokenSchema>;
 
-export type StateToken = RefreshToken;
+export const stateTokenSchema = z.object({
+  _id: z.string().meta({
+    description: 'The user id',
+    example: '679d3c8b4b8c9d3c8b4b8c9d',
+  }),
+  clientType: z.string().meta({
+    description: 'The type of the client',
+    example: 'web',
+  }),
+});
+
+export type StateToken = z.infer<typeof stateTokenSchema>;

@@ -1,9 +1,9 @@
-import { motion } from 'framer-motion';
-import { Ellipsis, MoveRight } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
+import { Card } from "@/components/ui/card";
+import { MoveRight, Ellipsis } from 'lucide-react';
+import { Switch } from "@/components/ui/switch";
+import { useActionsModal } from "@/shared/hooks/useActionsModal";
 import { Button } from '@/components/wrappers/Button';
-import { useActionsModal } from '@/shared/hooks/useActionsModal';
+import { motion } from 'framer-motion';
 
 interface StatsCardProps {
   title: string;

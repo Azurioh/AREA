@@ -14,22 +14,9 @@ import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
 import { useClearUserData } from '@/shared/hooks/useClearUserData';
 
 const RegisterPage: React.FC = () => {
-  const { showPassword, showConfirmPassword, togglePasswordVisibility, toggleConfirmPasswordVisibility } =
-    useShowPassword();
+  const { showPassword, showConfirmPassword, togglePasswordVisibility, toggleConfirmPasswordVisibility } = useShowPassword();
   const { rememberMe, toggleRememberMe } = useRememberMe();
-  const {
-    name,
-    setName,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    confirmPassword,
-    setConfirmPassword,
-    isLoading,
-    error,
-    handleSubmit,
-  } = useRegister();
+  const { name, setName, email, setEmail, password, setPassword, confirmPassword, setConfirmPassword, isLoading, error, handleSubmit } = useRegister();
   useClearUserData();
 
   return (
@@ -47,14 +34,12 @@ const RegisterPage: React.FC = () => {
           </div>
           <form className="space-y-4" onSubmit={handleSubmit}>
             {error && (
-              <div className="p-3 rounded-[var(--small-radius)] bg-destructive/10 text-destructive text-sm">
+              <div className='p-3 rounded-[var(--small-radius)] bg-destructive/10 text-destructive text-sm'>
                 {error}
               </div>
             )}
             <div className="space-y-2">
-              <label htmlFor="name" className="text-foreground">
-                Name
-              </label>
+              <label htmlFor="name" className="text-foreground">Name</label>
               <Input
                 id="name"
                 type="text"
@@ -65,9 +50,7 @@ const RegisterPage: React.FC = () => {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="email" className="text-foreground">
-                Email
-              </label>
+              <label htmlFor="email" className="text-foreground">Email</label>
               <Input
                 id="email"
                 type="email"
@@ -90,13 +73,9 @@ const RegisterPage: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                >
+                <Button variant="ghost" onClick={togglePasswordVisibility} className='absolute right-3 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-inherit'>
                   {showPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                </button>
+                </Button>
               </div>
             </div>
             <div className="space-y-2">
@@ -112,13 +91,9 @@ const RegisterPage: React.FC = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
-                <button
-                  type="button"
-                  onClick={toggleConfirmPasswordVisibility}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                >
+                <Button variant="ghost" onClick={toggleConfirmPasswordVisibility} className='absolute right-3 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-inherit'>
                   {showConfirmPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                </button>
+                </Button>
               </div>
             </div>
             <div className="flex items-center justify-between">

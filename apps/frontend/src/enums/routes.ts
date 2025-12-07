@@ -6,4 +6,5 @@ export const AppRoutesPaths = {
   PROFILE: '/profile',
   WORKFLOWS: '/workflows',
   OTHER: '/other',
+  CREATE: '/create',
 } as const;

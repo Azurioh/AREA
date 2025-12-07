@@ -3,6 +3,7 @@ import { createContext, type ReactNode, useMemo, useState } from 'react';
 import { WebhookClient } from '@/features/webhook';
 import { ActionReactionClient, ServicesClient } from '@/features/workflows';
 import { TokenManager } from '@/lib/TokenManager';
+import { LoginClient } from '@/features/auth/api/AuthClient';
 
 /**
  * @interface User
@@ -28,6 +29,7 @@ export interface AuthState {
  * @description Api context type
  */
 export interface AuthContextType {
+    loginClient: LoginClient;
   webhookClient: WebhookClient;
   actionReactionClient: ActionReactionClient;
   servicesClient: ServicesClient;
@@ -54,6 +56,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const webhookClient = useMemo(() => new WebhookClient(BASE_URL, tokenManager), [tokenManager]);
   const servicesClient = useMemo(() => new ServicesClient(BASE_URL, tokenManager), [tokenManager]);
   const actionReactionClient = useMemo(() => new ActionReactionClient(BASE_URL, tokenManager), [tokenManager]);
+  const loginClient = useMemo(() => new LoginClient(BASE_URL), []);
 
   const contextValue: AuthContextType = useMemo(
     () => ({
@@ -62,9 +65,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       authState,
       tokenManager,
       actionReactionClient,
+      loginClient,
       logout: tokenManager.logout.bind(tokenManager),
     }),
-    [authState, tokenManager, actionReactionClient, servicesClient, webhookClient],
+    [authState, tokenManager, actionReactionClient, servicesClient, webhookClient, loginClient],
   );
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
