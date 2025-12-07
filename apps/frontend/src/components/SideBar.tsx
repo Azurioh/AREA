@@ -11,12 +11,12 @@ const SideBar = () => {
   const location = useLocation();
   const name = useUserInitials();
 
-  const menuItems = [
-    { icon: House, label: 'Home', path: AppRoutesPaths.HOME, name: 'Home' },
-    { icon: Workflow, label: 'Workflows', path: '/test', name: 'Workflows' },
-    { icon: Link, label: 'Connections', path: '/test', name: 'Connections' },
-    { icon: LayoutDashboard, label: 'Dashboard', path: AppRoutesPaths.ADMIN_DASHBOARD, name: 'Dashboard' },
-  ];
+    const menuItems = [
+        { icon: House, label: 'Home', path: AppRoutesPaths.HOME, name: 'Home' },
+        { icon: Workflow, label: 'Workflows', path: AppRoutesPaths.WORKFLOWS, name: 'Workflows' },
+        { icon: Link, label: 'Connections', path: "/test", name: 'Connections' },
+        { icon: LayoutDashboard, label: 'Dashboard', path: AppRoutesPaths.ADMIN_DASHBOARD, name: 'Dashboard' },
+    ]
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-24 bg-background flex flex-col items-center py-8 gap-4">

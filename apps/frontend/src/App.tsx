@@ -7,6 +7,7 @@ import { Profile } from '@/features/profile';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './contexts/PorectedRoutes';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { WorkflowsPage } from '@/features/workflows';
 import { CreateWorkflowsPage } from '@/features/workflows';
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
               <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
               <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
               <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
+              <Route path={AppRoutesPaths.WORKFLOWS} element={<WorkflowsPage />} />
               <Route path={AppRoutesPaths.CREATE} element={<CreateWorkflowsPage />} />
             </Route>
           </Routes>
