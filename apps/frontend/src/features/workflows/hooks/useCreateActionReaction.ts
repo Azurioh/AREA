@@ -7,8 +7,8 @@ export const useCreateActionReaction = () => {
   const { actionReactionClient } = useApp();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [action, setAction] = useState<CreateAction | null>(null);
-  const [reaction, setReaction] = useState<CreateReaction | null>(null);
+  const [action, setAction] = useState<Omit<CreateAction, 'trigger'> | null>(null);
+  const [reaction, setReaction] = useState<Omit<CreateReaction, 'trigger'> | null>(null);
 
   const setActionParams = (params: Record<string, unknown>) => {
     if (action) {

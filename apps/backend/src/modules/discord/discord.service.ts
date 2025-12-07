@@ -9,6 +9,7 @@ import type { MaybeNull } from '@area/shared/utils/common';
 import type { WithId } from 'mongodb';
 import { encryptString } from '@/utils/crypt';
 import type { DiscordAccount, DiscordAuthorizationResponse } from '@/types/discord';
+import type { CreateAction, CreateReaction } from '@area/shared/schemas/action-reaction.schema';
 
 /**
  * @class DiscordService
@@ -24,14 +25,55 @@ export class DiscordService {
   }
 
   /**
+   * @function createAction
+   * @description Create an action with the discord service
+   *
+   * @param {string} _userId - The id of the user creating the action
+   * @param {CreateAction} action - The information about the action
+   * @returns {Promise<boolean>} If the action was created
+   */
+  async createAction(_userId: string, action: CreateAction): Promise<string> {
+    const trigger = `${action.name}/${action.params.channel.id}`;
+
+    return trigger;
+  }
+
+  /**
+   * @function createReaction
+   * @description Create a reaction with the discord service
+   *
+   * @param {string} _userId - The id of the user creating the action
+   * @param {CreateReaction} reaction - The information about the reaction
+   * @returns {Promise<boolean>} If the action was created
+   */
+  async createReaction(_userId: string, reaction: CreateReaction): Promise<boolean> {
+    switch (reaction.name) {
+      case 'send_message': {
+        const response = await fetch(`https://discord.com/api/channels/${reaction.params.channel.id}/messages`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bot ${environment.DISCORD_BOT_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: reaction.params.content,
+          }),
+        });
+        return response.ok;
+      }
+    }
+    return false;
+  }
+
+  /**
    * @function authorizeUser
    * @description Authorize a user to a discord account
    *
    * @param {string} code - The code provided by discrod to get the tokens
    * @param {state} state - A string to protect against threats
-   * @returns {Promise<boolean>} If the autorization was succesful
+   * @returns {Promise<string | null>} The client type authorizing
    */
-  async authorizeUser(code: string, state: string): Promise<boolean> {
+  async authorizeUser(code: string, state: string): Promise<string | null> {
     const decoded = verifyToken<StateToken>(state, environment.JWT_STATE_TOKEN_SECRET);
 
     if (!(await this.usersService.checkIfUserExist(decoded._id))) {
@@ -53,7 +95,7 @@ export class DiscordService {
     });
 
     if (response.status !== HttpStatusCode.OK) {
-      return false;
+      return null;
     }
 
     const formattedResponse = (await response.json()) as DiscordAuthorizationResponse;
@@ -75,7 +117,7 @@ export class DiscordService {
     } else {
       success = await this.repository.createDiscordAccount(data);
     }
-    return success;
+    return success ? decoded.clientType : null;
   }
 
   /**

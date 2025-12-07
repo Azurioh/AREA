@@ -1,12 +1,5 @@
 import { z } from 'zod';
 
-export const listGithubRepositoriesResponseSchema = z.array(
-  z.string().meta({
-    description: 'Repository name',
-    example: 'area',
-  }),
-);
-
 export const githubAuthorizationQueryStringSchema = z.object({
   code: z.string().optional().meta({
     description: 'The code provided by Github to authenticate the user',
