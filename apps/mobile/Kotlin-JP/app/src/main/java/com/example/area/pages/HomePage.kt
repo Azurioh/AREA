@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,26 +60,28 @@ fun HomePage(
         )
     }
 
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(color = Background),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Home page",
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 30.sp,
-            color = CustomBlack,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(top = 32.dp)
-                .fillMaxWidth()
-        )
+        item {
+            Text(
+                text = "Home page",
+                fontFamily = poppinsFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                color = CustomBlack,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 32.dp)
+                    .fillMaxWidth()
+            )
+        }
 
-        actionsReactions.forEach { actionReaction ->
+        items(actionsReactions) { actionReaction ->
             DisplayCard(
                 actionServiceImage = getServiceImage(actionReaction.action.service),
                 reactionServiceImage = getServiceImage(actionReaction.reaction.service),
