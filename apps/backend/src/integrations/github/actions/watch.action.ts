@@ -1,7 +1,7 @@
 import { Action } from '@/integrations/_definitions/action.interface';
 import type { GithubService } from '@/modules/github';
 
-export class GithubPullRequestAction extends Action {
+export class GithubWatchAction extends Action {
   private githubService: GithubService;
 
   constructor(githubService: GithubService) {
