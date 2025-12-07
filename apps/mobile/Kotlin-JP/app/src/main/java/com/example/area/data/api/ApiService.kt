@@ -10,6 +10,7 @@ import com.example.area.data.models.ActionDetail
 import com.example.area.data.models.ActionReactionRequest
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -24,7 +25,10 @@ interface ApiService {
     suspend fun getUserProfile() : User
 
     @GET("users/v1/me/authorization-url/{third_party_service}")
-    suspend fun getAuthorizationUrl(@Path("third_party_service") service: String) : ServicesUrl
+    suspend fun getAuthorizationUrl(
+        @Path("third_party_service") service: String,
+        @Header("x-client-type") clientType: String = "mobile"
+    ) : ServicesUrl
 
     @GET("services/v1/{service}/actions")
     suspend fun getAllServices(@Path("service") service: String) : List<ServicesValue>
