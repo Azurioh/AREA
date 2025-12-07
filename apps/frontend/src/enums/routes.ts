@@ -7,4 +7,6 @@ export const AppRoutesPaths = {
   WORKFLOWS: '/workflows',
   OTHER: '/other',
   CREATE: '/create',
+  CONNECTIONS: '/connections',
+  OAUTH_CALLBACK: '/oauth/callback',
 } as const;

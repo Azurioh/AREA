@@ -22,7 +22,10 @@ export const useCreateActionReaction = () => {
     }
   };
 
-  const createActionReaction = async () => {
+  const createActionReaction = async (
+    actionData: Omit<CreateAction, 'trigger'>,
+    reactionData: Omit<CreateReaction, 'trigger'>,
+  ) => {
     if (!action) {
       toast.error('Please provide an action');
       return;
@@ -33,7 +36,8 @@ export const useCreateActionReaction = () => {
     }
     try {
       setLoading(true);
-      await actionReactionClient.createWorkflow({ action, reaction });
+
+      await actionReactionClient.createWorkflow({ action: actionData, reaction: reactionData });
       toast.success('Workflow created successfully');
     } catch (error) {
       toast.error(`Failed to create workflow: ${error}`);

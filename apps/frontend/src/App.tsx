@@ -9,6 +9,8 @@ import { ProtectedRoute } from './contexts/PorectedRoutes';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { WorkflowsPage } from '@/features/workflows';
 import { CreateWorkflowsPage } from '@/features/workflows';
+import { ConnectionsPage } from './features/connections/';
+import { OauthCallbackPage } from '@/features/connections';
 
 export default function App() {
   return (
@@ -19,14 +21,16 @@ export default function App() {
             <Route path={AppRoutesPaths.REGISTER} element={<RegisterPage />} />
             <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
             <Route element={<ProtectedRoute />}>
-              <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={ <AdminDashboardPage /> } />
-              <Route path={AppRoutesPaths.PROFILE} element={ <Profile /> } />
-              <Route path={AppRoutesPaths.HOME} element={ <HomePage /> } />
+              <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
+              <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
+              <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
               <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
               <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
               <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
               <Route path={AppRoutesPaths.WORKFLOWS} element={<WorkflowsPage />} />
               <Route path={AppRoutesPaths.CREATE} element={<CreateWorkflowsPage />} />
+              <Route path={AppRoutesPaths.CONNECTIONS} element={<ConnectionsPage />} />
+              <Route path={AppRoutesPaths.OAUTH_CALLBACK} element={<OauthCallbackPage />} />
             </Route>
           </Routes>
         </AuthProvider>

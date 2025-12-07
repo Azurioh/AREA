@@ -33,8 +33,8 @@ const CreateWorkflows: React.FC = () => {
       label: string;
       placeholder: string;
       type: string;
-      options?: { value: string; label: string }[];
-      value?: string;
+      options?: { name: string; id: string }[];
+      value?: string | { name: string; id: string };
     }[]
   >([]);
 
@@ -48,8 +48,8 @@ const CreateWorkflows: React.FC = () => {
       label: string;
       placeholder: string;
       type: string;
-      options?: { value: string; label: string }[];
-      value?: string;
+      options?: { name: string; id: string }[];
+      value?: string | { name: string; id: string };
     }[]
   >([]);
 
@@ -158,7 +158,7 @@ const CreateWorkflows: React.FC = () => {
                               <Input
                                 id={id}
                                 placeholder={param.placeholder}
-                                value={param.value || ''}
+                                value={typeof param.value === 'string' ? param.value : ''}
                                 onChange={(e) => {
                                   const newParams = [...actionParams];
                                   newParams[index].value = e.target.value;
@@ -174,23 +174,25 @@ const CreateWorkflows: React.FC = () => {
                                     id={id}
                                     aria-labelledby={id}
                                   >
-                                    {param.value || param.placeholder}
+                                    {typeof param.value === 'object' && param.value?.name
+                                      ? param.value.name
+                                      : param.placeholder}
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-full">
                                   {(param.options && param.options.length > 0
                                     ? param.options
-                                    : [{ value: 'test', label: 'test' }]
+                                    : [{ name: 'test', id: 'test' }]
                                   ).map((opt) => (
                                     <DropdownMenuItem
-                                      key={opt.value}
+                                      key={opt.id}
                                       onClick={() => {
                                         const newParams = [...actionParams];
-                                        newParams[index].value = opt.value;
+                                        newParams[index].value = { name: opt.name, id: opt.id };
                                         setActionParams(newParams);
                                       }}
                                     >
-                                      {opt.label}
+                                      {opt.name}
                                     </DropdownMenuItem>
                                   ))}
                                 </DropdownMenuContent>
@@ -275,7 +277,7 @@ const CreateWorkflows: React.FC = () => {
                               <Input
                                 id={id}
                                 placeholder={param.placeholder}
-                                value={param.value || ''}
+                                value={typeof param.value === 'string' ? param.value : ''}
                                 onChange={(e) => {
                                   const newParams = [...reactionParams];
                                   newParams[index].value = e.target.value;
@@ -291,23 +293,25 @@ const CreateWorkflows: React.FC = () => {
                                     id={id}
                                     aria-labelledby={id}
                                   >
-                                    {param.value || param.placeholder}
+                                    {typeof param.value === 'object' && param.value?.name
+                                      ? param.value.name
+                                      : param.placeholder}
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-full">
                                   {(param.options && param.options.length > 0
                                     ? param.options
-                                    : [{ value: 'test', label: 'test' }]
+                                    : [{ name: 'test', id: 'test' }]
                                   ).map((opt) => (
                                     <DropdownMenuItem
-                                      key={opt.value}
+                                      key={opt.id}
                                       onClick={() => {
                                         const newParams = [...reactionParams];
-                                        newParams[index].value = opt.value;
+                                        newParams[index].value = { name: opt.name, id: opt.id };
                                         setReactionParams(newParams);
                                       }}
                                     >
-                                      {opt.label}
+                                      {opt.name}
                                     </DropdownMenuItem>
                                   ))}
                                 </DropdownMenuContent>
@@ -324,23 +328,22 @@ const CreateWorkflows: React.FC = () => {
               <div className="flex justify-center pt-4 pb-6">
                 <Button
                   onClick={async () => {
-                    setAction((prev: any) =>
-                      prev
-                        ? {
-                            ...prev,
-                            params: actionParams.reduce((acc: any, p: any) => ({ ...acc, [p.key]: p.value }), {}),
-                          }
-                        : prev,
-                    );
-                    setReaction((prev: any) =>
-                      prev
-                        ? {
-                            ...prev,
-                            params: reactionParams.reduce((acc: any, p: any) => ({ ...acc, [p.key]: p.value }), {}),
-                          }
-                        : prev,
-                    );
-                    await createActionReaction();
+                    const actionData = {
+                      service: selectedActionService?.toLowerCase() || '',
+                      name: selectedAction || '',
+                      params: actionParams.reduce((acc: any, p: any) => ({ ...acc, [p.key]: p.value }), {}),
+                    };
+
+                    const reactionData = {
+                      service: selectedReactionService?.toLowerCase() || '',
+                      name: selectedReaction || '',
+                      params: reactionParams.reduce((acc: any, p: any) => ({ ...acc, [p.key]: p.value }), {}),
+                    };
+
+                    setAction(actionData);
+                    setReaction(reactionData);
+
+                    await createActionReaction(actionData, reactionData);
                     toast.success('Workflow created successfully !');
                   }}
                   className="w-full max-w-xs"
