@@ -13,7 +13,7 @@ const SideBar = () => {
 
     const menuItems = [
         { icon: House, label: "Home", path: AppRoutesPaths.HOME, name: "Home" },
-        { icon: Workflow, label: "Workflows", path: "/test", name: "Workflows" },
+        { icon: Workflow, label: "Workflows", path: AppRoutesPaths.WORKFLOWS, name: "Workflows" },
         { icon: Link, label: "Connections", path: "/test", name: "Connections" },
         { icon: LayoutDashboard, label: "Dashboard", path: AppRoutesPaths.ADMIN_DASHBOARD, name: "Dashboard" },
     ]
