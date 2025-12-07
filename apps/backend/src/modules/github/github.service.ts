@@ -61,6 +61,7 @@ export class GithubService {
 
     const trigger = `${action.name}/${action.params.repository}`;
 
+    console.log(formattedResponse);
     if (!response.ok) {
       for (const error of formattedResponse.errors) {
         if (!error) {
