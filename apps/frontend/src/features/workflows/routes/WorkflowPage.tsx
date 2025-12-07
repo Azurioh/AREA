@@ -16,8 +16,8 @@ const WorkflowPage: React.FC = () => {
 
     const [search, setSearch] = useState("");
 
-    const filteredWorkflows = useFilter(workflows, search, wf =>
-        (wf.action?.service || "").toLowerCase()
+    const filteredWorkflows = useFilter(workflows, search, workflow =>
+        (workflow.action?.service || "").toLowerCase()
     );
 
     return (

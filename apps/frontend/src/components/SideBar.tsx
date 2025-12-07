@@ -12,10 +12,10 @@ const SideBar = () => {
   const name = useUserInitials();
 
     const menuItems = [
-        { icon: House, label: "Home", path: AppRoutesPaths.HOME, name: "Home" },
-        { icon: Workflow, label: "Workflows", path: AppRoutesPaths.WORKFLOWS, name: "Workflows" },
-        { icon: Link, label: "Connections", path: "/test", name: "Connections" },
-        { icon: LayoutDashboard, label: "Dashboard", path: AppRoutesPaths.ADMIN_DASHBOARD, name: "Dashboard" },
+        { icon: House, label: 'Home', path: AppRoutesPaths.HOME, name: 'Home' },
+        { icon: Workflow, label: 'Workflows', path: AppRoutesPaths.WORKFLOWS, name: 'Workflows' },
+        { icon: Link, label: 'Connections', path: "/test", name: 'Connections' },
+        { icon: LayoutDashboard, label: 'Dashboard', path: AppRoutesPaths.ADMIN_DASHBOARD, name: 'Dashboard' },
     ]
 
   return (
