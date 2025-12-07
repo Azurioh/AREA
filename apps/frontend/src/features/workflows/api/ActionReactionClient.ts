@@ -1,4 +1,4 @@
-import type { CreateActionReactionBody } from '../../../../../../packages/shared/schemas/action-reaction.schema';
+import type { CreateActionReactionBody } from '@area/shared/schemas/action-reaction.schema';
 import { ApiClient } from '@/lib/ApiClient';
 
 /**
