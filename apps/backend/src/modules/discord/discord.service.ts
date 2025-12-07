@@ -7,7 +7,7 @@ import type { StateToken } from '@area/shared/types/user.types';
 import type { DiscordRepository } from './discord.repository';
 import type { MaybeNull } from '@area/shared/utils/common';
 import type { WithId } from 'mongodb';
-import { decryptString, encryptString } from '@/utils/crypt';
+import { encryptString } from '@/utils/crypt';
 import type { DiscordAccount, DiscordAuthorizationResponse, DiscordChannel } from '@/types/discord';
 import type { CreateAction, CreateReaction } from '@area/shared/schemas/action-reaction.schema';
 
@@ -90,7 +90,7 @@ export class DiscordService {
         client_secret: environment.DISCORD_CLIENT_SECRET,
         code: code,
         grant_type: 'authorization_code',
-        redirect_uri: 'https://area-dev.loca.lt/discord/v1/authorize',
+        redirect_uri: `${environment.BASE_API_URL}/discord/v1/authorize`,
       }),
     });
 
@@ -174,30 +174,25 @@ export class DiscordService {
     if (!discordAccount) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'Discord account not found');
     }
-    const getChannels = async (accessToken: string) => {
-      return await fetch(`https://discord.com/api/guilds/${discordAccount.guildId}/channels`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          Accept: 'application/json',
-        },
-      });
-    };
-    let response = await getChannels(decryptString(discordAccount.accessToken, environment.CRYPT_SECRET_KEY));
+    const response = await fetch(`https://discord.com/api/guilds/${discordAccount.guildId}/channels`, {
+      headers: {
+        Authorization: `Bot ${environment.DISCORD_BOT_TOKEN}`,
+        Accept: 'application/json',
+      },
+    });
 
-    if (response.status === HttpStatusCode.UNAUTHORIZED) {
-      const tokens = await this.refreshDiscordTokens(
-        decryptString(discordAccount.refreshToken, environment.CRYPT_SECRET_KEY),
-      );
-
-      response = await getChannels(tokens.accessToken);
-    }
-
-    console.log(response);
     if (!response.ok) {
       throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Failed to list channels');
     }
-
-    console.log();
-    return [];
+    const data = await response.json();
+    const channels: DiscordChannel[] = data
+      .filter((channel: any) => channel.type === 0)
+      .map((channel: any) => {
+        return {
+          name: channel.name,
+          id: `${channel.id}`,
+        };
+      });
+    return channels;
   }
 }
