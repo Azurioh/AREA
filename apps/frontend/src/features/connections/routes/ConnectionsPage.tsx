@@ -3,7 +3,7 @@ import SideBar from '@/components/SideBar';
 import { Card, CardContent } from '@/components/wrappers/Card';
 import ConnectionCard from '../components/ConnectionCard';
 
-const Connections: React.FC = () => {
+const ConnectionsPage: React.FC = () => {
   const services = [
     {
       image: 'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png',
@@ -33,4 +33,4 @@ const Connections: React.FC = () => {
   );
 };
 
-export default Connections;
+export default ConnectionsPage;
