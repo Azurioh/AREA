@@ -9,7 +9,7 @@ export class GithubCreateIssueReaction extends Reaction {
   private githubService: GithubService;
 
   constructor(githubService: GithubService) {
-    super('createIssue', 'Create an issue on GitHub', [
+    super('create_issue', 'Create an issue on GitHub', [
       {
         type: 'select',
         key: 'repository',
