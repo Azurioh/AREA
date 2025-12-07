@@ -62,7 +62,7 @@ export class GithubService {
     const trigger = `${action.name}/${action.params.repository.id}`;
 
     if (!response.ok) {
-      for (const error of formattedResponse.errors) {
+      for (const error of formattedResponse.errors || []) {
         if (!error) {
           continue;
         }
@@ -201,12 +201,15 @@ export class GithubService {
     }
 
     const data = await response.json();
-    const repositories: GithubRepositories = data.map((repo: any) => {
-      return {
-        name: repo.name,
-        id: `${repo.id}`,
-      };
-    });
+
+    const repositories: GithubRepositories = data
+      .filter((repo: any) => repo.permissions?.admin || false)
+      .map((repo: any) => {
+        return {
+          name: repo.name,
+          id: `${repo.id}`,
+        };
+      });
     return repositories;
   }
 
