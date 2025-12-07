@@ -13,7 +13,7 @@ export interface Workflow {
 
 export class AllWorkflowsClient extends ApiClient {
   /**
-   * Récupère tous les workflows de l'utilisateur authentifié
+   * get all the workflows of the authenticated user
    * @returns {Promise<Workflow[]>}
    */
   async getAllWorkflows(): Promise<Workflow[]> {
