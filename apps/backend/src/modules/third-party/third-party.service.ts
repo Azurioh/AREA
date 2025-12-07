@@ -2,6 +2,7 @@ import { HttpStatusCode } from '@area/shared/enums/http-status';
 import ApiError from '@/utils/api-error';
 import { environment } from '@/utils/environment';
 import { generateStateToken } from '@/utils/token';
+import type { ClientType } from '@/types/third-party';
 
 /**
  * @class ThirdPartyService
@@ -29,13 +30,14 @@ export class ThirdPartyService {
    *
    * @param {string} name - The third party name
    * @param {string} userId - The if of the user authenticating
+   * @param {ClientType} clientType - The type of the client
    * @returns {Promise<string>} The authorization url to the given third party
    */
-  async getThirdPartyAuthorizationUrl(name: string, userId: string): Promise<string> {
+  async getThirdPartyAuthorizationUrl(name: string, userId: string, clientType: ClientType): Promise<string> {
     if (!this.authorizationUrls.has(name)) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, "Requested third party service doesn't exist");
     }
-    const stateToken = generateStateToken({ _id: userId });
+    const stateToken = generateStateToken({ _id: userId, clientType: clientType });
     const url = (this.authorizationUrls.get(name) as string).replace('{state}', stateToken);
 
     return url;

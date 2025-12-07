@@ -11,6 +11,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { UsersService } from './users.service';
 import { generateStateToken } from '@/utils/token';
 import type { ThirdPartyService } from '../third-party';
+import type { ClientType } from '@/types/third-party';
 
 /**
  * @class UsersController
@@ -34,7 +35,7 @@ export class UsersController {
    * @returns {Promise<void>} Nothing
    */
   async createUserMeState(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const stateToken = generateStateToken({ _id: request.user._id });
+    const stateToken = generateStateToken({ _id: request.user._id, clientType: 'web' });
 
     return reply.status(HttpStatusCode.OK).send({ stateToken: stateToken });
   }
@@ -51,9 +52,15 @@ export class UsersController {
     request: FastifyRequest<{ Params: GetUserMeThirdPartyAuthorizationUrlParams }>,
     reply: FastifyReply,
   ): Promise<void> {
+    const headers = request.headers;
+
+    if (headers['x-client-type'] !== 'web' && headers['x-client-type'] !== 'mobile') {
+      headers['x-client-type'] = 'web';
+    }
     const url = await this.thirdPartyService.getThirdPartyAuthorizationUrl(
       request.params.third_party_service,
       request.user._id,
+      headers['x-client-type'] as ClientType,
     );
 
     reply.status(HttpStatusCode.OK).send({ url: url });

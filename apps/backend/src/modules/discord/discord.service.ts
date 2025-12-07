@@ -29,9 +29,9 @@ export class DiscordService {
    *
    * @param {string} code - The code provided by discrod to get the tokens
    * @param {state} state - A string to protect against threats
-   * @returns {Promise<boolean>} If the autorization was succesful
+   * @returns {Promise<string | null>} The client type authorizing
    */
-  async authorizeUser(code: string, state: string): Promise<boolean> {
+  async authorizeUser(code: string, state: string): Promise<string | null> {
     const decoded = verifyToken<StateToken>(state, environment.JWT_STATE_TOKEN_SECRET);
 
     if (!(await this.usersService.checkIfUserExist(decoded._id))) {
@@ -53,7 +53,7 @@ export class DiscordService {
     });
 
     if (response.status !== HttpStatusCode.OK) {
-      return false;
+      return null;
     }
 
     const formattedResponse = (await response.json()) as DiscordAuthorizationResponse;
@@ -75,7 +75,7 @@ export class DiscordService {
     } else {
       success = await this.repository.createDiscordAccount(data);
     }
-    return success;
+    return success ? decoded.clientType : null;
   }
 
   /**

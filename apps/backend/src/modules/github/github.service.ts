@@ -116,9 +116,9 @@ export class GithubService {
    *
    * @param {string} code - The code provided by github to get the tokens
    * @param {state} state - A string to protect against threats
-   * @returns {Promise<boolean>} If the autorization was succesful
+   * @returns {Promise<string | null>} The client type authorizing
    */
-  async authorizeUser(code: string, state: string): Promise<boolean> {
+  async authorizeUser(code: string, state: string): Promise<string | null> {
     const decoded = verifyToken<StateToken>(state, environment.JWT_STATE_TOKEN_SECRET);
 
     if (!(await this.usersService.checkIfUserExist(decoded._id))) {
@@ -139,7 +139,7 @@ export class GithubService {
     });
 
     if (response.status !== HttpStatusCode.OK) {
-      return false;
+      return null;
     }
 
     const formattedResponse = (await response.json()) as GitHubAuthorizationResponse;
@@ -159,7 +159,7 @@ export class GithubService {
     } else {
       success = await this.repository.createGithubAccount(data);
     }
-    return success;
+    return success ? decoded.clientType : null;
   }
 
   /**
