@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Button } from '@/components/wrappers/Button';
 import WorkflowsCard from '@/components/WorkflowsCard';
 import { Search } from "lucide-react";
@@ -8,10 +7,18 @@ import SideBar from "@/components/SideBar";
 import { Card, CardContent } from "@/components/wrappers/Card";
 import { useNavigate } from "react-router-dom"
 import { useGetAllWorkflows } from "@/features/workflows/hooks/useGetAllWorkflows";
+import { useFilter } from "@/features/workflows/hooks/useFilter";
+import { AppRoutesPaths } from '@/enums/routes';
 
 const WorkflowPage: React.FC = () => {
     const navigate = useNavigate();
     const { workflows, isLoading, error } = useGetAllWorkflows();
+
+    const [search, setSearch] = useState("");
+
+    const filteredWorkflows = useFilter(workflows, search, wf =>
+        (wf.action?.service || "").toLowerCase()
+    );
 
     return (
         <div className="flex h-screen bg-background">
@@ -28,6 +35,8 @@ const WorkflowPage: React.FC = () => {
                                 <Input
                                     id="search-workflows"
                                     placeholder="Search your workflow ..."
+                                    value={search}
+                                    onChange={e => setSearch(e.target.value)}
                                 />
                                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                                     <Search size={28} />
@@ -38,7 +47,7 @@ const WorkflowPage: React.FC = () => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 px-4 mb-12">
                                 {isLoading && <div className="col-span-3 text-center text-lg">Chargement...</div>}
                                 {error && <div className="col-span-3 text-center text-red-500">{error}</div>}
-                                {!isLoading && !error && workflows.map((wf, idx) => (
+                                {!isLoading && !error && filteredWorkflows.map((wf, idx) => (
                                     <WorkflowsCard
                                         key={idx}
                                         title={wf.action?.service || 'Unknown'}
@@ -46,8 +55,8 @@ const WorkflowPage: React.FC = () => {
                                         Value={wf.action?.params?.value || ''}
                                         Last={wf.action?.params?.last || ''}
                                         activated={true}
-                                        Service1={''}
-                                        Service2={''}
+                                        Service1={'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png'}
+                                        Service2={'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png'}
                                     />
                                 ))}
                             </div>
@@ -57,7 +66,7 @@ const WorkflowPage: React.FC = () => {
                                 <Button
                                     size="icon"
                                     className={`w-60 h-10 rounded-[var(--small-radius)]`}
-                                    onClick={() => navigate("/test")}
+                                    onClick={() => navigate(AppRoutesPaths.CREATE)}
                                 >
                                     <p className="text-2xl"> Create workflow </p>
                                 </Button>
