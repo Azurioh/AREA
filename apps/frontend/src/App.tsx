@@ -18,6 +18,9 @@ export default function App() {
             <Route path={AppRoutesPaths.REGISTER} element={<RegisterPage />} />
             <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
             <Route element={<ProtectedRoute />}>
+              <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={ <AdminDashboardPage /> } />
+              <Route path={AppRoutesPaths.PROFILE} element={ <Profile /> } />
+              <Route path={AppRoutesPaths.HOME} element={ <HomePage /> } />
               <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
               <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
               <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
