@@ -128,12 +128,12 @@ fun ActionDetailCard(
                             onValueChange = { selectedValue ->
                                 paramValues = paramValues.toMutableMap().apply {
                                     val selectedOption = param.options.find { it.value == selectedValue }
-                                    if (param.key == "repository" && selectedOption != null) {
-                                        val repoMap: Map<String, Any> = mapOf(
+                                    if ((param.key == "repository" || param.key == "channel") && selectedOption != null) {
+                                        val objectMap: Map<String, Any> = mapOf(
                                             "name" to selectedOption.label,
                                             "id" to (selectedOption.value.toIntOrNull() ?: selectedOption.value)
                                         )
-                                        this[param.key] = repoMap
+                                        this[param.key] = objectMap
                                     } else {
                                         this[param.key] = selectedValue
                                     }
