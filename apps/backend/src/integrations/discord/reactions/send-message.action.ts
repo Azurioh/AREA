@@ -1,7 +1,10 @@
 import { Reaction } from '@/integrations/_definitions/reaction.interface';
+import type { DiscordService } from '@/modules/discord';
 
 export class DiscordSendMessageReaction extends Reaction {
-  constructor() {
+  private discordService: DiscordService;
+
+  constructor(discordService: DiscordService) {
     super('send_message', 'Send a message in a discord channel', [
       {
         type: 'select',
@@ -17,9 +20,11 @@ export class DiscordSendMessageReaction extends Reaction {
         placeholder: 'The content of the message',
       },
     ]);
+    this.discordService = discordService;
   }
 
   override async refreshParams(_userId: string): Promise<void> {
+    this.discordService;
     return Promise.resolve();
   }
 }

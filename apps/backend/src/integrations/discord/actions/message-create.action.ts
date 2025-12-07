@@ -1,7 +1,10 @@
 import { Action } from '@/integrations/_definitions/action.interface';
+import type { DiscordService } from '@/modules/discord';
 
 export class DiscordMessageCreateAction extends Action {
-  constructor() {
+  private discordService: DiscordService;
+
+  constructor(discordService: DiscordService) {
     super(
       'message_create',
       'Action triggered when a message is send in a discord channel',
@@ -29,9 +32,11 @@ export class DiscordMessageCreateAction extends Action {
         },
       ],
     );
+    this.discordService = discordService;
   }
 
   override async refreshParams(_userId: string): Promise<void> {
+    this.discordService;
     return Promise.resolve();
   }
 }
