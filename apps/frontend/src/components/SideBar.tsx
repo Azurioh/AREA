@@ -1,21 +1,21 @@
-import { House, Workflow, Link, LayoutDashboard, Plus } from "lucide-react"
-import { Button } from "@/components/wrappers/Button"
-import { useNavigate, useLocation } from "react-router-dom"
-import { AppRoutesPaths } from "@/enums/routes"
-import areaLogo from "@/assets/area_logo.png"
-import { Avatar} from "@/components/ui/avatar"
-import { useUserInitials } from "@/shared/hooks/useUserInitials"
+import { House, Workflow, Link, LayoutDashboard, Plus } from 'lucide-react';
+import { Button } from '@/components/wrappers/Button';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { AppRoutesPaths } from '@/enums/routes';
+import areaLogo from '@/assets/area_logo.png';
+import { Avatar } from '@/components/ui/avatar';
+import { useUserInitials } from '@/shared/hooks/useUserInitials';
 
 const SideBar = () => {
-    const navigate = useNavigate()
-    const location = useLocation()
-    const name = useUserInitials();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const name = useUserInitials();
 
     const menuItems = [
-        { icon: House, label: "Home", path: AppRoutesPaths.HOME, name: "Home" },
-        { icon: Workflow, label: "Workflows", path: "/test", name: "Workflows" },
-        { icon: Link, label: "Connections", path: "/test", name: "Connections" },
-        { icon: LayoutDashboard, label: "Dashboard", path: AppRoutesPaths.ADMIN_DASHBOARD, name: "Dashboard" },
+        { icon: House, label: 'Home', path: AppRoutesPaths.HOME, name: 'Home' },
+        { icon: Workflow, label: 'Workflows', path: AppRoutesPaths.WORKFLOWS, name: 'Workflows' },
+        { icon: Link, label: 'Connections', path: "/test", name: 'Connections' },
+        { icon: LayoutDashboard, label: 'Dashboard', path: AppRoutesPaths.ADMIN_DASHBOARD, name: 'Dashboard' },
     ]
 
   return (
@@ -24,7 +24,7 @@ const SideBar = () => {
         <img src={areaLogo} alt="Area Logo" className="w-16 h-6" />
       </div>
       <div className="flex flex-col items-center pt-6 mb-10">
-        <Button className="rounded-[30px] w-12 h-12">
+        <Button className="rounded-[30px] w-12 h-12" onClick={() => navigate(AppRoutesPaths.CREATE)}>
           {' '}
           <Plus className="h-16 w-16 scale-[2]" />
         </Button>
@@ -62,6 +62,6 @@ const SideBar = () => {
       </div>
     </aside>
   );
-}
+};
 
-export default SideBar
+export default SideBar;

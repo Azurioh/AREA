@@ -30,7 +30,7 @@ export const useUserInformation = () => {
 
   const getInitials = () => {
     if (!user?.name) {
-        return '??';
+      return '??';
     }
     return user.name.substring(0, 2).toUpperCase();
   };

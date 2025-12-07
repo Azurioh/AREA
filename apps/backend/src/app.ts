@@ -1,6 +1,5 @@
 import { type FastifyInstance, fastify } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { githubService, serviceManager } from '@/integrations';
 import { setupCookie } from './config/cookie';
 import { setupCors } from './config/cors';
 import { setupErrorHandler } from './config/error-handler';
@@ -16,10 +15,8 @@ import { servicesRoutes } from './modules/services';
 import { usersRoutes } from './modules/users';
 import { webhookRoutes } from './modules/webhook';
 import { actionsReactionsRoute } from './modules/actions-reactions';
-
-const registerServices = () => {
-  serviceManager.register(githubService);
-};
+import { registerServices } from './config/register-service';
+import { setupDiscordBot } from './config/discord-bot';
 
 async function build(): Promise<FastifyInstance> {
   const app: FastifyInstance = fastify({
@@ -31,12 +28,13 @@ async function build(): Promise<FastifyInstance> {
   setupCors(app);
   setupCookie(app);
   setupSwagger(app);
-  setupMongoDB(app);
+  await setupMongoDB(app);
   setupNotFoundHandler(app);
   setupErrorHandler(app);
   setupZod(app);
+  setupDiscordBot();
 
-  registerServices();
+  registerServices(app);
 
   app.withTypeProvider<ZodTypeProvider>().register(aboutRoutes);
   app.withTypeProvider<ZodTypeProvider>().register(webhookRoutes, { prefix: '/webhook' });

@@ -2,7 +2,7 @@ import type { Webhook } from '@area/shared/types/webhook.types';
 import type { WithId } from 'mongodb';
 import { v4 } from 'uuid';
 import type { WebhookRepository } from './webhook.repository';
-import type { GithubWebhookPayload } from '@/types/webhook';
+import type { DiscordWebhookPayload, GithubWebhookPayload } from '@/types/webhook';
 import type { ActionPayload } from '@/types/action-reaction';
 import type { ActionsReactionsService } from '../actions-reactions';
 
@@ -19,10 +19,33 @@ export class WebhookService {
     this.actionsReactionsService = actionsReactionsService;
   }
 
+  /**
+   * @function githubCallback
+   * @description Handle the github callback.
+   *
+   * @param {string} event The event who triggered the callback.
+   * @param {GithubWebhookPayload} body The body of the callback.
+   */
   async githubCallback(event: string, body: GithubWebhookPayload): Promise<void> {
     const action: ActionPayload = {
       service: 'github',
-      trigger: `${event}/${(body as GithubWebhookPayload).repository.name}`,
+      trigger: `${event}/${body.repository.id}`,
+    };
+
+    this.actionsReactionsService.handleReactions(action);
+  }
+
+  /**
+   * @function discordCallback
+   * @description Handle the discord callback.
+   *
+   * @param {string} event The event who triggered the callback.
+   * @param {DiscordWebhookPayload} body The body of the callback.
+   */
+  async discordCallback(event: string, body: DiscordWebhookPayload): Promise<void> {
+    const action: ActionPayload = {
+      service: 'discord',
+      trigger: `${event}/${body.channelId}`,
     };
 
     this.actionsReactionsService.handleReactions(action);

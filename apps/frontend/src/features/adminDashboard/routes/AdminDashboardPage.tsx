@@ -1,6 +1,10 @@
-import { motion } from 'framer-motion';
-import { Search } from 'lucide-react';
-import type React from 'react';
+import React from "react";
+import { Card, CardContent } from '@/components/wrappers/Card';
+import { Input } from "@/components/wrappers/Input";
+import { Button } from "@/components/wrappers/Button";
+import { Checkbox } from "@/components/wrappers/CheckBox";
+import { motion } from "framer-motion";
+import { Search } from "lucide-react";
 import SideBar from '@/components/SideBar';
 import {
   DropdownMenu,
@@ -8,10 +12,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/wrappers/Button';
-import { Card, CardContent } from '@/components/wrappers/Card';
-import { Checkbox } from '@/components/wrappers/CheckBox';
-import { Input } from '@/components/wrappers/Input';
 import UserCard from '../components/UserCard';
 import { useUserFilter } from '../hooks/useUserFilter';
 

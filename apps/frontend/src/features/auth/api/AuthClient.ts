@@ -31,11 +31,10 @@ export class LoginClient {
       body: JSON.stringify({ email, password, rememberMe }),
     });
 
-
     if (!response.ok) {
       const errorData = await response.json();
-      if (response.status == 404 || response.status == 401) {
-        throw new Error("Invalid email or password")
+      if (response.status === 404 || response.status === 401) {
+        throw new Error('Invalid email or password');
       }
       throw new Error(errorData.message || 'Login failed');
     }
@@ -64,11 +63,10 @@ export class LoginClient {
       body: JSON.stringify({ name, email, password }),
     });
 
-
     if (!response.ok) {
       const errorData = await response.json();
-      if (response.status == 409) {
-        throw new Error("Email already used");
+      if (response.status === 409) {
+        throw new Error('Email already used');
       }
       throw new Error(errorData.message || 'Registration failed');
     }

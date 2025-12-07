@@ -1,5 +1,5 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type { CreateUserMeActionReactionBody } from '@area/shared/schemas/action-reaction.schema';
+import type { CreateActionReactionBody } from '@area/shared/schemas/action-reaction.schema';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { ActionsReactionsService } from '../actions-reactions';
 
@@ -15,20 +15,34 @@ export class ActionsReactionsController {
   }
 
   /**
-   * @function createUserMeActionReaction
+   * @function createActionReaction
    * @description Create action reaction for the current user
    *
-   * @param {FastifyRequest<{ Body: CreateUserMeActionReaction }>} request The FastifyRequest object
+   * @param {FastifyRequest<{ Body: CreateActionReactionBody }>} request The FastifyRequest object
    * @param {FastifyReply} reply The FastifyReply object
    * @returns {Promise<void>} Nothing
    */
   async createActionReaction(
-    request: FastifyRequest<{ Body: CreateUserMeActionReactionBody }>,
+    request: FastifyRequest<{ Body: CreateActionReactionBody }>,
     reply: FastifyReply,
   ): Promise<void> {
     const body = request.body;
     await this.service.createActionReaction(request.user._id, body.action, body.reaction);
 
     return reply.status(HttpStatusCode.NO_CONTENT).send();
+  }
+
+  /**
+   * @function getMeActionsReactions
+   * @description get the current user action reaction
+   *
+   * @param {FastifyRequest} request The FastifyRequest object
+   * @param {FastifyReply} reply The FastifyReply object
+   * @returns {Promise<void>} Nothing
+   */
+  async getMeActionsReactions(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    const actionsReactions = await this.service.getMeActionsReactions(request.user._id);
+
+    return reply.status(HttpStatusCode.OK).send(actionsReactions);
   }
 }
