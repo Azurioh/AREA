@@ -1,5 +1,5 @@
 import { environment } from '@/utils/environment';
-import { Client, GatewayIntentBits, type Message, type OmitPartialGroupDMChannel } from 'discord.js';
+import { Client, Events, GatewayIntentBits, type Message, type OmitPartialGroupDMChannel } from 'discord.js';
 
 export const setupDiscordBot = () => {
   const client = new Client({
@@ -11,7 +11,7 @@ export const setupDiscordBot = () => {
     ],
   });
 
-  client.on('messageCreate', async (message: OmitPartialGroupDMChannel<Message<boolean>>) => {
+  client.on(Events.MessageCreate, async (message: OmitPartialGroupDMChannel<Message<boolean>>) => {
     if (message.author.id === environment.DISCORD_CLIENT_ID) {
       return;
     }
