@@ -1,4 +1,4 @@
-import { createGithubService, serviceManager } from '@/integrations';
+import { createGithubService, ServiceManager } from '@/integrations';
 import { GithubRepository, GithubService } from '@/modules/github';
 import { UsersRepository, UsersService } from '@/modules/users';
 import type { FastifyInstance } from 'fastify';
@@ -13,5 +13,5 @@ export const registerServices = (app: FastifyInstance): void => {
   const githubRepository = new GithubRepository(app.mongo.db!);
   const githubService = new GithubService(githubRepository, usersService);
 
-  serviceManager.register(createGithubService(githubService));
+  ServiceManager.instance.register(createGithubService(githubService));
 };
