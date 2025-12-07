@@ -5,4 +5,5 @@ export const AppRoutesPaths = {
   ADMIN_DASHBOARD: '/admin-dashboard',
   PROFILE: '/profile',
   OTHER: '/other',
+  CREATE: '/create',
 } as const;
