@@ -35,8 +35,12 @@ export class DiscordMessageCreateAction extends Action {
     this.discordService = discordService;
   }
 
-  override async refreshParams(_userId: string): Promise<void> {
-    this.discordService;
+  override async refreshParams(userId: string): Promise<void> {
+    const channelParam = this.params[0];
+
+    if (channelParam?.type === 'select') {
+      channelParam.options = await this.discordService.listChannels(userId);
+    }
     return Promise.resolve();
   }
 }
