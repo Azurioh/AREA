@@ -6,4 +6,6 @@ export const AppRoutesPaths = {
   PROFILE: '/profile',
   OTHER: '/other',
   CREATE: '/create',
+  CONNECTIONS: '/connections',
+  OAUTH_CALLBACK: '/oauth/callback',
 } as const;
