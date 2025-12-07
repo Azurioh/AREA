@@ -44,4 +44,7 @@ interface ApiService {
 
     @POST("actions-reactions/v1")
     suspend fun createActionReaction(@Body request: ActionReactionRequest)
+
+    @GET("actions-reactions/v1/me")
+    suspend fun getAllActionsReactions() : List<ActionReactionRequest>
 }
