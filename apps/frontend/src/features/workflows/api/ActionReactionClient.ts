@@ -1,4 +1,4 @@
-import type { CreateUserMeActionReactionBody } from '@area/shared/schemas/action-reaction.schema';
+import type { CreateActionReactionBody } from '@area/shared/schemas/action-reaction.schema';
 import { ApiClient } from '@/lib/ApiClient';
 
 /**
@@ -10,10 +10,10 @@ export class ActionReactionClient extends ApiClient {
    * @function createWorkflow
    * @description Creates a new action-reaction workflow for the authenticated user.
    *
-   * @param {CreateUserMeActionReactionBody} body - The body of the request containing action and reaction details.
+   * @param {CreateActionReactionBody} body - The body of the request containing action and reaction details.
    * @returns {Promise<void>} A promise that resolves when the workflow is created.
    */
-  async createWorkflow(body: CreateUserMeActionReactionBody): Promise<void> {
+  async createWorkflow(body: CreateActionReactionBody): Promise<void> {
     try {
       await this.fetch<void>('/actions-reactions/v1', {
         method: 'POST',
