@@ -22,7 +22,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(url.url)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Erreur inconnue")
+                onError(e.message ?: "Unknow error")
             }
         }
     }
@@ -38,7 +38,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(services)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Erreur inconnue")
+                onError(e.message ?: "Unknow error")
             }
         }
     }
@@ -54,7 +54,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(reactions)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Erreur inconnue")
+                onError(e.message ?: "Unknow error")
             }
         }
     }
@@ -71,7 +71,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(actionDetails)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Erreur inconnue")
+                onError(e.message ?: "Unknow error")
             }
         }
     }
@@ -88,7 +88,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(reactionDetails)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Erreur inconnue")
+                onError(e.message ?: "Unknow error")
             }
         }
     }
@@ -121,7 +121,22 @@ class ServiceViewModel : ViewModel() {
                 onSuccess()
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Erreur inconnue")
+                onError(e.message ?: "Unknow error")
+            }
+        }
+    }
+
+    fun getAllActionsReactions(
+        onSuccess: (List<ActionReactionRequest>) -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val actionsReactions = RetrofitInstance.api.getAllActionsReactions()
+                onSuccess(actionsReactions)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onError(e.message ?: "Unknow error")
             }
         }
     }
