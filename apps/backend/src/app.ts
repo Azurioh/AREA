@@ -16,6 +16,7 @@ import { usersRoutes } from './modules/users';
 import { webhookRoutes } from './modules/webhook';
 import { actionsReactionsRoute } from './modules/actions-reactions';
 import { registerServices } from './config/register-service';
+import { setupDiscordBot } from './config/discord-bot';
 
 async function build(): Promise<FastifyInstance> {
   const app: FastifyInstance = fastify({
@@ -31,6 +32,7 @@ async function build(): Promise<FastifyInstance> {
   setupNotFoundHandler(app);
   setupErrorHandler(app);
   setupZod(app);
+  setupDiscordBot();
 
   registerServices(app);
 

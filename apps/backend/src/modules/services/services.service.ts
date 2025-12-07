@@ -1,6 +1,6 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { ActionReturnValues, IAction, IReaction } from '@area/shared/types/services.types';
-import { serviceManager } from '@/integrations';
+import { ServiceManager } from '@/integrations';
 import ApiError from '@/utils/api-error';
 
 /**
@@ -16,7 +16,7 @@ export class ServicesService {
    * @returns {Promise<IAction[]>} The actions of the service
    */
   async getServiceActions(serviceName: string): Promise<Pick<IAction, 'name' | 'description'>[]> {
-    const service = serviceManager.get(serviceName);
+    const service = ServiceManager.instance.get(serviceName);
     if (!service) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, `Service ${serviceName} not found`);
     }
@@ -43,7 +43,7 @@ export class ServicesService {
     actionName: string,
     userId: string,
   ): Promise<Omit<IAction, 'returnedValues'>> {
-    const service = serviceManager.get(serviceName);
+    const service = ServiceManager.instance.get(serviceName);
     if (!service) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, `Service ${serviceName} not found`);
     }
@@ -69,7 +69,7 @@ export class ServicesService {
    * @returns {Promise<ActionReturnValues[]>} The returned values of the action
    */
   async getActionReturnedValues(serviceName: string, actionName: string): Promise<Omit<ActionReturnValues, 'path'>[]> {
-    const service = serviceManager.get(serviceName);
+    const service = ServiceManager.instance.get(serviceName);
     if (!service) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, `Service ${serviceName} not found`);
     }
@@ -98,7 +98,7 @@ export class ServicesService {
    * @returns {IReaction[]} The reactions of the service
    */
   async getServiceReactions(serviceName: string): Promise<Pick<IReaction, 'name' | 'description'>[]> {
-    const service = serviceManager.get(serviceName);
+    const service = ServiceManager.instance.get(serviceName);
     if (!service) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, `Service ${serviceName} not found`);
     }
@@ -121,7 +121,7 @@ export class ServicesService {
    * @returns {Promise<IReaction>} The details of the reaction
    */
   async getReactionDetails(serviceName: string, reactionName: string, userId: string): Promise<IReaction> {
-    const service = serviceManager.get(serviceName);
+    const service = ServiceManager.instance.get(serviceName);
     if (!service) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, `Service ${serviceName} not found`);
     }

@@ -1,12 +1,22 @@
 /**
- * @type DiscordAuthorizationQueryString
- * @description Query string required to authenticate with discord.
+ * @type GithubWebhookPayload
+ * @description The payload of the github webhook.
  *
  * @property {Object} repository The information about the repository
- * @property {string} repository.name The name of the repository
+ * @property {string} repository.id The id of the repository
  */
 export type GithubWebhookPayload = {
   repository: {
-    name: string;
+    id: number;
   };
+};
+
+/**
+ * @type DiscordWebhookPayload
+ * @description The payload of the discord webhook.
+ *
+ * @property {string} channelId The id of the channel
+ */
+export type DiscordWebhookPayload = {
+  channelId: number;
 };

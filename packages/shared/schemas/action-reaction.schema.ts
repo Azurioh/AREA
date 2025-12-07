@@ -12,9 +12,7 @@ export const actionReactionSchema = z.object({
   params: z.object({}).catchall(z.any()),
 });
 
-export type CreateAction = z.infer<typeof actionReactionSchema> & {
-  trigger: string;
-};
+export type CreateAction = z.infer<typeof actionReactionSchema>;
 
 export type CreateReaction = z.infer<typeof actionReactionSchema>;
 

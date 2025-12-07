@@ -1,5 +1,5 @@
 import type { AboutServiceType } from '@area/shared/types/about.types';
-import { serviceManager } from '@/integrations';
+import { ServiceManager } from '@/integrations';
 
 /**
  * @class AboutService
@@ -23,7 +23,7 @@ export class AboutService {
    * @returns {AboutServiceType} An array of services with their details.
    */
   getServices(): AboutServiceType {
-    const services = serviceManager.getAll();
+    const services = ServiceManager.instance.getAll();
 
     return services.map((service) => ({
       name: service.name,
