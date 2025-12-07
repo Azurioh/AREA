@@ -4,8 +4,8 @@ import type { FastifyInstance } from 'fastify';
 import ApiError from '@/utils/api-error';
 import { environment } from '@/utils/environment';
 
-export const setupMongoDB = (app: FastifyInstance): void => {
-  app.register(fastifyMongo, {
+export const setupMongoDB = async (app: FastifyInstance): Promise<void> => {
+  await app.register(fastifyMongo, {
     forceClose: true,
     url: environment.MONGO_URI,
     database: environment.MONGO_DATABASE,

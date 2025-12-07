@@ -44,3 +44,17 @@ export type GithubAccount = {
   userId: string;
   accessToken: string;
 };
+
+/**
+ * @type GithubRepositories
+ * @description The type representing a github repository.
+ *
+ * @property {string} name - The name of the repository.
+ * @property {string} id - The id of the repository.
+ */
+export type GithubRepositories = [
+  {
+    name: string;
+    id: string;
+  },
+];
