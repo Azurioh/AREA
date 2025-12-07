@@ -10,5 +10,3 @@ export const createGithubService = (githubService: GithubService): Service => {
     reactions: Object.values(reactions).map((Reaction) => new Reaction(githubService)),
   };
 };
-
-// export const githubService: Service = createGithubService(githubService);
