@@ -7,84 +7,11 @@ import { Input } from '@/components/wrappers/Input';
 import SideBar from "@/components/SideBar";
 import { Card, CardContent } from "@/components/wrappers/Card";
 import { useNavigate } from "react-router-dom"
-
-const workflowsMock = [
-    {
-        title: 'Workflow A',
-        Description: 'Description A',
-        Value: '42',
-        Last: '5',
-        activated: true,
-        Service1: 'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png',
-        Service2: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png',
-    },
-    {
-        title: 'Workflow A',
-        Description: 'Description A',
-        Value: '42',
-        Last: '5',
-        activated: true,
-        Service1: 'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png',
-        Service2: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png',
-    },
-    {
-        title: 'Workflow A',
-        Description: 'Description A',
-        Value: '42',
-        Last: '5',
-        activated: true,
-        Service1: 'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png',
-        Service2: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png',
-    },
-    {
-        title: 'Workflow B',
-        Description: 'Description B',
-        Value: '123',
-        Last: '10',
-        activated: false,
-        Service1: 'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png',
-        Service2: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png',
-    },
-    {
-        title: 'Workflow C',
-        Description: 'Description C',
-        Value: '300',
-        Last: '60',
-        activated: true,
-        Service1: 'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png',
-        Service2: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png',
-    },
-    {
-        title: 'Workflow D',
-        Description: 'Description D',
-        Value: '88',
-        Last: '12',
-        activated: false,
-        Service1: 'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png',
-        Service2: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png',
-    },
-    {
-        title: 'Workflow E',
-        Description: 'Description E',
-        Value: '150',
-        Last: '20',
-        activated: true,
-        Service1: 'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png',
-        Service2: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png',
-    },
-    {
-        title: 'Workflow F',
-        Description: 'Description F',
-        Value: '75',
-        Last: '8',
-        activated: false,
-        Service1: 'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png',
-        Service2: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png',
-    },
-];
+import { useGetAllWorkflows } from "@/features/workflows/hooks/useGetAllWorkflows";
 
 const WorkflowPage: React.FC = () => {
     const navigate = useNavigate();
+    const { workflows, isLoading, error } = useGetAllWorkflows();
 
     return (
         <div className="flex h-screen bg-background">
@@ -109,16 +36,18 @@ const WorkflowPage: React.FC = () => {
                         </div>
                         <div className="w-full flex justify-center">
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 px-4 mb-12">
-                                {workflowsMock.map((wf, idx) => (
+                                {isLoading && <div className="col-span-3 text-center text-lg">Chargement...</div>}
+                                {error && <div className="col-span-3 text-center text-red-500">{error}</div>}
+                                {!isLoading && !error && workflows.map((wf, idx) => (
                                     <WorkflowsCard
-                                    key={idx}
-                                    title={wf.title}
-                                    Description={wf.Description}
-                                    Value={wf.Value}
-                                    Last={wf.Last}
-                                    activated={wf.activated}
-                                    Service1={wf.Service1}
-                                    Service2={wf.Service2}
+                                        key={idx}
+                                        title={wf.action?.service || 'Unknown'}
+                                        Description={wf.action?.name || ''}
+                                        Value={wf.action?.params?.value || ''}
+                                        Last={wf.action?.params?.last || ''}
+                                        activated={true}
+                                        Service1={''}
+                                        Service2={''}
                                     />
                                 ))}
                             </div>
