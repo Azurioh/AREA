@@ -1,4 +1,4 @@
-import type { CreateAction, CreateReaction } from '@area/shared/schemas/action-reaction.schema';
+import type { CreateAction, CreateReaction, MeActionsReactions } from '@area/shared/schemas/action-reaction.schema';
 import type { ActionsReactionsRepository } from './actions-reactions.repository';
 import type { ActionPayload, ActionsReactions } from '@/types/action-reaction';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
@@ -90,5 +90,24 @@ export class ActionsReactionsService {
    */
   async getActionsReactionsByTrigger(trigger: string): Promise<ActionsReactions[]> {
     return await this.repository.getActionsReactionsByTrigger(trigger);
+  }
+
+  /**
+   * @function getMeActionsReactions
+   * @description Get the list of actions reactions for the current user
+   *
+   * @param {string} userId The id of the user
+   * @returns {Promise<MeActionsReactions[]>} The matched actions reactions
+   */
+  async getMeActionsReactions(trigger: string): Promise<MeActionsReactions> {
+    const actionsReactions = await this.repository.getMeActionsReactions(trigger);
+
+    const formattedActionsReactions: MeActionsReactions = actionsReactions.map((actionReaction) => {
+      return {
+        action: actionReaction.action,
+        reaction: actionReaction.reaction,
+      };
+    });
+    return formattedActionsReactions;
   }
 }
