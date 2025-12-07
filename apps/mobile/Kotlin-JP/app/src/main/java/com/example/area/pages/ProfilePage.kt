@@ -98,6 +98,23 @@ fun ProfilePage(
                     )
                 }
             )
+            ConnectionCard(
+                serviceImage = R.drawable.discord,
+                serviceName = "Discord",
+                isConnected = false,
+                onButtonClick = {
+                    serviceViewModel.connectToService(
+                        serviceName = "discord",
+                        onSuccess = { url ->
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            context.startActivity(intent)
+                        },
+                        onError = { error ->
+                            println(">>> Failed to connect to Discord: $error")
+                        }
+                    )
+                }
+            )
         }
     }
 }
