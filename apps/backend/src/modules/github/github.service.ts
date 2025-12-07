@@ -40,6 +40,8 @@ export class GithubService {
     }
     const userName = await this.getUserName(userId, githubAccount);
 
+    console.log(userName);
+    console.log(action.params.repository.name);
     const response = await fetch(`https://api.github.com/repos/${userName}/${action.params.repository.name}/hooks`, {
       method: 'POST',
       headers: {
@@ -57,13 +59,15 @@ export class GithubService {
       }),
     });
 
+    console.log(response);
+
     const formattedResponse = await response.json();
 
     const trigger = `${action.name}/${action.params.repository.id}`;
 
     console.log(formattedResponse);
     if (!response.ok) {
-      for (const error of formattedResponse.errors) {
+      for (const error of formattedResponse.errors || []) {
         if (!error) {
           continue;
         }
