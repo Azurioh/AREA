@@ -7,11 +7,13 @@ import type { CreateAction, CreateReaction } from '@area/shared/schemas/action-r
  * @property {string} userId The id of the user creating the action reaction
  * @property {CreateAction} action The data to create the action
  * @property {CreateReaction} reaction The data to create the reaction
+ * @property {string} trigger The action trigger that result in the reaction
  */
 export type ActionsReactions = {
   userId: string;
   action: CreateAction;
   reaction: CreateReaction;
+  trigger: string;
 };
 
 /**

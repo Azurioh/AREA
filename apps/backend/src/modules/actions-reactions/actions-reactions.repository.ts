@@ -38,7 +38,7 @@ export class ActionsReactionsRepository {
   async getActionsReactionsByTrigger(trigger: string): Promise<ActionsReactions[]> {
     return await this.db
       .collection<ActionsReactions>(MongoCollections.ACTIONS_REACTIONS)
-      .find({ 'action.trigger': trigger })
+      .find({ trigger: trigger })
       .toArray();
   }
 

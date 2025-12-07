@@ -1,6 +1,6 @@
 import type { Action, Reaction, Service } from './_definitions';
-import serviceManager from './_manager/service.manager';
+import { ServiceManager } from './_manager/service.manager';
 import { createGithubService } from './github';
-import { getGithubClient } from './github/client';
+import { createDiscordService } from './discord';
 
-export { getGithubClient, createGithubService, serviceManager, type Action, type Reaction, type Service };
+export { createGithubService, createDiscordService, ServiceManager, type Action, type Reaction, type Service };
