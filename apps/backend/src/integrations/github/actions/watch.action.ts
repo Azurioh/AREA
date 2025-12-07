@@ -1,7 +1,10 @@
 import { Action } from '@/integrations/_definitions/action.interface';
+import type { GithubService } from '@/modules/github';
 
 export class GithubPullRequestAction extends Action {
-  constructor() {
+  private githubService: GithubService;
+
+  constructor(githubService: GithubService) {
     super(
       'watch',
       'Action triggered when a user star a repository',
@@ -35,9 +38,22 @@ export class GithubPullRequestAction extends Action {
         },
       ],
     );
+    this.githubService = githubService;
   }
 
-  override async refreshParams(_userId: string): Promise<void> {
+  /**
+   * @function refreshParams
+   * @description Refresh the parameters of the action
+   *
+   * @param {string} userId The id of the user
+   * @returns {Promise<void>} Nothing
+   */
+  override async refreshParams(userId: string): Promise<void> {
+    const repositortyParam = this.params[0];
+
+    if (repositortyParam?.type === 'select') {
+      repositortyParam.options = await this.githubService.listRepositories(userId);
+    }
     return Promise.resolve();
   }
 }

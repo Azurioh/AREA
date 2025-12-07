@@ -3,7 +3,7 @@ import type { CreateAction, CreateReaction } from '@area/shared/schemas/action-r
 import type { StateToken } from '@area/shared/types/user.types';
 import type { MaybeNull } from '@area/shared/utils/common';
 import type { WithId } from 'mongodb';
-import type { GitHubAuthorizationResponse, GithubAccount } from '@/types/github';
+import type { GitHubAuthorizationResponse, GithubAccount, GithubRepositories } from '@/types/github';
 import ApiError from '@/utils/api-error';
 import { decryptString, encryptString } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
@@ -116,9 +116,9 @@ export class GithubService {
    *
    * @param {string} code - The code provided by github to get the tokens
    * @param {state} state - A string to protect against threats
-   * @returns {Promise<boolean>} If the autorization was succesful
+   * @returns {Promise<string | null>} The client type authorizing
    */
-  async authorizeUser(code: string, state: string): Promise<boolean> {
+  async authorizeUser(code: string, state: string): Promise<string | null> {
     const decoded = verifyToken<StateToken>(state, environment.JWT_STATE_TOKEN_SECRET);
 
     if (!(await this.usersService.checkIfUserExist(decoded._id))) {
@@ -139,7 +139,7 @@ export class GithubService {
     });
 
     if (response.status !== HttpStatusCode.OK) {
-      return false;
+      return null;
     }
 
     const formattedResponse = (await response.json()) as GitHubAuthorizationResponse;
@@ -159,7 +159,7 @@ export class GithubService {
     } else {
       success = await this.repository.createGithubAccount(data);
     }
-    return success;
+    return success ? decoded.clientType : null;
   }
 
   /**
@@ -175,14 +175,20 @@ export class GithubService {
 
   /**
    * @function listRepositories
-   * @description List all repositories for the authenticated user
+   * @description List all repositories for the given user
    *
-   * @returns {Promise<string[]>} Array of repository names
+   * @param {string} userId The id of the user
+   * @returns {Promise<GithubRepositories>} Array of repository names
    */
-  async listRepositories(): Promise<string[]> {
-    const response = await fetch('https://api.github.com/user/repos', {
+  async listRepositories(userId: string): Promise<GithubRepositories> {
+    const githubAccount = await this.getGithubAccountByUserId(userId);
+
+    if (!githubAccount) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Github account not found');
+    }
+    const response = await fetch(`https://api.github.com/user/repos`, {
       headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        Authorization: `Bearer ${decryptString(githubAccount.accessToken, environment.CRYPT_SECRET_KEY)}`,
         Accept: 'application/vnd.github+json',
       },
     });
@@ -192,17 +198,24 @@ export class GithubService {
     }
 
     const data = await response.json();
-    const repositoryNames = data.map((repo: any) => repo.full_name);
-    return repositoryNames;
+    const repositories: GithubRepositories = data.map((repo: any) => {
+      return {
+        name: repo.name,
+        id: `${repo.id}`,
+      };
+    });
+    return repositories;
   }
 
   /**
    * @function listRepositories
    * @description List all repositories for the authenticated user
    *
+   * @param {string} userId The id of the user
+   * @param {MaybeNull<GithubAccount>} account The user account
    * @returns {Promise<string>} The name of the user
    */
-  async getUserName(userId: string, account?: GithubAccount): Promise<string> {
+  async getUserName(userId: string, account?: MaybeNull<GithubAccount>): Promise<string> {
     const githubAccount = account ?? (await this.getGithubAccountByUserId(userId));
 
     if (!githubAccount) {

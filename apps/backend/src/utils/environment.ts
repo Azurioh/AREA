@@ -12,7 +12,8 @@ export interface Environment {
   PORT: number;
   BASE_API_URL: string;
   CRYPT_SECRET_KEY: string;
-  FRONTEND_AUTHORIZE_CALLBACK_URL: string;
+  WEB_OAUTH_CALLBACK_URL: string;
+  MOBILE_OAUTH_CALLBACK_URL: string;
   MONGO_URI: string;
   MONGO_DATABASE: string;
   GITHUB_TOKEN: string;
@@ -58,7 +59,8 @@ export const environment: Environment = {
   NODE_ENV: process.env.NODE_ENV as string,
   BASE_API_URL: process.env.BASE_API_URL as string,
   CRYPT_SECRET_KEY: process.env.CRYPT_SECRET_KEY as string,
-  FRONTEND_AUTHORIZE_CALLBACK_URL: process.env.FRONTEND_AUTHORIZE_CALLBACK_URL as string,
+  WEB_OAUTH_CALLBACK_URL: process.env.WEB_OAUTH_CALLBACK_URL as string,
+  MOBILE_OAUTH_CALLBACK_URL: process.env.MOBILE_OAUTH_CALLBACK_URL as string,
   MONGO_URI: process.env.MONGO_URI as string,
   MONGO_DATABASE: process.env.MONGO_DATABASE as string,
   GITHUB_TOKEN: process.env.GITHUB_TOKEN as string,

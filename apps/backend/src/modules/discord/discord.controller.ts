@@ -27,13 +27,21 @@ export class DiscordController {
     reply: FastifyReply,
   ): Promise<void> {
     const query = request.query;
+    const status = { code: HttpStatusCode.BAD_REQUEST, text: 'error' };
+    let callbackUrl = environment.WEB_OAUTH_CALLBACK_URL;
 
-    if (!query.code || !(await this.service.authorizeUser(query.code, query.state))) {
-      reply.redirect(`${environment.FRONTEND_AUTHORIZE_CALLBACK_URL}?error=true`);
-      return reply.status(HttpStatusCode.BAD_REQUEST).send();
+    if (query.code) {
+      const clientType = await this.service.authorizeUser(query.code, query.state);
+
+      if (clientType) {
+        if (clientType === 'mobile') {
+          callbackUrl = environment.MOBILE_OAUTH_CALLBACK_URL;
+        }
+        status.code = HttpStatusCode.NO_CONTENT;
+        status.text = 'success';
+      }
     }
-
-    reply.redirect(`${environment.FRONTEND_AUTHORIZE_CALLBACK_URL}`);
-    reply.status(HttpStatusCode.NO_CONTENT).send();
+    reply.redirect(`${callbackUrl}?status=${status.text}`);
+    reply.status(status.code).send();
   }
 }
