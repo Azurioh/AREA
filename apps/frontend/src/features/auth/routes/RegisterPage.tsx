@@ -73,7 +73,7 @@ const RegisterPage: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <Button variant="ghost" onClick={togglePasswordVisibility} className='absolute right-3 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-inherit'>
+                <Button type="button" variant="ghost" onClick={togglePasswordVisibility} className='absolute right-3 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-inherit'>
                   {showPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                 </Button>
               </div>
@@ -91,7 +91,7 @@ const RegisterPage: React.FC = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
-                <Button variant="ghost" onClick={toggleConfirmPasswordVisibility} className='absolute right-3 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-inherit'>
+                <Button type='button' variant='ghost' onClick={toggleConfirmPasswordVisibility} className='absolute right-3 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-inherit'>
                   {showConfirmPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                 </Button>
               </div>
