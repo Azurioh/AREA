@@ -21,9 +21,13 @@ export const actionParamsFields = {
     description: 'The type of the parameter',
     example: 'select',
   }),
-  options: z.array(z.string()).meta({
+  options: z.array(z.object({ name: z.string(), id: z.string() })).meta({
     description: 'The options of the parameter (only for select type)',
-    example: ['option1', 'option2', 'option3'],
+    example: [
+      { name: 'option1', id: '1' },
+      { name: 'option2', id: '2' },
+      { name: 'option3', id: '3' },
+    ],
   }),
 };
 

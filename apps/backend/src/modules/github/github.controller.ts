@@ -16,19 +16,6 @@ export class GithubController {
   }
 
   /**
-   * @function listRepositories
-   * @description Handles listing all repositories.
-   *
-   * @param {FastifyRequest} _ The Fastify request object.
-   * @param {FastifyReply} reply The Fastify reply object for sending the response.
-   */
-  async listRepositories(_: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const repositories = await this.service.listRepositories();
-
-    reply.status(200).send(repositories);
-  }
-
-  /**
    * @function authorizeUser
    * @description Authorize a user to its github account.
    *
