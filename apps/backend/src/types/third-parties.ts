@@ -1,0 +1,115 @@
+import type {
+  thirdPartyAuthorizationParamsSchema,
+  thirdPartyAuthorizationQueryStringSchema,
+} from '@area/shared/schemas/third-parties.schema';
+import type z from 'zod';
+
+export type ClientType = 'web' | 'client';
+
+/**
+ * @type ThirdPartyAuthorizationQueryString
+ * @description Query string required to authenticate with github.
+ *
+ * @property {string} code The code provided by github to authenticate the user
+ * @property {string} state A state given by the client when making the authorization request
+ */
+export type ThirdPartyAuthorizationQueryString = z.infer<typeof thirdPartyAuthorizationQueryStringSchema>;
+
+/**
+ * @type ThirdPartyAuthorizationParams
+ * @description Params required for the service name.
+ *
+ * @property {ServiceType} service The service authorizing
+ */
+export type ThirdPartyAuthorizationParams = z.infer<typeof thirdPartyAuthorizationParamsSchema>;
+
+/**
+ * @type ThirdPartyAuthorization
+ * @description ThirdPartyAuthorization type.
+ *
+ * @property {string} code The code provided by the service to authenticate the user
+ * @property {string} state A state given by the client when making the authorization request
+ */
+export type ThirdPartyAuthorization = ThirdPartyAuthorizationQueryString;
+
+export type ServiceType = 'github' | 'discord';
+
+/**
+ * @type BaseAccount
+ * @description BaseAccount type.
+ *
+ * @property {string} userId The id of the user linked to the account
+ * @property {string} service The name of the service
+ * @property {string} accessToken The access token
+ * @property {string | null} refreshToken The refresh token
+ */
+export type BaseAccount = {
+  userId: string;
+  service: ServiceType;
+  accessToken: string;
+  refreshToken: string | null;
+};
+
+/**
+ * @type DiscordAccount
+ * @description DiscordAccount type.
+ *
+ * @property {'discord'} service The name of the service
+ * @property {string} guildId The if of the guild the bot has been authorize into
+ */
+export type DiscordAccount = BaseAccount & {
+  service: 'discord';
+  guildId: string;
+};
+
+/**
+ * @type GithubAccount
+ * @description GithubAccount type.
+ *
+ * @property {'github'} service The name of the service
+ * @property {string} username The name of the github usr
+ */
+export type GithubAccount = BaseAccount & {
+  service: 'github';
+  username: string;
+};
+
+export type ThirdPartyAccount = DiscordAccount | GithubAccount;
+
+/**********************************
+ * SERVICE AUTHORIZATION RESPONSE *
+ **********************************/
+
+/**
+ * @type GitHubAuthorizationResponse
+ * @description The content of the github authorization response.
+ *
+ * @property {string} access_token - The response access token.
+ */
+export type GitHubAuthorizationResponse = {
+  access_token: string;
+};
+
+/**
+ * @type DiscordGuild
+ * @description The content of a discord guild.
+ *
+ * @property {string} id - The id of the guild.
+ */
+type DiscordGuild = {
+  id: string;
+};
+
+/**
+ * @type DiscordAuthorizationResponse
+ * @description The content of the discord authorization response.
+ *
+ * @property {string} access_token - The response access token.
+ * @property {string} refresh_token - The response refresh token.
+ * @property {DiscordGuild} guild - The authorized guild
+ */
+export type DiscordAuthorizationResponse = {
+  access_token: string;
+  refresh_token: string;
+  guild: DiscordGuild;
+};
