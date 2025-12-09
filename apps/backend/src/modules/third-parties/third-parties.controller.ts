@@ -22,7 +22,7 @@ export class ThirdPartiesController {
   }
 
   /**
-   * @function getUserMeThirdPartyAuthorizationUrl
+   * @function getThirdPartyAuthorizationUrl
    * @description Connect the current user to a thid party service
    *
    * @param {FastifyRequest} request The FastifyRequest object

@@ -1,6 +1,6 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-reactions.schema';
-import type { GithubRepositories } from '@/types/github';
+import type { GithubRepository } from '@/types/github';
 import ApiError from '@/utils/api-error';
 import { decryptString } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
@@ -107,7 +107,7 @@ export class GithubService {
    * @param {string} userId The id of the user
    * @returns {Promise<GithubRepositories>} Array of repository names
    */
-  async listRepositories(userId: string): Promise<GithubRepositories> {
+  async listRepositories(userId: string): Promise<GithubRepository[]> {
     const githubAccount = await this.thirdPartiesService.getThirdPartyAccountByUserId<GithubAccount>('github', userId);
 
     const response = await fetch(`https://api.github.com/user/repos`, {
@@ -123,7 +123,7 @@ export class GithubService {
 
     const data = await response.json();
 
-    const repositories: GithubRepositories = data
+    const repositories: GithubRepository[] = data
       .filter((repo: any) => repo.permissions?.admin || false)
       .map((repo: any) => {
         return {

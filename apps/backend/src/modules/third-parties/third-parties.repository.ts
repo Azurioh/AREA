@@ -1,7 +1,6 @@
 import { MongoCollections } from '@/enums/mongo-collection';
 import type { ServiceType, ThirdPartyAccount } from '@/types/third-parties';
 import type { MaybeNull } from '@area/shared/utils/common';
-// import type { GithubAccount } from '@/types/github';
 import { ObjectId, type UpdateResult, type Db, type WithId } from 'mongodb';
 
 /**
