@@ -1,12 +1,13 @@
 import type { FastifyInstance } from 'fastify';
 import { GithubService } from '@/modules/github';
-import { GithubRepository } from '@/modules/github/github.repository';
 import { WebhookService } from '@/modules/webhook';
 import { UsersRepository, UsersService } from '../users';
 import { WebhookController } from './webhook.controller';
 import { WebhookRepository } from './webhook.repository';
 import { ActionsReactionsRepository, ActionsReactionsService } from '../actions-reactions';
-import { DiscordRepository, DiscordService } from '../discord';
+import { DiscordService } from '../discord';
+import { ThirdPartiesRepository } from '../third-parties/third-parties.repository';
+import { ThirdPartiesService } from '../third-parties';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -15,13 +16,13 @@ export default async (app: FastifyInstance) => {
 
   const userRepository = new UsersRepository(app.mongo.db);
   const repository = new WebhookRepository(app.mongo.db);
-  const githubRepository = new GithubRepository(app.mongo.db);
-  const discordRepository = new DiscordRepository(app.mongo.db);
   const actionsReactionsRepository = new ActionsReactionsRepository(app.mongo.db);
+  const thirdPartiesRepository = new ThirdPartiesRepository(app.mongo.db);
 
-  const userService = new UsersService(userRepository);
-  const githubService = new GithubService(githubRepository, userService);
-  const discordService = new DiscordService(discordRepository, userService);
+  const usersService = new UsersService(userRepository);
+  const thirdPartiesService = new ThirdPartiesService(thirdPartiesRepository, usersService);
+  const githubService = new GithubService(thirdPartiesService);
+  const discordService = new DiscordService(thirdPartiesService);
   const actionsReactionsService = new ActionsReactionsService(
     actionsReactionsRepository,
     githubService,
