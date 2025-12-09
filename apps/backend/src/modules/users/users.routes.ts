@@ -11,7 +11,7 @@ import {
   updateUserByIdResponseSchema,
   updateUserMeBodySchema,
   updateUserMeResponseSchema,
-} from '@area/shared/schemas/user.schema';
+} from '@area/shared/schemas/users.schema';
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';
 import { UsersController } from './users.controller';
