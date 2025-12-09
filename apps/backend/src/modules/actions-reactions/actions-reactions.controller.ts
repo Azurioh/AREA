@@ -1,5 +1,5 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type { CreateActionReactionBody } from '@area/shared/schemas/action-reaction.schema';
+import type { CreateActionReactionBody } from '@area/shared/schemas/actions-reactions.schema';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { ActionsReactionsService } from '../actions-reactions';
 

@@ -3,24 +3,29 @@ import {
   createActionReactionResponseSchema,
   getMeActionsReactionsResponseSchema,
   type CreateActionReactionBody,
-} from '@area/shared/schemas/action-reaction.schema';
+} from '@area/shared/schemas/actions-reactions.schema';
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';
 import { ActionsReactionsRepository, ActionsReactionsService } from '../actions-reactions';
-import { GithubRepository, GithubService } from '../github';
+import { GithubService } from '../github';
 import { ActionsReactionsController } from './actions-reactions.controller';
 import { UsersRepository, UsersService } from '../users';
-import { DiscordRepository, DiscordService } from '../discord';
+import { DiscordService } from '../discord';
+import { ThirdPartiesService } from '../third-parties';
+import { ThirdPartiesRepository } from '../third-parties/third-parties.repository';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
     throw new Error('MongoDB not initialized');
   }
 
-  const usersService = new UsersService(new UsersRepository(app.mongo.db));
+  const thirdPartiesRepository = new ThirdPartiesRepository(app.mongo.db);
 
-  const githubService = new GithubService(new GithubRepository(app.mongo.db), usersService);
-  const discordService = new DiscordService(new DiscordRepository(app.mongo.db), usersService);
+  const usersService = new UsersService(new UsersRepository(app.mongo.db));
+  const thirdPartiesService = new ThirdPartiesService(thirdPartiesRepository, usersService);
+
+  const githubService = new GithubService(thirdPartiesService);
+  const discordService = new DiscordService(thirdPartiesService);
 
   const repository = new ActionsReactionsRepository(app.mongo.db);
   const service = new ActionsReactionsService(repository, githubService, discordService);

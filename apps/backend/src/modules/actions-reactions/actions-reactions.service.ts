@@ -1,4 +1,4 @@
-import type { CreateAction, CreateReaction, MeActionsReactions } from '@area/shared/schemas/action-reaction.schema';
+import type { CreateAction, CreateReaction, MeActionsReactions } from '@area/shared/schemas/actions-reactions.schema';
 import type { ActionsReactionsRepository } from './actions-reactions.repository';
 import type { ActionPayload, ActionsReactions } from '@/types/action-reaction';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
