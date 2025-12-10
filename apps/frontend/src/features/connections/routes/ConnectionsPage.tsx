@@ -7,8 +7,6 @@ import { useServicesClient } from '../hooks/useServicesClient';
 const ConnectionsPage: React.FC = () => {
   const services = useServicesClient();
 
-  console.log(services);
-
   return (
     <div className="flex h-screen bg-background">
       <SideBar />

@@ -11,7 +11,7 @@ export const useAuthorization = () => {
 
     try {
       const response = await authorizationUrl.getAuthorizationUrl(serviceName);
-      console.log(response);
+
       if (!response) {
         return;
       }

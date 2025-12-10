@@ -13,7 +13,9 @@ export function useServicesClient() {
   useEffect(() => {
     const fetchServices = async () => {
       const response = await servicesClient.listServices();
-      if (!response) return;
+      if (!response) {
+        return;
+      }
 
       const servicesWithStatus = await Promise.all(
         response.map(async (serviceName: string) => {

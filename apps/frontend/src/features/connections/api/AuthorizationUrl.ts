@@ -11,7 +11,6 @@ export class AuthorizationUrl extends ApiClient {
      * @returns {Promise<MaybeUndefined<GetThirdPartyAuthorizationUrlResponse>>} The authorization url
      */
     async getAuthorizationUrl(service: string): Promise<MaybeUndefined<GetThirdPartyAuthorizationUrlResponse>> {
-        console.log('Fetching authorization URL for service:', service);
 
         const response = await this.fetch<GetThirdPartyAuthorizationUrlResponse>(
             `/third-parties/v1/authorization-url/${service}`,
