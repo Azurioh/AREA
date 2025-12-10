@@ -10,7 +10,6 @@ export const useAuthorization = () => {
     setError(null);
 
     try {
-      console.log('Starting authorization for service:', serviceName);
       const response = await authorizationUrl.getAuthorizationUrl(serviceName);
       console.log(response);
       if (!response) {
