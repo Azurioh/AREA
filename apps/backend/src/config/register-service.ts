@@ -1,6 +1,8 @@
 import { createDiscordService, createGithubService, ServiceManager } from '@/integrations';
-import { DiscordRepository, DiscordService } from '@/modules/discord';
-import { GithubRepository, GithubService } from '@/modules/github';
+import { DiscordService } from '@/modules/discord';
+import { GithubService } from '@/modules/github';
+import { ThirdPartiesService } from '@/modules/third-parties';
+import { ThirdPartiesRepository } from '@/modules/third-parties/third-parties.repository';
 import { UsersRepository, UsersService } from '@/modules/users';
 import type { FastifyInstance } from 'fastify';
 
@@ -8,14 +10,14 @@ export const registerServices = (app: FastifyInstance): void => {
   if (!app.mongo.db) {
     throw new Error('MongoDB not initialized');
   }
+
+  const thirdPartiesRepository = new ThirdPartiesRepository(app.mongo.db);
   const usersRepository = new UsersRepository(app.mongo.db);
+
   const usersService = new UsersService(usersRepository);
-
-  const githubRepository = new GithubRepository(app.mongo.db!);
-  const githubService = new GithubService(githubRepository, usersService);
-
-  const discordRepository = new DiscordRepository(app.mongo.db);
-  const discordService = new DiscordService(discordRepository, usersService);
+  const thirdPartiesService = new ThirdPartiesService(thirdPartiesRepository, usersService);
+  const githubService = new GithubService(thirdPartiesService);
+  const discordService = new DiscordService(thirdPartiesService);
 
   ServiceManager.instance.register(createGithubService(githubService));
   ServiceManager.instance.register(createDiscordService(discordService));

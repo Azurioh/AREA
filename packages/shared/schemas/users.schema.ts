@@ -13,30 +13,6 @@ export const createUserMeStateTokenResponseSchema = z.object({
   }),
 });
 
-/*********************************************
- * GET USER ME THIRD PARTY AUTHORIZATION URL *
- *********************************************/
-
-export const getUserMeThirdPartyAuthorizationUrlResponseSchema = z.object({
-  url: z.string().meta({
-    description: 'The url to authorize the user ',
-    example: 'https://your-authorization-url.com/',
-  }),
-});
-
-export const getUserMeThirdPartyAuthorizationUrlParamsSchema = z.object({
-  third_party_service: z.string().meta({
-    description: 'The name of the third party service',
-    example: 'github',
-  }),
-});
-
-/**
- * @type GetUserMeThirdPartyAuthorizationUrlParams
- * @description The params for the get user me third party authorization url endpoint
- */
-export type GetUserMeThirdPartyAuthorizationUrlParams = z.infer<typeof getUserMeThirdPartyAuthorizationUrlParamsSchema>;
-
 export const getUserByIdResponseSchema = userSchema.omit({ password: true });
 
 /***************
