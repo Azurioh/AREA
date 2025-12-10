@@ -16,6 +16,7 @@ import { actionsReactionsRoute } from './modules/actions-reactions';
 import { registerServices } from './config/register-service';
 import { setupDiscordBot } from './config/discord-bot';
 import thirdPartiesRoute from './modules/third-parties/third-parties.route';
+import { setupStaticFiles } from './config/static-files';
 
 async function build(): Promise<FastifyInstance> {
   const app: FastifyInstance = fastify({
@@ -32,6 +33,7 @@ async function build(): Promise<FastifyInstance> {
   setupErrorHandler(app);
   setupZod(app);
   setupDiscordBot();
+  setupStaticFiles(app);
 
   registerServices(app);
 
