@@ -16,11 +16,10 @@ export class AuthorizationUrl {
    * @description Get the authorization url for a service
    *
    * @param {string} service - The service for which to get the authorization url
-   * @param {string} service - The service for which to get the authorization url
    * @returns {Promise<any>} The response from the server
    */
   async get(service: string): Promise<any> {
-    const url = `${this.baseURL}/users/v1/me/authorization-url/${service}`;
+    const url = `${this.baseURL}/third-parties/v1/authorization-url/${service}`;
     const accessToken = localStorage.getItem('accessToken');
 
     const response = await fetch(url, {
