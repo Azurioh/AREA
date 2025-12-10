@@ -5,6 +5,9 @@ import {
   type GetThirdPartyAuthorizationUrlParams,
   getThirdPartyAuthorizationUrlParamsSchema,
   getThirdPartyAuthorizationUrlResponseSchema,
+  type GetThirdPartyStatusParams,
+  getThirdPartyStatusParamsSchema,
+  getThirdPartyStatusResponseSchema,
   thirdPartyAuthorizationParamsSchema,
   thirdPartyAuthorizationQueryStringSchema,
   thirdPartyAuthorizationResponseSchema,
@@ -53,5 +56,21 @@ export default async (app: FastifyInstance) => {
         200: thirdPartyAuthorizationResponseSchema,
       },
     },
+  });
+
+  app.route<{ Params: GetThirdPartyStatusParams }>({
+    method: 'GET',
+    url: '/v1/status/:service',
+    schema: {
+      summary: 'Return the status of a user regarding a service',
+      description: 'Return if the user is connected to the service or no',
+      tags: ['Third parties'],
+      params: getThirdPartyStatusParamsSchema,
+      response: {
+        200: getThirdPartyStatusResponseSchema,
+      },
+    },
+    preHandler: [verifyUserAccess(usersService)],
+    handler: controller.getThirdPartyStatus.bind(controller),
   });
 };

@@ -7,7 +7,10 @@ import type {
   ThirdPartyAuthorizationQueryString,
 } from '@/types/third-parties';
 import type { ThirdPartiesService } from './third-parties.service';
-import type { GetThirdPartyAuthorizationUrlParams } from '@area/shared/schemas/third-parties.schema';
+import type {
+  GetThirdPartyAuthorizationUrlParams,
+  GetThirdPartyStatusParams,
+} from '@area/shared/schemas/third-parties.schema';
 import { environment } from '@/utils/environment';
 
 /**
@@ -39,7 +42,7 @@ export class ThirdPartiesController {
       headers['x-client-type'] = 'web';
     }
     const url = await this.service.getThirdPartyAuthorizationUrl(
-      request.params.provider as ServiceType,
+      request.params.service.toLowerCase() as ServiceType,
       request.user._id,
       headers['x-client-type'] as ClientType,
     );
@@ -59,12 +62,15 @@ export class ThirdPartiesController {
     reply: FastifyReply,
   ): Promise<void> {
     const query = request.query;
-    const params = request.params;
     const status = { code: HttpStatusCode.BAD_REQUEST, text: 'error' };
     let callbackUrl = environment.WEB_OAUTH_CALLBACK_URL;
 
     if (query.code) {
-      const result = await this.service.authorizeToService(params.service as ServiceType, query.code, query.state);
+      const result = await this.service.authorizeToService(
+        request.params.service as ServiceType,
+        query.code,
+        query.state,
+      );
 
       if (result.clientType === 'mobile') {
         callbackUrl = environment.MOBILE_OAUTH_CALLBACK_URL;
@@ -76,5 +82,24 @@ export class ThirdPartiesController {
     }
     reply.redirect(`${callbackUrl}?status=${status.text}`);
     reply.status(status.code).send();
+  }
+
+  /**
+   * @function getThirdPartyStatus
+   * @description Get the status of the given third party service.
+   *
+   * @param {FastifyRequest} request The Fastify request object.
+   * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   */
+  async getThirdPartyStatus(
+    request: FastifyRequest<{ Params: GetThirdPartyStatusParams }>,
+    reply: FastifyReply,
+  ): Promise<void> {
+    const connected = await this.service.getThirdPartyStatus(
+      request.params.service.toLowerCase() as ServiceType,
+      request.user._id,
+    );
+
+    reply.status(HttpStatusCode.OK).send({ connected: connected });
   }
 }
