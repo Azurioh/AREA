@@ -58,6 +58,12 @@ export const getThirdPartyStatusResponseSchema = z.object({
   }),
 });
 
+/**
+ * @type GetThirdPartyStatusResponse
+ * @description The response for the get third party status endpoint
+ */
+export type GetThirdPartyStatusResponse = z.infer<typeof getThirdPartyStatusResponseSchema>;
+
 export const getThirdPartyStatusParamsSchema = z.object({
   service: z.string().meta({
     description: 'The name of the service ',
