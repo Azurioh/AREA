@@ -30,23 +30,7 @@ data class Service(
     @SerializedName("name")
     val name: String,
     @SerializedName("actions")
-    val actions: List<Action>,
+    val actions: List<ServicesValue>,
     @SerializedName("reactions")
-    val reactions: List<Reaction>
-)
-
-@Serializable
-data class Action(
-    @SerializedName("name")
-    val name: String,
-    @SerializedName("description")
-    val description: String
-)
-
-@Serializable
-data class Reaction(
-    @SerializedName("name")
-    val name: String,
-    @SerializedName("description")
-    val description: String
+    val reactions: List<ServicesValue>
 )

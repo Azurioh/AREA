@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,12 +45,22 @@ import com.example.area.viewModel.ServiceViewModel
 import com.example.area.data.models.ServicesValue
 import com.example.area.data.models.ActionDetail
 
+private fun getServiceImage(serviceName: String): Int {
+    return when (serviceName.lowercase()) {
+        "github" -> R.drawable.github_dark
+        "discord" -> R.drawable.discord
+        else -> R.drawable.github_dark
+    }
+}
+
 @Composable
 fun CreatePage(
     modifier: Modifier = Modifier,
     serviceViewModel: ServiceViewModel = viewModel()
 ) {
     val context = LocalContext.current
+    val aboutJson by serviceViewModel.aboutJson.collectAsState()
+
     var onAction by remember { mutableStateOf(false) }
     var onReaction by remember { mutableStateOf(false) }
     var actionSelected by remember { mutableStateOf(false) }
@@ -73,10 +84,11 @@ fun CreatePage(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when {
-            showActionDetail && actionDetail != null -> {
+            showActionDetail && actionDetail != null && selectedAction != null -> {
                 ConfigureDetailView(
                     title = "Configure Action",
                     detail = actionDetail!!,
+                    serviceImage = getServiceImage(selectedAction!!.service),
                     onClose = {
                         showActionDetail = false
                         actionDetail = null
@@ -89,10 +101,11 @@ fun CreatePage(
                     }
                 )
             }
-            showReactionDetail && reactionDetail != null -> {
+            showReactionDetail && reactionDetail != null && selectedReaction != null -> {
                 ConfigureDetailView(
                     title = "Configure Reaction",
                     detail = reactionDetail!!,
+                    serviceImage = getServiceImage(selectedReaction!!.service),
                     onClose = {
                         showReactionDetail = false
                         reactionDetail = null
@@ -109,35 +122,13 @@ fun CreatePage(
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    val githubActions = actionServices.filter { it.service == "github" }
-                    val discordActions = actionServices.filter { it.service == "discord" }
+                    val serviceGroups = actionServices.groupBy { it.service }
 
-                    if (githubActions.isNotEmpty()) {
+                    serviceGroups.forEach { (serviceName, services) ->
                         ServiceListView(
-                            title = "GitHub Actions",
-                            services = githubActions,
-                            onServiceClick = { service ->
-                                serviceViewModel.getActionDetails(
-                                    service = service.service,
-                                    action = service.name,
-                                    onSuccess = { details ->
-                                        actionDetail = details
-                                        selectedAction = service
-                                        showActionDetail = true
-                                        onAction = false
-                                    },
-                                    onError = { error ->
-                                        Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
-                                    }
-                                )
-                            }
-                        )
-                    }
-
-                    if (discordActions.isNotEmpty()) {
-                        ServiceListView(
-                            title = "Discord Actions",
-                            services = discordActions,
+                            title = "${serviceName.replaceFirstChar { it.uppercase() }} Actions",
+                            isAction = true,
+                            serviceViewModel = serviceViewModel,
                             onServiceClick = { service ->
                                 serviceViewModel.getActionDetails(
                                     service = service.service,
@@ -161,35 +152,13 @@ fun CreatePage(
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    val githubReactions = reactionServices.filter { it.service == "github" }
-                    val discordReactions = reactionServices.filter { it.service == "discord" }
+                    val serviceGroups = reactionServices.groupBy { it.service }
 
-                    if (githubReactions.isNotEmpty()) {
+                    serviceGroups.forEach { (serviceName, services) ->
                         ServiceListView(
-                            title = "GitHub Reactions",
-                            services = githubReactions,
-                            onServiceClick = { service ->
-                                serviceViewModel.getReactionDetails(
-                                    service = service.service,
-                                    reaction = service.name,
-                                    onSuccess = { details ->
-                                        reactionDetail = details
-                                        selectedReaction = service
-                                        showReactionDetail = true
-                                        onReaction = false
-                                    },
-                                    onError = { error ->
-                                        Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
-                                    }
-                                )
-                            }
-                        )
-                    }
-
-                    if (discordReactions.isNotEmpty()) {
-                        ServiceListView (
-                            title = "Discord Reactions",
-                            services = discordReactions,
+                            title = "${serviceName.replaceFirstChar { it.uppercase() }} Reactions",
+                            isAction = false,
+                            serviceViewModel = serviceViewModel,
                             onServiceClick = { service ->
                                 serviceViewModel.getReactionDetails(
                                     service = service.service,
@@ -216,94 +185,70 @@ fun CreatePage(
                     reactionSelected = reactionSelected,
                     selectedReaction = selectedReaction,
                     onActionClick = {
-                        var githubServices = emptyList<ServicesValue>()
-                        var discordServices = emptyList<ServicesValue>()
-                        var githubLoaded = false
-                        var discordLoaded = false
+                        val services = aboutJson?.server?.services ?: emptyList()
+                        if (services.isEmpty()) {
+                            Toast.makeText(context, "No services available", Toast.LENGTH_SHORT).show()
+                            return@MainView
+                        }
 
-                        serviceViewModel.getServices(
-                            service = "github",
-                            onSuccess = { services ->
-                                githubServices = services.map { it.copy(service = "github") }
-                                githubLoaded = true
-                                if (discordLoaded) {
-                                    actionServices = githubServices + discordServices
-                                    onAction = true
+                        val allActions = mutableListOf<ServicesValue>()
+                        var loadedCount = 0
+
+                        services.forEach { service ->
+                            val serviceName = service.name.lowercase()
+                            serviceViewModel.getServices(
+                                service = serviceName,
+                                onSuccess = { actions ->
+                                    allActions.addAll(actions.map { it.copy(service = serviceName) })
+                                    loadedCount++
+                                    if (loadedCount == services.size) {
+                                        actionServices = allActions
+                                        onAction = true
+                                    }
+                                },
+                                onError = { error ->
+                                    Toast.makeText(context, "${service.name} Error: $error", Toast.LENGTH_SHORT).show()
+                                    loadedCount++
+                                    if (loadedCount == services.size) {
+                                        actionServices = allActions
+                                        onAction = true
+                                    }
                                 }
-                            },
-                            onError = { error ->
-                                Toast.makeText(context, "GitHub Error: $error", Toast.LENGTH_LONG).show()
-                                githubLoaded = true
-                                if (discordLoaded) {
-                                    actionServices = githubServices + discordServices
-                                    onAction = true
-                                }
-                            }
-                        )
-                        serviceViewModel.getServices(
-                            service = "discord",
-                            onSuccess = { services ->
-                                discordServices = services.map { it.copy(service = "discord") }
-                                discordLoaded = true
-                                if (githubLoaded) {
-                                    actionServices = githubServices + discordServices
-                                    onAction = true
-                                }
-                            },
-                            onError = { error ->
-                                Toast.makeText(context, "Discord Error: $error", Toast.LENGTH_LONG).show()
-                                discordLoaded = true
-                                if (githubLoaded) {
-                                    actionServices = githubServices + discordServices
-                                    onAction = true
-                                }
-                            }
-                        )
+                            )
+                        }
                     },
                     onReactionClick = {
-                        var githubReactions = emptyList<ServicesValue>()
-                        var discordReactions = emptyList<ServicesValue>()
-                        var githubLoaded = false
-                        var discordLoaded = false
+                        val services = aboutJson?.server?.services ?: emptyList()
+                        if (services.isEmpty()) {
+                            Toast.makeText(context, "No services available", Toast.LENGTH_SHORT).show()
+                            return@MainView
+                        }
 
-                        serviceViewModel.getReactions(
-                            service = "github",
-                            onSuccess = { reactions ->
-                                githubReactions = reactions.map { it.copy(service = "github") }
-                                githubLoaded = true
-                                if (discordLoaded) {
-                                    reactionServices = githubReactions + discordReactions
-                                    onReaction = true
+                        val allReactions = mutableListOf<ServicesValue>()
+                        var loadedCount = 0
+
+                        services.forEach { service ->
+                            val serviceName = service.name.lowercase()
+                            serviceViewModel.getReactions(
+                                service = serviceName,
+                                onSuccess = { reactions ->
+                                    allReactions.addAll(reactions.map { it.copy(service = serviceName) })
+                                    loadedCount++
+                                    if (loadedCount == services.size) {
+                                        reactionServices = allReactions
+                                        onReaction = true
+                                    }
+                                },
+                                onError = { error ->
+                                    Toast.makeText(context, "${service.name} Error: $error", Toast.LENGTH_SHORT).show()
+                                    loadedCount++
+                                    if (loadedCount == services.size) {
+                                        reactionServices = allReactions
+                                        onReaction = true
+                                    }
                                 }
-                            },
-                            onError = { error ->
-                                Toast.makeText(context, "GitHub Error: $error", Toast.LENGTH_LONG).show()
-                                githubLoaded = true
-                                if (discordLoaded) {
-                                    reactionServices = githubReactions + discordReactions
-                                    onReaction = true
-                                }
-                            }
-                        )
-                        serviceViewModel.getReactions(
-                            service = "discord",
-                            onSuccess = { reactions ->
-                                discordReactions = reactions.map { it.copy(service = "discord") }
-                                discordLoaded = true
-                                if (githubLoaded) {
-                                    reactionServices = githubReactions + discordReactions
-                                    onReaction = true
-                                }
-                            },
-                            onError = { error ->
-                                Toast.makeText(context, "Discord Error: $error", Toast.LENGTH_LONG).show()
-                                discordLoaded = true
-                                if (githubLoaded) {
-                                    reactionServices = githubReactions + discordReactions
-                                    onReaction = true
-                                }
-                            }
-                        )
+                            )
+                        }
                     },
                     onActionRemove = {
                         actionSelected = false
@@ -345,6 +290,7 @@ fun CreatePage(
 private fun ConfigureDetailView(
     title: String,
     detail: ActionDetail,
+    serviceImage: Int,
     onClose: () -> Unit,
     onValidate: (Map<String, Any>) -> Unit
 ) {
@@ -361,7 +307,7 @@ private fun ConfigureDetailView(
     )
 
     ActionDetailCard(
-        actionServiceImage = R.drawable.github_dark,
+        actionServiceImage = serviceImage,
         actionDetail = detail,
         onClose = onClose,
         onValidate = onValidate
@@ -371,9 +317,16 @@ private fun ConfigureDetailView(
 @Composable
 private fun ServiceListView(
     title: String,
-    services: List<ServicesValue>,
+    isAction: Boolean,
+    serviceViewModel: ServiceViewModel = viewModel(),
     onServiceClick: (ServicesValue) -> Unit
 ) {
+    val aboutJson by serviceViewModel.aboutJson.collectAsState()
+
+    val keyword = if (isAction) " Actions" else " Reactions"
+    val serviceName = title.substringBefore(keyword).lowercase()
+    val serviceData = aboutJson?.server?.services?.find { it.name.lowercase() == serviceName }
+
     Text(
         text = title,
         fontFamily = poppinsFontFamily,
@@ -386,18 +339,30 @@ private fun ServiceListView(
             .fillMaxWidth()
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        services.forEach { service ->
-            AreaCard(
-                actionServiceImage = R.drawable.github_dark,
-                description = service.description,
-                onMenuClick = { onServiceClick(service) }
-            )
+    if (serviceData != null) {
+        val items = if (isAction) serviceData.actions else serviceData.reactions
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items.forEach { item ->
+                AreaCard(
+                    actionServiceImage = getServiceImage(serviceData.name),
+                    description = item.description,
+                    onMenuClick = {
+                        onServiceClick(
+                            ServicesValue(
+                                name = item.name,
+                                description = item.description,
+                                service = serviceData.name.lowercase()
+                            )
+                        )
+                    }
+                )
+            }
         }
     }
 }
@@ -458,7 +423,7 @@ private fun MainView(
     ) {
         if (actionSelected && selectedAction != null) {
             AreaSelectedCard(
-                actionServiceImage = R.drawable.github_dark,
+                actionServiceImage = getServiceImage(selectedAction.service),
                 title = "Action",
                 description = selectedAction.description,
                 onMenuClick = onActionRemove
@@ -478,7 +443,7 @@ private fun MainView(
 
         if (reactionSelected && selectedReaction != null) {
             AreaSelectedCard(
-                actionServiceImage = R.drawable.github_dark,
+                actionServiceImage = getServiceImage(selectedReaction.service),
                 title = "Reaction",
                 description = selectedReaction.description,
                 onMenuClick = onReactionRemove
