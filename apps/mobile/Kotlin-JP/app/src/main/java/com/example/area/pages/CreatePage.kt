@@ -187,7 +187,7 @@ fun CreatePage(
                     }
 
                     if (discordReactions.isNotEmpty()) {
-                        ServiceListView(
+                        ServiceListView (
                             title = "Discord Reactions",
                             services = discordReactions,
                             onServiceClick = { service ->

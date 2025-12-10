@@ -1,52 +1,52 @@
 package com.example.area.data.models
 
-import kotlinx.serialization.SerialName
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class AboutJson(
-    @SerialName("client")
+    @SerializedName("client")
     val client: Client,
-    @SerialName("server")
+    @SerializedName("server")
     val server: Server
 )
 
 @Serializable
 data class Client(
-    @SerialName("host")
+    @SerializedName("host")
     val host: String
 )
 
 @Serializable
 data class Server(
-    @SerialName("current_time")
+    @SerializedName("current_time")
     val currentTime: Long,
-    @SerialName("services")
+    @SerializedName("services")
     val services: List<Service>
 )
 
 @Serializable
 data class Service(
-    @SerialName("name")
+    @SerializedName("name")
     val name: String,
-    @SerialName("actions")
+    @SerializedName("actions")
     val actions: List<Action>,
-    @SerialName("reactions")
+    @SerializedName("reactions")
     val reactions: List<Reaction>
 )
 
 @Serializable
 data class Action(
-    @SerialName("name")
+    @SerializedName("name")
     val name: String,
-    @SerialName("description")
+    @SerializedName("description")
     val description: String
 )
 
 @Serializable
 data class Reaction(
-    @SerialName("name")
+    @SerializedName("name")
     val name: String,
-    @SerialName("description")
+    @SerializedName("description")
     val description: String
 )
