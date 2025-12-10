@@ -1,4 +1,4 @@
-import type { GetUserMeResponse } from '@area/shared/schemas/user.schema';
+import type { GetUserMeResponse } from '@area/shared/schemas/users.schema';
 import { useEffect, useState } from 'react';
 import { useApp } from '@/hooks/useApp';
 

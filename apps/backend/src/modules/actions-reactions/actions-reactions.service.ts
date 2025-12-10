@@ -1,5 +1,9 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type { CreateAction, CreateReaction, GetMeActionsReactions } from '@area/shared/schemas/action-reaction.schema';
+import type {
+  CreateAction,
+  CreateReaction,
+  GetMeActionsReactions,
+} from '@area/shared/schemas/actions-reactions.schema';
 import type { DiscordService } from '@/modules/discord';
 import type { GithubService } from '@/modules/github';
 import type { ActionPayload, ActionsReactions } from '@/types/action-reaction';

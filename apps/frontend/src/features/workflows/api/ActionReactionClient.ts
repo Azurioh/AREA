@@ -1,4 +1,4 @@
-import type { CreateActionReactionBody, GetMeActionsReactions } from '@area/shared/schemas/action-reaction.schema';
+import type { CreateActionReactionBody, GetMeActionsReactions } from '@area/shared/schemas/actions-reactions.schema';
 import type { MaybeUndefined } from '@area/shared/utils/common';
 import { ApiClient } from '@/lib/ApiClient';
 

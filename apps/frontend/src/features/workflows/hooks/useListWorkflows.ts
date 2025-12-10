@@ -1,4 +1,4 @@
-import type { GetMeActionsReactions } from '@area/shared/schemas/action-reaction.schema';
+import type { GetMeActionsReactions } from '@area/shared/schemas/actions-reactions.schema';
 import { useState } from 'react';
 import { useApp } from '@/hooks/useApp';
 

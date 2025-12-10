@@ -1,5 +1,5 @@
 import type { RefreshTokenResponse } from '@area/shared/schemas/auth.schema';
-import type { GetUserMeResponse } from '@area/shared/schemas/user.schema';
+import type { GetUserMeResponse } from '@area/shared/schemas/users.schema';
 import type { AuthState } from '@/contexts/AuthContext';
 
 /**
