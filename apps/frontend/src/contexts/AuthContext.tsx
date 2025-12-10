@@ -6,6 +6,7 @@ import { ActionReactionClient, ServicesClient } from '@/features/workflows';
 import { TokenManager } from '@/lib/TokenManager';
 import { UserInformationClient } from '@/shared/api/UserInformationClient';
 import { AuthorizationUrl } from '@/features/connections/api/AuthorizationUrl';
+import { ConnectionStatus } from '@/features/connections/api/ConnectionStatus';
 
 /**
  * @interface AuthState
@@ -28,6 +29,7 @@ export interface AuthContextType {
   authState: AuthState;
   tokenManager: TokenManager;
   authorizationUrl: AuthorizationUrl;
+  connectionStatus: ConnectionStatus;
   logout: () => void;
 }
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
@@ -50,6 +52,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const userInformationClient = useMemo(() => new UserInformationClient(BASE_URL, tokenManager), [tokenManager]);
   const authClient = useMemo(() => new AuthClient(BASE_URL, tokenManager), [tokenManager]);
   const authorizationUrl = useMemo(() => new AuthorizationUrl(BASE_URL, tokenManager), [tokenManager]);
+  const connectionStatus = useMemo(() => new ConnectionStatus(BASE_URL, tokenManager), [tokenManager]);
 
   const contextValue: AuthContextType = useMemo(
     () => ({
@@ -60,6 +63,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       userInformationClient,
       authClient,
       authorizationUrl,
+      connectionStatus,
       logout: tokenManager.logout.bind(tokenManager),
     }),
     [authState, tokenManager, actionReactionClient, servicesClient, userInformationClient, authClient],
