@@ -93,7 +93,7 @@ fun ProfilePage(
                             context.startActivity(intent)
                         },
                         onError = { error ->
-                            println(">>> Failed to connect to GitHub: $error")
+                            println("Failed to connect to GitHub: $error")
                         }
                     )
                 }
@@ -110,7 +110,7 @@ fun ProfilePage(
                             context.startActivity(intent)
                         },
                         onError = { error ->
-                            println(">>> Failed to connect to Discord: $error")
+                            println("Failed to connect to Discord: $error")
                         }
                     )
                 }

@@ -23,7 +23,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(url.url)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -39,7 +39,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(services)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -55,7 +55,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(reactions)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -72,7 +72,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(actionDetails)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -89,7 +89,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(reactionDetails)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -122,7 +122,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess()
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -137,7 +137,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(actionsReactions)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -152,7 +152,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(aboutJson)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
