@@ -34,6 +34,14 @@ import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.viewModel.UserViewModel
 
+
+private fun getServiceImage(serviceName: String): Int {
+    return when (serviceName.lowercase()) {
+        "github" -> R.drawable.github_dark
+        "discord" -> R.drawable.discord
+        else -> R.drawable.github_dark
+    }
+}
 @Composable
 fun ProfilePage(
     modifier: Modifier = Modifier,
@@ -86,8 +94,8 @@ fun ProfilePage(
             )
             aboutJson?.server?.services?.forEach { service ->
                 ConnectionCard(
-                    serviceImage = R.drawable.discord,
-                    serviceName = service.name,
+                    serviceImage = getServiceImage(service.name),
+                    serviceName = service.name.toLowerCase(),
                     isConnected = false,
                     onButtonClick = {
                         serviceViewModel.connectToService(
