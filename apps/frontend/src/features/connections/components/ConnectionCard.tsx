@@ -7,9 +7,10 @@ import { Avatar, AvatarImage, } from '@/components/ui/avatar';
 interface ConnectionCardProps {
   image: string;
   serviceName: string;
+  status: boolean
 }
 
-const ConnectionCard: React.FC<ConnectionCardProps> = ({ image, serviceName }) => {
+const ConnectionCard: React.FC<ConnectionCardProps> = ({ image, serviceName, status }) => {
   const { handleSubmit } = useAuthorization();
 
   return (
@@ -28,9 +29,15 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ image, serviceName }) =
             <h1 className="text-[30px]">{serviceName}</h1>
           </div>
           <div>
-            <Button className="text-[20px]" onClick={() => handleSubmit(serviceName)}>
-              Connect
-            </Button>
+            {status ? (
+              <Button className="text-[20px] bg-destructive" onClick={() => handleSubmit(serviceName)} >
+                Disconnect
+              </Button>
+            ) : (
+              <Button className="text-[20px]" onClick={() => handleSubmit(serviceName)} >
+                Connected
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

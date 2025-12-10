@@ -1,30 +1,13 @@
 import type React from 'react';
-import { useEffect, useState } from 'react';
 import SideBar from '@/components/SideBar';
 import { Card, CardContent } from '@/components/wrappers/Card';
 import ConnectionCard from '../components/ConnectionCard';
-import { useApp } from '@/hooks/useApp';
-
-interface Service {
-  name: string;
-}
+import { useServicesClient } from '../hooks/useServicesClient';
 
 const ConnectionsPage: React.FC = () => {
-  const { servicesClient } = useApp();
-  const [services, setServices] = useState<Service[]>([]);
+  const services = useServicesClient();
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      const response = await servicesClient.listServices();
-      if (!response) {
-        return;
-      }
-      const formatted = response.map((name: string) => ({ name }));
-      setServices(formatted);
-    };
-
-    fetchServices();
-  }, [servicesClient]);
+  console.log(services);
 
   return (
     <div className="flex h-screen bg-background">
@@ -45,6 +28,7 @@ const ConnectionsPage: React.FC = () => {
                     key={service.name}
                     serviceName={service.name}
                     image={`http://167.86.110.198:8085/images/${service.name.toLowerCase()}.png`}
+                    status={service.status}
                   />
                 ))}
               </div>
