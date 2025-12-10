@@ -1,4 +1,4 @@
-import type { CreateAction, CreateReaction } from '@area/shared/schemas/action-reaction.schema';
+import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-reactions.schema';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useApp } from '@/hooks/useApp';

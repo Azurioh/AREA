@@ -16,7 +16,6 @@ export interface Environment {
   MOBILE_OAUTH_CALLBACK_URL: string;
   MONGO_URI: string;
   MONGO_DATABASE: string;
-  GITHUB_TOKEN: string;
   JWT_ACCESS_TOKEN_SECRET: string;
   JWT_REFRESH_TOKEN_SECRET: string;
   JWT_STATE_TOKEN_SECRET: string;
@@ -33,7 +32,6 @@ const variables: Record<string, string | undefined> = {
   BASE_API_URL: process.env.BASE_API_URL,
   MONGO_URI: process.env.MONGO_URI,
   MONGO_DATABASE: process.env.MONGO_DATABASE,
-  GITHUB_TOKEN: process.env.GITHUB_TOKEN,
 };
 
 for (const [key, value] of Object.entries(variables)) {
@@ -63,7 +61,6 @@ export const environment: Environment = {
   MOBILE_OAUTH_CALLBACK_URL: process.env.MOBILE_OAUTH_CALLBACK_URL as string,
   MONGO_URI: process.env.MONGO_URI as string,
   MONGO_DATABASE: process.env.MONGO_DATABASE as string,
-  GITHUB_TOKEN: process.env.GITHUB_TOKEN as string,
   JWT_ACCESS_TOKEN_SECRET: process.env.JWT_ACCESS_TOKEN_SECRET as string,
   JWT_REFRESH_TOKEN_SECRET: process.env.JWT_REFRESH_TOKEN_SECRET as string,
   JWT_STATE_TOKEN_SECRET: process.env.JWT_STATE_TOKEN_SECRET as string,

@@ -4,7 +4,6 @@
  */
 export enum MongoCollections {
   USERS = 'users',
-  GITHUB_ACCOUNT = 'github_account',
-  DISCORD_ACCOUNT = 'discord_account',
+  THIRD_PARTIES_ACCOUNT = 'third_parties_account',
   ACTIONS_REACTIONS = 'actions_reactions',
 }

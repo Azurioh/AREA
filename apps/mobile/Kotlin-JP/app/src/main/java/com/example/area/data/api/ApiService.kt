@@ -25,7 +25,7 @@ interface ApiService {
     @GET("users/v1/me")
     suspend fun getUserProfile() : User
 
-    @GET("users/v1/me/authorization-url/{third_party_service}")
+    @GET("third-parties/v1/authorization-url/{third_party_service}")
     suspend fun getAuthorizationUrl(
         @Path("third_party_service") service: String,
         @Header("x-client-type") clientType: String = "mobile"

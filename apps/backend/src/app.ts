@@ -9,14 +9,13 @@ import { setupSwagger } from './config/swagger';
 import { setupZod } from './config/zod';
 import { aboutRoutes } from './modules/about';
 import { authRoutes } from './modules/auth';
-import { discordRoutes } from './modules/discord';
-import { githubRoutes } from './modules/github';
 import { servicesRoutes } from './modules/services';
 import { usersRoutes } from './modules/users';
 import { webhookRoutes } from './modules/webhook';
 import { actionsReactionsRoute } from './modules/actions-reactions';
 import { registerServices } from './config/register-service';
 import { setupDiscordBot } from './config/discord-bot';
+import thirdPartiesRoute from './modules/third-parties/third-parties.route';
 
 async function build(): Promise<FastifyInstance> {
   const app: FastifyInstance = fastify({
@@ -37,9 +36,8 @@ async function build(): Promise<FastifyInstance> {
   registerServices(app);
 
   app.withTypeProvider<ZodTypeProvider>().register(aboutRoutes);
+  app.withTypeProvider<ZodTypeProvider>().register(thirdPartiesRoute, { prefix: '/third-parties' });
   app.withTypeProvider<ZodTypeProvider>().register(webhookRoutes, { prefix: '/webhook' });
-  app.withTypeProvider<ZodTypeProvider>().register(githubRoutes, { prefix: '/github' });
-  app.withTypeProvider<ZodTypeProvider>().register(discordRoutes, { prefix: '/discord' });
   app.withTypeProvider<ZodTypeProvider>().register(authRoutes, { prefix: '/auth' });
   app.withTypeProvider<ZodTypeProvider>().register(usersRoutes, { prefix: '/users' });
   app.withTypeProvider<ZodTypeProvider>().register(actionsReactionsRoute, { prefix: '/actions-reactions' });

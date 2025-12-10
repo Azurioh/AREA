@@ -9,8 +9,14 @@ import com.example.area.data.models.ServicesValue
 import com.example.area.data.models.ActionDetail
 import com.example.area.data.models.ActionReactionRequest
 import com.example.area.data.models.ActionReactionParams
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class ServiceViewModel : ViewModel() {
+
+    private val _aboutJson = MutableStateFlow<AboutJson?>(null)
+    val aboutJson: StateFlow<AboutJson?> = _aboutJson.asStateFlow()
 
     fun connectToService(
         serviceName: String,
@@ -149,6 +155,7 @@ class ServiceViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val aboutJson = RetrofitInstance.api.getAboutJson()
+                _aboutJson.value = aboutJson
                 onSuccess(aboutJson)
             } catch (e: Exception) {
                 e.printStackTrace()
