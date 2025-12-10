@@ -11,6 +11,10 @@ export const useListReactions = () => {
     setLoading(true);
     try {
       const reactions = await servicesClient.listServiceReactions(serviceName);
+
+      if (!reactions) {
+        return;
+      }
       setReactions(reactions);
     } catch (error) {
       console.error('Error fetching reactions:', error);

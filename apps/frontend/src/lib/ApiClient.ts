@@ -1,7 +1,10 @@
+import type { MaybeUndefined } from '@area/shared/utils/common';
+import { toast } from 'sonner';
 import type { TokenManager } from './TokenManager';
 
 interface FetchOptions extends RequestInit {
   skipAuth?: boolean;
+  throwError?: boolean;
 }
 
 /**
@@ -27,7 +30,7 @@ export class ApiClient {
    * @param {FetchOptions} options The options to pass to the fetch function
    * @returns {Promise<T>} The data fetched from the API
    */
-  protected async fetch<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
+  protected async fetch<T>(endpoint: string, options: FetchOptions = {}): Promise<MaybeUndefined<T>> {
     const url = `${this.baseURL}${endpoint}`;
 
     if (!options.skipAuth) {
@@ -66,7 +69,14 @@ export class ApiClient {
     }
 
     if (!response.ok) {
-      throw await response.json();
+      const errorResponse = await response.json();
+      const errorMessage = errorResponse?.message || errorResponse?.data || 'An error occurred';
+
+      toast.error(errorMessage);
+      if (options.throwError) {
+        throw new Error(errorMessage);
+      }
+      return undefined;
     }
 
     return response.json() as Promise<T>;

@@ -1,19 +1,10 @@
+import type { User } from '@area/shared/types/user.types';
 import type React from 'react';
 import { createContext, type ReactNode, useMemo, useState } from 'react';
-import { WebhookClient } from '@/features/webhook';
+import { AuthClient } from '@/features/auth/api/AuthClient';
 import { ActionReactionClient, ServicesClient } from '@/features/workflows';
 import { TokenManager } from '@/lib/TokenManager';
-import { LoginClient } from '@/features/auth/api/AuthClient';
-
-/**
- * @interface User
- * @description User interface
- */
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
+import { UserInformationClient } from '@/shared/api/UserInformationClient';
 
 /**
  * @interface AuthState
@@ -21,7 +12,7 @@ interface User {
  */
 export interface AuthState {
   isAuthenticated: boolean;
-  user: User | null;
+  user: Omit<User, 'password'> | null;
 }
 
 /**
@@ -29,10 +20,10 @@ export interface AuthState {
  * @description Api context type
  */
 export interface AuthContextType {
-    loginClient: LoginClient;
-  webhookClient: WebhookClient;
+  authClient: AuthClient;
   actionReactionClient: ActionReactionClient;
   servicesClient: ServicesClient;
+  userInformationClient: UserInformationClient;
   authState: AuthState;
   tokenManager: TokenManager;
   logout: () => void;
@@ -53,22 +44,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   });
 
   const tokenManager = useMemo(() => new TokenManager(BASE_URL, setAuthState), []);
-  const webhookClient = useMemo(() => new WebhookClient(BASE_URL, tokenManager), [tokenManager]);
   const servicesClient = useMemo(() => new ServicesClient(BASE_URL, tokenManager), [tokenManager]);
   const actionReactionClient = useMemo(() => new ActionReactionClient(BASE_URL, tokenManager), [tokenManager]);
-  const loginClient = useMemo(() => new LoginClient(BASE_URL), []);
+  const userInformationClient = useMemo(() => new UserInformationClient(BASE_URL, tokenManager), [tokenManager]);
+  const authClient = useMemo(() => new AuthClient(BASE_URL, tokenManager), [tokenManager]);
 
   const contextValue: AuthContextType = useMemo(
     () => ({
-      webhookClient,
       servicesClient,
       authState,
       tokenManager,
       actionReactionClient,
-      loginClient,
+      userInformationClient,
+      authClient,
       logout: tokenManager.logout.bind(tokenManager),
     }),
-    [authState, tokenManager, actionReactionClient, servicesClient, webhookClient, loginClient],
+    [authState, tokenManager, actionReactionClient, servicesClient, userInformationClient, authClient],
   );
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

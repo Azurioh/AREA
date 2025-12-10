@@ -2,21 +2,30 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff } from 'lucide-react';
 import type React from 'react';
 import { Link } from 'react-router-dom';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/wrappers/Button';
 import { Card } from '@/components/wrappers/Card';
-import { Checkbox } from '@/components/wrappers/CheckBox';
 import { Input } from '@/components/wrappers/Input';
 import { AppRoutesPaths } from '@/enums/routes';
 import { useRegister } from '@/features/auth/hooks/useRegister';
-import { useRememberMe } from '@/features/auth/hooks/useRememberMe';
 import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
 import { useClearUserData } from '@/shared/hooks/useClearUserData';
 
 const RegisterPage: React.FC = () => {
-  const { showPassword, showConfirmPassword, togglePasswordVisibility, toggleConfirmPasswordVisibility } = useShowPassword();
-  const { rememberMe, toggleRememberMe } = useRememberMe();
-  const { name, setName, email, setEmail, password, setPassword, confirmPassword, setConfirmPassword, isLoading, error, handleSubmit } = useRegister();
+  const { showPassword, showConfirmPassword, togglePasswordVisibility, toggleConfirmPasswordVisibility } =
+    useShowPassword();
+  const {
+    name,
+    setName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    isLoading,
+    error,
+    handleSubmit,
+  } = useRegister();
   useClearUserData();
 
   return (
@@ -34,12 +43,14 @@ const RegisterPage: React.FC = () => {
           </div>
           <form className="space-y-4" onSubmit={handleSubmit}>
             {error && (
-              <div className='p-3 rounded-[var(--small-radius)] bg-destructive/10 text-destructive text-sm'>
+              <div className="p-3 rounded-[var(--small-radius)] bg-destructive/10 text-destructive text-sm">
                 {error}
               </div>
             )}
             <div className="space-y-2">
-              <label htmlFor="name" className="text-foreground">Name</label>
+              <label htmlFor="name" className="text-foreground">
+                Name
+              </label>
               <Input
                 id="name"
                 type="text"
@@ -50,7 +61,9 @@ const RegisterPage: React.FC = () => {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="email" className="text-foreground">Email</label>
+              <label htmlFor="email" className="text-foreground">
+                Email
+              </label>
               <Input
                 id="email"
                 type="email"
@@ -73,7 +86,12 @@ const RegisterPage: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <Button type="button" variant="ghost" onClick={togglePasswordVisibility} className='absolute right-3 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-inherit'>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-inherit"
+                >
                   {showPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                 </Button>
               </div>
@@ -91,18 +109,17 @@ const RegisterPage: React.FC = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
-                <Button type='button' variant='ghost' onClick={toggleConfirmPasswordVisibility} className='absolute right-3 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-inherit'>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={toggleConfirmPasswordVisibility}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-inherit"
+                >
                   {showConfirmPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                 </Button>
               </div>
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="remember-me" checked={rememberMe} onCheckedChange={toggleRememberMe} />
-                <Label htmlFor="remember-me">Remember me</Label>
-              </div>
-            </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full !mt-7" disabled={isLoading}>
               {isLoading ? 'Creating account...' : 'Sign up'}
             </Button>
             <div className="text-center text-sm text-foreground">

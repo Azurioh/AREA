@@ -1,17 +1,17 @@
 import {
+  type CreateActionReactionBody,
   createActionReactionBodySchema,
   createActionReactionResponseSchema,
   getMeActionsReactionsResponseSchema,
-  type CreateActionReactionBody,
 } from '@area/shared/schemas/actions-reactions.schema';
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';
 import { ActionsReactionsRepository, ActionsReactionsService } from '@/modules/actions-reactions';
-import { GithubService } from '@/modules/github';
-import { ActionsReactionsController } from './actions-reactions.controller';
-import { UsersRepository, UsersService } from '@/modules/users';
 import { DiscordService } from '@/modules/discord';
-import { ThirdPartiesService, ThirdPartiesRepository } from '@/modules/third-parties';
+import { GithubService } from '@/modules/github';
+import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
+import { UsersRepository, UsersService } from '@/modules/users';
+import { ActionsReactionsController } from './actions-reactions.controller';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {

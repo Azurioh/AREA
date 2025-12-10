@@ -11,6 +11,8 @@ export const getThirdPartyAuthorizationUrlResponseSchema = z.object({
   }),
 });
 
+export type GetThirdPartyAuthorizationUrlResponse = z.infer<typeof getThirdPartyAuthorizationUrlResponseSchema>;
+
 export const getThirdPartyAuthorizationUrlParamsSchema = z.object({
   provider: z.string().meta({
     description: 'The name of the third party service',

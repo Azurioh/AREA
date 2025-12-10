@@ -40,4 +40,4 @@ export const getMeActionsReactionsResponseSchema = z.array(
   }),
 );
 
-export type MeActionsReactions = z.infer<typeof getMeActionsReactionsResponseSchema>;
+export type GetMeActionsReactions = z.infer<typeof getMeActionsReactionsResponseSchema>;
