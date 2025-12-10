@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 import type { WebhookRepository } from './webhook.repository';
 import type { DiscordWebhookPayload, GithubWebhookPayload } from '@/types/webhook';
 import type { ActionPayload } from '@/types/action-reaction';
-import type { ActionsReactionsService } from '../actions-reactions';
+import type { ActionsReactionsService } from '@/modules/actions-reactions';
 
 /**
  * @class WebhookService

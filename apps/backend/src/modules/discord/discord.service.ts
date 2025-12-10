@@ -3,7 +3,7 @@ import ApiError from '@/utils/api-error';
 import { environment } from '@/utils/environment';
 import type { DiscordChannel } from '@/types/discord';
 import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-reactions.schema';
-import type { ThirdPartiesService } from '../third-parties';
+import type { ThirdPartiesService } from '@/modules/third-parties';
 import type { DiscordAccount, DiscordAuthorizationResponse } from '@/types/third-parties';
 
 /**

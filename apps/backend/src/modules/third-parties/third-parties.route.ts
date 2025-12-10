@@ -1,7 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';
-import { ThirdPartiesService } from '../third-parties';
-import { ThirdPartiesController } from './third-parties.controller';
+import { ThirdPartiesController, ThirdPartiesService, ThirdPartiesRepository } from '@/modules/third-parties';
 import {
   type GetThirdPartyAuthorizationUrlParams,
   getThirdPartyAuthorizationUrlParamsSchema,
@@ -10,8 +9,7 @@ import {
   thirdPartyAuthorizationQueryStringSchema,
   thirdPartyAuthorizationResponseSchema,
 } from '@area/shared/schemas/third-parties.schema';
-import { UsersRepository, UsersService } from '../users';
-import { ThirdPartiesRepository } from './third-parties.repository';
+import { UsersRepository, UsersService } from '@/modules/users';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {

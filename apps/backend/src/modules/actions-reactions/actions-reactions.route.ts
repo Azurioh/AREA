@@ -6,13 +6,12 @@ import {
 } from '@area/shared/schemas/actions-reactions.schema';
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';
-import { ActionsReactionsRepository, ActionsReactionsService } from '../actions-reactions';
-import { GithubService } from '../github';
+import { ActionsReactionsRepository, ActionsReactionsService } from '@/modules/actions-reactions';
+import { GithubService } from '@/modules/github';
 import { ActionsReactionsController } from './actions-reactions.controller';
-import { UsersRepository, UsersService } from '../users';
-import { DiscordService } from '../discord';
-import { ThirdPartiesService } from '../third-parties';
-import { ThirdPartiesRepository } from '../third-parties/third-parties.repository';
+import { UsersRepository, UsersService } from '@/modules/users';
+import { DiscordService } from '@/modules/discord';
+import { ThirdPartiesService, ThirdPartiesRepository } from '@/modules/third-parties';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
