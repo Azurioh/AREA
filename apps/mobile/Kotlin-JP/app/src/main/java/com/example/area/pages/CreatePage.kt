@@ -124,7 +124,7 @@ fun CreatePage(
                 ) {
                     val serviceGroups = actionServices.groupBy { it.service }
 
-                    serviceGroups.forEach { (serviceName, services) ->
+                    serviceGroups.forEach { (serviceName) ->
                         ServiceListView(
                             title = "${serviceName.replaceFirstChar { it.uppercase() }} Actions",
                             isAction = true,
@@ -154,7 +154,7 @@ fun CreatePage(
                 ) {
                     val serviceGroups = reactionServices.groupBy { it.service }
 
-                    serviceGroups.forEach { (serviceName, services) ->
+                    serviceGroups.forEach { (serviceName) ->
                         ServiceListView(
                             title = "${serviceName.replaceFirstChar { it.uppercase() }} Reactions",
                             isAction = false,
