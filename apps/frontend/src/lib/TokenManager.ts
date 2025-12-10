@@ -1,3 +1,5 @@
+import type { RefreshTokenResponse } from '@area/shared/schemas/auth.schema';
+import type { GetUserMeResponse } from '@area/shared/schemas/user.schema';
 import type { AuthState } from '@/contexts/AuthContext';
 
 /**
@@ -22,24 +24,26 @@ export class TokenManager {
   getAccessToken = (): string | null => localStorage.getItem('accessToken');
 
   /**
-   * @function getRefreshToken
-   * @description Get the refresh token
-   *
-   * @returns {string | null} The refresh token
-   */
-  getRefreshToken = (): string | null => localStorage.getItem('refreshToken');
-
-  /**
    * @function setTokens
    * @description Set the access and refresh tokens
    *
-   * @param {string} access - The access token
-   * @param {string} refresh - The refresh token
+   * @param {string} accessToken The access token
    */
-  setTokens = (access: string, refresh: string) => {
-    localStorage.setItem('accessToken', access);
-    localStorage.setItem('refreshToken', refresh);
-    this.setAuthState({ isAuthenticated: true, user: null });
+  setToken = async (accessToken: string) => {
+    const userResponse = await fetch(`${this.baseURL}/users/v1/me`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (userResponse.ok) {
+      localStorage.setItem('accessToken', accessToken);
+      const userData: GetUserMeResponse = await userResponse.json();
+      this.setAuthState({ isAuthenticated: true, user: userData });
+    } else {
+      this.logout();
+    }
   };
 
   /**
@@ -49,19 +53,14 @@ export class TokenManager {
    * @returns {Promise<boolean>} True if the refresh was successful, false otherwise.
    */
   async refreshAccessToken(): Promise<boolean> {
-    const refreshToken = this.getRefreshToken();
-    if (!refreshToken) return false;
-
     try {
       const response = await fetch(`${this.baseURL}/token/refresh`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        this.setTokens(data.newAccessToken, data.newRefreshToken || refreshToken);
+        const data: RefreshTokenResponse = await response.json();
+        this.setToken(data.accessToken);
         return true;
       }
     } catch (error) {
@@ -77,7 +76,6 @@ export class TokenManager {
    */
   logout() {
     localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
     this.setAuthState({ isAuthenticated: false, user: null });
   }
 }

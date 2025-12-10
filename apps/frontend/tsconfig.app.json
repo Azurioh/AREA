@@ -26,9 +26,10 @@
     "esModuleInterop": true,
 
     /* Paths */
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"],
+      "@area/shared": ["../../packages/shared/index.ts"],
+      "@area/shared/*": ["../../packages/shared/*"]
     }
   },
   "include": ["src"]

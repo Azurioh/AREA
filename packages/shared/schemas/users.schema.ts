@@ -21,6 +21,8 @@ export const getUserByIdResponseSchema = userSchema.omit({ password: true });
 
 export const getUserMeResponseSchema = userSchema.omit({ password: true });
 
+export type GetUserMeResponse = z.infer<typeof getUserMeResponseSchema>;
+
 /******************
  * UPDATE USER ME *
  ******************/

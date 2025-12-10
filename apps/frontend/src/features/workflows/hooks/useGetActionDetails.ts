@@ -11,6 +11,10 @@ export const useGetActionDetails = () => {
     setLoading(true);
     try {
       const actionDetails = await servicesClient.getActionDetails(serviceName, actionName);
+
+      if (!actionDetails) {
+        return;
+      }
       setAction(actionDetails);
     } catch (error) {
       console.error('Error fetching action details:', error);

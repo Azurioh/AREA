@@ -25,6 +25,8 @@ export const registerBodyResponseSchema = z.object({
   }),
 });
 
+export type RegisterResponse = z.infer<typeof registerBodyResponseSchema>;
+
 /*********
  * LOGIN *
  *********/
@@ -51,6 +53,8 @@ export const loginBodyResponseSchema = z.object({
   }),
 });
 
+export type LoginResponse = z.infer<typeof loginBodyResponseSchema>;
+
 export const refreshTokenResponseSchema = z.object({
   accessToken: z.string().meta({
     description: 'New access token',
@@ -58,3 +62,5 @@ export const refreshTokenResponseSchema = z.object({
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
   }),
 });
+
+export type RefreshTokenResponse = z.infer<typeof refreshTokenResponseSchema>;

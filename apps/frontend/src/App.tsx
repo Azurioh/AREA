@@ -1,22 +1,23 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { AppRoutesPaths } from '@/enums/routes';
 import { AdminDashboardPage } from '@/features/adminDashboard';
 import { LoginPage, RegisterPage } from '@/features/auth';
+import { OauthCallbackPage } from '@/features/connections';
 import { HomePage } from '@/features/home';
 import { Profile } from '@/features/profile';
+import { CreateWorkflowsPage, WorkflowsPage } from '@/features/workflows';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './contexts/PorectedRoutes';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { WorkflowsPage } from '@/features/workflows';
-import { CreateWorkflowsPage } from '@/features/workflows';
 import { ConnectionsPage } from './features/connections/';
-import { OauthCallbackPage } from '@/features/connections';
 
 export default function App() {
   return (
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
+          <Toaster position="top-center" richColors closeButton />
           <Routes>
             <Route path={AppRoutesPaths.REGISTER} element={<RegisterPage />} />
             <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />

@@ -1,7 +1,7 @@
+import type { CheckboxProps as ShadcnCheckboxProps } from '@radix-ui/react-checkbox';
 import * as React from 'react';
 import { Checkbox as ShadcnCheckbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
-import type { CheckboxProps as ShadcnCheckboxProps } from '@radix-ui/react-checkbox';
 
 export interface CheckboxProps extends ShadcnCheckboxProps {}
 
