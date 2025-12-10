@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/wrappers/Button';
 import { useAuthorization } from '../hooks/useAuthorization';
+import { Avatar, AvatarImage, } from '@/components/ui/avatar';
 
 interface ConnectionCardProps {
   image: string;
@@ -18,10 +19,12 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ image, serviceName }) =
       transition={{ duration: 0.5 }}
       className="w-full max-w-5xl mx-auto"
     >
-      <Card className="p-6 rounded-[20px] shadow-lg w-full max-w-4xl border-none ring-0 outline-none relative bg-muted mb-5">
+      <Card className="p-3 pr-8 rounded-[var(--large-radius)] shadow-lg border-none bg-muted w-[570px] h-[90px]">
         <CardContent className="flex items-center gap-6 p-0 font-text justify-between">
           <div className="flex items-center gap-5">
-            <img src={image} alt={serviceName} className="h-20 max-w-full object-contain" />
+            <Avatar className="w-16 h-16">
+              <AvatarImage src={image} alt={serviceName} className="w-full h-full object-contain" />
+            </Avatar>
             <h1 className="text-[30px]">{serviceName}</h1>
           </div>
           <div>
