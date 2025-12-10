@@ -1,5 +1,6 @@
 package com.example.area.data.api
 
+import com.example.area.data.models.AboutJson
 import com.example.area.data.models.Register
 import com.example.area.data.models.Login
 import com.example.area.data.models.AuthResponse
@@ -47,4 +48,7 @@ interface ApiService {
 
     @GET("actions-reactions/v1/me")
     suspend fun getAllActionsReactions() : List<ActionReactionRequest>
+
+    @GET("about.json")
+    suspend fun getAboutJson() : AboutJson
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import com.example.area.data.api.RetrofitInstance
+import com.example.area.data.models.AboutJson
 import com.example.area.data.models.ServicesValue
 import com.example.area.data.models.ActionDetail
 import com.example.area.data.models.ActionReactionRequest
@@ -134,6 +135,21 @@ class ServiceViewModel : ViewModel() {
             try {
                 val actionsReactions = RetrofitInstance.api.getAllActionsReactions()
                 onSuccess(actionsReactions)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onError(e.message ?: "Unknow error")
+            }
+        }
+    }
+
+    fun getAboutJson(
+        onSuccess: (AboutJson) -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val aboutJson = RetrofitInstance.api.getAboutJson()
+                onSuccess(aboutJson)
             } catch (e: Exception) {
                 e.printStackTrace()
                 onError(e.message ?: "Unknow error")

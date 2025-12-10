@@ -1,11 +1,11 @@
 package com.example.area.data.models
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
 
 data class ParamOption(
-    @SerializedName("name")
+    @SerialName("name")
     val label: String,
-    @SerializedName("id")
+    @SerialName("id")
     val value: String
 )
 
