@@ -28,10 +28,10 @@ jobs:
         - name: Install dependencies
           run: pnpm install
 
-        - name: Build shared folder
-          run: pnpm run build
+        - name: Build shared package
+          run: pnpm build
           working-directory: ./packages/shared
 
         - name: Build frontend
-          run: pnpm run build
+          run: pnpm build
           working-directory: ./apps/frontend
