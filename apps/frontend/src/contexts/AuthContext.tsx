@@ -5,6 +5,7 @@ import { AuthClient } from '@/features/auth/api/AuthClient';
 import { ActionReactionClient, ServicesClient } from '@/features/workflows';
 import { TokenManager } from '@/lib/TokenManager';
 import { UserInformationClient } from '@/shared/api/UserInformationClient';
+import { AuthorizationUrl } from '@/features/connections/api/AuthorizationUrl';
 
 /**
  * @interface AuthState
@@ -26,9 +27,9 @@ export interface AuthContextType {
   userInformationClient: UserInformationClient;
   authState: AuthState;
   tokenManager: TokenManager;
+  authorizationUrl: AuthorizationUrl;
   logout: () => void;
 }
-
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 if (!BASE_URL) {
   throw new Error('VITE_BACKEND_URL is not defined.');
@@ -48,6 +49,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const actionReactionClient = useMemo(() => new ActionReactionClient(BASE_URL, tokenManager), [tokenManager]);
   const userInformationClient = useMemo(() => new UserInformationClient(BASE_URL, tokenManager), [tokenManager]);
   const authClient = useMemo(() => new AuthClient(BASE_URL, tokenManager), [tokenManager]);
+  const authorizationUrl = useMemo(() => new AuthorizationUrl(BASE_URL, tokenManager), [tokenManager]);
 
   const contextValue: AuthContextType = useMemo(
     () => ({
@@ -57,6 +59,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       actionReactionClient,
       userInformationClient,
       authClient,
+      authorizationUrl,
       logout: tokenManager.logout.bind(tokenManager),
     }),
     [authState, tokenManager, actionReactionClient, servicesClient, userInformationClient, authClient],
