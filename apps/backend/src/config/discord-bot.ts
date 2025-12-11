@@ -1,5 +1,5 @@
-import { environment } from '@/utils/environment';
 import { Client, Events, GatewayIntentBits, type Message, type OmitPartialGroupDMChannel } from 'discord.js';
+import { environment } from '@/utils/environment';
 
 export const setupDiscordBot = () => {
   const client = new Client({
