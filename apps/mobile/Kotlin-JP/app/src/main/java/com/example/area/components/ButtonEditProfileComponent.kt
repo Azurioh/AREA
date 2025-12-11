@@ -24,7 +24,7 @@ fun ButtonEditProfileComponent(
 ) {
     Button(
         onClick = {
-            println(">>> Save edit $textFieldNewName - $textFieldNewEmail")
+            println("Save edit $textFieldNewName - $textFieldNewEmail")
             onDismiss()
         },
         modifier = Modifier

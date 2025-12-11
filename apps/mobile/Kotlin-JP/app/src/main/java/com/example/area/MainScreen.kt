@@ -24,6 +24,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -40,6 +41,7 @@ import com.example.area.pages.CreatePage
 import com.example.area.pages.SettingsPage
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.CustomWhite
+import com.example.area.viewModel.ServiceViewModel
 import com.example.area.viewModel.UserViewModel
 
 data class NavItemState(
@@ -54,6 +56,7 @@ data class NavItemState(
 fun MainScreenWithNav(
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel = viewModel(),
+    serviceViewModel: ServiceViewModel = viewModel(),
     onLogout: () -> Unit = {}
 ) {
 
@@ -133,10 +136,21 @@ fun MainScreenWithNav(
         }
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
+            LaunchedEffect(Unit) {
+                serviceViewModel.getAboutJson(
+                    onSuccess = { aboutJson ->
+                        println("AboutJson loaded: ${aboutJson.server}")
+                    },
+                    onError = { error ->
+                        println("Error loading aboutJson: $error")
+                    }
+                )
+            }
             ContentScreen(
                 modifier = Modifier.fillMaxSize(),
                 selectedIndex = bottomNavState,
                 userViewModel = userViewModel,
+                serviceViewModel = serviceViewModel,
                 onLogout = onLogout,
                 bottomPadding = paddingValues.calculateBottomPadding()
             )
@@ -149,13 +163,14 @@ fun ContentScreen(
     modifier: Modifier = Modifier,
     selectedIndex: Int,
     userViewModel: UserViewModel,
+    serviceViewModel: ServiceViewModel,
     onLogout: () -> Unit = {},
     bottomPadding: androidx.compose.ui.unit.Dp = 0.dp
 ) {
     when(selectedIndex) {
         0 -> HomePage(modifier = modifier)
-        1 -> CreatePage(modifier = modifier)
-        2 -> ProfilePage(modifier = modifier, userViewModel = userViewModel)
+        1 -> CreatePage(modifier = modifier, serviceViewModel = serviceViewModel)
+        2 -> ProfilePage(modifier = modifier, userViewModel = userViewModel, serviceViewModel = serviceViewModel)
         3 -> SettingsPage(modifier = modifier, onLogout = onLogout)
     }
 }
