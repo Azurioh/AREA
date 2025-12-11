@@ -1,7 +1,10 @@
 name: PR-Agent Review
 
 on:
-  - pull_request
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+  issue_comment:
+    types: [created, edited]
 
 jobs:
   pr_agent_job:
@@ -16,7 +19,7 @@ jobs:
       - name: PR Agent action
         uses: Codium-ai/pr-agent@main
         env:
-          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          OPENAI_KEY: ${{ secrets.MISTRAL_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
           CONFIG.MODEL: "mistral/codestral-latest"
