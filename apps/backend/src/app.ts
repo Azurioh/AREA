@@ -6,6 +6,7 @@ import { setupDiscordBot } from './config/discord-bot';
 import { setupErrorHandler } from './config/error-handler';
 import { setupMongoDB } from './config/mongo';
 import { setupNotFoundHandler } from './config/not-found';
+import { registerServices } from './config/register-service';
 import { setupStaticFiles } from './config/static-files';
 import { setupSwagger } from './config/swagger';
 import { setupZod } from './config/zod';
@@ -33,6 +34,8 @@ async function build(): Promise<FastifyInstance> {
   setupZod(app);
   await setupDiscordBot();
   setupStaticFiles(app);
+
+  registerServices(app);
 
   app.withTypeProvider<ZodTypeProvider>().register(aboutRoutes);
   app.withTypeProvider<ZodTypeProvider>().register(thirdPartiesRoute, { prefix: '/third-parties' });
