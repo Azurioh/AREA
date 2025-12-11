@@ -40,15 +40,15 @@ class MainActivity : ComponentActivity() {
             when (status) {
                 "success" -> {
                     val message = if (service != null) {
-                        "$service connecté avec succès!"
+                        "$service connected successfully!"
                     } else {
-                        "Service connecté avec succès!"
+                        "Service connected successfully!"
                     }
                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 }
                 "error" -> {
-                    val error = data.getQueryParameter("error") ?: "Erreur inconnue"
-                    Toast.makeText(this, "Erreur: $error", Toast.LENGTH_LONG).show()
+                    val error = data.getQueryParameter("error") ?: "Unknown error"
+                    Toast.makeText(this, "Error: $error", Toast.LENGTH_LONG).show()
                 }
             }
         }

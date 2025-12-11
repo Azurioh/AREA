@@ -38,7 +38,7 @@ class UserViewModel : ViewModel() {
                 fetchUserProfile()
                 onSuccess()
             } catch (e: Exception) {
-                onError(e.message ?: "Erreur inconnue")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -64,7 +64,7 @@ class UserViewModel : ViewModel() {
                 fetchUserProfile()
                 onSuccess()
             } catch (e: Exception) {
-                onError(e.message ?: "Erreur inconnue")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -77,7 +77,7 @@ class UserViewModel : ViewModel() {
                 val user = RetrofitInstance.api.getUserProfile()
                 _userProfile.value = user
             } catch (e: Exception) {
-                onError(e.message ?: "Erreur inconnue")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
