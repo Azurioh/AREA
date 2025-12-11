@@ -30,7 +30,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ image, serviceName, sta
           </div>
           <div>
             {status ? (
-              <Button className="text-[20px] bg-destructive" onClick={() => handleSubmit(serviceName)} >
+              <Button className="text-[20px] bg-destructive hover:bg-destructive/80" onClick={() => handleSubmit(serviceName)} >
                 Disconnect
               </Button>
             ) : (

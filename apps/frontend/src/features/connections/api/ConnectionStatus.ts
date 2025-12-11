@@ -1,4 +1,4 @@
-import type { GetThirdPartyAuthorizationUrlResponse } from "@area/shared/schemas/third-parties.schema";
+import type { GetThirdPartyStatusResponse } from "@area/shared/schemas/third-parties.schema";
 import type { MaybeUndefined } from '@area/shared/utils/common';
 import { ApiClient } from "@/lib/ApiClient";
 
@@ -8,11 +8,11 @@ export class ConnectionStatus extends ApiClient {
      * @description Fetch the connection status for a third party service
      *
      * @param {string} service - The third party service
-     * @returns {Promise<MaybeUndefined<GetThirdPartyAuthorizationUrlResponse>>} The connection status
+     * @returns {Promise<MaybeUndefined<GetThirdPartyStatusResponse>>} The connection status
      */
-    async getConnectionStatus(service: string): Promise<MaybeUndefined<GetThirdPartyAuthorizationUrlResponse>> {
+    async getConnectionStatus(service: string): Promise<MaybeUndefined<GetThirdPartyStatusResponse>> {
 
-        const response = await this.fetch<GetThirdPartyAuthorizationUrlResponse>(
+        const response = await this.fetch<GetThirdPartyStatusResponse>(
             `/third-parties/v1/status/${service}`,
             {
                 method: 'GET',

@@ -6,6 +6,7 @@ interface Service {
   status: boolean;
 }
 
+
 export function useServicesClient() {
   const { servicesClient, connectionStatus } = useApp();
   const [services, setServices] = useState<Service[]>([]);
@@ -22,8 +23,8 @@ export function useServicesClient() {
             const statusResponse = await connectionStatus.getConnectionStatus(serviceName);
 
             return {
-            name: serviceName,
-            status: Boolean(statusResponse),
+                name: serviceName,
+                status: Boolean(statusResponse?.connected),
             };
         })
       );
