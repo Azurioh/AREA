@@ -25,3 +25,4 @@ jobs:
           CONFIG.FALLBACK_MODELS: '["mistral/mistral-large-latest"]'
 
           PR_REVIEWER.EXTRA_INSTRUCTIONS: "Concentre-toi sur la sécurité et la lisibilité. Réponds en Français."
+          GITHUB_ACTION_CONFIG.PR_ACTIONS: '["opened", "reopened", "ready_for_review", "synchronize"]'
