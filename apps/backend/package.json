@@ -6,7 +6,7 @@
     "dev": "nodemon src/index.ts",
     "lint": "biome lint . --write",
     "format": "biome format . --write",
-    "test": "NODE_ENV=test jest",
+    "test": "NODE_ENV=test jest --detectOpenHandles",
     "test:watch": "NODE_ENV=test jest --watch",
     "test:coverage": "NODE_ENV=test jest --coverage"
   },

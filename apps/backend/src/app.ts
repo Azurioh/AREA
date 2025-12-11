@@ -31,7 +31,7 @@ async function build(): Promise<FastifyInstance> {
   setupNotFoundHandler(app);
   setupErrorHandler(app);
   setupZod(app);
-  setupDiscordBot();
+  await setupDiscordBot();
   setupStaticFiles(app);
 
   app.withTypeProvider<ZodTypeProvider>().register(aboutRoutes);

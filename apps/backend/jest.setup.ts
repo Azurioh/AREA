@@ -1,3 +1,8 @@
+import path from 'node:path';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: path.resolve(__dirname, '.env.test') });
+
 // Mock the environment module to prevent validation during tests
 jest.mock('./src/utils/environment', () => ({
   environment: {
