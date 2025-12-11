@@ -2,21 +2,21 @@ import { type FastifyInstance, fastify } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { setupCookie } from './config/cookie';
 import { setupCors } from './config/cors';
+import { setupDiscordBot } from './config/discord-bot';
 import { setupErrorHandler } from './config/error-handler';
 import { setupMongoDB } from './config/mongo';
 import { setupNotFoundHandler } from './config/not-found';
+import { registerServices } from './config/register-service';
+import { setupStaticFiles } from './config/static-files';
 import { setupSwagger } from './config/swagger';
 import { setupZod } from './config/zod';
 import { aboutRoutes } from './modules/about';
+import { actionsReactionsRoute } from './modules/actions-reactions';
 import { authRoutes } from './modules/auth';
 import { servicesRoutes } from './modules/services';
+import thirdPartiesRoute from './modules/third-parties/third-parties.route';
 import { usersRoutes } from './modules/users';
 import { webhookRoutes } from './modules/webhook';
-import { actionsReactionsRoute } from './modules/actions-reactions';
-import { registerServices } from './config/register-service';
-import { setupDiscordBot } from './config/discord-bot';
-import thirdPartiesRoute from './modules/third-parties/third-parties.route';
-import { setupStaticFiles } from './config/static-files';
 
 async function build(): Promise<FastifyInstance> {
   const app: FastifyInstance = fastify({
@@ -32,7 +32,7 @@ async function build(): Promise<FastifyInstance> {
   setupNotFoundHandler(app);
   setupErrorHandler(app);
   setupZod(app);
-  setupDiscordBot();
+  await setupDiscordBot();
   setupStaticFiles(app);
 
   registerServices(app);
