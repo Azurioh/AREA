@@ -1,10 +1,10 @@
+import type { FastifyInstance } from 'fastify';
 import { createDiscordService, createGithubService, ServiceManager } from '@/integrations';
 import { DiscordService } from '@/modules/discord';
 import { GithubService } from '@/modules/github';
 import { ThirdPartiesService } from '@/modules/third-parties';
 import { ThirdPartiesRepository } from '@/modules/third-parties/third-parties.repository';
 import { UsersRepository, UsersService } from '@/modules/users';
-import type { FastifyInstance } from 'fastify';
 
 export const registerServices = (app: FastifyInstance): void => {
   if (!app.mongo.db) {

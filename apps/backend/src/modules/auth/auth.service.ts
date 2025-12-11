@@ -2,7 +2,7 @@ import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { LoginBody } from '@area/shared/schemas/auth.schema';
 import type { Tokens } from '@area/shared/types/auth.types';
 import type { User } from '@area/shared/types/user.types';
-import { MongoServerError } from 'mongodb';
+import { type InsertOneResult, MongoServerError } from 'mongodb';
 import type { UsersRepository } from '@/modules/users';
 import ApiError from '@/utils/api-error';
 import { comparePasswords, hashPassword } from '@/utils/crypt';
@@ -30,8 +30,16 @@ export class AuthService {
   async registerUser(data: User): Promise<Tokens> {
     try {
       data.password = await hashPassword(data.password);
+      let result: InsertOneResult<User>;
 
-      const result = await this.repository.createUser(data);
+      try {
+        result = await this.repository.createUser(data);
+      } catch (error) {
+        if (error instanceof MongoServerError && error.code === 11000) {
+          throw new ApiError(HttpStatusCode.CONFLICT, 'Failed to create user, user already exists.');
+        }
+        throw error;
+      }
 
       if (!result.acknowledged) {
         throw new ApiError(
