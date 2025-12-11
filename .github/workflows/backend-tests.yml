@@ -32,7 +32,7 @@ jobs:
           run: pnpm run build
           working-directory: ./packages/shared
 
-        - name: Build backend
+        - name: Run tests
           run: pnpm run test
           working-directory: ./apps/backend
           env:
@@ -41,3 +41,4 @@ jobs:
             DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
             DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
             DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+            MONGO_URI: ${{ secrets.MONGO_URI }}

@@ -4,7 +4,7 @@ jest.mock('./src/utils/environment', () => ({
     NODE_ENV: 'test',
     PORT: 3000,
     BASE_API_URL: 'http://localhost:3000',
-    MONGO_URI: 'mongodb://localhost:27017',
+    MONGO_URI: process.env.MONGO_URI,
     MONGO_DATABASE: 'area-test',
     CRYPT_SECRET_KEY: 'test',
     WEB_OAUTH_CALLBACK_URL: 'http://localhost:3001/oauth/callback',
