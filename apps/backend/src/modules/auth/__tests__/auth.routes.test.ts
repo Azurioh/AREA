@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import request from 'supertest';
 import { v4 } from 'uuid';
 import build from '@/app';
+import { closeDiscordBot } from '@/config/discord-bot';
 import { MongoCollections } from '@/enums/mongo-collection';
 import { removeValueFromDatabase } from '@/utils/db-cleaner';
 
@@ -28,6 +29,7 @@ describe('Auth Routes', () => {
 
   afterAll(async () => {
     await app?.close();
+    await closeDiscordBot();
   });
 
   describe('POST /auth/v1/register', () => {
