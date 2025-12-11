@@ -35,3 +35,9 @@ jobs:
         - name: Build backend
           run: pnpm run test
           working-directory: ./apps/backend
+          env:
+            GITHUB_CLIENT_ID: ${{ secrets.GH_CLIENT_ID }}
+            GITHUB_CLIENT_SECRET: ${{ secrets.GH_CLIENT_SECRET }}
+            DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+            DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
+            DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
