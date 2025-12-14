@@ -9,4 +9,5 @@ export const AppRoutesPaths = {
   CREATE: '/create',
   CONNECTIONS: '/connections',
   OAUTH_CALLBACK: '/oauth/callback',
+  LANDING: '/landing',
 } as const;

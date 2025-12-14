@@ -11,6 +11,7 @@ import { WorkflowsPage } from '@/features/workflows';
 import { CreateWorkflowsPage } from '@/features/workflows';
 import { ConnectionsPage } from './features/connections/';
 import { OauthCallbackPage } from '@/features/connections';
+import { LandingPage } from '@/features/landing';
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
               <Route path={AppRoutesPaths.CREATE} element={<CreateWorkflowsPage />} />
               <Route path={AppRoutesPaths.CONNECTIONS} element={<ConnectionsPage />} />
               <Route path={AppRoutesPaths.OAUTH_CALLBACK} element={<OauthCallbackPage />} />
+              <Route path={AppRoutesPaths.LANDING} element={<LandingPage />} />
             </Route>
           </Routes>
         </AuthProvider>
