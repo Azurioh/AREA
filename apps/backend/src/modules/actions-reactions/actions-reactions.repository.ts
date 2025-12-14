@@ -1,6 +1,6 @@
 import { MongoCollections } from '@/enums/mongo-collection';
 import type { ActionsReactions } from '@/types/action-reaction';
-import type { Db } from 'mongodb';
+import { ObjectId, type WithId, type Db } from 'mongodb';
 
 /**
  * @class ActionsReactionsRepository
@@ -33,9 +33,9 @@ export class ActionsReactionsRepository {
    * @description Get the list of actions reactions matching the action trigger
    *
    * @param {string} trigger The trigger of the action
-   * @returns {Promise<ActionsReactions[]>} The matched actions reactions
+   * @returns {Promise<WithId<ActionsReactions>[]>} The matched actions reactions
    */
-  async getActionsReactionsByTrigger(trigger: string): Promise<ActionsReactions[]> {
+  async getActionsReactionsByTrigger(trigger: string): Promise<WithId<ActionsReactions>[]> {
     return await this.db
       .collection<ActionsReactions>(MongoCollections.ACTIONS_REACTIONS)
       .find({ trigger: trigger })
@@ -54,5 +54,18 @@ export class ActionsReactionsRepository {
       .collection<ActionsReactions>(MongoCollections.ACTIONS_REACTIONS)
       .find({ userId: userId })
       .toArray();
+  }
+
+  /**
+   * @function incrementActionReactionExecution
+   * @description Increment by one the number of execution of an action reaction
+   *
+   * @param {string} id The id of the action reaction
+   * @returns {Promise<void>} Nothing
+   */
+  async incrementActionReactionExecution(id: string): Promise<void> {
+    await this.db
+      .collection<ActionsReactions>(MongoCollections.ACTIONS_REACTIONS)
+      .updateOne({ _id: new ObjectId(id) }, { $inc: { numberOfExecution: 1 } });
   }
 }

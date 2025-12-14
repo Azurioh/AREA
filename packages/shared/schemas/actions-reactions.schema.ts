@@ -37,6 +37,10 @@ export const getMeActionsReactionsResponseSchema = z.array(
   z.object({
     action: actionReactionSchema,
     reaction: actionReactionSchema,
+    numberOfExecution: z.number().meta({
+      description: 'The number of execution of the workflow',
+      example: 14,
+    }),
   }),
 );
 
