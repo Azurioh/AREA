@@ -1,29 +1,30 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import React from 'react';
+import { toast } from 'sonner';
 import SideBar from '@/components/SideBar';
-import { Card, CardContent } from '@/components/wrappers/Card';
-import { Button } from '@/components/wrappers/Button';
-import { Input } from '@/components/wrappers/Input';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
+import { Button } from '@/components/wrappers/Button';
+import { Card, CardContent } from '@/components/wrappers/Card';
+import { Input } from '@/components/wrappers/Input';
+import { useCreateActionReaction } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useListActions } from '@/features/workflows/hooks/useListActions';
 import { useListReactions } from '@/features/workflows/hooks/useListReactions';
-import { useCreateActionReaction } from '@/features/workflows/hooks/useCreateActionReaction';
+import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useApp } from '@/hooks/useApp';
-import { toast } from 'sonner';
 
 const CreateWorkflows: React.FC = () => {
   const { servicesClient } = useApp();
 
-  const [services, setServices] = React.useState<string[]>([]);
+  const { services, fetchServices } = useListServices();
+
   React.useEffect(() => {
-    servicesClient.listServices().then(setServices);
-  }, []);
+    fetchServices();
+  }, [fetchServices]);
 
   const [selectedActionService, setSelectedActionService] = React.useState<string | null>(null);
   const [selectedAction, setSelectedAction] = React.useState<string | null>(null);

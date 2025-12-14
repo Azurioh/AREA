@@ -10,12 +10,12 @@ export const setupErrorHandler = (app: FastifyInstance) => {
       reply.status(error.httpCode).send({
         data: error.message,
       });
-    } else if (error instanceof ZodError) {
+    } else if (error instanceof ZodError || (error as any).code === 'FST_ERR_VALIDATION') {
       reply.status(HttpStatusCode.BAD_REQUEST).send({
-        data: error.message,
+        data: (error as any).message,
       });
     } else if (error instanceof Error) {
-      if (environment.NODE_ENV === 'development') {
+      if (environment.NODE_ENV === 'development' || environment.NODE_ENV === 'test') {
         console.log(error);
       }
       reply.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send({

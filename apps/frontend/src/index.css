@@ -40,6 +40,7 @@
     --font-text: system-ui, sans-serif;
     --button-disabled-text: 0 0% 100%;
     --switch-disabled: #5E5E5E;
+    --radius: 0.5rem;
   }
   .dark {
     --background: #1b1f24;

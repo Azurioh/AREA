@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,12 +34,21 @@ import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.viewModel.UserViewModel
 
+
+private fun getServiceImage(serviceName: String): Int {
+    return when (serviceName.lowercase()) {
+        "github" -> R.drawable.github_dark
+        "discord" -> R.drawable.discord
+        else -> R.drawable.github_dark
+    }
+}
 @Composable
 fun ProfilePage(
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel = viewModel(),
     serviceViewModel: ServiceViewModel = viewModel()
 ) {
+    val aboutJson by serviceViewModel.aboutJson.collectAsState()
     var isEditing by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -81,40 +92,25 @@ fun ProfilePage(
                     .padding(top = 20.dp, start = 32.dp)
                     .fillMaxWidth()
             )
-            ConnectionCard(
-                serviceImage = R.drawable.github_dark,
-                serviceName = "Github",
-                isConnected = false,
-                onButtonClick = {
-                    serviceViewModel.connectToService(
-                        serviceName = "github",
-                        onSuccess = { url ->
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                            context.startActivity(intent)
-                        },
-                        onError = { error ->
-                            println(">>> Failed to connect to GitHub: $error")
-                        }
-                    )
-                }
-            )
-            ConnectionCard(
-                serviceImage = R.drawable.discord,
-                serviceName = "Discord",
-                isConnected = false,
-                onButtonClick = {
-                    serviceViewModel.connectToService(
-                        serviceName = "discord",
-                        onSuccess = { url ->
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                            context.startActivity(intent)
-                        },
-                        onError = { error ->
-                            println(">>> Failed to connect to Discord: $error")
-                        }
-                    )
-                }
-            )
+            aboutJson?.server?.services?.forEach { service ->
+                ConnectionCard(
+                    serviceImage = getServiceImage(service.name),
+                    serviceName = service.name.toLowerCase(),
+                    isConnected = false,
+                    onButtonClick = {
+                        serviceViewModel.connectToService(
+                            serviceName = service.name.toLowerCase(),
+                            onSuccess = { url ->
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                context.startActivity(intent)
+                            },
+                            onError = { error ->
+                                println("Failed to connect to ${service.name}: $error")
+                            }
+                        )
+                    }
+                )
+            }
         }
     }
 }

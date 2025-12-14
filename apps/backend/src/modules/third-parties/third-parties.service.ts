@@ -53,7 +53,7 @@ export class ThirdPartiesService {
    * @description Get a third party authorization url
    *
    * @param {ServiceType} service - The service name
-   * @param {string} userId - The if of the user authenticating
+   * @param {string} userId - The id of the user authenticating
    * @param {ClientType} clientType - The type of the client
    * @returns {Promise<string>} The authorization url to the given third party
    */
@@ -224,6 +224,20 @@ export class ThirdPartiesService {
       guildId: formattedResponse.guild.id,
     };
     return data;
+  }
+
+  /**
+   * @function getThirdPartyStatus
+   * @description Get a third party status
+   *
+   * @param {ServiceType} service - The service name
+   * @param {string} userId - The id of the user authenticating
+   * @returns {Promise<boolean>} The status of the connection with the third party service
+   */
+  async getThirdPartyStatus(service: ServiceType, userId: string): Promise<boolean> {
+    const account = await this.repository.getThirdPartyAccountByUserId(userId, service);
+
+    return account !== null;
   }
 
   /**

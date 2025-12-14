@@ -1,4 +1,5 @@
-import type { CreateActionReactionBody } from '@area/shared/schemas/actions-reactions.schema';
+import type { CreateActionReactionBody, GetMeActionsReactions } from '@area/shared/schemas/actions-reactions.schema';
+import type { MaybeUndefined } from '@area/shared/utils/common';
 import { ApiClient } from '@/lib/ApiClient';
 
 /**
@@ -27,5 +28,19 @@ export class ActionReactionClient extends ApiClient {
       console.error('Error creating workflow:', error);
       throw error;
     }
+  }
+
+  /**
+   * @function getAllWorkflows
+   * @description Retrieves all action-reaction workflows for the authenticated user.
+   *
+   * @returns {Promise<MaybeUndefined<GetMeActionsReactions>>} A promise that resolves to the user's workflows or undefined.
+   */
+  async getAllWorkflows(): Promise<MaybeUndefined<GetMeActionsReactions>> {
+    const response = await this.fetch<GetMeActionsReactions>('/actions-reactions/v1/me', {
+      method: 'GET',
+    });
+
+    return response;
   }
 }

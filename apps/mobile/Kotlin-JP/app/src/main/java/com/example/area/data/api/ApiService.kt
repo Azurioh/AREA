@@ -1,5 +1,6 @@
 package com.example.area.data.api
 
+import com.example.area.data.models.AboutJson
 import com.example.area.data.models.Register
 import com.example.area.data.models.Login
 import com.example.area.data.models.AuthResponse
@@ -24,7 +25,7 @@ interface ApiService {
     @GET("users/v1/me")
     suspend fun getUserProfile() : User
 
-    @GET("users/v1/me/authorization-url/{third_party_service}")
+    @GET("third-parties/v1/authorization-url/{third_party_service}")
     suspend fun getAuthorizationUrl(
         @Path("third_party_service") service: String,
         @Header("x-client-type") clientType: String = "mobile"
@@ -47,4 +48,7 @@ interface ApiService {
 
     @GET("actions-reactions/v1/me")
     suspend fun getAllActionsReactions() : List<ActionReactionRequest>
+
+    @GET("about.json")
+    suspend fun getAboutJson() : AboutJson
 }

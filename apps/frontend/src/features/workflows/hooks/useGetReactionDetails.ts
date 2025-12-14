@@ -11,6 +11,10 @@ export const useGetReactionDetails = () => {
     setLoading(true);
     try {
       const reactionDetails = await servicesClient.getReactionDetails(serviceName, reactionName);
+
+      if (!reactionDetails) {
+        return;
+      }
       setReaction(reactionDetails);
     } catch (error) {
       console.error('Error fetching reaction details:', error);

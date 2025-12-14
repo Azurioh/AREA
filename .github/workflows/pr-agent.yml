@@ -1,0 +1,29 @@
+name: PR-Agent Review
+
+on:
+  - pull_request
+  - issue_comment
+
+jobs:
+  pr_agent_job:
+    if: ${{ github.event.sender.type != 'Bot' }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: read
+    name: Run PR Agent
+    steps:
+      - name: PR Agent action
+        uses: Codium-ai/pr-agent@main
+        env:
+          OPENAI_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          CONFIG.MODEL: "mistral/codestral-latest"
+
+          CONFIG.FALLBACK_MODELS: '["mistral/mistral-large-latest"]'
+
+          PR_REVIEWER.EXTRA_INSTRUCTIONS: "Concentre-toi sur la sécurité et la lisibilité. Réponds en Français."
+          GITHUB_ACTION_CONFIG.PR_ACTIONS: '["opened", "reopened", "ready_for_review", "synchronize"]'

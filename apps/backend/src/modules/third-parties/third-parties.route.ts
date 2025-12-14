@@ -1,14 +1,17 @@
-import type { FastifyInstance } from 'fastify';
-import { verifyUserAccess } from '@/middlewares/auth';
-import { ThirdPartiesController, ThirdPartiesService, ThirdPartiesRepository } from '@/modules/third-parties';
 import {
   type GetThirdPartyAuthorizationUrlParams,
+  type GetThirdPartyStatusParams,
   getThirdPartyAuthorizationUrlParamsSchema,
   getThirdPartyAuthorizationUrlResponseSchema,
+  getThirdPartyStatusParamsSchema,
+  getThirdPartyStatusResponseSchema,
   thirdPartyAuthorizationParamsSchema,
   thirdPartyAuthorizationQueryStringSchema,
   thirdPartyAuthorizationResponseSchema,
 } from '@area/shared/schemas/third-parties.schema';
+import type { FastifyInstance } from 'fastify';
+import { verifyUserAccess } from '@/middlewares/auth';
+import { ThirdPartiesController, ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
 import { UsersRepository, UsersService } from '@/modules/users';
 
 export default async (app: FastifyInstance) => {
@@ -25,7 +28,7 @@ export default async (app: FastifyInstance) => {
 
   app.route<{ Params: GetThirdPartyAuthorizationUrlParams }>({
     method: 'GET',
-    url: '/v1/authorization-url/:provider',
+    url: '/v1/authorization-url/:service',
     schema: {
       summary: 'Get the authorization url for a third pary service',
       description: 'Returns the authentication url for the specified third party service',
@@ -53,5 +56,21 @@ export default async (app: FastifyInstance) => {
         200: thirdPartyAuthorizationResponseSchema,
       },
     },
+  });
+
+  app.route<{ Params: GetThirdPartyStatusParams }>({
+    method: 'GET',
+    url: '/v1/status/:service',
+    schema: {
+      summary: 'Return the status of a user regarding a service',
+      description: 'Return if the user is connected to the service or no',
+      tags: ['Third parties'],
+      params: getThirdPartyStatusParamsSchema,
+      response: {
+        200: getThirdPartyStatusResponseSchema,
+      },
+    },
+    preHandler: [verifyUserAccess(usersService)],
+    handler: controller.getThirdPartyStatus.bind(controller),
   });
 };

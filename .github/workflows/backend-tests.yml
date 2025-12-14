@@ -1,0 +1,40 @@
+name: Backend tests
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/backend-tests.yml
+      - apps/backend/**
+
+jobs:
+    backend-tests:
+        name: Backend Tests
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Checkout repository
+          uses: actions/checkout@v6
+
+        - name: Set up Node.js
+          uses: actions/setup-node@v6
+          with:
+            node-version: '22'
+
+        - name: Set up pnpm
+          uses: pnpm/action-setup@v4
+          with:
+            version: 10.24.0
+
+        - name: Install dependencies
+          run: pnpm install
+
+        - name: Run tests
+          run: pnpm run test
+          working-directory: ./apps/backend
+          env:
+            GITHUB_CLIENT_ID: ${{ secrets.GH_CLIENT_ID }}
+            GITHUB_CLIENT_SECRET: ${{ secrets.GH_CLIENT_SECRET }}
+            DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
+            DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
+            DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+            MONGO_URI: ${{ secrets.MONGO_URI }}

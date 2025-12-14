@@ -4,12 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import com.example.area.data.api.RetrofitInstance
+import com.example.area.data.models.AboutJson
 import com.example.area.data.models.ServicesValue
 import com.example.area.data.models.ActionDetail
 import com.example.area.data.models.ActionReactionRequest
 import com.example.area.data.models.ActionReactionParams
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class ServiceViewModel : ViewModel() {
+
+    private val _aboutJson = MutableStateFlow<AboutJson?>(null)
+    val aboutJson: StateFlow<AboutJson?> = _aboutJson.asStateFlow()
 
     fun connectToService(
         serviceName: String,
@@ -22,7 +29,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(url.url)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -38,7 +45,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(services)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -54,7 +61,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(reactions)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -71,7 +78,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(actionDetails)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -88,7 +95,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(reactionDetails)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -121,7 +128,7 @@ class ServiceViewModel : ViewModel() {
                 onSuccess()
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
             }
         }
     }
@@ -136,7 +143,23 @@ class ServiceViewModel : ViewModel() {
                 onSuccess(actionsReactions)
             } catch (e: Exception) {
                 e.printStackTrace()
-                onError(e.message ?: "Unknow error")
+                onError(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun getAboutJson(
+        onSuccess: (AboutJson) -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val aboutJson = RetrofitInstance.api.getAboutJson()
+                _aboutJson.value = aboutJson
+                onSuccess(aboutJson)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onError(e.message ?: "Unknown error")
             }
         }
     }

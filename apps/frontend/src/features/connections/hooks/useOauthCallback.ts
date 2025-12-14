@@ -5,9 +5,7 @@ export const useOauthCallback = () => {
     if (searchParams.has('status')) {
       const status = searchParams.get('status');
 
-      window.opener.dispatchEvent(
-        new CustomEvent('oauth-ended', { detail: { error: status === 'error' ? true : false } }),
-      );
+      window.opener.dispatchEvent(new CustomEvent('oauth-ended', { detail: { error: status === 'error' } }));
     }
   };
 

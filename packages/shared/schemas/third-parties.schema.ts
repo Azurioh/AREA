@@ -11,8 +11,10 @@ export const getThirdPartyAuthorizationUrlResponseSchema = z.object({
   }),
 });
 
+export type GetThirdPartyAuthorizationUrlResponse = z.infer<typeof getThirdPartyAuthorizationUrlResponseSchema>;
+
 export const getThirdPartyAuthorizationUrlParamsSchema = z.object({
-  provider: z.string().meta({
+  service: z.string().meta({
     description: 'The name of the third party service',
     example: 'github',
   }),
@@ -47,3 +49,32 @@ export const thirdPartyAuthorizationQueryStringSchema = z.object({
 });
 
 export const thirdPartyAuthorizationResponseSchema = z.object({});
+
+/**************************
+ * GET THIRD PARTY STATUS *
+ **************************/
+
+export const getThirdPartyStatusResponseSchema = z.object({
+  connected: z.boolean().meta({
+    description: 'If the user is connected to the third party service',
+  }),
+});
+
+/**
+ * @type GetThirdPartyStatusResponse
+ * @description The response for the get third party status endpoint
+ */
+export type GetThirdPartyStatusResponse = z.infer<typeof getThirdPartyStatusResponseSchema>;
+
+export const getThirdPartyStatusParamsSchema = z.object({
+  service: z.string().meta({
+    description: 'The name of the service ',
+    example: 'github',
+  }),
+});
+
+/**
+ * @type GetThirdPartyStatusParams
+ * @description The params for the get third party status endpoint
+ */
+export type GetThirdPartyStatusParams = z.infer<typeof getThirdPartyStatusParamsSchema>;

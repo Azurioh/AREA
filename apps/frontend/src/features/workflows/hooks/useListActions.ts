@@ -11,6 +11,10 @@ export const useListActions = () => {
     setLoading(true);
     try {
       const actions = await servicesClient.listServiceActions(serviceName);
+
+      if (!actions) {
+        return;
+      }
       setActions(actions);
     } catch (error) {
       console.error('Error fetching actions:', error);

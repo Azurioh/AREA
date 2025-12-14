@@ -1,10 +1,14 @@
-import type { CreateAction, CreateReaction, MeActionsReactions } from '@area/shared/schemas/actions-reactions.schema';
-import type { ActionsReactionsRepository } from './actions-reactions.repository';
-import type { ActionPayload, ActionsReactions } from '@/types/action-reaction';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import ApiError from '@/utils/api-error';
-import type { GithubService } from '@/modules/github';
+import type {
+  CreateAction,
+  CreateReaction,
+  GetMeActionsReactions,
+} from '@area/shared/schemas/actions-reactions.schema';
 import type { DiscordService } from '@/modules/discord';
+import type { GithubService } from '@/modules/github';
+import type { ActionPayload, ActionsReactions } from '@/types/action-reaction';
+import ApiError from '@/utils/api-error';
+import type { ActionsReactionsRepository } from './actions-reactions.repository';
 
 /**
  * @class ActionsReactionsService
@@ -101,12 +105,12 @@ export class ActionsReactionsService {
    * @description Get the list of actions reactions for the current user
    *
    * @param {string} userId The id of the user
-   * @returns {Promise<MeActionsReactions[]>} The matched actions reactions
+   * @returns {Promise<GetMeActionsReactions[]>} The matched actions reactions
    */
-  async getMeActionsReactions(trigger: string): Promise<MeActionsReactions> {
+  async getMeActionsReactions(trigger: string): Promise<GetMeActionsReactions> {
     const actionsReactions = await this.repository.getMeActionsReactions(trigger);
 
-    const formattedActionsReactions: MeActionsReactions = actionsReactions.map((actionReaction) => {
+    const formattedActionsReactions: GetMeActionsReactions = actionsReactions.map((actionReaction) => {
       return {
         action: actionReaction.action,
         reaction: actionReaction.reaction,

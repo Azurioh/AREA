@@ -1,7 +1,9 @@
-import { environment } from '@/utils/environment';
 import { Client, Events, GatewayIntentBits, type Message, type OmitPartialGroupDMChannel } from 'discord.js';
+import { environment } from '@/utils/environment';
 
-export const setupDiscordBot = () => {
+export let discordClient: Client | null = null;
+
+export const setupDiscordBot = async () => {
   const client = new Client({
     intents: [
       GatewayIntentBits.Guilds,
@@ -25,5 +27,13 @@ export const setupDiscordBot = () => {
     });
   });
 
-  client.login(environment.DISCORD_BOT_TOKEN);
+  await client.login(environment.DISCORD_BOT_TOKEN);
+  discordClient = client;
+};
+
+export const closeDiscordBot = async () => {
+  if (discordClient) {
+    await discordClient.destroy();
+    discordClient = null;
+  }
 };
