@@ -41,6 +41,10 @@ export const getMeActionsReactionsResponseSchema = z.array(
     }),
     action: actionReactionSchema,
     reaction: actionReactionSchema,
+    executionState: z.boolean().meta({
+      description: 'The execution state of the workflow',
+      example: true,
+    }),
   }),
 );
 

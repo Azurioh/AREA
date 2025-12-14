@@ -120,6 +120,7 @@ export class ActionsReactionsService {
         _id: actionReaction._id.toString(),
         action: actionReaction.action,
         reaction: actionReaction.reaction,
+        executionState: actionReaction.executionState,
       };
     });
     return formattedActionsReactions;
