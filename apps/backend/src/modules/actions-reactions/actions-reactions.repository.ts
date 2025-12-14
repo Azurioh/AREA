@@ -1,6 +1,6 @@
 import { MongoCollections } from '@/enums/mongo-collection';
-import type { ActionsReactions } from '@/types/action-reaction';
-import type { Db } from 'mongodb';
+import type { ActionReaction } from '@/types/action-reaction';
+import { ObjectId, type Db, type UpdateResult, type WithId } from 'mongodb';
 
 /**
  * @class ActionsReactionsRepository
@@ -17,12 +17,12 @@ export class ActionsReactionsRepository {
    * @function createActionReaction
    * @description Create a new action reaction
    *
-   * @param {ActionsReactions} data The action reaction to add
+   * @param {ActionReaction} data The action reaction to add
    * @returns {Promise<boolean>} If the action reaction was added
    */
-  async createActionReaction(data: ActionsReactions): Promise<boolean> {
+  async createActionReaction(data: ActionReaction): Promise<boolean> {
     const { acknowledged } = await this.db
-      .collection<ActionsReactions>(MongoCollections.ACTIONS_REACTIONS)
+      .collection<ActionReaction>(MongoCollections.ACTIONS_REACTIONS)
       .insertOne(data);
 
     return acknowledged;
@@ -33,11 +33,11 @@ export class ActionsReactionsRepository {
    * @description Get the list of actions reactions matching the action trigger
    *
    * @param {string} trigger The trigger of the action
-   * @returns {Promise<ActionsReactions[]>} The matched actions reactions
+   * @returns {Promise<ActionReaction[]>} The matched actions reactions
    */
-  async getActionsReactionsByTrigger(trigger: string): Promise<ActionsReactions[]> {
+  async getActionsReactionsByTrigger(trigger: string): Promise<ActionReaction[]> {
     return await this.db
-      .collection<ActionsReactions>(MongoCollections.ACTIONS_REACTIONS)
+      .collection<ActionReaction>(MongoCollections.ACTIONS_REACTIONS)
       .find({ trigger: trigger })
       .toArray();
   }
@@ -49,10 +49,27 @@ export class ActionsReactionsRepository {
    * @param {string} userId The id of the user
    * @returns {Promise<ActionsReactions[]>} The matched actions reactions
    */
-  async getMeActionsReactions(userId: string): Promise<ActionsReactions[]> {
+  async getMeActionsReactions(userId: string): Promise<WithId<ActionReaction>[]> {
     return await this.db
-      .collection<ActionsReactions>(MongoCollections.ACTIONS_REACTIONS)
+      .collection<ActionReaction>(MongoCollections.ACTIONS_REACTIONS)
       .find({ userId: userId })
       .toArray();
+  }
+
+  /**
+   * @function updateActionReactionExecutionStateById
+   * @description Update the execution state of an action reaction
+   *
+   * @param {string} id The id of the action reaction
+   * @param {string} executionState The execution state
+   * @returns {Promise<UpdateResult<ActionReaction>>} The result of the update
+   */
+  async updateActionReactionExecutionStateById(
+    id: string,
+    executionState: boolean,
+  ): Promise<UpdateResult<ActionReaction>> {
+    return await this.db
+      .collection<ActionReaction>(MongoCollections.ACTIONS_REACTIONS)
+      .updateOne({ _id: new ObjectId(id) }, { $set: { executionState: executionState } });
   }
 }
