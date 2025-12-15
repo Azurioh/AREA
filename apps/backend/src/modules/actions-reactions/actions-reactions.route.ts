@@ -3,6 +3,11 @@ import {
   createActionReactionBodySchema,
   createActionReactionResponseSchema,
   getMeActionsReactionsResponseSchema,
+  type UpdateActionReactionExecutionStateBody,
+  updateActionReactionExecutionStateBodySchema,
+  type UpdateActionReactionExecutionStateParams,
+  updateActionReactionExecutionStateParamsSchema,
+  updateActionReactionExecutionStateResponseSchema,
 } from '@area/shared/schemas/actions-reactions.schema';
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';
@@ -36,7 +41,7 @@ export default async (app: FastifyInstance) => {
     schema: {
       summary: 'Create an action reaction',
       description: 'Create the given action reaction.',
-      tags: ['Users'],
+      tags: ['Action reactions'],
       body: createActionReactionBodySchema,
       response: {
         200: createActionReactionResponseSchema,
@@ -52,12 +57,29 @@ export default async (app: FastifyInstance) => {
     schema: {
       summary: 'Get current user actions reactions',
       description: 'Get the current user actions and reactions.',
-      tags: ['Users'],
+      tags: ['Action reactions'],
       response: {
         200: getMeActionsReactionsResponseSchema,
       },
     },
     preHandler: [verifyUserAccess(usersService)],
     handler: controller.getMeActionsReactions.bind(controller),
+  });
+
+  app.route<{ Params: UpdateActionReactionExecutionStateParams; Body: UpdateActionReactionExecutionStateBody }>({
+    method: 'PATCH',
+    url: '/v1/:id/execution-state',
+    schema: {
+      summary: 'Update workflow execution state',
+      description: 'Enable or disable a workflow execution state.',
+      tags: ['Action reactions'],
+      params: updateActionReactionExecutionStateParamsSchema,
+      body: updateActionReactionExecutionStateBodySchema,
+      response: {
+        200: updateActionReactionExecutionStateResponseSchema,
+      },
+    },
+    preHandler: [verifyUserAccess(usersService)],
+    handler: controller.updateActionReactionExecutionStateById.bind(controller),
   });
 };
