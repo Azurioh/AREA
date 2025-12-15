@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.R
 import com.example.area.components.DisplayCard
+import com.example.area.data.models.ActionReactionDisplay
 import com.example.area.ui.theme.Background
 import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.poppinsFontFamily
@@ -47,7 +48,7 @@ fun HomePage(
     serviceViewModel: ServiceViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    var actionsReactions by remember { mutableStateOf<List<ActionReactionRequest>>(emptyList()) }
+    var actionsReactions by remember { mutableStateOf<List<ActionReactionDisplay>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         serviceViewModel.getAllActionsReactions(
@@ -88,7 +89,7 @@ fun HomePage(
                 title = "${actionReaction.action.name} → ${actionReaction.reaction.name}",
                 description = "Action: ${actionReaction.action.service} | Reaction: ${actionReaction.reaction.service}",
                 lastExecution = "Last execution: 0s ago",
-                executionCount = 0,
+                executionCount = actionReaction.numberOfExecution.toInt(),
                 isEnabled = true,
                 onToggle = { isChecked ->
                     println("Switch toggled: $isChecked")
