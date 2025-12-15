@@ -52,7 +52,7 @@ export default async (app: FastifyInstance) => {
   app.route({
     method: 'POST',
     url: '/v1/refresh',
-    handler: controller.refreshToken.bind(service),
+    handler: controller.refreshToken.bind(controller),
     schema: {
       summary: 'Refresh access token',
       description: 'Generates a new access token using the refresh token.',
