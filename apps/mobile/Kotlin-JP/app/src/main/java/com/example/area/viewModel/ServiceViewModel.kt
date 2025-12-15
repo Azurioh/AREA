@@ -7,6 +7,7 @@ import com.example.area.data.api.RetrofitInstance
 import com.example.area.data.models.AboutJson
 import com.example.area.data.models.ServicesValue
 import com.example.area.data.models.ActionDetail
+import com.example.area.data.models.ActionReactionDisplay
 import com.example.area.data.models.ActionReactionRequest
 import com.example.area.data.models.ActionReactionParams
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -134,7 +135,7 @@ class ServiceViewModel : ViewModel() {
     }
 
     fun getAllActionsReactions(
-        onSuccess: (List<ActionReactionRequest>) -> Unit = {},
+        onSuccess: (List<ActionReactionDisplay>) -> Unit = {},
         onError: (String) -> Unit = {}
     ) {
         viewModelScope.launch {

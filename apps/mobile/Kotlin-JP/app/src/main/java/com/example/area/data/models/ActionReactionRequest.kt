@@ -8,5 +8,5 @@ data class ActionReactionParams(
 
 data class ActionReactionRequest(
     val action: ActionReactionParams,
-    val reaction: ActionReactionParams
+    val reaction: ActionReactionParams,
 )

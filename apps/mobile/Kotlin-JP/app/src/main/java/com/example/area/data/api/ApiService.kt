@@ -8,6 +8,7 @@ import com.example.area.data.models.ServicesUrl
 import com.example.area.data.models.ServicesValue
 import com.example.area.data.models.User
 import com.example.area.data.models.ActionDetail
+import com.example.area.data.models.ActionReactionDisplay
 import com.example.area.data.models.ActionReactionRequest
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -47,7 +48,7 @@ interface ApiService {
     suspend fun createActionReaction(@Body request: ActionReactionRequest)
 
     @GET("actions-reactions/v1/me")
-    suspend fun getAllActionsReactions() : List<ActionReactionRequest>
+    suspend fun getAllActionsReactions() : List<ActionReactionDisplay>
 
     @GET("about.json")
     suspend fun getAboutJson() : AboutJson
