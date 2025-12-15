@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useApp } from '@/hooks/useApp';
 
 export const useAuthorization = () => {
-  const { userInformationClient } = useApp();
+  const { thirdPartiesInformation } = useApp();
   const [authorizationState, setAuthorizationState] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -10,7 +10,8 @@ export const useAuthorization = () => {
     setError(null);
 
     try {
-      const response = await userInformationClient.getAuthorizationUrl(serviceName);
+      const response = await thirdPartiesInformation.getAuthorizationUrl(serviceName);
+
       if (!response) {
         return;
       }
