@@ -22,6 +22,7 @@ export default function App() {
           <Routes>
             <Route path={AppRoutesPaths.REGISTER} element={<RegisterPage />} />
             <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
+            <Route path={AppRoutesPaths.LANDING} element={<LandingPage />} />
             <Route element={<ProtectedRoute />}>
               <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
               <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
@@ -33,7 +34,6 @@ export default function App() {
               <Route path={AppRoutesPaths.CREATE} element={<CreateWorkflowsPage />} />
               <Route path={AppRoutesPaths.CONNECTIONS} element={<ConnectionsPage />} />
               <Route path={AppRoutesPaths.OAUTH_CALLBACK} element={<OauthCallbackPage />} />
-              <Route path={AppRoutesPaths.LANDING} element={<LandingPage />} />
             </Route>
           </Routes>
         </AuthProvider>
