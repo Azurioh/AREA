@@ -10,11 +10,14 @@ import type {
   GitHubAuthorizationResponse,
   ServiceType,
   ThirdPartyAccount,
+  XAccount,
+  XAuthorizationResponse,
 } from '@/types/third-parties';
 import type { StateToken } from '@area/shared/types/user.types';
 import type { UsersService } from '@/modules/users';
 import type { ThirdPartiesRepository } from './third-parties.repository';
 import { encryptString } from '@/utils/crypt';
+import { createHash } from 'crypto';
 
 /**
  * @class ThirdPartiesService
@@ -41,10 +44,15 @@ export class ThirdPartiesService {
         'discord',
         `https://discord.com/oauth2/authorize?client_id=${environment.DISCORD_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/discord&response_type=code&scope=identify+guilds+bot&state={state}&permissions=536870912`,
       ],
+      [
+        'x',
+        `https://x.com/i/oauth2/authorize?response_type=code&client_id=${environment.X_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/x&scope=tweet.read%20users.read%20follows.read%20follows.write%20offline.access&state={state}&code_challenge=${createHash('sha256').update(environment.X_CODE_VERIFIER).digest().toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')}&code_challenge_method=S256`,
+      ],
     ]);
     this.servicesAuthorizationFunc = new Map([
       ['github', this.authorizeToGithub],
       ['discord', this.authorizeToDiscord],
+      ['x', this.authorizeToX],
     ]);
   }
 
@@ -222,6 +230,44 @@ export class ThirdPartiesService {
       accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
       refreshToken: encryptString(formattedResponse.refresh_token, environment.CRYPT_SECRET_KEY),
       guildId: formattedResponse.guild.id,
+    };
+    return data;
+  }
+
+  /**
+   * @function authorizeToX
+   * @description Authorize a user to X
+   *
+   * @param {string} userId - The user id
+   * @param {string} code - The code provided by the service to get the tokens
+   * @returns {Promise<ThirdPartyAccount | null>} The create third party account
+   */
+  private async authorizeToX(userId: string, code: string): Promise<ThirdPartyAccount | null> {
+    const response = await fetch('https://api.x.com/2/oauth2/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${Buffer.from(`${environment.X_CLIENT_ID}:${environment.X_CLIENT_SECRET}`).toString('base64')}`,
+      },
+      body: new URLSearchParams({
+        code: code,
+        code_verifier: environment.X_CODE_VERIFIER,
+        grant_type: 'authorization_code',
+        redirect_uri: `${environment.BASE_API_URL}/third-parties/v1/authorize/x`,
+      }).toString(),
+    });
+
+    if (response.status !== HttpStatusCode.OK) {
+      return null;
+    }
+
+    const formattedResponse = (await response.json()) as XAuthorizationResponse;
+
+    const data: XAccount = {
+      userId,
+      service: 'x',
+      accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
+      refreshToken: encryptString(formattedResponse.refresh_token, environment.CRYPT_SECRET_KEY),
     };
     return data;
   }

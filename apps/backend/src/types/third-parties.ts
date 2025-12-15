@@ -32,7 +32,7 @@ export type ThirdPartyAuthorizationParams = z.infer<typeof thirdPartyAuthorizati
  */
 export type ThirdPartyAuthorization = ThirdPartyAuthorizationQueryString;
 
-export type ServiceType = 'github' | 'discord';
+export type ServiceType = 'github' | 'discord' | 'x';
 
 /**
  * @type BaseAccount
@@ -51,6 +51,18 @@ export type BaseAccount = {
 };
 
 /**
+ * @type GithubAccount
+ * @description GithubAccount type.
+ *
+ * @property {'github'} service The name of the service
+ * @property {string} username The name of the github usr
+ */
+export type GithubAccount = BaseAccount & {
+  service: 'github';
+  username: string;
+};
+
+/**
  * @type DiscordAccount
  * @description DiscordAccount type.
  *
@@ -66,15 +78,13 @@ export type DiscordAccount = BaseAccount & {
  * @type GithubAccount
  * @description GithubAccount type.
  *
- * @property {'github'} service The name of the service
- * @property {string} username The name of the github usr
+ * @property {'x'} service The name of the service
  */
-export type GithubAccount = BaseAccount & {
-  service: 'github';
-  username: string;
+export type XAccount = BaseAccount & {
+  service: 'x';
 };
 
-export type ThirdPartyAccount = DiscordAccount | GithubAccount;
+export type ThirdPartyAccount = GithubAccount | DiscordAccount | XAccount;
 
 /**********************************
  * SERVICE AUTHORIZATION RESPONSE *
@@ -112,4 +122,16 @@ export type DiscordAuthorizationResponse = {
   access_token: string;
   refresh_token: string;
   guild: DiscordGuild;
+};
+
+/**
+ * @type XAuthorizationResponse
+ * @description The content of the github authorization response.
+ *
+ * @property {string} access_token - The response access token.
+ * @property {string} refresh_token - The response refresh token.
+ */
+export type XAuthorizationResponse = {
+  access_token: string;
+  refresh_token: string;
 };
