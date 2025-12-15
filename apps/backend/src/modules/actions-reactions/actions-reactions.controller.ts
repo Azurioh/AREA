@@ -47,7 +47,6 @@ export class ActionsReactionsController {
   async getMeActionsReactions(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const actionsReactions = await this.service.getMeActionsReactions(request.user._id);
 
-    console.log(actionsReactions);
     return reply.status(HttpStatusCode.OK).send(actionsReactions);
   }
 
