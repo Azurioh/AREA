@@ -33,9 +33,9 @@ export class ActionsReactionsRepository {
    * @description Get the list of actions reactions matching the action trigger
    *
    * @param {string} trigger The trigger of the action
-   * @returns {Promise<ActionReaction[]>} The matched actions reactions
+   * @returns {Promise<WithId<ActionReaction>[]>} The matched actions reactions
    */
-  async getActionsReactionsByTrigger(trigger: string): Promise<ActionReaction[]> {
+  async getActionsReactionsByTrigger(trigger: string): Promise<WithId<ActionReaction>[]> {
     return await this.db
       .collection<ActionReaction>(MongoCollections.ACTIONS_REACTIONS)
       .find({ trigger: trigger })
@@ -54,6 +54,19 @@ export class ActionsReactionsRepository {
       .collection<ActionReaction>(MongoCollections.ACTIONS_REACTIONS)
       .find({ userId: userId })
       .toArray();
+  }
+
+  /**
+   * @function incrementActionReactionExecution
+   * @description Increment by one the number of execution of an action reaction
+   *
+   * @param {string} id The id of the action reaction
+   * @returns {Promise<void>} Nothing
+   */
+  async incrementActionReactionExecution(id: string): Promise<void> {
+    await this.db
+      .collection<ActionReaction>(MongoCollections.ACTIONS_REACTIONS)
+      .updateOne({ _id: new ObjectId(id) }, { $inc: { numberOfExecution: 1 } });
   }
 
   /**

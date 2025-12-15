@@ -9,6 +9,7 @@ import type { GithubService } from '@/modules/github';
 import type { ActionPayload, ActionReaction } from '@/types/action-reaction';
 import ApiError from '@/utils/api-error';
 import type { ActionsReactionsRepository } from './actions-reactions.repository';
+import type { WithId } from 'mongodb';
 
 /**
  * @class ActionsReactionsService
@@ -68,7 +69,9 @@ export class ActionsReactionsService {
       if (!reactionCreationFunc) {
         continue;
       }
-      await reactionCreationFunc(actionReaction.userId, actionReaction.reaction);
+      if (await reactionCreationFunc(actionReaction.userId, actionReaction.reaction)) {
+        await this.repository.incrementActionReactionExecution(actionReaction._id.toString());
+      }
     }
   }
 
@@ -89,6 +92,7 @@ export class ActionsReactionsService {
       action: action,
       reaction: reaction,
       trigger: trigger,
+      numberOfExecution: 0,
       executionState: true,
     };
     await this.repository.createActionReaction(data);
@@ -99,9 +103,9 @@ export class ActionsReactionsService {
    * @description Get the list of actions reactions matching the action trigger
    *
    * @param {string} trigger The trigger of the action
-   * @returns {Promise<ActionsReactions[]>} The matched actions reactions
+   * @returns {Promise<WithId<ActionReaction>[]>} The matched actions reactions
    */
-  async getActionsReactionsByTrigger(trigger: string): Promise<ActionReaction[]> {
+  async getActionsReactionsByTrigger(trigger: string): Promise<WithId<ActionReaction>[]> {
     return await this.repository.getActionsReactionsByTrigger(trigger);
   }
 
@@ -120,6 +124,7 @@ export class ActionsReactionsService {
         _id: actionReaction._id.toString(),
         action: actionReaction.action,
         reaction: actionReaction.reaction,
+        numberOfExecution: actionReaction.numberOfExecution,
         executionState: actionReaction.executionState,
       };
     });
