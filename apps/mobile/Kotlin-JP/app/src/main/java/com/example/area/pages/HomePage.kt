@@ -90,9 +90,23 @@ fun HomePage(
                 description = "Action: ${actionReaction.action.service} | Reaction: ${actionReaction.reaction.service}",
                 lastExecution = "Last execution: 0s ago",
                 executionCount = actionReaction.numberOfExecution.toInt(),
-                isEnabled = true,
+                isEnabled = actionReaction.executionState,
                 onToggle = { isChecked ->
-                    println("Switch toggled: $isChecked")
+                    val workflowId = actionReaction.id
+                    if (workflowId != null) {
+                        serviceViewModel.updateStateWorkflow(
+                            workflowId = workflowId,
+                            executionState = isChecked,
+                            onSuccess = {
+                                Toast.makeText(context, "Workflow state updated", Toast.LENGTH_SHORT).show()
+                            },
+                            onError = { error ->
+                                Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                            }
+                        )
+                    } else {
+                        Toast.makeText(context, "Error: Workflow ID is null", Toast.LENGTH_LONG).show()
+                    }
                 },
                 onMenuClick = {
                     println("Menu clicked")
