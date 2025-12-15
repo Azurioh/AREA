@@ -5,6 +5,7 @@ import type { UsersService } from '@/modules/users';
 import ApiError from '@/utils/api-error';
 import { environment } from '@/utils/environment';
 import { verifyToken } from '@/utils/token';
+import { decryptString } from '@/utils/crypt';
 
 export const verifyUserAccess = (userService: UsersService) => async (request: FastifyRequest, _: FastifyReply) => {
   const accessToken = request.headers.authorization;
@@ -16,7 +17,10 @@ export const verifyUserAccess = (userService: UsersService) => async (request: F
     throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Invalid authorization format, expected Bearer');
   }
 
-  const decoded = verifyToken<AccessToken>(accessToken.replace('Bearer ', ''), environment.JWT_ACCESS_TOKEN_SECRET);
+  const decoded = verifyToken<AccessToken>(
+    decryptString(accessToken.replace('Bearer ', ''), environment.CRYPT_SECRET_KEY),
+    environment.JWT_ACCESS_TOKEN_SECRET,
+  );
 
   if (!(await userService.checkIfUserExist(decoded._id))) {
     throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Unauthorized');

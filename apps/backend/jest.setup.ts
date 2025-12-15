@@ -11,7 +11,7 @@ jest.mock('./src/utils/environment', () => ({
     BASE_API_URL: 'http://localhost:3000',
     MONGO_URI: process.env.MONGO_URI,
     MONGO_DATABASE: 'area-test',
-    CRYPT_SECRET_KEY: 'test',
+    CRYPT_SECRET_KEY: 'cc0e4ca4aaa19656747de47a835ccaea2bd4adb5a8f7ca44d1362bac6cd01c5d',
     WEB_OAUTH_CALLBACK_URL: 'http://localhost:3001/oauth/callback',
     MOBILE_OAUTH_CALLBACK_URL: 'area://oauth/callback',
     JWT_ACCESS_TOKEN_SECRET: 'test',

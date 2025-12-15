@@ -1,5 +1,9 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type { CreateActionReactionBody } from '@area/shared/schemas/actions-reactions.schema';
+import type {
+  CreateActionReactionBody,
+  UpdateActionReactionExecutionStateBody,
+  UpdateActionReactionExecutionStateParams,
+} from '@area/shared/schemas/actions-reactions.schema';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { ActionsReactionsService } from './actions-reactions.service';
 
@@ -43,6 +47,27 @@ export class ActionsReactionsController {
   async getMeActionsReactions(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const actionsReactions = await this.service.getMeActionsReactions(request.user._id);
 
+    console.log(actionsReactions);
     return reply.status(HttpStatusCode.OK).send(actionsReactions);
+  }
+
+  /**
+   * @function updateActionReactionExecutionStateById
+   * @description Update the action reaction execution state by id
+   *
+   * @param {FastifyRequest<{ Params: UpdateActionReactionExecutionStateParams, Body: UpdateActionReactionExecutionStateBody }>} request The FastifyRequest object
+   * @param {FastifyReply} reply The FastifyReply object
+   * @returns {Promise<void>} Nothing
+   */
+  async updateActionReactionExecutionStateById(
+    request: FastifyRequest<{
+      Params: UpdateActionReactionExecutionStateParams;
+      Body: UpdateActionReactionExecutionStateBody;
+    }>,
+    reply: FastifyReply,
+  ): Promise<void> {
+    await this.service.updateActionReactionExecutionStateById(request.params.id, request.body.executionState);
+
+    return reply.status(HttpStatusCode.NO_CONTENT).send();
   }
 }
