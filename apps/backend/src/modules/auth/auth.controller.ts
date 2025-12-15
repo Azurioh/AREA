@@ -4,6 +4,7 @@ import type { User } from '@area/shared/types/user.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { AuthService } from '@/modules/auth/auth.service';
 import { environment } from '@/utils/environment';
+import { decryptString, encryptString } from '@/utils/crypt';
 
 /**
  * @class AuthController
@@ -38,14 +39,14 @@ export class AuthController {
 
     const { accessToken, refreshToken } = await this.service.registerUser(data);
 
-    reply.setCookie('refresh-token', refreshToken, {
+    reply.setCookie('refresh-token', encryptString(refreshToken, environment.CRYPT_SECRET_KEY), {
       httpOnly: true,
       secure: environment.NODE_ENV !== 'development',
       sameSite: 'strict',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     });
-    reply.status(201).send({ accessToken: accessToken });
+    reply.status(201).send({ accessToken: encryptString(accessToken, environment.CRYPT_SECRET_KEY) });
   }
 
   /**
@@ -60,14 +61,14 @@ export class AuthController {
 
     const { accessToken, refreshToken } = await this.service.loginUser(body);
 
-    reply.setCookie('refresh-token', refreshToken, {
+    reply.setCookie('refresh-token', encryptString(refreshToken, environment.CRYPT_SECRET_KEY), {
       httpOnly: true,
       secure: environment.NODE_ENV !== 'development',
       sameSite: 'strict',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     });
-    reply.status(200).send({ accessToken: accessToken });
+    reply.status(200).send({ accessToken: encryptString(accessToken, environment.CRYPT_SECRET_KEY) });
   }
 
   async refreshToken(request: FastifyRequest, reply: FastifyReply): Promise<void> {
@@ -78,8 +79,8 @@ export class AuthController {
       return;
     }
 
-    const { accessToken } = await this.service.refreshToken(refreshToken);
+    const { accessToken } = await this.service.refreshToken(decryptString(refreshToken, environment.CRYPT_SECRET_KEY));
 
-    reply.status(200).send({ accessToken: accessToken });
+    reply.status(200).send({ accessToken: encryptString(accessToken, environment.CRYPT_SECRET_KEY) });
   }
 }
