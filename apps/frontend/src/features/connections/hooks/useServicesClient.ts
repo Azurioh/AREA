@@ -8,7 +8,7 @@ interface Service {
 
 
 export function useServicesClient() {
-  const { servicesClient, connectionStatus } = useApp();
+  const { servicesClient, thirdPartiesInformation } = useApp();
   const [services, setServices] = useState<Service[]>([]);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export function useServicesClient() {
 
       const servicesWithStatus = await Promise.all(
         response.map(async (serviceName: string) => {
-            const statusResponse = await connectionStatus.getConnectionStatus(serviceName);
+            const statusResponse = await thirdPartiesInformation.getConnectionStatus(serviceName);
 
             return {
                 name: serviceName,
@@ -33,7 +33,7 @@ export function useServicesClient() {
     };
 
     fetchServices();
-  }, [servicesClient, connectionStatus]);
+  }, [servicesClient, thirdPartiesInformation]);
 
   return services;
 }

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/wrappers/Button';
 import { useAuthorization } from '../hooks/useAuthorization';
-import { Avatar, AvatarImage, } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
 interface ConnectionCardProps {
   image: string;
