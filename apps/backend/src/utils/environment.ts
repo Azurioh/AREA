@@ -24,6 +24,9 @@ export interface Environment {
   DISCORD_CLIENT_ID: string;
   DISCORD_CLIENT_SECRET: string;
   DISCORD_BOT_TOKEN: string;
+  X_CLIENT_ID: string;
+  X_CLIENT_SECRET: string;
+  X_CODE_VERIFIER: string;
 }
 
 const variables: Record<string, string | undefined> = {
@@ -69,4 +72,7 @@ export const environment: Environment = {
   DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID as string,
   DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET as string,
   DISCORD_BOT_TOKEN: process.env.DISCORD_BOT_TOKEN as string,
+  X_CLIENT_ID: process.env.X_CLIENT_ID as string,
+  X_CLIENT_SECRET: process.env.X_CLIENT_SECRET as string,
+  X_CODE_VERIFIER: process.env.X_CODE_VERIFIER as string,
 };

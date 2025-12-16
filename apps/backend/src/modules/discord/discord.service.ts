@@ -5,6 +5,7 @@ import type { DiscordChannel } from '@/types/discord';
 import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-reactions.schema';
 import type { ThirdPartiesService } from '@/modules/third-parties';
 import type { DiscordAccount, DiscordAuthorizationResponse } from '@/types/third-parties';
+import type { Tokens } from '@area/shared/types/auth.types';
 
 /**
  * @class DiscordService
@@ -63,9 +64,9 @@ export class DiscordService {
    * @description Refresh a user discord tokens
    *
    * @param {state} refreshToken - The refresh token
-   * @returns {Promise<{accessToken: string, refreshToken: string}>} The refreshed tokens
+   * @returns {Promise<Tokens>} The refreshed tokens
    */
-  async refreshDiscordTokens(refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
+  async refreshDiscordTokens(refreshToken: string): Promise<Tokens> {
     const response = await fetch('https://discord.com/api/oauth2/token', {
       method: 'POST',
       headers: {
