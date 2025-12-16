@@ -4,6 +4,7 @@ import {
   deleteUserByIdResponseSchema,
   deleteUserMeResponseSchema,
   type GetUserByIdParams,
+  getAllUsersResponseSchema,
   getUserByIdParamsSchema,
   getUserByIdResponseSchema,
   getUserMeResponseSchema,
@@ -15,11 +16,6 @@ import {
   updateUserByIdResponseSchema,
   updateUserMeBodySchema,
   updateUserMeResponseSchema,
-  type DeleteUserByIdParams,
-  type UpdateUserByIdBody,
-  type UpdateUserByIdParams,
-  type GetUserByIdParams,
-  getAllUsersResponseSchema,
 } from '@area/shared/schemas/users.schema';
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';
