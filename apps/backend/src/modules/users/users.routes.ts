@@ -80,7 +80,7 @@ export default async (app: FastifyInstance) => {
 
   app.route({
     method: 'GET',
-    url: '/v1/',
+    url: '/v1',
     schema: {
       summary: 'Get all the users',
       description: 'Returns the users.',
@@ -89,7 +89,7 @@ export default async (app: FastifyInstance) => {
         200: getAllUsersResponseSchema,
       },
     },
-    preHandler: [verifyUserAccess(service)],
+    preHandler: [verifyUserAccess(service, { adminOnly: true })],
     handler: controller.getAllUsers.bind(controller),
   });
 
