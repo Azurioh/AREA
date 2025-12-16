@@ -18,7 +18,7 @@ export const registerBodySchema = z.object({
 export type RegisterBody = z.infer<typeof registerBodySchema>;
 
 export const registerHeadersSchema = z.looseObject({
-  'Content-Type': z.literal('application/json').meta({
+  'content-type': z.literal('application/json').meta({
     description: 'The content type of the request body',
   }),
   'x-admin-secret': z.string().optional().meta({
