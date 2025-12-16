@@ -1,10 +1,10 @@
 import { DysType, UserRoles } from '@area/shared/enums/user-enums';
-import type { LoginBody, RegisterBody } from '@area/shared/schemas/auth.schema';
+import type { LoginBody, RegisterBody, RegisterHeaders } from '@area/shared/schemas/auth.schema';
 import type { User } from '@area/shared/types/user.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { AuthService } from '@/modules/auth/auth.service';
+import { decryptString, encryptString, safeEqualCheck } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
-import { decryptString, encryptString } from '@/utils/crypt';
 
 /**
  * @class AuthController
@@ -24,13 +24,18 @@ export class AuthController {
    * @param {FastifyRequest} request - The Fastify request object.
    * @param {FastifyReply} reply - The Fastify reply object for sending the response.
    */
-  async registerUser(request: FastifyRequest<{ Body: RegisterBody }>, reply: FastifyReply): Promise<void> {
+  async registerUser(
+    request: FastifyRequest<{ Body: RegisterBody; Headers: RegisterHeaders }>,
+    reply: FastifyReply,
+  ): Promise<void> {
     const body = request.body;
     const data: User = {
       name: body.name,
       email: body.email,
       password: body.password,
-      role: UserRoles.USER,
+      role: safeEqualCheck(request.headers['x-admin-secret']!, environment.ADMIN_SECRET)
+        ? UserRoles.ADMIN
+        : UserRoles.USER,
       darkModeEnabled: false,
       dyslexiaType: DysType.NOTHING,
       createdAt: new Date(),
