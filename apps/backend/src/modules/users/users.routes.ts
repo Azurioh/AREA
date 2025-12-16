@@ -1,10 +1,14 @@
 import {
+  type DeleteUserByIdParams,
   deleteUserByIdParamsSchema,
   deleteUserByIdResponseSchema,
   deleteUserMeResponseSchema,
+  type GetUserByIdParams,
   getUserByIdParamsSchema,
   getUserByIdResponseSchema,
   getUserMeResponseSchema,
+  type UpdateUserByIdBody,
+  type UpdateUserByIdParams,
   type UpdateUserMeBody,
   updateUserByIdBodySchema,
   updateUserByIdParamsSchema,
@@ -78,7 +82,7 @@ export default async (app: FastifyInstance) => {
     handler: controller.deleteUserMe.bind(controller),
   });
 
-  app.route({
+  app.route<{ Params: GetUserByIdParams }>({
     method: 'GET',
     url: '/v1/',
     schema: {
@@ -105,7 +109,7 @@ export default async (app: FastifyInstance) => {
         200: getUserByIdResponseSchema,
       },
     },
-    preHandler: [verifyUserAccess(service)],
+    preHandler: [verifyUserAccess(service, { adminOnly: true })],
     handler: controller.getUserById.bind(controller),
   });
 
@@ -122,7 +126,7 @@ export default async (app: FastifyInstance) => {
         204: updateUserByIdResponseSchema,
       },
     },
-    preHandler: [verifyUserAccess(service)],
+    preHandler: [verifyUserAccess(service, { adminOnly: true })],
     handler: controller.updateUserById.bind(controller),
   });
 
@@ -138,7 +142,7 @@ export default async (app: FastifyInstance) => {
         204: deleteUserByIdResponseSchema,
       },
     },
-    preHandler: [verifyUserAccess(service)],
+    preHandler: [verifyUserAccess(service, { adminOnly: true })],
     handler: controller.deleteUserById.bind(controller),
   });
 };
