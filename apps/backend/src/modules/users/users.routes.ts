@@ -78,7 +78,7 @@ export default async (app: FastifyInstance) => {
     handler: controller.deleteUserMe.bind(controller),
   });
 
-  app.route<{ Params: GetUserByIdParams }>({
+  app.route({
     method: 'GET',
     url: '/v1/',
     schema: {
