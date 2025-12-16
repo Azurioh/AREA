@@ -6,7 +6,7 @@ interface ServiceLogo {
   imageUrl: string;
 }
 
-const BASE_IMAGE_URL = 'http://167.86.110.198:8085/images';
+const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
 
 export function useServiceLogos() {
   const { servicesClient } = useApp();
