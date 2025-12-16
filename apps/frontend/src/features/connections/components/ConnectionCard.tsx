@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/wrappers/Button';
 import { useAuthorization } from '../hooks/useAuthorization';
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
 interface ConnectionCardProps {
   image: string;
   serviceName: string;
-  status: boolean
+  status: boolean;
 }
 
 const ConnectionCard: React.FC<ConnectionCardProps> = ({ image, serviceName, status }) => {
@@ -30,12 +30,15 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ image, serviceName, sta
           </div>
           <div>
             {status ? (
-              <Button className="text-[20px] bg-destructive hover:bg-destructive/80" onClick={() => handleSubmit(serviceName)} >
+              <Button
+                className="text-[20px] bg-destructive hover:bg-destructive/80"
+                onClick={() => handleSubmit(serviceName)}
+              >
                 Disconnect
               </Button>
             ) : (
-              <Button className="text-[20px]" onClick={() => handleSubmit(serviceName)} >
-                Connected
+              <Button className="text-[20px]" onClick={() => handleSubmit(serviceName)}>
+                Connect
               </Button>
             )}
           </div>
