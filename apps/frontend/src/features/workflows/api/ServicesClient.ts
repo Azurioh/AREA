@@ -23,6 +23,7 @@ export class ServicesClient extends ApiClient {
     const response = await this.fetch<AboutResponse>('/about.json', {
       method: 'GET',
       skipAuth: true,
+      credentials: 'include',
     });
 
     const services = response?.server.services.map((service) => service.name);
@@ -41,6 +42,7 @@ export class ServicesClient extends ApiClient {
     const response = await this.fetch<GetServiceActionsResponse>(`/services/v1/${service}/actions`, {
       method: 'GET',
       skipAuth: true,
+      credentials: 'include',
     });
 
     return response;
@@ -57,6 +59,7 @@ export class ServicesClient extends ApiClient {
   async getActionDetails(service: string, action: string): Promise<MaybeUndefined<GetActionDetailsResponse>> {
     const response = await this.fetch<GetActionDetailsResponse>(`/services/v1/${service}/actions/${action}`, {
       method: 'GET',
+      credentials: 'include',
     });
 
     return response;
@@ -78,6 +81,7 @@ export class ServicesClient extends ApiClient {
       `/services/v1/${service}/actions/${action}/return-values`,
       {
         method: 'GET',
+        credentials: 'include',
       },
     );
 
@@ -95,6 +99,7 @@ export class ServicesClient extends ApiClient {
     const response = await this.fetch<GetServiceReactionsResponse>(`/services/v1/${service}/reactions`, {
       method: 'GET',
       skipAuth: true,
+      credentials: 'include',
     });
 
     return response;
@@ -111,6 +116,7 @@ export class ServicesClient extends ApiClient {
   async getReactionDetails(service: string, reaction: string): Promise<MaybeUndefined<GetActionDetailsResponse>> {
     const response = await this.fetch<GetActionDetailsResponse>(`/services/v1/${service}/reactions/${reaction}`, {
       method: 'GET',
+      credentials: 'include',
     });
 
     return response;

@@ -22,6 +22,7 @@ export class ActionReactionClient extends ApiClient {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
+        credentials: 'include',
         body: JSON.stringify(body),
       });
     } catch (error) {
@@ -39,6 +40,7 @@ export class ActionReactionClient extends ApiClient {
   async getAllWorkflows(): Promise<MaybeUndefined<GetMeActionsReactions>> {
     const response = await this.fetch<GetMeActionsReactions>('/actions-reactions/v1/me', {
       method: 'GET',
+      credentials: 'include',
     });
 
     return response;
