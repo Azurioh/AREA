@@ -80,6 +80,20 @@ export class UsersController {
   }
 
   /**
+   * @function getAllUsers
+   * @description Get a user by id
+   *
+   * @param {FastifyRequest} _ The FastifyRequest object
+   * @param {FastifyReply} reply The FastifyReply object
+   * @returns {Promise<void>} Nothing
+   */
+  async getAllUsers(_: FastifyRequest, reply: FastifyReply): Promise<void> {
+    const users = await this.service.getAllUsers();
+
+    return reply.status(HttpStatusCode.OK).send(users);
+  }
+
+  /**
    * @function getUserById
    * @description Get a user by id
    *

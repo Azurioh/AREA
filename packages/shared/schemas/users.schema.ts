@@ -1,20 +1,6 @@
 import z from 'zod';
 import { userFields, userSchema } from '../types/user.types';
 
-/************************
- * CREATE USER ME STATE *
- ************************/
-
-export const createUserMeStateTokenResponseSchema = z.object({
-  stateToken: z.string().meta({
-    description: 'The oauth state token',
-    example:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-  }),
-});
-
-export const getUserByIdResponseSchema = userSchema.omit({ password: true });
-
 /***************
  * GET USER ME *
  ***************/
@@ -46,6 +32,22 @@ export const updateUserMeResponseSchema = z.object({});
 
 export const deleteUserMeResponseSchema = z.object({});
 
+/*****************
+ * GET ALL USERS *
+ *****************/
+
+export const getAllUsersResponseSchema = userSchema
+  .omit({ password: true })
+  .and(
+    z.object({
+      _id: z.string().meta({
+        description: 'The id of the user',
+        example: '1897894387843',
+      }),
+    }),
+  )
+  .array();
+
 /******************
  * GET USER BY ID *
  ******************/
@@ -56,6 +58,8 @@ export const getUserByIdParamsSchema = z.object({
     example: '679d8c9b3c9b3c9b3c9b3c9b',
   }),
 });
+
+export const getUserByIdResponseSchema = userSchema.omit({ password: true });
 
 /**
  * @type GetUserByIdParams

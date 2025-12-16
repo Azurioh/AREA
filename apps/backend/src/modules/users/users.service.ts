@@ -1,14 +1,14 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { User } from '@area/shared/types/user.types';
-import type { InsertOneResult } from 'mongodb';
+import type { InsertOneResult, WithId } from 'mongodb';
 import ApiError from '@/utils/api-error';
 import type { UsersRepository } from './users.repository';
 
 export class UsersService {
-  private readonly userRepository: UsersRepository;
+  private readonly repository: UsersRepository;
 
-  constructor(userRepository: UsersRepository) {
-    this.userRepository = userRepository;
+  constructor(repository: UsersRepository) {
+    this.repository = repository;
   }
 
   /**
@@ -19,12 +19,12 @@ export class UsersService {
    * @returns {Promise<InsertOneResult<User>>} The created user
    */
   async createUser(user: User): Promise<InsertOneResult<User>> {
-    const userAlreadyExist = await this.userRepository.getUserByEmail(user.email);
+    const userAlreadyExist = await this.repository.getUserByEmail(user.email);
     if (userAlreadyExist) {
       throw new ApiError(HttpStatusCode.CONFLICT, 'User with same email already exists');
     }
 
-    const userCreated = await this.userRepository.createUser(user);
+    const userCreated = await this.repository.createUser(user);
 
     if (!userCreated.acknowledged) {
       throw new ApiError(
@@ -44,7 +44,7 @@ export class UsersService {
    * @returns {Promise<boolean>} True if the user exists, false otherwise
    */
   async checkIfUserExist(id: string): Promise<boolean> {
-    const user = await this.userRepository.getUserById(id);
+    const user = await this.repository.getUserById(id);
 
     return user !== null;
   }
@@ -57,13 +57,30 @@ export class UsersService {
    * @returns {Promise<User>} The user
    */
   async getUserByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.getUserByEmail(email);
+    const user = await this.repository.getUserByEmail(email);
 
     if (!user) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'User not found');
     }
 
     return user;
+  }
+
+  /**
+   * @function getAllUsers
+   * @description Get all users
+   *
+   * @returns {Promise<(User & { _id: string })[]>} The users
+   */
+  async getAllUsers(): Promise<(User & { _id: string })[]> {
+    const users = await this.repository.getAllUsers();
+
+    return users.map((user: WithId<User>) => {
+      return {
+        ...user,
+        _id: user._id.toString(),
+      };
+    });
   }
 
   /**
@@ -74,7 +91,7 @@ export class UsersService {
    * @returns {Promise<User>} The user
    */
   async getUserById(id: string): Promise<User> {
-    const user = await this.userRepository.getUserById(id);
+    const user = await this.repository.getUserById(id);
 
     if (!user) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'User not found');
@@ -92,7 +109,7 @@ export class UsersService {
    * @returns {Promise<void>} The updated user
    */
   async updateUser(id: string, user: Partial<User>): Promise<void> {
-    const userUpdated = await this.userRepository.updateUser(id, user);
+    const userUpdated = await this.repository.updateUser(id, user);
 
     if (!userUpdated.acknowledged) {
       throw new ApiError(
@@ -114,7 +131,7 @@ export class UsersService {
    * @returns {Promise<void>} The deleted user
    */
   async deleteUser(id: string): Promise<void> {
-    const userDeleted = await this.userRepository.deleteUser(id);
+    const userDeleted = await this.repository.deleteUser(id);
 
     if (!userDeleted.acknowledged) {
       throw new ApiError(
