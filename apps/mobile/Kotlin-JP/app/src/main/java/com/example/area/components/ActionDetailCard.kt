@@ -1,6 +1,5 @@
 package com.example.area.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,12 +37,12 @@ import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.poppinsFontFamily
+import coil.compose.AsyncImage
 
 @Composable
 fun ActionDetailCard(
-    actionServiceImage: Int,
+    actionServiceImage: String,
     actionDetail: ActionDetail,
-    onClose: () -> Unit,
     onValidate: (Map<String, Any>) -> Unit
 ) {
     var paramValues by remember { mutableStateOf(mutableMapOf<String, Any>()) }
@@ -70,8 +68,8 @@ fun ActionDetailCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = actionServiceImage),
+                    AsyncImage(
+                        model = actionServiceImage,
                         contentDescription = "Service Image",
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
@@ -80,7 +78,7 @@ fun ActionDetailCard(
                     )
 
                     Text(
-                        text = actionDetail.name,
+                        text = actionDetail.name.replace('_', ' ', ignoreCase = true).capitalize(),
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 17.sp,
@@ -88,15 +86,6 @@ fun ActionDetailCard(
                         textAlign = TextAlign.Start
                     )
                 }
-
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close",
-                    tint = CustomBlack,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable { onClose() }
-                )
             }
 
             Spacer(modifier = Modifier.height(12.dp))

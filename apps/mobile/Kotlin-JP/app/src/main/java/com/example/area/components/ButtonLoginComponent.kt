@@ -20,7 +20,7 @@ fun ButtonLoginComponent(
     textFieldEmail: String,
     textFieldPassword: String,
     userViewModel: UserViewModel,
-    rememberMe: Boolean = false,
+    rememberMe: Boolean,
     onSuccess: () -> Unit = {}
 ) {
     Button(

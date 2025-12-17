@@ -1,5 +1,6 @@
 package com.example.area.viewModel
 
+import android.telephony.ServiceState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -11,6 +12,7 @@ import com.example.area.data.models.ActionReactionDisplay
 import com.example.area.data.models.ActionReactionRequest
 import com.example.area.data.models.ActionReactionParams
 import com.example.area.data.models.State
+import com.example.area.data.models.StateService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -177,6 +179,22 @@ class ServiceViewModel : ViewModel() {
                 val stateRequest = State(executionState = executionState)
                 RetrofitInstance.api.updateStateWorkflow(workflowId, stateRequest)
                 onSuccess()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onError(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun getServiceStatus(
+        serviceName: String,
+        onSuccess: (StateService) -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val stateService = RetrofitInstance.api.getStatusService(serviceName)
+                onSuccess(stateService)
             } catch (e: Exception) {
                 e.printStackTrace()
                 onError(e.message ?: "Unknown error")

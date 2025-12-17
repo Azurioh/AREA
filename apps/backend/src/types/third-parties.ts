@@ -32,7 +32,7 @@ export type ThirdPartyAuthorizationParams = z.infer<typeof thirdPartyAuthorizati
  */
 export type ThirdPartyAuthorization = ThirdPartyAuthorizationQueryString;
 
-export type ServiceType = 'github' | 'discord' | 'x';
+export type ServiceType = 'github' | 'discord' | 'spotify';
 
 /**
  * @type BaseAccount
@@ -75,16 +75,17 @@ export type DiscordAccount = BaseAccount & {
 };
 
 /**
- * @type GithubAccount
- * @description GithubAccount type.
+ * @type SpotifyAccount
+ * @description SpotifyAccount type.
  *
- * @property {'x'} service The name of the service
+ * @property {'spotify'} service The name of the service
  */
-export type XAccount = BaseAccount & {
-  service: 'x';
+export type SpotifyAccount = BaseAccount & {
+  service: 'spotify';
+  id: string;
 };
 
-export type ThirdPartyAccount = GithubAccount | DiscordAccount | XAccount;
+export type ThirdPartyAccount = GithubAccount | DiscordAccount | SpotifyAccount;
 
 /**********************************
  * SERVICE AUTHORIZATION RESPONSE *
@@ -125,13 +126,13 @@ export type DiscordAuthorizationResponse = {
 };
 
 /**
- * @type XAuthorizationResponse
- * @description The content of the github authorization response.
+ * @type SpotifyAuthorizationResponse
+ * @description The content of the spotify authorization response.
  *
  * @property {string} access_token - The response access token.
  * @property {string} refresh_token - The response refresh token.
  */
-export type XAuthorizationResponse = {
+export type SpotifyAuthorizationResponse = {
   access_token: string;
   refresh_token: string;
 };
