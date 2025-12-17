@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,11 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.area.R
 import com.example.area.components.ConnectionCard
 import com.example.area.components.ProfileCard
 import com.example.area.components.EditProfileCard
@@ -33,15 +32,9 @@ import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.viewModel.UserViewModel
+import com.example.area.utils.getServiceImage
 
 
-private fun getServiceImage(serviceName: String): Int {
-    return when (serviceName.lowercase()) {
-        "github" -> R.drawable.github_dark
-        "discord" -> R.drawable.discord
-        else -> R.drawable.github_dark
-    }
-}
 @Composable
 fun ProfilePage(
     modifier: Modifier = Modifier,
@@ -51,6 +44,18 @@ fun ProfilePage(
     val aboutJson by serviceViewModel.aboutJson.collectAsState()
     var isEditing by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var serviceStatuses by remember { mutableStateOf<Map<String, Boolean>>(emptyMap()) }
+
+    LaunchedEffect(aboutJson) {
+        aboutJson?.server?.services?.forEach { service ->
+            serviceViewModel.getServiceStatus(
+                serviceName = service.name.lowercase(),
+                onSuccess = { status ->
+                    serviceStatuses = serviceStatuses + (service.name to status.connected)
+                }
+            )
+        }
+    }
 
     Column(
         modifier = modifier
@@ -93,10 +98,11 @@ fun ProfilePage(
                     .fillMaxWidth()
             )
             aboutJson?.server?.services?.forEach { service ->
+                val isConnected = serviceStatuses[service.name] ?: false
                 ConnectionCard(
                     serviceImage = getServiceImage(service.name),
-                    serviceName = service.name.toLowerCase(),
-                    isConnected = false,
+                    serviceName = service.name.capitalize(),
+                    isConnected = isConnected,
                     onButtonClick = {
                         serviceViewModel.connectToService(
                             serviceName = service.name.toLowerCase(),
