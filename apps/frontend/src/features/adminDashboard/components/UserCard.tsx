@@ -6,13 +6,13 @@ import { Input } from '@/components/wrappers/Input';
 import { Trash, X } from 'lucide-react';
 import { useDeleteUser } from '../hooks/useDeleteUser';
 import { useDeleteConfirmation } from '../hooks/useDeleteConfirmation';
-import { UserRoles } from '@area/shared/enums/user-enums';
+import { enums } from '@area/shared';
 
 interface User {
   _id: string;
   name: string;
   email: string;
-  role: UserRoles;
+  role: enums.userEnums.UserRoles;
 }
 
 interface UserCardProps {
@@ -34,7 +34,7 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
             {user.email}
           </Label>
           <Label htmlFor={`user-${user._id}`} className="truncate text-sm">
-            {user.role === UserRoles.ADMIN ? 'Admin' : 'User'}
+            {user.role === enums.userEnums.UserRoles.ADMIN ? 'Admin' : 'User'}
           </Label>
           <div className="flex ">
             <Button className="h-8 px-2 md:px-3 truncate bg-destructive/80 hover:bg-destructive/50 text-xs md:text-sm" onClick={() => openDialog(user._id)}>
