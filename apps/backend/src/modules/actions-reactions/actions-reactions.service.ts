@@ -6,9 +6,10 @@ import type {
 } from '@area/shared/schemas/actions-reactions.schema';
 import type { DiscordService } from '@/modules/discord';
 import type { GithubService } from '@/modules/github';
-import type { ActionPayload, ActionsReactions } from '@/types/action-reaction';
+import type { ActionPayload, ActionReaction } from '@/types/action-reaction';
 import ApiError from '@/utils/api-error';
 import type { ActionsReactionsRepository } from './actions-reactions.repository';
+import type { WithId } from 'mongodb';
 
 /**
  * @class ActionsReactionsService
@@ -59,12 +60,18 @@ export class ActionsReactionsService {
     const actionsReactions = await this.getActionsReactionsByTrigger(action.trigger);
 
     for (const actionReaction of actionsReactions) {
+      if (!actionReaction.executionState) {
+        continue;
+      }
+
       const reactionCreationFunc = this.reactionsCreationFunc.get(actionReaction.reaction.service);
 
       if (!reactionCreationFunc) {
         continue;
       }
-      await reactionCreationFunc(actionReaction.userId, actionReaction.reaction);
+      if (await reactionCreationFunc(actionReaction.userId, actionReaction.reaction)) {
+        await this.repository.incrementActionReactionExecution(actionReaction._id.toString());
+      }
     }
   }
 
@@ -80,11 +87,13 @@ export class ActionsReactionsService {
   async createActionReaction(userId: string, action: CreateAction, reaction: CreateReaction): Promise<void> {
     const trigger = await this.handleActions(userId, action);
 
-    const data: ActionsReactions = {
+    const data: ActionReaction = {
       userId: userId,
       action: action,
       reaction: reaction,
       trigger: trigger,
+      numberOfExecution: 0,
+      executionState: true,
     };
     await this.repository.createActionReaction(data);
   }
@@ -94,9 +103,9 @@ export class ActionsReactionsService {
    * @description Get the list of actions reactions matching the action trigger
    *
    * @param {string} trigger The trigger of the action
-   * @returns {Promise<ActionsReactions[]>} The matched actions reactions
+   * @returns {Promise<WithId<ActionReaction>[]>} The matched actions reactions
    */
-  async getActionsReactionsByTrigger(trigger: string): Promise<ActionsReactions[]> {
+  async getActionsReactionsByTrigger(trigger: string): Promise<WithId<ActionReaction>[]> {
     return await this.repository.getActionsReactionsByTrigger(trigger);
   }
 
@@ -112,10 +121,36 @@ export class ActionsReactionsService {
 
     const formattedActionsReactions: GetMeActionsReactions = actionsReactions.map((actionReaction) => {
       return {
+        _id: actionReaction._id.toString(),
         action: actionReaction.action,
         reaction: actionReaction.reaction,
+        numberOfExecution: actionReaction.numberOfExecution,
+        executionState: actionReaction.executionState,
       };
     });
     return formattedActionsReactions;
+  }
+
+  /**
+   * @function updateActionReactionExecutionStateById
+   * @description Update the action reaction execution state by id
+   *
+   * @param {string} id The id of the action reaction
+   * @param {string} executionState The execution state of the action reaction
+   * @returns {Promise<void[]>} The matched actions reactions
+   */
+  async updateActionReactionExecutionStateById(id: string, executionState: boolean): Promise<void> {
+    const updated = await this.repository.updateActionReactionExecutionStateById(id, executionState);
+
+    if (!updated.acknowledged) {
+      throw new ApiError(
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        'Failed to update the execution state, please contact an administrator',
+      );
+    }
+
+    if (updated.matchedCount === 0) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action reaction not found');
+    }
   }
 }

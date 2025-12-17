@@ -1,8 +1,9 @@
 import { DysType, UserRoles } from '@area/shared/enums/user-enums';
-import type { LoginBody, RegisterBody } from '@area/shared/schemas/auth.schema';
+import type { LoginBody, RegisterBody, RegisterHeaders } from '@area/shared/schemas/auth.schema';
 import type { User } from '@area/shared/types/user.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { AuthService } from '@/modules/auth/auth.service';
+import { decryptString, encryptString, safeEqualCheck } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
 
 /**
@@ -23,13 +24,18 @@ export class AuthController {
    * @param {FastifyRequest} request - The Fastify request object.
    * @param {FastifyReply} reply - The Fastify reply object for sending the response.
    */
-  async registerUser(request: FastifyRequest<{ Body: RegisterBody }>, reply: FastifyReply): Promise<void> {
+  async registerUser(
+    request: FastifyRequest<{ Body: RegisterBody; Headers: RegisterHeaders }>,
+    reply: FastifyReply,
+  ): Promise<void> {
     const body = request.body;
     const data: User = {
       name: body.name,
       email: body.email,
       password: body.password,
-      role: UserRoles.USER,
+      role: safeEqualCheck(request.headers['x-admin-secret']!, environment.ADMIN_SECRET)
+        ? UserRoles.ADMIN
+        : UserRoles.USER,
       darkModeEnabled: false,
       dyslexiaType: DysType.NOTHING,
       createdAt: new Date(),
@@ -38,14 +44,14 @@ export class AuthController {
 
     const { accessToken, refreshToken } = await this.service.registerUser(data);
 
-    reply.setCookie('refresh-token', refreshToken, {
+    reply.setCookie('refresh-token', encryptString(refreshToken, environment.CRYPT_SECRET_KEY), {
       httpOnly: true,
       secure: environment.NODE_ENV !== 'development',
       sameSite: 'strict',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     });
-    reply.status(201).send({ accessToken: accessToken });
+    reply.status(201).send({ accessToken: encryptString(accessToken, environment.CRYPT_SECRET_KEY) });
   }
 
   /**
@@ -60,14 +66,14 @@ export class AuthController {
 
     const { accessToken, refreshToken } = await this.service.loginUser(body);
 
-    reply.setCookie('refresh-token', refreshToken, {
+    reply.setCookie('refresh-token', encryptString(refreshToken, environment.CRYPT_SECRET_KEY), {
       httpOnly: true,
       secure: environment.NODE_ENV !== 'development',
       sameSite: 'strict',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     });
-    reply.status(200).send({ accessToken: accessToken });
+    reply.status(200).send({ accessToken: encryptString(accessToken, environment.CRYPT_SECRET_KEY) });
   }
 
   async refreshToken(request: FastifyRequest, reply: FastifyReply): Promise<void> {
@@ -78,8 +84,8 @@ export class AuthController {
       return;
     }
 
-    const { accessToken } = await this.service.refreshToken(refreshToken);
+    const { accessToken } = await this.service.refreshToken(decryptString(refreshToken, environment.CRYPT_SECRET_KEY));
 
-    reply.status(200).send({ accessToken: accessToken });
+    reply.status(200).send({ accessToken: encryptString(accessToken, environment.CRYPT_SECRET_KEY) });
   }
 }

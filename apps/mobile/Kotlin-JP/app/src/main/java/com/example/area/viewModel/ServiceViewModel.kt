@@ -7,8 +7,10 @@ import com.example.area.data.api.RetrofitInstance
 import com.example.area.data.models.AboutJson
 import com.example.area.data.models.ServicesValue
 import com.example.area.data.models.ActionDetail
+import com.example.area.data.models.ActionReactionDisplay
 import com.example.area.data.models.ActionReactionRequest
 import com.example.area.data.models.ActionReactionParams
+import com.example.area.data.models.State
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -134,7 +136,7 @@ class ServiceViewModel : ViewModel() {
     }
 
     fun getAllActionsReactions(
-        onSuccess: (List<ActionReactionRequest>) -> Unit = {},
+        onSuccess: (List<ActionReactionDisplay>) -> Unit = {},
         onError: (String) -> Unit = {}
     ) {
         viewModelScope.launch {
@@ -157,6 +159,24 @@ class ServiceViewModel : ViewModel() {
                 val aboutJson = RetrofitInstance.api.getAboutJson()
                 _aboutJson.value = aboutJson
                 onSuccess(aboutJson)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onError(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun updateStateWorkflow(
+        workflowId: String,
+        executionState: Boolean,
+        onSuccess: () -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val stateRequest = State(executionState = executionState)
+                RetrofitInstance.api.updateStateWorkflow(workflowId, stateRequest)
+                onSuccess()
             } catch (e: Exception) {
                 e.printStackTrace()
                 onError(e.message ?: "Unknown error")

@@ -4,6 +4,7 @@ import {
   refreshTokenResponseSchema,
   registerBodyResponseSchema,
   registerBodySchema,
+  registerHeadersSchema,
 } from '@area/shared/schemas/auth.schema';
 import type { FastifyInstance } from 'fastify';
 import { AuthController } from '@/modules/auth/auth.controller';
@@ -27,6 +28,7 @@ export default async (app: FastifyInstance) => {
       summary: 'Register a new user',
       description: 'Returns an array with the users token.',
       tags: ['Auth'],
+      headers: registerHeadersSchema,
       body: registerBodySchema,
       response: {
         201: registerBodyResponseSchema,
@@ -52,7 +54,7 @@ export default async (app: FastifyInstance) => {
   app.route({
     method: 'POST',
     url: '/v1/refresh',
-    handler: controller.refreshToken.bind(service),
+    handler: controller.refreshToken.bind(controller),
     schema: {
       summary: 'Refresh access token',
       description: 'Generates a new access token using the refresh token.',

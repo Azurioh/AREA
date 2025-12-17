@@ -1,10 +1,15 @@
 import {
+  type DeleteUserByIdParams,
   deleteUserByIdParamsSchema,
   deleteUserByIdResponseSchema,
   deleteUserMeResponseSchema,
+  type GetUserByIdParams,
+  getAllUsersResponseSchema,
   getUserByIdParamsSchema,
   getUserByIdResponseSchema,
   getUserMeResponseSchema,
+  type UpdateUserByIdBody,
+  type UpdateUserByIdParams,
   type UpdateUserMeBody,
   updateUserByIdBodySchema,
   updateUserByIdParamsSchema,
@@ -75,6 +80,21 @@ export default async (app: FastifyInstance) => {
 
   app.route({
     method: 'GET',
+    url: '/v1',
+    schema: {
+      summary: 'Get all the users',
+      description: 'Returns the users.',
+      tags: ['Users'],
+      response: {
+        200: getAllUsersResponseSchema,
+      },
+    },
+    preHandler: [verifyUserAccess(service, { adminOnly: true })],
+    handler: controller.getAllUsers.bind(controller),
+  });
+
+  app.route<{ Params: GetUserByIdParams }>({
+    method: 'GET',
     url: '/v1/:id',
     schema: {
       summary: 'Get user by id',
@@ -85,10 +105,11 @@ export default async (app: FastifyInstance) => {
         200: getUserByIdResponseSchema,
       },
     },
+    preHandler: [verifyUserAccess(service, { adminOnly: true })],
     handler: controller.getUserById.bind(controller),
   });
 
-  app.route({
+  app.route<{ Params: UpdateUserByIdParams; Body: UpdateUserByIdBody }>({
     method: 'PUT',
     url: '/v1/:id',
     schema: {
@@ -101,10 +122,11 @@ export default async (app: FastifyInstance) => {
         204: updateUserByIdResponseSchema,
       },
     },
+    preHandler: [verifyUserAccess(service, { adminOnly: true })],
     handler: controller.updateUserById.bind(controller),
   });
 
-  app.route({
+  app.route<{ Params: DeleteUserByIdParams }>({
     method: 'DELETE',
     url: '/v1/:id',
     schema: {
@@ -116,6 +138,7 @@ export default async (app: FastifyInstance) => {
         204: deleteUserByIdResponseSchema,
       },
     },
+    preHandler: [verifyUserAccess(service, { adminOnly: true })],
     handler: controller.deleteUserById.bind(controller),
   });
 };

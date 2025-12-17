@@ -1,19 +1,23 @@
 import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-reactions.schema';
 
 /**
- * @type ActionsReactions
- * @description The format of a action reaction in the db
+ * @type ActionReaction
+ * @description The format of an action reaction in the db
  *
  * @property {string} userId The id of the user creating the action reaction
  * @property {CreateAction} action The data to create the action
  * @property {CreateReaction} reaction The data to create the reaction
  * @property {string} trigger The action trigger that result in the reaction
+ * @property {string} numberOfExecution The number of times the action reaction have been executed
+ * @property {boolean} executionState If the action reaction should be executed
  */
-export type ActionsReactions = {
+export type ActionReaction = {
   userId: string;
   action: CreateAction;
   reaction: CreateReaction;
   trigger: string;
+  numberOfExecution: number;
+  executionState: boolean;
 };
 
 /**

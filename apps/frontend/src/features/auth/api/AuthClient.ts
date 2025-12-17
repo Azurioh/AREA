@@ -20,6 +20,7 @@ export class AuthClient extends ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(data),
       skipAuth: true,
     });
@@ -40,6 +41,7 @@ export class AuthClient extends ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(data),
       skipAuth: true,
     });

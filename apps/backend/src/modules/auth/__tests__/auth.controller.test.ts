@@ -2,6 +2,11 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import { AuthController } from '../auth.controller';
 import type { AuthService } from '../auth.service';
 
+jest.mock('@/utils/crypt', () => ({
+  encryptString: jest.fn((toEncrypt: string, _secret: string) => `encrypted_${toEncrypt}`),
+  safeEqualCheck: jest.fn(() => false),
+}));
+
 describe('AuthController', () => {
   let controller: AuthController;
   let mockService: jest.Mocked<AuthService>;
@@ -22,6 +27,9 @@ describe('AuthController', () => {
         email: 'john@example.com',
         password: 'password123',
       },
+      headers: {
+        'Content-Type': 'application/json',
+      },
     } as any;
 
     mockReply = {
@@ -40,11 +48,14 @@ describe('AuthController', () => {
 
       mockService.registerUser.mockResolvedValueOnce(tokens);
 
-      await controller.registerUser(mockRequest as FastifyRequest<{ Body: any }>, mockReply as FastifyReply);
+      await controller.registerUser(
+        mockRequest as FastifyRequest<{ Body: any; Headers: any }>,
+        mockReply as FastifyReply,
+      );
 
       expect(mockReply.setCookie).toHaveBeenCalledWith(
         'refresh-token',
-        'refresh_token_123',
+        'encrypted_refresh_token_123',
         expect.objectContaining({
           httpOnly: true,
           sameSite: 'strict',
@@ -52,7 +63,7 @@ describe('AuthController', () => {
       );
       expect(mockReply.status).toHaveBeenCalledWith(201);
       expect(mockReply.send).toHaveBeenCalledWith({
-        accessToken: 'access_token_123',
+        accessToken: 'encrypted_access_token_123',
       });
     });
   });

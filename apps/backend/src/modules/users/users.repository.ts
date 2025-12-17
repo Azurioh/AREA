@@ -39,6 +39,16 @@ export class UsersRepository {
   }
 
   /**
+   * @function getAllUsers
+   * @description Get all the users.
+   *
+   * @returns {Promise<WithId<User>[]>} The user data.
+   */
+  async getAllUsers(): Promise<WithId<User>[]> {
+    return await this.db.collection<User>(MongoCollections.USERS).find().toArray();
+  }
+
+  /**
    * @function getUserById
    * @description Retrieves a user by its id.
    *
