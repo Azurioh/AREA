@@ -18,7 +18,10 @@ import type { WithId } from 'mongodb';
 export class ActionsReactionsService {
   private readonly repository: ActionsReactionsRepository;
   private actionsCreationFunc: Map<string, (userId: string, action: CreateAction) => Promise<string>>;
-  private reactionsCreationFunc: Map<string, (userId: string, action: CreateReaction) => Promise<boolean>>;
+  private reactionsCreationFunc: Map<
+    string,
+    (userId: string, reaction: CreateReaction, action: ActionPayload) => Promise<boolean>
+  >;
 
   constructor(repository: ActionsReactionsRepository, githubService: GithubService, discordService: DiscordService) {
     this.repository = repository;
@@ -69,7 +72,7 @@ export class ActionsReactionsService {
       if (!reactionCreationFunc) {
         continue;
       }
-      if (await reactionCreationFunc(actionReaction.userId, actionReaction.reaction)) {
+      if (await reactionCreationFunc(actionReaction.userId, actionReaction.reaction, action)) {
         await this.repository.incrementActionReactionExecution(actionReaction._id.toString());
       }
     }
