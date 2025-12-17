@@ -9,9 +9,19 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
     private var tokenManager: TokenManager? = null
+    private var onUnauthorizedCallback: (() -> Unit)? = null
+    private var hasTriggeredUnauthorized = false
 
     fun initialize(context: Context) {
         tokenManager = TokenManager(context)
+    }
+
+    fun setOnUnauthorizedCallback(callback: () -> Unit) {
+        onUnauthorizedCallback = callback
+    }
+
+    fun resetUnauthorizedFlag() {
+        hasTriggeredUnauthorized = false
     }
 
     private val okHttpClient by lazy {
@@ -33,7 +43,15 @@ object RetrofitInstance {
                     originalRequest
                 }
 
-                chain.proceed(newRequest)
+                val response = chain.proceed(newRequest)
+
+                if (response.code == 401 && !isAuthRoute && !hasTriggeredUnauthorized) {
+                    hasTriggeredUnauthorized = true
+                    tokenManager?.clearToken()
+                    onUnauthorizedCallback?.invoke()
+                }
+
+                response
             }
             .build()
     }

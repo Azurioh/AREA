@@ -6,19 +6,30 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.example.area.data.api.RetrofitInstance
 import com.example.area.ui.theme.PocTheme
 
 class MainActivity : ComponentActivity() {
+    private var shouldLogout by mutableStateOf(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         RetrofitInstance.initialize(applicationContext)
+        RetrofitInstance.setOnUnauthorizedCallback {
+            runOnUiThread {
+                Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_LONG).show()
+                shouldLogout = true
+            }
+        }
 
         enableEdgeToEdge()
         setContent {
             PocTheme {
-                AppNavigation()
+                AppNavigation(shouldLogout = shouldLogout, onLogoutHandled = { shouldLogout = false })
             }
         }
 

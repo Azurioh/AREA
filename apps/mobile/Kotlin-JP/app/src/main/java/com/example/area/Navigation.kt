@@ -1,12 +1,15 @@
 package com.example.area
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.area.data.api.RetrofitInstance
 import com.example.area.pages.LoginPage
 import com.example.area.pages.RegisterPage
 import com.example.area.viewModel.UserViewModel
@@ -21,9 +24,28 @@ sealed class Screen(val route: String) {
 fun AppNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = Screen.Login.route,
-    userViewModel: UserViewModel = viewModel()
+    userViewModel: UserViewModel = viewModel(),
+    shouldLogout: Boolean = false,
+    onLogoutHandled: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val isLoggedIn = RetrofitInstance.getTokenManager().isLoggedIn()
+    val startDestination = if (isLoggedIn) Screen.Main.route else Screen.Login.route
+
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) {
+            userViewModel.fetchUserProfile()
+        }
+    }
+
+    LaunchedEffect(shouldLogout) {
+        if (shouldLogout) {
+            navController.navigate(Screen.Login.route) {
+                popUpTo(0) { inclusive = true }
+            }
+            onLogoutHandled()
+        }
+    }
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -61,6 +83,7 @@ fun AppNavigation(
             MainScreenWithNav(
                 userViewModel = userViewModel,
                 onLogout = {
+                    RetrofitInstance.getTokenManager().clearToken()
                     navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.Main.route) { inclusive = true }
                     }
