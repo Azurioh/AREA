@@ -34,22 +34,28 @@ describe('Auth Routes', () => {
 
   describe('POST /auth/v1/register', () => {
     it('should register a new user with valid data', async () => {
-      const response = await request(app.server).post('/auth/v1/register').send({
-        name: profiles[0]!.name,
-        email: profiles[0]!.email,
-        password: profiles[0]!.password,
-      });
+      const response = await request(app.server)
+        .post('/auth/v1/register')
+        .set({ 'Content-Type': 'application/json' })
+        .send({
+          name: profiles[0]!.name,
+          email: profiles[0]!.email,
+          password: profiles[0]!.password,
+        });
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('accessToken');
     });
 
     it('should return 400 for invalid email', async () => {
-      const response = await request(app.server).post('/auth/v1/register').send({
-        name: 'John Doe',
-        email: 'invalid-email',
-        password: 'password123',
-      });
+      const response = await request(app.server)
+        .post('/auth/v1/register')
+        .set({ 'Content-Type': 'application/json' })
+        .send({
+          name: 'John Doe',
+          email: 'invalid-email',
+          password: 'password123',
+        });
 
       expect(response.status).toBe(400);
     });
@@ -63,19 +69,20 @@ describe('Auth Routes', () => {
 
   describe('POST /auth/v1/login', () => {
     it('should login user with valid credentials', async () => {
-      // First register a user
-      await request(app.server).post('/auth/v1/register').send({
+      await request(app.server).post('/auth/v1/register').set({ 'Content-Type': 'application/json' }).send({
         name: profiles[1]!.name,
         email: profiles[1]!.email,
         password: profiles[1]!.password,
       });
 
-      // Then login
-      const response = await request(app.server).post('/auth/v1/login').send({
-        email: profiles[1]!.email,
-        password: profiles[1]!.password,
-        rememberMe: false,
-      });
+      const response = await request(app.server)
+        .post('/auth/v1/login')
+        .set({ 'Content-Type': 'application/json' })
+        .send({
+          email: profiles[1]!.email,
+          password: profiles[1]!.password,
+          rememberMe: false,
+        });
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('accessToken');
