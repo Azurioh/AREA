@@ -266,7 +266,7 @@ export class ThirdPartiesService {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${formattedResponse.access_token}`,
-          Accept: 'application/vnd.github+json',
+          Accept: 'application/x-www-form-urlencoded',
         },
       });
 
