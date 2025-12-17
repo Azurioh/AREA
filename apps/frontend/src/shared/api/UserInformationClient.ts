@@ -16,6 +16,7 @@ export class UserInformationClient extends ApiClient {
   async getUserInformation(): Promise<MaybeUndefined<GetUserMeResponse>> {
     const response = await this.fetch<GetUserMeResponse>('/users/v1/me', {
       method: 'GET',
+      credentials: 'include',
     });
 
     return response;
