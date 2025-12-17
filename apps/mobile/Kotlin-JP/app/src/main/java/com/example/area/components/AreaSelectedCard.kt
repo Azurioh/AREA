@@ -1,6 +1,5 @@
 package com.example.area.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
@@ -31,10 +29,11 @@ import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.poppinsFontFamily
+import coil.compose.AsyncImage
 
 @Composable
 fun AreaSelectedCard(
-    actionServiceImage: Int,
+    actionServiceImage: String,
     title: String,
     description: String,
     onMenuClick: () -> Unit
@@ -60,8 +59,8 @@ fun AreaSelectedCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = actionServiceImage),
+                    AsyncImage(
+                        model = actionServiceImage,
                         contentDescription = "Service Image",
                         contentScale = ContentScale.Fit,
                         modifier = Modifier

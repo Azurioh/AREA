@@ -5,15 +5,20 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -30,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.area.R
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.Background
 import com.example.area.ui.theme.montserratFontFamily
@@ -39,19 +44,15 @@ import com.example.area.components.ActionCard
 import com.example.area.components.AreaCard
 import com.example.area.ui.theme.CustomBlack
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.area.R
 import com.example.area.components.AreaSelectedCard
 import com.example.area.components.ActionDetailCard
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.data.models.ServicesValue
 import com.example.area.data.models.ActionDetail
+import com.example.area.ui.theme.CustomWhite
+import com.example.area.utils.getServiceImage
 
-private fun getServiceImage(serviceName: String): Int {
-    return when (serviceName.lowercase()) {
-        "github" -> R.drawable.github_dark
-        "discord" -> R.drawable.discord
-        else -> R.drawable.github_dark
-    }
-}
 
 @Composable
 fun CreatePage(
@@ -85,15 +86,42 @@ fun CreatePage(
     ) {
         when {
             showActionDetail && actionDetail != null && selectedAction != null -> {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Button(
+                        onClick = {
+                            showActionDetail = false
+                            actionDetail = null
+                            onAction = true
+                        },
+                        modifier = Modifier
+                            .padding(start = 25.dp, top = 25.dp)
+                            .size(width = 90.dp, height = 28.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Accent,
+                            contentColor = CustomWhite
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "BackArrow",
+                            tint = CustomWhite,
+                        )
+                        Text(
+                            text = "Back",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
                 ConfigureDetailView(
                     title = "Configure Action",
                     detail = actionDetail!!,
                     serviceImage = getServiceImage(selectedAction!!.service),
-                    onClose = {
-                        showActionDetail = false
-                        actionDetail = null
-                        selectedAction = null
-                    },
                     onValidate = { paramValues ->
                         actionParams = paramValues
                         actionSelected = true
@@ -102,15 +130,42 @@ fun CreatePage(
                 )
             }
             showReactionDetail && reactionDetail != null && selectedReaction != null -> {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Button(
+                        onClick = {
+                            showReactionDetail = false
+                            reactionDetail = null
+                            onReaction = true
+                        },
+                        modifier = Modifier
+                            .padding(start = 25.dp, top = 25.dp)
+                            .size(width = 90.dp, height = 28.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Accent,
+                            contentColor = CustomWhite
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "BackArrow",
+                            tint = CustomWhite,
+                        )
+                        Text(
+                            text = "Back",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
                 ConfigureDetailView(
                     title = "Configure Reaction",
                     detail = reactionDetail!!,
                     serviceImage = getServiceImage(selectedReaction!!.service),
-                    onClose = {
-                        showReactionDetail = false
-                        reactionDetail = null
-                        selectedReaction = null
-                    },
                     onValidate = { paramValues ->
                         reactionParams = paramValues
                         reactionSelected = true
@@ -123,6 +178,30 @@ fun CreatePage(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     val serviceGroups = actionServices.groupBy { it.service }
+
+                    Button(
+                        onClick = {onAction = false},
+                        modifier = Modifier
+                            .padding(start = 25.dp, top = 25.dp)
+                            .size(width = 90.dp, height = 28.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Accent,
+                            contentColor = CustomWhite
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "BackArrow",
+                            tint = CustomWhite,
+                        )
+                        Text(
+                            text = "Back",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
 
                     serviceGroups.forEach { (serviceName) ->
                         ServiceListView(
@@ -140,7 +219,9 @@ fun CreatePage(
                                         onAction = false
                                     },
                                     onError = { error ->
-                                        Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                                        if (!error.contains("401") && !error.contains("Unauthorized")) {
+                                            Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                                        }
                                     }
                                 )
                             }
@@ -153,6 +234,30 @@ fun CreatePage(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     val serviceGroups = reactionServices.groupBy { it.service }
+
+                    Button(
+                        onClick = {onReaction = false},
+                        modifier = Modifier
+                            .padding(start = 25.dp, top = 25.dp)
+                            .size(width = 90.dp, height = 28.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Accent,
+                            contentColor = CustomWhite
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "BackArrow",
+                            tint = CustomWhite,
+                        )
+                        Text(
+                            text = "Back",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
 
                     serviceGroups.forEach { (serviceName) ->
                         ServiceListView(
@@ -170,7 +275,9 @@ fun CreatePage(
                                         onReaction = false
                                     },
                                     onError = { error ->
-                                        Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                                        if (!error.contains("401") && !error.contains("Unauthorized")) {
+                                            Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                                        }
                                     }
                                 )
                             }
@@ -207,7 +314,9 @@ fun CreatePage(
                                     }
                                 },
                                 onError = { error ->
-                                    Toast.makeText(context, "${service.name} Error: $error", Toast.LENGTH_SHORT).show()
+                                    if (!error.contains("401") && !error.contains("Unauthorized")) {
+                                        Toast.makeText(context, "${service.name} Error: $error", Toast.LENGTH_SHORT).show()
+                                    }
                                     loadedCount++
                                     if (loadedCount == services.size) {
                                         actionServices = allActions
@@ -276,7 +385,9 @@ fun CreatePage(
                                 reactionParams = emptyMap()
                             },
                             onError = { error ->
-                                Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                                if (!error.contains("401") && !error.contains("Unauthorized")) {
+                                    Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                                }
                             }
                         )
                     }
@@ -290,8 +401,7 @@ fun CreatePage(
 private fun ConfigureDetailView(
     title: String,
     detail: ActionDetail,
-    serviceImage: Int,
-    onClose: () -> Unit,
+    serviceImage: String,
     onValidate: (Map<String, Any>) -> Unit
 ) {
     Text(
@@ -309,7 +419,6 @@ private fun ConfigureDetailView(
     ActionDetailCard(
         actionServiceImage = serviceImage,
         actionDetail = detail,
-        onClose = onClose,
         onValidate = onValidate
     )
 }
