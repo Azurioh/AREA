@@ -1,7 +1,7 @@
+import crypto from 'node:crypto';
+import { HttpStatusCode } from '@area/shared/enums/http-status';
 import bcrypt from 'bcrypt';
 import ApiError from './api-error';
-import { HttpStatusCode } from '@area/shared/enums/http-status';
-import crypto from 'node:crypto';
 
 /**
  * @function hashPassword
@@ -105,3 +105,22 @@ export function decryptString(toDecrypt: string, secret: string): string {
 
   return decrypted.toString('utf8');
 }
+
+/**
+ * @function safeEqualCheck
+ * @description Compares two strings in a constant time.
+ *
+ * @param {string} a The first string to compare
+ * @param {string} b The second string to compare
+ * @returns {boolean} If both strings are equal.
+ */
+export const safeEqualCheck = (a: string, b: string): boolean => {
+  if (!a || !b) {
+    return false;
+  }
+
+  const aBuffer = Buffer.from(a);
+  const bBuffer = Buffer.from(b);
+
+  return crypto.timingSafeEqual(aBuffer, bBuffer);
+};
