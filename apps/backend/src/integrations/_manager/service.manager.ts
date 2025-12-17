@@ -50,6 +50,4 @@ class ServiceManager {
   }
 }
 
-// const serviceManager = new ServiceManager();
-
 export { ServiceManager };
