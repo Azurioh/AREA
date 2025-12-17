@@ -2,7 +2,6 @@ import React from "react";
 import { Card, CardContent } from '@/components/wrappers/Card';
 import { Input } from "@/components/wrappers/Input";
 import { Button } from "@/components/wrappers/Button";
-import { Checkbox } from "@/components/wrappers/CheckBox";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import SideBar from '@/components/SideBar';
@@ -14,23 +13,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import UserCard from '../components/UserCard';
 import { useUserFilter } from '../hooks/useUserFilter';
-
-const users = [
-  { id: 1, name: 'John Doe', email: 'john.doe@example.com', role: 'Admin' },
-  { id: 2, name: 'Jane Smith', email: 'jane.smith@example.com', role: 'User' },
-  { id: 3, name: 'Bob Johnson', email: 'bob.johnson@example.com', role: 'User' },
-  { id: 4, name: 'Alice Brown', email: 'alice.brown@example.com', role: 'Admin' },
-  { id: 5, name: 'Charlie Davis', email: 'charlie.davis@example.com', role: 'User' },
-  { id: 6, name: 'Diana Evans', email: 'diana.evans@gmail.com', role: 'User' },
-  { id: 7, name: 'Frank Miller', email: 'frank.miller@example.com', role: 'Admin' },
-  { id: 8, name: 'Grace Wilson', email: 'grace.wilson@example.com', role: 'User' },
-  { id: 9, name: 'Henry Taylor', email: 'henry.taylor@example.com', role: 'User' },
-  { id: 10, name: 'Ivy Anderson', email: 'ivy.anderson@example.com', role: 'Admin' },
-];
+import { useGetAllUsers } from '../hooks/useGetAllUsers';
 
 const AdminDashboardPage: React.FC = () => {
+  const { users, loading, error } = useGetAllUsers();
   const { searchQuery, setSearchQuery, roleFilter, setRoleFilter, filteredUsers } = useUserFilter(users);
 
+  console.log('AdminDashboardPage rendered with users:', users);
   return (
     <div className="flex h-screen bg-background">
       <SideBar />
@@ -40,7 +29,6 @@ const AdminDashboardPage: React.FC = () => {
             <div className="text-center space-y-2 mb-6">
               <h1 className="font-bold tracking-tighter text-primary">User Management</h1>
               <p className="text-foreground">
-                {' '}
                 Manage all users in one place. Control access, assign roles, or delete any users{' '}
               </p>
             </div>
@@ -53,7 +41,7 @@ const AdminDashboardPage: React.FC = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <Button variant="ghost" size="icon" className="absolute right-0 top-0 h-full">
+                <Button variant="ghost" size="icon" className="absolute right-0 top-0 h-full hover:bg-transparent hover:text-primary">
                   <Search className="h-4 w-4" />
                 </Button>
               </div>
@@ -63,8 +51,8 @@ const AdminDashboardPage: React.FC = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={() => setRoleFilter('All')}>All Users</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setRoleFilter('Admin')}>Admins</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setRoleFilter('User')}>Users</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setRoleFilter('Admin')}>Admin</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setRoleFilter('User')}>User</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -74,18 +62,21 @@ const AdminDashboardPage: React.FC = () => {
               transition={{ duration: 0.5 }}
               className="w-full max-w-5xl mx-auto"
             >
-              <div className="bg-primary p-4 rounded-[var(--large-radius)] mb-4">
-                <div className="grid grid-cols-[10px_1fr_1fr_1fr_1fr] gap-6 items-center">
-                  <Checkbox id="select-all" className="ml-4" />
-                  <h2 className="font-semibold ml-12 text-white text-xl">Name</h2>
-                  <h2 className="font-semibold ml-5 text-white text-xl">Email</h2>
+              <div className="lg:block bg-primary p-4 rounded-[var(--large-radius)] mb-4">
+                <div className="grid grid-cols-[200px_1fr_1fr_1fr] gap-20 items-center">
+                  <h2 className="font-semibold text-white text-xl">Name</h2>
+                  <h2 className="font-semibold text-white text-xl">Email</h2>
                   <h2 className="font-semibold text-white text-xl">Role</h2>
                   <h2 className="font-semibold text-white text-xl">Actions</h2>
                 </div>
               </div>
               <div className="flex flex-col gap-3">
-                {filteredUsers.length > 0 ? (
-                  filteredUsers.map((user) => <UserCard key={user.id} user={user} />)
+                {loading ? (
+                  <div className="text-center py-8 text-muted-foreground">Loading users...</div>
+                ) : error ? (
+                  <div className="text-center py-8 text-red-500">Error loading users: {error}</div>
+                ) : filteredUsers.length > 0 ? (
+                  filteredUsers.map((user) => <UserCard key={user._id} user={user} />)
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">No users found</div>
                 )}
