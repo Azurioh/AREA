@@ -12,7 +12,7 @@ export default function LandingPage() {
   const serviceLogos = useServiceLogos();
 
   const leftOffsets = [
-    { x: -200, y: -120 },
+    { x: -200, y: -110 },
     { x: -400, y: 0 },
     { x: -300, y: 210 },
   ];
