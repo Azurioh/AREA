@@ -4,6 +4,7 @@ import {
   refreshTokenResponseSchema,
   registerBodyResponseSchema,
   registerBodySchema,
+  registerHeadersSchema,
 } from '@area/shared/schemas/auth.schema';
 import type { FastifyInstance } from 'fastify';
 import { AuthController } from '@/modules/auth/auth.controller';
@@ -27,6 +28,7 @@ export default async (app: FastifyInstance) => {
       summary: 'Register a new user',
       description: 'Returns an array with the users token.',
       tags: ['Auth'],
+      headers: registerHeadersSchema,
       body: registerBodySchema,
       response: {
         201: registerBodyResponseSchema,

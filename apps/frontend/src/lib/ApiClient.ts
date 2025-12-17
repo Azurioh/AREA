@@ -46,8 +46,6 @@ export class ApiClient {
     let response = await fetch(url, options);
 
     if (response.status === 401 && !options.skipAuth) {
-      console.log('Token expiré, tentative de refresh...');
-
       const refreshSuccessful = await this.tokenManager.refreshAccessToken();
 
       if (refreshSuccessful) {
@@ -58,11 +56,8 @@ export class ApiClient {
             Authorization: `Bearer ${newAccessToken}`,
           };
         }
-
-        console.log('Refresh réussi, on retente la requête initiale.');
         response = await fetch(url, options);
       } else {
-        console.log('Refresh échoué. Déconnexion forcée.');
         this.tokenManager.logout();
         throw new Error('Unauthorized: Session expired.');
       }

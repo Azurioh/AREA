@@ -3,7 +3,8 @@ import { AuthController } from '../auth.controller';
 import type { AuthService } from '../auth.service';
 
 jest.mock('@/utils/crypt', () => ({
-  encryptString: jest.fn((toEncrypt: string, _secret: string) => 'encrypted_' + toEncrypt),
+  encryptString: jest.fn((toEncrypt: string, _secret: string) => `encrypted_${toEncrypt}`),
+  safeEqualCheck: jest.fn(() => false),
 }));
 
 describe('AuthController', () => {
@@ -26,6 +27,9 @@ describe('AuthController', () => {
         email: 'john@example.com',
         password: 'password123',
       },
+      headers: {
+        'Content-Type': 'application/json',
+      },
     } as any;
 
     mockReply = {
@@ -44,7 +48,10 @@ describe('AuthController', () => {
 
       mockService.registerUser.mockResolvedValueOnce(tokens);
 
-      await controller.registerUser(mockRequest as FastifyRequest<{ Body: any }>, mockReply as FastifyReply);
+      await controller.registerUser(
+        mockRequest as FastifyRequest<{ Body: any; Headers: any }>,
+        mockReply as FastifyReply,
+      );
 
       expect(mockReply.setCookie).toHaveBeenCalledWith(
         'refresh-token',

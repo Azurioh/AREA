@@ -54,13 +54,14 @@ export class TokenManager {
    */
   async refreshAccessToken(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseURL}/token/refresh`, {
+      const response = await fetch(`${this.baseURL}/auth/v1/refresh`, {
         method: 'POST',
+        credentials: 'include',
       });
 
       if (response.ok) {
         const data: RefreshTokenResponse = await response.json();
-        this.setToken(data.accessToken);
+        await this.setToken(data.accessToken);
         return true;
       }
     } catch (error) {
