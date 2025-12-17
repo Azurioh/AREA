@@ -1,6 +1,5 @@
 package com.example.area.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
@@ -43,11 +41,12 @@ import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.CustomWhite
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.poppinsFontFamily
+import coil.compose.AsyncImage
 
 @Composable
 fun DisplayCard(
-    actionServiceImage: Int,
-    reactionServiceImage: Int,
+    actionServiceImage: String,
+    reactionServiceImage: String,
     title: String,
     description: String,
     lastExecution: String,
@@ -74,8 +73,8 @@ fun DisplayCard(
                     .align(Alignment.TopStart)
                     .padding(top = 6.dp, start = 12.dp)
             ) {
-                Image(
-                    painter = painterResource(id = actionServiceImage),
+                AsyncImage(
+                    model = actionServiceImage,
                     contentDescription = "Service Image",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
@@ -92,8 +91,8 @@ fun DisplayCard(
                         .offset(y = 10.dp)
                 )
 
-                Image(
-                    painter = painterResource(id = reactionServiceImage),
+                AsyncImage(
+                    model = reactionServiceImage,
                     contentDescription = "Service Image",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
