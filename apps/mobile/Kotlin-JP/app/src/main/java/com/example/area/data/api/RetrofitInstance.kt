@@ -4,24 +4,24 @@ import android.content.Context
 import com.example.area.data.auth.TokenManager
 import okhttp3.OkHttpClient
 import com.example.area.BuildConfig
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
     private var tokenManager: TokenManager? = null
-    private var onUnauthorizedCallback: (() -> Unit)? = null
-    private var hasTriggeredUnauthorized = false
+
+    private val _isUnauthorized = MutableStateFlow(false)
+    val isUnauthorized: StateFlow<Boolean> = _isUnauthorized.asStateFlow()
 
     fun initialize(context: Context) {
         tokenManager = TokenManager(context)
     }
 
-    fun setOnUnauthorizedCallback(callback: () -> Unit) {
-        onUnauthorizedCallback = callback
-    }
-
-    fun resetUnauthorizedFlag() {
-        hasTriggeredUnauthorized = false
+    fun resetUnauthorizedState() {
+        _isUnauthorized.value = false
     }
 
     private val okHttpClient by lazy {
@@ -45,10 +45,9 @@ object RetrofitInstance {
 
                 val response = chain.proceed(newRequest)
 
-                if (response.code == 401 && !isAuthRoute && !hasTriggeredUnauthorized) {
-                    hasTriggeredUnauthorized = true
+                if (response.code == 401 && !isAuthRoute && !_isUnauthorized.value) {
                     tokenManager?.clearToken()
-                    onUnauthorizedCallback?.invoke()
+                    _isUnauthorized.value = true
                 }
 
                 response

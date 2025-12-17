@@ -24,13 +24,12 @@ sealed class Screen(val route: String) {
 fun AppNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    userViewModel: UserViewModel = viewModel(),
-    shouldLogout: Boolean = false,
-    onLogoutHandled: () -> Unit = {}
+    userViewModel: UserViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val isLoggedIn = RetrofitInstance.getTokenManager().isLoggedIn()
     val startDestination = if (isLoggedIn) Screen.Main.route else Screen.Login.route
+    val isUnauthorized by RetrofitInstance.isUnauthorized.collectAsState()
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
@@ -38,12 +37,12 @@ fun AppNavigation(
         }
     }
 
-    LaunchedEffect(shouldLogout) {
-        if (shouldLogout) {
+    LaunchedEffect(isUnauthorized) {
+        if (isUnauthorized) {
             navController.navigate(Screen.Login.route) {
                 popUpTo(0) { inclusive = true }
             }
-            onLogoutHandled()
+            RetrofitInstance.resetUnauthorizedState()
         }
     }
     NavHost(
