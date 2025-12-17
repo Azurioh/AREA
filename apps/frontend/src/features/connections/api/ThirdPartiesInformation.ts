@@ -11,7 +11,6 @@ export class ThirdPartiesInformation extends ApiClient {
      * @returns {Promise<MaybeUndefined<GetThirdPartyStatusResponse>>} The connection status
      */
     async getConnectionStatus(service: string): Promise<MaybeUndefined<GetThirdPartyStatusResponse>> {
-
         const response = await this.fetch<GetThirdPartyStatusResponse>(
             `/third-parties/v1/status/${service}`,
             {
@@ -30,7 +29,6 @@ export class ThirdPartiesInformation extends ApiClient {
      * @returns {Promise<MaybeUndefined<GetThirdPartyAuthorizationUrlResponse>>} The authorization url
      */
     async getAuthorizationUrl(service: string): Promise<MaybeUndefined<GetThirdPartyAuthorizationUrlResponse>> {
-
         const response = await this.fetch<GetThirdPartyAuthorizationUrlResponse>(
             `/third-parties/v1/authorization-url/${service}`,
             {
