@@ -32,9 +32,8 @@ export interface Environment {
   DISCORD_CLIENT_SECRET: string;
   DISCORD_BOT_TOKEN: string;
 
-  X_CLIENT_ID: string;
-  X_CLIENT_SECRET: string;
-  X_CODE_VERIFIER: string;
+  SPOTIFY_CLIENT_ID: string;
+  SPOTIFY_CLIENT_SECRET: string;
 }
 
 const variables: Record<string, string | undefined> = {
@@ -62,9 +61,8 @@ const variables: Record<string, string | undefined> = {
   DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
   DISCORD_BOT_TOKEN: process.env.DISCORD_BOT_TOKEN,
 
-  X_CLIENT_ID: process.env.X_CLIENT_ID,
-  X_CLIENT_SECRET: process.env.X_CLIENT_SECRET,
-  X_CODE_VERIFIER: process.env.X_CODE_VERIFIER,
+  SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
+  SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
 };
 
 for (const [key, value] of Object.entries(variables)) {
@@ -110,7 +108,6 @@ export const environment: Environment = {
   DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET as string,
   DISCORD_BOT_TOKEN: process.env.DISCORD_BOT_TOKEN as string,
 
-  X_CLIENT_ID: process.env.X_CLIENT_ID as string,
-  X_CLIENT_SECRET: process.env.X_CLIENT_SECRET as string,
-  X_CODE_VERIFIER: process.env.X_CODE_VERIFIER as string,
+  SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID as string,
+  SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET as string,
 };
