@@ -22,13 +22,13 @@ export class GithubPullRequestAction extends Action {
           key: 'repository',
           description: 'The repository that triggered the action',
           type: 'string',
-          path: 'repository.full_name',
+          path: 'repository.name',
         },
         {
           key: 'author',
           description: 'The author of the pull request',
           type: 'string',
-          path: 'pull_request.user.login',
+          path: 'sender.login',
         },
         {
           key: 'url',

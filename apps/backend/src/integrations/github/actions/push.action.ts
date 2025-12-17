@@ -22,13 +22,13 @@ export class GithubPushAction extends Action {
           key: 'repository',
           description: 'The repository that triggered the action',
           type: 'string',
-          path: 'repository.full_name',
+          path: 'repository.name',
         },
         {
           key: 'author',
           description: 'The author of the push',
           type: 'string',
-          path: 'pusher.name',
+          path: 'sender.login',
         },
         {
           key: 'url',
