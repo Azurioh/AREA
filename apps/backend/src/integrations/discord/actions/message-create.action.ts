@@ -22,13 +22,13 @@ export class DiscordMessageCreateAction extends Action {
           key: 'content',
           description: 'The content of the message who triggered the action',
           type: 'string',
-          path: 'repository.name',
+          path: 'content',
         },
         {
           key: 'author',
           description: 'The author of the message',
           type: 'string',
-          path: 'sender.login',
+          path: 'author.globalName',
         },
       ],
     );
