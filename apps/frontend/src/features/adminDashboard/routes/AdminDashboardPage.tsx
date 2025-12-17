@@ -19,7 +19,6 @@ const AdminDashboardPage: React.FC = () => {
   const { users, loading, error } = useGetAllUsers();
   const { searchQuery, setSearchQuery, roleFilter, setRoleFilter, filteredUsers } = useUserFilter(users);
 
-  console.log('AdminDashboardPage rendered with users:', users);
   return (
     <div className="flex h-screen bg-background">
       <SideBar />
