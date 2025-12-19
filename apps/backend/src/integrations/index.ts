@@ -1,4 +1,4 @@
-import type { Action, Reaction, Service } from './_definitions';
+import { Action, Reaction, type Service } from './_definitions';
 import { ServiceManager } from './_manager/service.manager';
 import { createGithubService } from './github';
 import { createDiscordService } from './discord';
@@ -9,7 +9,7 @@ export {
   createDiscordService,
   createSpotifyService,
   ServiceManager,
-  type Action,
-  type Reaction,
+  Action,
+  Reaction,
   type Service,
 };

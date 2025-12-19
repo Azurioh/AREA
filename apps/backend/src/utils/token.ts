@@ -1,5 +1,5 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type { AccessToken, RefreshToken, StateToken } from '@area/shared/types/user.types';
+import type { AccessToken, RefreshToken, StateToken } from '@area/shared/types/users.types';
 import jwt from 'jsonwebtoken';
 import ApiError from './api-error';
 import { environment } from './environment';

@@ -1,4 +1,6 @@
 import type { IAction, IReaction, ReactionParams } from '@area/shared/types/services.types';
+import { ServiceManager } from '../_manager/service.manager';
+import type { ActionPayload } from '@/types/action-reaction';
 
 /**
  * @class Reaction
@@ -23,20 +25,38 @@ export abstract class Reaction implements IReaction {
    * @function parseActionVariables
    * @description Parse the reaction elements with the action content
    *
-   * @param {IAction} action The action triggered
-   * @param {Record<string, any>} actionContent The content of the action triggered
+   * @param {Omit<ActionPayload, 'trigger'>} issuedAction The issued action
    * @param {string[]} inputs The inputs to parse
    * @returns {string[]} The parsed inputs
    */
-  parseActionVariables(action: IAction, actionContent: Record<string, any>, inputs: string[]): string[] {
+  static parseActionVariables(issuedAction: Omit<ActionPayload, 'trigger'>, inputs: string[]): string[] {
+    const action = ServiceManager.instance
+      .get(issuedAction.service)
+      ?.actions.find((value: IAction) => value.name === issuedAction.name);
+
+    if (!action) {
+      return inputs;
+    }
+
+    const getValueInObject = (object: Record<string, any>, path: string): any => {
+      const splitted = path.split('.');
+
+      if (splitted.length === 1 && splitted[0]) {
+        return object[splitted[0]];
+      } else if (splitted.length >= 2 && splitted[0]) {
+        return getValueInObject(object[splitted[0]], splitted.slice(1, splitted.length).join());
+      }
+      return undefined;
+    };
+
     const replaceValues = action.returnedValues.map((key) => ({
       key,
-      value: actionContent[key.path],
+      value: getValueInObject(issuedAction.content, key.path),
     }));
 
     return inputs.map((input) => {
       for (const replaceValue of replaceValues) {
-        input.replace(new RegExp(`$\{${replaceValue.key}}`, 'g'), replaceValue.value);
+        input = input.replaceAll(`$\{${replaceValue.key.key}}`, replaceValue.value);
       }
       return input;
     });

@@ -3,7 +3,6 @@ import { GithubService } from '@/modules/github';
 import { WebhookService } from '@/modules/webhook';
 import { UsersRepository, UsersService } from '../users';
 import { WebhookController } from './webhook.controller';
-import { WebhookRepository } from './webhook.repository';
 import { ActionsReactionsRepository, ActionsReactionsService } from '../actions-reactions';
 import { DiscordService } from '../discord';
 import { ThirdPartiesRepository } from '../third-parties/third-parties.repository';
@@ -15,7 +14,6 @@ export default async (app: FastifyInstance) => {
   }
 
   const userRepository = new UsersRepository(app.mongo.db);
-  const repository = new WebhookRepository(app.mongo.db);
   const actionsReactionsRepository = new ActionsReactionsRepository(app.mongo.db);
   const thirdPartiesRepository = new ThirdPartiesRepository(app.mongo.db);
 
@@ -28,7 +26,7 @@ export default async (app: FastifyInstance) => {
     githubService,
     discordService,
   );
-  const service = new WebhookService(repository, actionsReactionsService);
+  const service = new WebhookService(actionsReactionsService);
 
   const controller = new WebhookController(service);
 

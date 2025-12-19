@@ -1,5 +1,5 @@
 import z from 'zod';
-import { userFields } from '../types/user.types';
+import { userFields } from '../types/users.types';
 
 /************
  * REGISTER *

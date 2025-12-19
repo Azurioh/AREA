@@ -1,5 +1,5 @@
 import z from 'zod';
-import { userFields, userSchema } from '../types/user.types';
+import { userFields, userSchema } from '@area/shared/types/users.types';
 
 /***************
  * GET USER ME *
