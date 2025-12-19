@@ -1,5 +1,5 @@
 import { DysType, UserRoles } from '@area/shared/enums/user-enums';
-import type { User } from '@area/shared/types/user.types';
+import type { User } from '@area/shared/types/users.types';
 import { MongoServerError } from 'mongodb';
 import type { UsersRepository } from '@/modules/users';
 import ApiError from '@/utils/api-error';

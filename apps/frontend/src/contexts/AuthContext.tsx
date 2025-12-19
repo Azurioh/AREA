@@ -1,4 +1,4 @@
-import type { User } from '@area/shared/types/user.types';
+import type { User } from '@area/shared/types/users.types';
 import type React from 'react';
 import { createContext, type ReactNode, useMemo, useState } from 'react';
 import { AuthClient } from '@/features/auth/api/AuthClient';

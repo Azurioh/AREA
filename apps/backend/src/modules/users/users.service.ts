@@ -1,5 +1,5 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type { User } from '@area/shared/types/user.types';
+import type { User } from '@area/shared/types/users.types';
 import type { InsertOneResult, WithId } from 'mongodb';
 import ApiError from '@/utils/api-error';
 import type { UsersRepository } from './users.repository';

@@ -1,7 +1,7 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { LoginBody } from '@area/shared/schemas/auth.schema';
 import type { Tokens } from '@area/shared/types/auth.types';
-import type { User } from '@area/shared/types/user.types';
+import type { User } from '@area/shared/types/users.types';
 import { type InsertOneResult, MongoServerError } from 'mongodb';
 import type { UsersRepository } from '@/modules/users';
 import ApiError from '@/utils/api-error';

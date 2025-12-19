@@ -13,7 +13,7 @@ import type {
   SpotifyAuthorizationResponse,
   ThirdPartyAccount,
 } from '@/types/third-parties';
-import type { StateToken } from '@area/shared/types/user.types';
+import type { StateToken } from '@area/shared/types/users.types';
 import type { UsersService } from '@/modules/users';
 import type { ThirdPartiesRepository } from './third-parties.repository';
 import { encryptString } from '@/utils/crypt';
