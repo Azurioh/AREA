@@ -1,18 +1,18 @@
+import { UserRoles } from '@area/shared/enums/user-enums';
+import { Trash, X } from 'lucide-react';
 import type React from 'react';
+import { Label } from '@/components/ui/label';
 import { Button } from '@/components/wrappers/Button';
 import { Card } from '@/components/wrappers/Card';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/wrappers/Input';
-import { Trash, X } from 'lucide-react';
-import { useDeleteUser } from '../hooks/useDeleteUser';
-import { useDeleteConfirmation } from '../hooks/useDeleteConfirmation';
-import { enums } from '@area/shared';
+import { useDeleteConfirmation } from '@/features/adminDashboard/hooks/useDeleteConfirmation';
+import { useDeleteUser } from '@/features/adminDashboard/hooks/useDeleteUser';
 
 interface User {
   _id: string;
   name: string;
   email: string;
-  role: enums.userEnums.UserRoles;
+  role: UserRoles;
 }
 
 interface UserCardProps {
@@ -21,7 +21,8 @@ interface UserCardProps {
 
 const UserCard: React.FC<UserCardProps> = ({ user }) => {
   const { deleteUser } = useDeleteUser();
-  const { isDialogOpen, confirmText, setConfirmText, handleDelete, openDialog, closeDialog } = useDeleteConfirmation(deleteUser);
+  const { isDialogOpen, confirmText, setConfirmText, handleDelete, openDialog, closeDialog } =
+    useDeleteConfirmation(deleteUser);
 
   return (
     <>
@@ -34,10 +35,13 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
             {user.email}
           </Label>
           <Label htmlFor={`user-${user._id}`} className="truncate text-sm">
-            {user.role === enums.userEnums.UserRoles.ADMIN ? 'Admin' : 'User'}
+            {user.role === UserRoles.ADMIN ? 'Admin' : 'User'}
           </Label>
           <div className="flex ">
-            <Button className="h-8 px-2 md:px-3 truncate bg-destructive/80 hover:bg-destructive/50 text-xs md:text-sm" onClick={() => openDialog(user._id)}>
+            <Button
+              className="h-8 px-2 md:px-3 truncate bg-destructive/80 hover:bg-destructive/50 text-xs md:text-sm"
+              onClick={() => openDialog(user._id)}
+            >
               <Trash className="h-4 w-4 md:mr-2" />
               <span className="hidden md:inline">Delete</span>
             </Button>
@@ -55,7 +59,8 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
               </Button>
             </div>
             <p className="text-foreground mb-4">
-              To delete the user <span className="font-semibold text-primary">{user.name}</span>, write "delete" in the text field below:
+              To delete the user <span className="font-semibold text-primary">{user.name}</span>, write "delete" in the
+              text field below:
             </p>
             <Input
               type="text"
@@ -65,7 +70,7 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
               className="mb-4 bg-card"
             />
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={closeDialog} className='bg-primary hover:bg-primary/80 text-card'>
+              <Button variant="outline" onClick={closeDialog} className="bg-primary hover:bg-primary/80 text-card">
                 Cancel
               </Button>
               <Button

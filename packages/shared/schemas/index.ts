@@ -1,5 +1,10 @@
-import * as githubSchema from './github.schema';
-import * as miscSchema from './misc.schema';
-import * as webhookSchema from './webhook.schema';
-
-export { webhookSchema, miscSchema, githubSchema };
+export * from './about.schema';
+export * from './actions-reactions.schema';
+export * from './auth.schema';
+export * from './discord.schema';
+export * from './github.schema';
+export * from './misc.schema';
+export * from './services.schema';
+export * from './third-parties.schema';
+export * from './users.schema';
+export * from './webhook.schema';
