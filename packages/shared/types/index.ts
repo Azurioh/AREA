@@ -1,3 +1,6 @@
-import * as webhookTypes from './webhook.types';
+import * as aboutTypes from './about.types';
+import * as authTypes from './auth.types';
+import * as servicesTypes from './services.types';
+import * as usersTypes from './users.types';
 
-export { webhookTypes };
+export { aboutTypes, authTypes, servicesTypes, usersTypes };
