@@ -25,8 +25,7 @@ export abstract class Reaction implements IReaction {
    * @function parseActionVariables
    * @description Parse the reaction elements with the action content
    *
-   * @param {Pick<ActionPayload, 'service' | 'name'>} issuedAction The issued action
-   * @param {Record<string, any>} actionContent The content of the action issued
+   * @param {Omit<ActionPayload, 'trigger'>} issuedAction The issued action
    * @param {string[]} inputs The inputs to parse
    * @returns {string[]} The parsed inputs
    */
