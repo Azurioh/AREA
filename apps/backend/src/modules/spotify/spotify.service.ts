@@ -60,6 +60,8 @@ export class SpotifyService {
         return this.addTrackToPlayList(spotifyAccount, reaction, action);
       case 'save_episode':
         return this.saveEpisode(spotifyAccount, reaction, action);
+      case 'save_show':
+        return this.saveShow(spotifyAccount, reaction, action);
     }
     return false;
   }
@@ -158,7 +160,6 @@ export class SpotifyService {
       } else {
         spotifyEpisodeId = `${match[1] || ''}`;
       }
-      console.log(spotifyEpisodeId);
       const response = await fetch(`https://api.spotify.com/v1/me/episodes`, {
         method: 'PUT',
         headers: {
@@ -169,7 +170,6 @@ export class SpotifyService {
           ids: [spotifyEpisodeId],
         }),
       });
-      console.log(response);
       return response;
     };
 
@@ -182,6 +182,63 @@ export class SpotifyService {
       );
 
       response = await tryToSaveEpisode(accessToken);
+    }
+    return response.ok;
+  }
+
+  /**
+   * @function saveShow
+   * @description Save a show
+   *
+   * @param {WithId<SpotifyAccount>} spotifyAccount - The spotify account of the user
+   * @param {CreateReaction} reaction - The information about the reaction
+   * @param {ActionPayload} action - The information about the issued action
+   * @returns {Promise<boolean>} If the reaction was created
+   */
+  async saveShow(
+    spotifyAccount: WithId<SpotifyAccount>,
+    reaction: CreateReaction,
+    action: ActionPayload,
+  ): Promise<boolean> {
+    const [show] = Reaction.parseActionVariables(action, [reaction.params.show]);
+
+    if (!show) {
+      return false;
+    }
+    const tryToSaveShow = async (accessToken: string) => {
+      let spotifyShowId = '';
+      const match = show.match('/show/([a-zA-Z0-9]+)?');
+
+      if (!match) {
+        const search = await this.search(accessToken, show, 'show');
+
+        if (search.status === HttpStatusCode.UNAUTHORIZED) {
+          return { status: HttpStatusCode.UNAUTHORIZED, ok: false };
+        }
+        spotifyShowId = search.search.shows.items[0].id;
+      } else {
+        spotifyShowId = `${match[1] || ''}`;
+      }
+      const response = await fetch(`https://api.spotify.com/v1/me/shows?ids=${spotifyShowId}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(response);
+      return response;
+    };
+
+    let response = await tryToSaveShow(decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY));
+
+    if (response.status === HttpStatusCode.UNAUTHORIZED) {
+      const accessToken = await this.refreshTokens(
+        spotifyAccount._id.toString(),
+        decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
+      );
+
+      response = await tryToSaveShow(accessToken);
     }
     return response.ok;
   }
