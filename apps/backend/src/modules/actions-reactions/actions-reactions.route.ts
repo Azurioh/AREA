@@ -17,6 +17,7 @@ import { GithubService } from '@/modules/github';
 import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
 import { UsersRepository, UsersService } from '@/modules/users';
 import { ActionsReactionsController } from './actions-reactions.controller';
+import { SpotifyService } from '../spotify';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -30,9 +31,10 @@ export default async (app: FastifyInstance) => {
 
   const githubService = new GithubService(thirdPartiesService);
   const discordService = new DiscordService(thirdPartiesService);
+  const spotifyService = new SpotifyService(thirdPartiesService);
 
   const repository = new ActionsReactionsRepository(app.mongo.db);
-  const service = new ActionsReactionsService(repository, githubService, discordService);
+  const service = new ActionsReactionsService(repository, githubService, discordService, spotifyService);
   const controller = new ActionsReactionsController(service);
 
   app.route<{ Body: CreateActionReactionBody }>({

@@ -17,6 +17,7 @@ import type { StateToken } from '@area/shared/types/users.types';
 import type { UsersService } from '@/modules/users';
 import type { ThirdPartiesRepository } from './third-parties.repository';
 import { encryptString } from '@/utils/crypt';
+import type { WithId } from 'mongodb';
 
 /**
  * @class ThirdPartiesService
@@ -82,15 +83,18 @@ export class ThirdPartiesService {
    *
    * @param {ServiceType} service - The service name
    * @param {string} userId - The if of the user authenticating
-   * @returns {Promise<ThirdPartyAccount>} The third party account
+   * @returns {Promise<WithId<ThirdPartyAccount>>} The third party account
    */
-  async getThirdPartyAccountByUserId<T>(service: ServiceType, userId: string): Promise<T> {
-    const result = await this.repository.getThirdPartyAccountByUserId(userId, service);
+  async getThirdPartyAccountByUserId<T extends ThirdPartyAccount>(
+    service: ServiceType,
+    userId: string,
+  ): Promise<WithId<T>> {
+    const result = await this.repository.getThirdPartyAccountByUserId<T>(userId, service);
 
     if (!result) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'Third party account was not found');
     }
-    return result as T;
+    return result;
   }
 
   /**
