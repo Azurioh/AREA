@@ -7,6 +7,7 @@ import { ActionsReactionsRepository, ActionsReactionsService } from '../actions-
 import { DiscordService } from '../discord';
 import { ThirdPartiesRepository } from '../third-parties/third-parties.repository';
 import { ThirdPartiesService } from '../third-parties';
+import { SpotifyService } from '../spotify';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -21,10 +22,12 @@ export default async (app: FastifyInstance) => {
   const thirdPartiesService = new ThirdPartiesService(thirdPartiesRepository, usersService);
   const githubService = new GithubService(thirdPartiesService);
   const discordService = new DiscordService(thirdPartiesService);
+  const spotifyService = new SpotifyService(thirdPartiesService);
   const actionsReactionsService = new ActionsReactionsService(
     actionsReactionsRepository,
     githubService,
     discordService,
+    spotifyService,
   );
   const service = new WebhookService(actionsReactionsService);
 

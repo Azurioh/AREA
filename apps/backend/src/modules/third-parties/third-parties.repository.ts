@@ -30,20 +30,20 @@ export class ThirdPartiesRepository {
   }
 
   /**
-   * @function getGithubAccgetThirdPartyAccountByUserIdountByUserId
+   * @function getThirdPartyAccountByUserId
    * @description Get a third party account from the databse.
    *
    * @param {string} userId The user id related to the third party account.
    * @param {ServiceType} service The service type.
-   * @returns {Promise<MaybeNull<WithId<GithubAccount>>>} The third party account.
+   * @returns {Promise<MaybeNull<WithId<T>>>} The third party account.
    */
-  async getThirdPartyAccountByUserId(
+  async getThirdPartyAccountByUserId<T extends ThirdPartyAccount>(
     userId: string,
     service: ServiceType,
-  ): Promise<MaybeNull<WithId<ThirdPartyAccount>>> {
-    return await this.db
+  ): Promise<MaybeNull<WithId<T>>> {
+    return (await this.db
       .collection<ThirdPartyAccount>(MongoCollections.THIRD_PARTIES_ACCOUNT)
-      .findOne({ userId: userId, service: service });
+      .findOne({ userId: userId, service: service })) as WithId<T> | null;
   }
 
   /**

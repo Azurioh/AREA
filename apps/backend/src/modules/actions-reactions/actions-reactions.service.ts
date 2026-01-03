@@ -10,6 +10,7 @@ import type { ActionPayload, ActionReaction } from '@/types/action-reaction';
 import ApiError from '@/utils/api-error';
 import type { ActionsReactionsRepository } from './actions-reactions.repository';
 import type { WithId } from 'mongodb';
+import type { SpotifyService } from '../spotify';
 
 /**
  * @class ActionsReactionsService
@@ -23,15 +24,22 @@ export class ActionsReactionsService {
     (userId: string, reaction: CreateReaction, action: ActionPayload) => Promise<boolean>
   >;
 
-  constructor(repository: ActionsReactionsRepository, githubService: GithubService, discordService: DiscordService) {
+  constructor(
+    repository: ActionsReactionsRepository,
+    githubService: GithubService,
+    discordService: DiscordService,
+    spotifyService: SpotifyService,
+  ) {
     this.repository = repository;
     this.actionsCreationFunc = new Map([
       ['github', githubService.createAction.bind(githubService)],
       ['discord', discordService.createAction.bind(discordService)],
+      ['spotify', spotifyService.createAction.bind(spotifyService)],
     ]);
     this.reactionsCreationFunc = new Map([
       ['github', githubService.createReaction.bind(githubService)],
       ['discord', discordService.createReaction.bind(discordService)],
+      ['spotify', spotifyService.createReaction.bind(spotifyService)],
     ]);
   }
 
