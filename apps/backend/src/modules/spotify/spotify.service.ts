@@ -58,6 +58,8 @@ export class SpotifyService {
     switch (reaction.name) {
       case 'add_track_to_playlist':
         return this.addTrackToPlayList(spotifyAccount, reaction, action);
+      case 'save_episode':
+        return this.saveEpisode(spotifyAccount, reaction, action);
     }
     return false;
   }
@@ -81,7 +83,7 @@ export class SpotifyService {
     if (!track) {
       return false;
     }
-    const addTrack = async (accessToken: string) => {
+    const tryToAddTrackToPlayList = async (accessToken: string) => {
       let spotifyTrack = '';
       const match = track.match('/track/([a-zA-Z0-9]+)?');
 
@@ -108,7 +110,9 @@ export class SpotifyService {
       return response;
     };
 
-    let response = await addTrack(decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY));
+    let response = await tryToAddTrackToPlayList(
+      decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY),
+    );
 
     if (response.status === HttpStatusCode.UNAUTHORIZED) {
       const accessToken = await this.refreshTokens(
@@ -116,7 +120,68 @@ export class SpotifyService {
         decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
       );
 
-      response = await addTrack(accessToken);
+      response = await tryToAddTrackToPlayList(accessToken);
+    }
+    return response.ok;
+  }
+
+  /**
+   * @function saveEpisode
+   * @description Save an episode
+   *
+   * @param {WithId<SpotifyAccount>} spotifyAccount - The spotify account of the user
+   * @param {CreateReaction} reaction - The information about the reaction
+   * @param {ActionPayload} action - The information about the issued action
+   * @returns {Promise<boolean>} If the reaction was created
+   */
+  async saveEpisode(
+    spotifyAccount: WithId<SpotifyAccount>,
+    reaction: CreateReaction,
+    action: ActionPayload,
+  ): Promise<boolean> {
+    const [episode] = Reaction.parseActionVariables(action, [reaction.params.episode]);
+
+    if (!episode) {
+      return false;
+    }
+    const tryToSaveEpisode = async (accessToken: string) => {
+      let spotifyEpisodeId = '';
+      const match = episode.match('/episode/([a-zA-Z0-9]+)?');
+
+      if (!match) {
+        const search = await this.search(accessToken, episode, 'episode');
+
+        if (search.status === HttpStatusCode.UNAUTHORIZED) {
+          return { status: HttpStatusCode.UNAUTHORIZED, ok: false };
+        }
+        spotifyEpisodeId = search.search.episodes.items[0].id;
+      } else {
+        spotifyEpisodeId = `${match[1] || ''}`;
+      }
+      console.log(spotifyEpisodeId);
+      const response = await fetch(`https://api.spotify.com/v1/me/episodes`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ids: [spotifyEpisodeId],
+        }),
+      });
+      console.log(response);
+      return response;
+    };
+
+    let response = await tryToSaveEpisode(decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY));
+
+    if (response.status === HttpStatusCode.UNAUTHORIZED) {
+      const accessToken = await this.refreshTokens(
+        spotifyAccount._id.toString(),
+        decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
+      );
+
+      response = await tryToSaveEpisode(accessToken);
     }
     return response.ok;
   }
