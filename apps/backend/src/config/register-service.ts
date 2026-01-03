@@ -19,9 +19,9 @@ export const registerServices = (app: FastifyInstance): void => {
   const thirdPartiesService = new ThirdPartiesService(thirdPartiesRepository, usersService);
   const githubService = new GithubService(thirdPartiesService);
   const discordService = new DiscordService(thirdPartiesService);
-  const xService = new SpotifyService(thirdPartiesService);
+  const spotifyService = new SpotifyService(thirdPartiesService);
 
   ServiceManager.instance.register(createGithubService(githubService));
   ServiceManager.instance.register(createDiscordService(discordService));
-  ServiceManager.instance.register(createSpotifyService(xService));
+  ServiceManager.instance.register(createSpotifyService(spotifyService));
 };
