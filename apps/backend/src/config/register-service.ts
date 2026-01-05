@@ -1,12 +1,11 @@
 import type { FastifyInstance } from 'fastify';
-import { createDiscordService, createGithubService, ServiceManager } from '@/integrations';
+import { createDiscordService, createGithubService, createSpotifyService, ServiceManager } from '@/integrations';
 import { DiscordService } from '@/modules/discord';
 import { GithubService } from '@/modules/github';
 import { ThirdPartiesService } from '@/modules/third-parties';
 import { ThirdPartiesRepository } from '@/modules/third-parties/third-parties.repository';
 import { UsersRepository, UsersService } from '@/modules/users';
-import { XService } from '@/modules/x';
-import { createXService } from '@/integrations/x';
+import { SpotifyService } from '@/modules/spotify';
 
 export const registerServices = (app: FastifyInstance): void => {
   if (!app.mongo.db) {
@@ -20,9 +19,9 @@ export const registerServices = (app: FastifyInstance): void => {
   const thirdPartiesService = new ThirdPartiesService(thirdPartiesRepository, usersService);
   const githubService = new GithubService(thirdPartiesService);
   const discordService = new DiscordService(thirdPartiesService);
-  const xService = new XService(thirdPartiesService);
+  const xService = new SpotifyService(thirdPartiesService);
 
   ServiceManager.instance.register(createGithubService(githubService));
   ServiceManager.instance.register(createDiscordService(discordService));
-  ServiceManager.instance.register(createXService(xService));
+  ServiceManager.instance.register(createSpotifyService(xService));
 };

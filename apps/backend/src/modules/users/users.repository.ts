@@ -1,4 +1,4 @@
-import type { User } from '@area/shared/types/user.types';
+import type { User } from '@area/shared/types/users.types';
 import type { MaybeNull } from '@area/shared/utils/common';
 import { type Db, type DeleteResult, type InsertOneResult, ObjectId, type UpdateResult, type WithId } from 'mongodb';
 import { MongoCollections } from '@/enums/mongo-collection';

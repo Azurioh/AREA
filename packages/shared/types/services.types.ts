@@ -185,15 +185,4 @@ export interface IReaction {
    * @returns {Promise<void>} Nothing
    */
   refreshParams(userId: string): Promise<void>;
-
-  /**
-   * @function parseActionVariables
-   * @description Parse the reaction elements with the action content
-   *
-   * @param {IAction} action The action triggered
-   * @param {Record<string, any>} actionContent The content of the action triggered
-   * @param {string[]} inputs The inputs to parse
-   * @returns {string[]} The parsed inputs
-   */
-  parseActionVariables(action: IAction, actionContent: Record<string, any>, inputs: string[]): string[];
 }

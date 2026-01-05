@@ -1,6 +1,6 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import { UserRoles } from '@area/shared/enums/user-enums';
-import type { AccessToken } from '@area/shared/types/user.types';
+import type { AccessToken } from '@area/shared/types/users.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { UsersService } from '@/modules/users';
 import ApiError from '@/utils/api-error';

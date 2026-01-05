@@ -31,10 +31,10 @@ export class GithubWatchAction extends Action {
           path: 'sender.login',
         },
         {
-          key: 'watcher',
+          key: 'watchers',
           description: 'The current number of star',
           type: 'number',
-          path: 'repository.watcher',
+          path: 'repository.watchers',
         },
       ],
     );

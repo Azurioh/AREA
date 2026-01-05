@@ -21,13 +21,17 @@ export type ActionReaction = {
 };
 
 /**
- * @type DiscordAuthorizationQueryString
- * @description Query string required to authenticate with discord.
+ * @type ActionPayload
+ * @description The payload of an action.
  *
  * @property {string} service The service that issued the action
+ * @property {string} name The name of the issued action
  * @property {string} trigger The trigger that made the action
+ * @property {Record<string, any>} content The content of the action
  */
 export type ActionPayload = {
   service: string;
+  name: string;
   trigger: string;
+  content: Record<string, any>;
 };

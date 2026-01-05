@@ -1,6 +1,6 @@
 import { DysType, UserRoles } from '@area/shared/enums/user-enums';
 import type { LoginBody, RegisterBody, RegisterHeaders } from '@area/shared/schemas/auth.schema';
-import type { User } from '@area/shared/types/user.types';
+import type { User } from '@area/shared/types/users.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { AuthService } from '@/modules/auth/auth.service';
 import { decryptString, encryptString, safeEqualCheck } from '@/utils/crypt';

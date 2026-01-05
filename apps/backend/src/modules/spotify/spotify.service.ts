@@ -1,4 +1,4 @@
-import type { XAccount, XAuthorizationResponse } from '@/types/third-parties';
+import type { SpotifyAccount, SpotifyAuthorizationResponse } from '@/types/third-parties';
 import type { ThirdPartiesService } from '../third-parties';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import { environment } from '@/utils/environment';
@@ -6,10 +6,10 @@ import ApiError from '@/utils/api-error';
 import { encryptString } from '@/utils/crypt';
 
 /**
- * @class XService
- * @description The github service.
+ * @class SpotifyService
+ * @description The spotify service.
  */
-export class XService {
+export class SpotifyService {
   private thirdPartiesService: ThirdPartiesService;
 
   constructor(thirdPartiesService: ThirdPartiesService) {
@@ -29,7 +29,7 @@ export class XService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Basic ${Buffer.from(`${environment.X_CLIENT_ID}:${environment.X_CLIENT_SECRET}`).toString('base64')}`,
+        Authorization: `Basic ${Buffer.from(`${environment.SPOTIFY_CLIENT_ID}:${environment.SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
       },
       body: new URLSearchParams({
         grant_type: 'refresh_token',
@@ -41,13 +41,13 @@ export class XService {
       throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Error when refreshing X access token');
     }
 
-    const formattedResponse = (await response.json()) as XAuthorizationResponse;
+    const formattedResponse = (await response.json()) as SpotifyAuthorizationResponse;
 
-    const account: Partial<XAccount> = {
+    const account: Partial<SpotifyAccount> = {
       accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
       refreshToken: encryptString(formattedResponse.refresh_token, environment.CRYPT_SECRET_KEY),
     };
 
-    this.thirdPartiesService.updateThirdPartyAccount('x', accountId, account);
+    this.thirdPartiesService.updateThirdPartyAccount('spotify', accountId, account);
   }
 }

@@ -1,4 +1,4 @@
-import type { User } from '@area/shared/types/user.types';
+import type { User } from '@area/shared/types/users.types';
 import type React from 'react';
 import { createContext, type ReactNode, useMemo, useState, useEffect } from 'react';
 import { AuthClient } from '@/features/auth/api/AuthClient';
@@ -52,7 +52,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const userInformationClient = useMemo(() => new UserInformationClient(BASE_URL, tokenManager), [tokenManager]);
   const authClient = useMemo(() => new AuthClient(BASE_URL, tokenManager), [tokenManager]);
   const thirdPartiesInformation = useMemo(() => new ThirdPartiesInformation(BASE_URL, tokenManager), [tokenManager]);
-  const userAdminManagementClient = useMemo(() => new UserAdminManagementClient(BASE_URL, tokenManager), [tokenManager]);
+  const userAdminManagementClient = useMemo(
+    () => new UserAdminManagementClient(BASE_URL, tokenManager),
+    [tokenManager],
+  );
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -86,7 +89,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       userAdminManagementClient,
       logout: tokenManager.logout.bind(tokenManager),
     }),
-    [authState, tokenManager, actionReactionClient, servicesClient, userInformationClient, authClient, thirdPartiesInformation, userAdminManagementClient],
+    [
+      authState,
+      tokenManager,
+      actionReactionClient,
+      servicesClient,
+      userInformationClient,
+      authClient,
+      thirdPartiesInformation,
+      userAdminManagementClient,
+    ],
   );
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

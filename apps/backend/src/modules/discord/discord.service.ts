@@ -6,6 +6,8 @@ import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-
 import type { ThirdPartiesService } from '@/modules/third-parties';
 import type { DiscordAccount, DiscordAuthorizationResponse } from '@/types/third-parties';
 import type { Tokens } from '@area/shared/types/auth.types';
+import type { ActionPayload } from '@/types/action-reaction';
+import { Reaction } from '@/integrations';
 
 /**
  * @class DiscordService
@@ -38,25 +40,38 @@ export class DiscordService {
    *
    * @param {string} _userId - The id of the user creating the action
    * @param {CreateReaction} reaction - The information about the reaction
+   * @param {ActionPayload} action - The information about the issued action
    * @returns {Promise<boolean>} If the action was created
    */
-  async createReaction(_userId: string, reaction: CreateReaction): Promise<boolean> {
+  async createReaction(_userId: string, reaction: CreateReaction, action: ActionPayload): Promise<boolean> {
     switch (reaction.name) {
-      case 'send_message': {
-        const response = await fetch(`https://discord.com/api/channels/${reaction.params.channel.id}/messages`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bot ${environment.DISCORD_BOT_TOKEN}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            content: reaction.params.content,
-          }),
-        });
-        return response.ok;
-      }
+      case 'send_message':
+        return this.sendMessage(reaction, action);
     }
     return false;
+  }
+
+  /**
+   * @function sendMessage
+   * @description Compute the send message reaction
+   *
+   * @param {CreateReaction} reaction - The information about the reaction
+   * @param {ActionPayload} action - The information about the issued action
+   * @returns {Promise<boolean>} If the action was created
+   */
+  private async sendMessage(reaction: CreateReaction, action: ActionPayload): Promise<boolean> {
+    const [content] = Reaction.parseActionVariables(action, [reaction.params.content]);
+    const response = await fetch(`https://discord.com/api/channels/${reaction.params.channel.id}/messages`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bot ${environment.DISCORD_BOT_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        content: content,
+      }),
+    });
+    return response.ok;
   }
 
   /**

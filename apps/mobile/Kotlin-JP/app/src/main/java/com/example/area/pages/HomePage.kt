@@ -3,7 +3,6 @@ package com.example.area.pages
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,23 +23,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.area.R
 import com.example.area.components.DisplayCard
 import com.example.area.data.models.ActionReactionDisplay
 import com.example.area.ui.theme.Background
 import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.poppinsFontFamily
-import com.example.area.viewModel.UserViewModel
 import com.example.area.viewModel.ServiceViewModel
-import com.example.area.data.models.ActionReactionRequest
+import com.example.area.utils.getServiceImage
 
-private fun getServiceImage(service: String): Int {
-    return when (service) {
-        "github" -> R.drawable.github_dark
-        "discord" -> R.drawable.discord
-        else -> R.drawable.github_dark
-    }
-}
 
 @Composable
 fun HomePage(
@@ -56,7 +46,9 @@ fun HomePage(
                 actionsReactions = data
             },
             onError = { error ->
-                Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                if (!error.contains("401") && !error.contains("Unauthorized")) {
+                    Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                }
             }
         )
     }
@@ -86,7 +78,7 @@ fun HomePage(
             DisplayCard(
                 actionServiceImage = getServiceImage(actionReaction.action.service),
                 reactionServiceImage = getServiceImage(actionReaction.reaction.service),
-                title = "${actionReaction.action.name} → ${actionReaction.reaction.name}",
+                title = "${actionReaction.action.name.replace('_', ' ', ignoreCase = true).capitalize()} → ${actionReaction.reaction.name.replace('_', ' ', ignoreCase = true).capitalize()}",
                 description = "Action: ${actionReaction.action.service} | Reaction: ${actionReaction.reaction.service}",
                 lastExecution = "Last execution: 0s ago",
                 executionCount = actionReaction.numberOfExecution.toInt(),
@@ -101,7 +93,9 @@ fun HomePage(
                                 Toast.makeText(context, "Workflow state updated", Toast.LENGTH_SHORT).show()
                             },
                             onError = { error ->
-                                Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                                if (!error.contains("401") && !error.contains("Unauthorized")) {
+                                    Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                                }
                             }
                         )
                     } else {

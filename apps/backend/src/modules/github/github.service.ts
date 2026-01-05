@@ -6,6 +6,8 @@ import { decryptString } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
 import type { ThirdPartiesService } from '../third-parties';
 import type { GithubAccount } from '@/types/third-parties';
+import type { ActionPayload } from '@/types/action-reaction';
+import { Reaction } from '@/integrations';
 
 /**
  * @class GithubService
@@ -72,32 +74,50 @@ export class GithubService {
    * @description Create an action with the github service
    *
    * @param {string} userId - The id of the user creating the action
-   * @param {CreateReaction} action - The information about the action
+   * @param {CreateReaction} reaction - The information about the reaction
+   * @param {ActionPayload} action - The information about the issued action
    * @returns {Promise<boolean>} If the action was created
    */
-  async createReaction(userId: string, reaction: CreateReaction): Promise<boolean> {
+  async createReaction(userId: string, reaction: CreateReaction, action: ActionPayload): Promise<boolean> {
     const githubAccount = await this.thirdPartiesService.getThirdPartyAccountByUserId<GithubAccount>('github', userId);
 
     switch (reaction.name) {
-      case 'create_issue': {
-        const response = await fetch(
-          `https://api.github.com/repos/${githubAccount.username}/${reaction.params.repository.name}/issues`,
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${decryptString(githubAccount.accessToken, environment.CRYPT_SECRET_KEY)}`,
-              Accept: 'application/vnd.github+json',
-            },
-            body: JSON.stringify({
-              title: reaction.params.title,
-              body: reaction.params.body,
-            }),
-          },
-        );
-        return response.ok;
-      }
+      case 'create_issue':
+        return this.createIssue(githubAccount, reaction, action);
     }
     return false;
+  }
+
+  /**
+   * @function sendMessage
+   * @description Compute the send message reaction
+   *
+   * @param {GithubAccount} githubAccount - The user github account
+   * @param {CreateReaction} reaction - The information about the reaction
+   * @param {ActionPayload} action - The information about the issued action
+   * @returns {Promise<boolean>} If the action was created
+   */
+  private async createIssue(
+    githubAccount: GithubAccount,
+    reaction: CreateReaction,
+    action: ActionPayload,
+  ): Promise<boolean> {
+    const [title, body] = Reaction.parseActionVariables(action, [reaction.params.title, reaction.params.body]);
+    const response = await fetch(
+      `https://api.github.com/repos/${githubAccount.username}/${reaction.params.repository.name}/issues`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${decryptString(githubAccount.accessToken, environment.CRYPT_SECRET_KEY)}`,
+          Accept: 'application/vnd.github+json',
+        },
+        body: JSON.stringify({
+          title: title,
+          body: body,
+        }),
+      },
+    );
+    return response.ok;
   }
 
   /**

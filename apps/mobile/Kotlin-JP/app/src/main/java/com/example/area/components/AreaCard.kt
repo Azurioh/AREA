@@ -1,6 +1,5 @@
 package com.example.area.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -15,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.area.ui.theme.Secondary
 import androidx.compose.material3.Text
@@ -25,10 +23,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.montserratFontFamily
+import coil.compose.AsyncImage
 
 @Composable
 fun AreaCard(
-    actionServiceImage: Int,
+    actionServiceImage: String,
     description: String,
     onMenuClick: () -> Unit
 ) {
@@ -50,8 +49,8 @@ fun AreaCard(
                     .align(Alignment.TopStart)
                     .padding(top = 6.dp, start = 12.dp)
             ) {
-                Image(
-                    painter = painterResource(id = actionServiceImage),
+                AsyncImage(
+                    model = actionServiceImage,
                     contentDescription = "Service Image",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier

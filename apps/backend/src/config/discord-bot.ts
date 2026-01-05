@@ -17,13 +17,22 @@ export const setupDiscordBot = async () => {
     if (message.author.id === environment.DISCORD_CLIENT_ID) {
       return;
     }
+
+    const payload = {
+      channelId: message.channelId,
+      content: message.content,
+      author: {
+        globalName: message.author.globalName,
+      },
+    };
+
     await fetch(`${environment.BASE_API_URL}/webhook/v1/discord`, {
       method: 'POST',
       headers: {
         'x-discord-event': 'message_create',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(message),
+      body: JSON.stringify(payload),
     });
   });
 

@@ -9,15 +9,14 @@ import type {
   GithubAccount,
   GitHubAuthorizationResponse,
   ServiceType,
+  SpotifyAccount,
+  SpotifyAuthorizationResponse,
   ThirdPartyAccount,
-  XAccount,
-  XAuthorizationResponse,
 } from '@/types/third-parties';
-import type { StateToken } from '@area/shared/types/user.types';
+import type { StateToken } from '@area/shared/types/users.types';
 import type { UsersService } from '@/modules/users';
 import type { ThirdPartiesRepository } from './third-parties.repository';
 import { encryptString } from '@/utils/crypt';
-import { createHash } from 'crypto';
 
 /**
  * @class ThirdPartiesService
@@ -45,14 +44,14 @@ export class ThirdPartiesService {
         `https://discord.com/oauth2/authorize?client_id=${environment.DISCORD_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/discord&response_type=code&scope=identify+guilds+bot&state={state}&permissions=536870912`,
       ],
       [
-        'x',
-        `https://x.com/i/oauth2/authorize?response_type=code&client_id=${environment.X_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/x&scope=tweet.read%20users.read%20follows.read%20follows.write%20offline.access&state={state}&code_challenge=${createHash('sha256').update(environment.X_CODE_VERIFIER).digest().toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')}&code_challenge_method=S256`,
+        'spotify',
+        `https://accounts.spotify.com/authorize?response_type=code&client_id=${environment.SPOTIFY_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/spotify&scope=playlist-read-private%20playlist-read-collaborative%20playlist-modify-private%20playlist-modify-public%20user-library-read%20user-library-modify&state={state}`,
       ],
     ]);
     this.servicesAuthorizationFunc = new Map([
       ['github', this.authorizeToGithub],
       ['discord', this.authorizeToDiscord],
-      ['x', this.authorizeToX],
+      ['spotify', this.authorizeToSpotify],
     ]);
   }
 
@@ -235,25 +234,24 @@ export class ThirdPartiesService {
   }
 
   /**
-   * @function authorizeToX
-   * @description Authorize a user to X
+   * @function authorizeToSpotify
+   * @description Authorize a user to Spotify
    *
    * @param {string} userId - The user id
    * @param {string} code - The code provided by the service to get the tokens
    * @returns {Promise<ThirdPartyAccount | null>} The create third party account
    */
-  private async authorizeToX(userId: string, code: string): Promise<ThirdPartyAccount | null> {
-    const response = await fetch('https://api.x.com/2/oauth2/token', {
+  private async authorizeToSpotify(userId: string, code: string): Promise<ThirdPartyAccount | null> {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Basic ${Buffer.from(`${environment.X_CLIENT_ID}:${environment.X_CLIENT_SECRET}`).toString('base64')}`,
+        Authorization: `Basic ${Buffer.from(`${environment.SPOTIFY_CLIENT_ID}:${environment.SPOTIFY_CLIENT_SECRET}`).toString('base64')}`,
       },
       body: new URLSearchParams({
         code: code,
-        code_verifier: environment.X_CODE_VERIFIER,
         grant_type: 'authorization_code',
-        redirect_uri: `${environment.BASE_API_URL}/third-parties/v1/authorize/x`,
+        redirect_uri: `${environment.BASE_API_URL}/third-parties/v1/authorize/spotify`,
       }).toString(),
     });
 
@@ -261,13 +259,31 @@ export class ThirdPartiesService {
       return null;
     }
 
-    const formattedResponse = (await response.json()) as XAuthorizationResponse;
+    const formattedResponse = (await response.json()) as SpotifyAuthorizationResponse;
 
-    const data: XAccount = {
+    const getUserId = async () => {
+      const response = await fetch('https://api.spotify.com/v1/me', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${formattedResponse.access_token}`,
+          Accept: 'application/x-www-form-urlencoded',
+        },
+      });
+
+      if (response.status !== HttpStatusCode.OK) {
+        throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Failed to get spotify user information');
+      }
+      const data = (await response.json()) as { id: string };
+
+      return data.id;
+    };
+
+    const data: SpotifyAccount = {
       userId,
-      service: 'x',
+      service: 'spotify',
       accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
       refreshToken: encryptString(formattedResponse.refresh_token, environment.CRYPT_SECRET_KEY),
+      id: await getUserId(),
     };
     return data;
   }

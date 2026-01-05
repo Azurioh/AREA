@@ -1,5 +1,6 @@
-export * from './about.types';
-export * from './auth.types';
-export * from './services.types';
-export * from './user.types';
-export * from './webhook.types';
+import * as aboutTypes from './about.types';
+import * as authTypes from './auth.types';
+import * as servicesTypes from './services.types';
+import * as usersTypes from './users.types';
+
+export { aboutTypes, authTypes, servicesTypes, usersTypes };
