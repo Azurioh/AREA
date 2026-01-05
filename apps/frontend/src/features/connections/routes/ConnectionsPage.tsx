@@ -15,9 +15,7 @@ const ConnectionsPage: React.FC = () => {
           <CardContent className="p-6 h-full overflow-y-auto">
             <div className="text-center space-y-2 mb-6">
               <h1 className="font-bold tracking-tighter text-primary">Connect to your services</h1>
-              <p className="text-foreground">
-                Sign in to the services you want to link to your automations
-              </p>
+              <p className="text-foreground">Sign in to the services you want to link to your automations</p>
             </div>
             <div className="flex w-full justify-center mt-20">
               <div className="grid grid-cols-2 gap-12">

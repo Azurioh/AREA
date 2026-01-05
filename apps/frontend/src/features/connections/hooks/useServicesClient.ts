@@ -6,7 +6,6 @@ interface Service {
   status: boolean;
 }
 
-
 export function useServicesClient() {
   const { servicesClient, thirdPartiesInformation } = useApp();
   const [services, setServices] = useState<Service[]>([]);
@@ -20,13 +19,13 @@ export function useServicesClient() {
 
       const servicesWithStatus = await Promise.all(
         response.map(async (serviceName: string) => {
-            const statusResponse = await thirdPartiesInformation.getConnectionStatus(serviceName);
+          const statusResponse = await thirdPartiesInformation.getConnectionStatus(serviceName);
 
-            return {
-                name: serviceName,
-                status: Boolean(statusResponse?.connected),
-            };
-        })
+          return {
+            name: serviceName,
+            status: Boolean(statusResponse?.connected),
+          };
+        }),
       );
 
       setServices(servicesWithStatus);
