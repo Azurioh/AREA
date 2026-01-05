@@ -1,7 +1,8 @@
 import { Search } from 'lucide-react';
 import type React from 'react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import SideBar from '@/components/SideBar';
 import WorkflowsCard from '@/components/WorkflowsCard';
 import { Button } from '@/components/wrappers/Button';
@@ -10,19 +11,43 @@ import { Input } from '@/components/wrappers/Input';
 import { AppRoutesPaths } from '@/enums/routes';
 import { useFilter } from '@/features/workflows/hooks/useFilter';
 import { useListWorkflows } from '@/features/workflows/hooks/useListWorkflows';
+import { useToggleExecutionState } from '@/shared/hooks/useToggleExecutionState';
 
 const WorkflowPage: React.FC = () => {
   const navigate = useNavigate();
-  const { workflows, loading } = useListWorkflows();
+  const { workflows, loading, setWorkflows } = useListWorkflows();
+  const { toggleExecutionState, isUpdating } = useToggleExecutionState();
   const [search, setSearch] = useState('');
   const filteredWorkflows = useFilter(workflows, search, (workflow) => (workflow.action?.service || '').toLowerCase());
+
+  const handleToggle = useCallback(
+    async (workflowId: string, nextState: boolean) => {
+      setWorkflows((previous) =>
+        previous.map((workflow) =>
+          workflow._id === workflowId ? { ...workflow, executionState: nextState } : workflow,
+        ),
+      );
+
+      try {
+        await toggleExecutionState(workflowId, nextState);
+      } catch {
+        setWorkflows((previous) =>
+          previous.map((workflow) =>
+            workflow._id === workflowId ? { ...workflow, executionState: !nextState } : workflow,
+          ),
+        );
+        toast.error("Impossible de mettre à jour l'état de ce workflow.");
+      }
+    },
+    [setWorkflows, toggleExecutionState],
+  );
 
   return (
     <div className="flex h-screen bg-background">
       <SideBar />
       <main className="flex-1 ml-24 pr-4 pt-4">
         <Card className="h-full w-full rounded-b-none flex flex-col items-center justify-start">
-          <CardContent className="p-6 h-full overflow-y-auto">
+          <CardContent className="p-6 h-full w-full overflow-y-auto">
             <h1 className="text-5xl mt-12 mb-14 font-text text-center !font-text font-bold tracking-tighter text-primary">
               Build &amp; Manage Your Workflows
             </h1>
@@ -43,18 +68,18 @@ const WorkflowPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 px-4 mb-12">
                 {loading && <div className="col-span-3 text-center text-lg">Chargement...</div>}
                 {!loading &&
-                  filteredWorkflows.map((wf, idx) => (
+                  filteredWorkflows.map((wf) => (
                     <WorkflowsCard
-                      key={idx}
+                      key={wf._id}
                       title={wf.action?.service || 'Unknown'}
                       Description={wf.action?.name || ''}
-                      Value={wf.action?.params?.value || ''}
+                      Value={wf.numberOfExecution}
                       Last={wf.action?.params?.last || ''}
-                      activated={true}
-                      Service1={'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png'}
-                      Service2={
-                        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png'
-                      }
+                      activated={wf.executionState}
+                      Service1={`http://167.86.110.198:8085/images/${wf.action?.service?.toLowerCase()}.png`}
+                      Service2={`http://167.86.110.198:8085/images/${wf.reaction?.service?.toLowerCase()}.png`}
+                      onToggle={(checked) => handleToggle(wf._id, checked)}
+                      isToggling={isUpdating(wf._id)}
                     />
                   ))}
               </div>
