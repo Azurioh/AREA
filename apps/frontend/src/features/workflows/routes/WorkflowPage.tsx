@@ -66,7 +66,12 @@ const WorkflowPage: React.FC = () => {
             </div>
             <div className="w-full flex justify-center">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 px-4 mb-12">
-                {loading && <div className="col-span-3 text-center text-lg">Chargement...</div>}
+                {loading && <div className="col-span-3 text-center text-lg">Loading...</div>}
+                {!loading && filteredWorkflows.length === 0 && (
+                  <div className="col-span-3 text-center text-lg text-muted-foreground">
+                    No workflows found. Create your first workflow to get started!
+                  </div>
+                )}
                 {!loading &&
                   filteredWorkflows.map((wf) => (
                     <WorkflowsCard

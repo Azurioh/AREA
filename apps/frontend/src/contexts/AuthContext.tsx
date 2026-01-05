@@ -1,12 +1,13 @@
 import type { User } from '@area/shared/types/users.types';
 import type React from 'react';
-import { createContext, type ReactNode, useMemo, useState } from 'react';
+import { createContext, type ReactNode, useMemo, useState, useEffect } from 'react';
 import { AuthClient } from '@/features/auth/api/AuthClient';
 import { ActionReactionClient, ServicesClient } from '@/features/workflows';
 import { TokenManager } from '@/lib/TokenManager';
 import { UserInformationClient } from '@/shared/api/UserInformationClient';
 import { ThirdPartiesInformation } from '@/features/connections/api/ThirdPartiesInformation';
 import { ExecutionState } from '@/shared/api/ExecutionState';
+import { UserAdminManagementClient } from '@/features/adminDashboard/api/UserAdminManagement';
 
 /**
  * @interface AuthState
@@ -30,6 +31,7 @@ export interface AuthContextType {
   tokenManager: TokenManager;
   thirdPartiesInformation: ThirdPartiesInformation;
   executionStateClient: ExecutionState;
+  userAdminManagementClient: UserAdminManagementClient;
   logout: () => void;
 }
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
@@ -54,6 +56,31 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const thirdPartiesInformation = useMemo(() => new ThirdPartiesInformation(BASE_URL, tokenManager), [tokenManager]);
   const executionStateClient = useMemo(() => new ExecutionState(BASE_URL, tokenManager), [tokenManager]);
 
+  const userAdminManagementClient = useMemo(
+    () => new UserAdminManagementClient(BASE_URL, tokenManager),
+    [tokenManager],
+  );
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      if (authState.isAuthenticated && !authState.user) {
+        try {
+          const userData = await userInformationClient.getUserInformation();
+          if (userData) {
+            setAuthState((prev) => ({
+              ...prev,
+              user: userData,
+            }));
+          }
+        } catch (error) {
+          console.error('Failed to fetch user information:', error);
+        }
+      }
+    };
+
+    fetchUserInfo();
+  }, [authState.isAuthenticated, authState.user, userInformationClient]);
+
   const contextValue: AuthContextType = useMemo(
     () => ({
       servicesClient,
@@ -64,6 +91,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       authClient,
       thirdPartiesInformation,
       executionStateClient,
+      userAdminManagementClient,
       logout: tokenManager.logout.bind(tokenManager),
     }),
     [
@@ -75,6 +103,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       authClient,
       executionStateClient,
       thirdPartiesInformation,
+      thirdPartiesInformation,
+      userAdminManagementClient,
     ],
   );
 

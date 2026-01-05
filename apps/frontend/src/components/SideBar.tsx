@@ -5,18 +5,26 @@ import { AppRoutesPaths } from '@/enums/routes';
 import areaLogo from '@/assets/area_logo.png';
 import { Avatar } from '@/components/ui/avatar';
 import { useUserInitials } from '@/shared/hooks/useUserInitials';
+import { useApp } from '@/hooks/useApp';
 
 const SideBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const name = useUserInitials();
+  const { authState } = useApp();
 
   const menuItems = [
     { icon: House, label: 'Home', path: AppRoutesPaths.HOME, name: 'Home' },
     { icon: Workflow, label: 'Workflows', path: AppRoutesPaths.WORKFLOWS, name: 'Workflows' },
     { icon: Link, label: 'Connections', path: AppRoutesPaths.CONNECTIONS, name: 'Connections' },
-    { icon: LayoutDashboard, label: 'Dashboard', path: AppRoutesPaths.ADMIN_DASHBOARD, name: 'Dashboard' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: AppRoutesPaths.ADMIN_DASHBOARD, name: 'Dashboard', adminOnly: true },
   ];
+  const visibleMenuItems = menuItems.filter(item => {
+    if (item.adminOnly) {
+      return authState.user?.role === 1;
+    }
+    return true;
+  });
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-24 bg-background flex flex-col items-center py-8 gap-4">
@@ -25,12 +33,11 @@ const SideBar = () => {
       </div>
       <div className="flex flex-col items-center pt-6 mb-10">
         <Button className="rounded-[30px] w-12 h-12" onClick={() => navigate(AppRoutesPaths.CREATE)}>
-          {' '}
           <Plus className="h-16 w-16 scale-[2]" />
         </Button>
         <p className="text-xs"> Create </p>
       </div>
-      {menuItems.map((item) => {
+      {visibleMenuItems.map((item) => {
         const isActive = location.pathname === item.path;
         return (
           <div key={item.label} className="flex flex-col items-center">

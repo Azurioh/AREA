@@ -1,13 +1,7 @@
 import { useState, useMemo } from 'react';
+import type { GetAllUsers } from '@area/shared/schemas/users.schema';
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-}
-
-export const useUserFilter = (users: User[]) => {
+export const useUserFilter = (users: GetAllUsers) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<'All' | 'Admin' | 'User'>('All');
 
@@ -16,7 +10,14 @@ export const useUserFilter = (users: User[]) => {
       const matchesSearch =
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesRole = roleFilter === 'All' || user.role === roleFilter;
+
+      let matchesRole = true;
+      if (roleFilter === 'Admin') {
+        matchesRole = String(user.role) === '1';
+      } else if (roleFilter === 'User') {
+        matchesRole = String(user.role) === '2';
+      }
+
       return matchesSearch && matchesRole;
     });
   }, [searchQuery, roleFilter, users]);

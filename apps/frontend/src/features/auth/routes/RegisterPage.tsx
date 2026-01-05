@@ -125,7 +125,6 @@ const RegisterPage: React.FC = () => {
             <div className="text-center text-sm text-foreground">
               Already have an account ?
               <Link to={AppRoutesPaths.LOGIN} className="text-primary hover:underline">
-                {' '}
                 Sign in
               </Link>
             </div>
