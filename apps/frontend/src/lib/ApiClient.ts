@@ -63,9 +63,19 @@ export class ApiClient {
       }
     }
 
+    const responseText = await response.text();
+
     if (!response.ok) {
-      const errorResponse = await response.json();
-      const errorMessage = errorResponse?.message || errorResponse?.data || 'An error occurred';
+      let errorMessage = 'An error occurred';
+
+      if (responseText) {
+        try {
+          const errorResponse = JSON.parse(responseText);
+          errorMessage = errorResponse?.message || errorResponse?.data || errorMessage;
+        } catch {
+          errorMessage = responseText;
+        }
+      }
 
       toast.error(errorMessage);
       if (options.throwError) {
@@ -74,6 +84,14 @@ export class ApiClient {
       return undefined;
     }
 
-    return response.json() as Promise<T>;
+    if (!responseText) {
+      return undefined;
+    }
+
+    try {
+      return JSON.parse(responseText) as T;
+    } catch {
+      return undefined;
+    }
   }
 }
