@@ -63,18 +63,13 @@ export class ApiClient {
       }
     }
 
-    const responseText = await response.text();
-
     if (!response.ok) {
       let errorMessage = 'An error occurred';
-
-      if (responseText) {
-        try {
-          const errorResponse = JSON.parse(responseText);
-          errorMessage = errorResponse?.message || errorResponse?.data || errorMessage;
-        } catch {
-          errorMessage = responseText;
-        }
+      try {
+        const errorResponse = await response.json();
+        errorMessage = errorResponse?.message || errorResponse?.data || errorMessage;
+      } catch {
+        // ignore empty error bodies
       }
 
       toast.error(errorMessage);
@@ -84,12 +79,8 @@ export class ApiClient {
       return undefined;
     }
 
-    if (!responseText) {
-      return undefined;
-    }
-
     try {
-      return JSON.parse(responseText) as T;
+      return (await response.json()) as T;
     } catch {
       return undefined;
     }
