@@ -21,11 +21,14 @@ const WorkflowPage: React.FC = () => {
     <div className="flex h-screen bg-background">
       <SideBar />
       <main className="flex-1 ml-24 pr-4 pt-4">
-        <Card className="h-full w-full rounded-b-none flex flex-col items-center justify-start">
+        <Card className="h-full w-full rounded-b-none">
           <CardContent className="p-6 h-full overflow-y-auto">
-            <h1 className="text-5xl mt-12 mb-14 font-text text-center !font-text font-bold tracking-tighter text-primary">
-              Build &amp; Manage Your Workflows
-            </h1>
+            <div className="text-center space-y-2 mb-6">
+              <h1 className="font-bold tracking-tighter text-primary"> Build &amp; Manage Your Workflows </h1>
+              <p className="text-foreground">
+                See all the workflows you've created and manage them from one place
+              </p>
+            </div>
             <div className="w-full flex justify-center mb-8">
               <div className="relative w-full max-w-4xl">
                 <Input
@@ -41,8 +44,14 @@ const WorkflowPage: React.FC = () => {
             </div>
             <div className="w-full flex justify-center">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 px-4 mb-12">
-                {loading && <div className="col-span-3 text-center text-lg">Chargement...</div>}
+                {loading && <div className="col-span-3 text-center text-lg">Loading...</div>}
+                {!loading && filteredWorkflows.length === 0 && (
+                  <div className="col-span-3 text-center text-lg text-muted-foreground">
+                    No workflows found. Create your first workflow to get started!
+                  </div>
+                )}
                 {!loading &&
+                  filteredWorkflows.length > 0 &&
                   filteredWorkflows.map((wf, idx) => (
                     <WorkflowsCard
                       key={idx}

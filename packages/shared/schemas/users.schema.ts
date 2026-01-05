@@ -48,6 +48,8 @@ export const getAllUsersResponseSchema = userSchema
   )
   .array();
 
+export type GetAllUsers = z.infer<typeof getAllUsersResponseSchema>;
+
 /******************
  * GET USER BY ID *
  ******************/
