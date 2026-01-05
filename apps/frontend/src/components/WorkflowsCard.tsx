@@ -1,7 +1,7 @@
-import { Card } from "@/components/ui/card";
+import { Card } from '@/components/ui/card';
 import { MoveRight, Ellipsis } from 'lucide-react';
-import { Switch } from "@/components/ui/switch";
-import { useActionsModal } from "@/shared/hooks/useActionsModal";
+import { Switch } from '@/components/ui/switch';
+import { useActionsModal } from '@/shared/hooks/useActionsModal';
 import { Button } from '@/components/wrappers/Button';
 import { motion } from 'framer-motion';
 
@@ -13,7 +13,11 @@ interface StatsCardProps {
   activated: boolean;
   Service1: string;
   Service2: string;
+  onToggle?: (checked: boolean) => void;
+  isToggling?: boolean;
 }
+
+const noop = () => undefined;
 
 export default function WorkflowsCard({
   title,
@@ -23,8 +27,12 @@ export default function WorkflowsCard({
   Service1,
   Service2,
   activated,
+  onToggle,
+  isToggling = false,
 }: StatsCardProps) {
   const { isModalOpen, openModal, closeModal, modalRef, buttonRef } = useActionsModal();
+  const handleToggle = onToggle ?? noop;
+  const switchDisabled = isToggling || !onToggle;
 
   return (
     <motion.div
@@ -36,7 +44,9 @@ export default function WorkflowsCard({
       <Card className="relative p-4 flex items-center justify-between max-w-sm rounded-[var(--large-radius)] min-w-96 bg-muted">
         <div className="absolute top-2 right-2 flex items-center space-x-2">
           <Switch
-            defaultChecked={activated}
+            checked={activated}
+            onCheckedChange={handleToggle}
+            disabled={switchDisabled}
             className="data-[state=unchecked]:bg-switch-disabled data-[state=unchecked]:border-switch-disabled"
           />
           <div className="relative">
