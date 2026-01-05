@@ -5,6 +5,7 @@ on:
     paths:
       - .github/workflows/backend-tests.yml
       - apps/backend/**
+      - packages/shared/**
 
 jobs:
     backend-tests:

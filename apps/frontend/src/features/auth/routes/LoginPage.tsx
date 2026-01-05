@@ -88,7 +88,6 @@ const LoginPage: React.FC = () => {
             <div className="text-center text-sm text-foreground">
               Don't have an account ?
               <Link to={AppRoutesPaths.REGISTER} className="text-primary hover:underline">
-                {' '}
                 Sign up
               </Link>
             </div>

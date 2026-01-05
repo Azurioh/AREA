@@ -5,6 +5,7 @@ on:
     paths:
       - .github/workflows/frontend-tests.yml
       - apps/frontend/**
+      - packages/shared/**
 
 jobs:
     frontend-tests:

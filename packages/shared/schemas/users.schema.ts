@@ -1,5 +1,5 @@
-import z from 'zod';
 import { userFields, userSchema } from '@area/shared/types/users.types';
+import z from 'zod';
 
 /***************
  * GET USER ME *
@@ -47,6 +47,8 @@ export const getAllUsersResponseSchema = userSchema
     }),
   )
   .array();
+
+export type GetAllUsers = z.infer<typeof getAllUsersResponseSchema>;
 
 /******************
  * GET USER BY ID *
