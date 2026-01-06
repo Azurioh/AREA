@@ -27,5 +27,5 @@ export function useListWorkflows() {
     fetchWorkflows();
   }, []);
 
-  return { workflows, loading };
+  return { workflows, loading, setWorkflows };
 }

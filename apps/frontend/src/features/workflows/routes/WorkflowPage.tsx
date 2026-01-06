@@ -1,7 +1,8 @@
 import { Search } from 'lucide-react';
 import type React from 'react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import SideBar from '@/components/SideBar';
 import WorkflowsCard from '@/components/WorkflowsCard';
 import { Button } from '@/components/wrappers/Button';
@@ -10,25 +11,47 @@ import { Input } from '@/components/wrappers/Input';
 import { AppRoutesPaths } from '@/enums/routes';
 import { useFilter } from '@/features/workflows/hooks/useFilter';
 import { useListWorkflows } from '@/features/workflows/hooks/useListWorkflows';
+import { useToggleExecutionState } from '@/shared/hooks/useToggleExecutionState';
+import { MoveRight } from 'lucide-react';
 
 const WorkflowPage: React.FC = () => {
   const navigate = useNavigate();
-  const { workflows, loading } = useListWorkflows();
+  const { workflows, loading, setWorkflows } = useListWorkflows();
+  const { toggleExecutionState, isUpdating } = useToggleExecutionState();
   const [search, setSearch] = useState('');
   const filteredWorkflows = useFilter(workflows, search, (workflow) => (workflow.action?.service || '').toLowerCase());
+
+  const handleToggle = useCallback(
+    async (workflowId: string, nextState: boolean) => {
+      setWorkflows((previous) =>
+        previous.map((workflow) =>
+          workflow._id === workflowId ? { ...workflow, executionState: nextState } : workflow,
+        ),
+      );
+
+      try {
+        await toggleExecutionState(workflowId, nextState);
+      } catch {
+        setWorkflows((previous) =>
+          previous.map((workflow) =>
+            workflow._id === workflowId ? { ...workflow, executionState: !nextState } : workflow,
+          ),
+        );
+        toast.error('Unable to update the state of this workflow.');
+      }
+    },
+    [setWorkflows, toggleExecutionState],
+  );
 
   return (
     <div className="flex h-screen bg-background">
       <SideBar />
       <main className="flex-1 ml-24 pr-4 pt-4">
-        <Card className="h-full w-full rounded-b-none">
-          <CardContent className="p-6 h-full overflow-y-auto">
-            <div className="text-center space-y-2 mb-6">
-              <h1 className="font-bold tracking-tighter text-primary"> Build &amp; Manage Your Workflows </h1>
-              <p className="text-foreground">
-                See all the workflows you've created and manage them from one place
-              </p>
-            </div>
+        <Card className="h-full w-full rounded-b-none flex flex-col items-center justify-start">
+          <CardContent className="p-6 h-full w-full overflow-y-auto">
+            <h1 className="text-5xl mt-12 mb-14 font-text text-center !font-text font-bold tracking-tighter text-primary">
+              Build &amp; Manage Your Workflows
+            </h1>
             <div className="w-full flex justify-center mb-8">
               <div className="relative w-full max-w-4xl">
                 <Input
@@ -51,19 +74,23 @@ const WorkflowPage: React.FC = () => {
                   </div>
                 )}
                 {!loading &&
-                  filteredWorkflows.length > 0 &&
-                  filteredWorkflows.map((wf, idx) => (
+                  filteredWorkflows.map((wf) => (
                     <WorkflowsCard
-                      key={idx}
-                      title={wf.action?.service || 'Unknown'}
-                      Description={wf.action?.name || ''}
-                      Value={wf.action?.params?.value || ''}
-                      Last={wf.action?.params?.last || ''}
-                      activated={true}
-                      Service1={'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png'}
-                      Service2={
-                        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png'
+                      key={wf._id}
+                      title={wf.action?.service + ' | ' + wf.reaction?.service || 'Unknown'}
+                      Description={
+                        <span className="inline-flex items-center gap-2">
+                          <span>{wf.action?.name || 'Unknown action'}</span>
+                          <MoveRight className="h-4 w-4 text-muted-foreground" />
+                          <span>{wf.reaction?.name || 'Unknown reaction'}</span>
+                        </span>
                       }
+                      Value={wf.numberOfExecution}
+                      activated={wf.executionState}
+                      Service1={`${import.meta.env.VITE_BASE_IMAGE_URL}/${wf.action?.service?.toLowerCase()}.png`}
+                      Service2={`${import.meta.env.VITE_BASE_IMAGE_URL}/${wf.reaction?.service?.toLowerCase()}.png`}
+                      onToggle={(checked) => handleToggle(wf._id, checked)}
+                      isToggling={isUpdating(wf._id)}
                     />
                   ))}
               </div>
