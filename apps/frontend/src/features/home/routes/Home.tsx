@@ -50,8 +50,8 @@ export default function HomePage() {
                   }
                   Value={wf.numberOfExecution}
                   activated={wf.executionState}
-                  Service1={`http://167.86.110.198:8085/images/${wf.action?.service?.toLowerCase()}.png`}
-                  Service2={`http://167.86.110.198:8085/images/${wf.reaction?.service?.toLowerCase()}.png`}
+                  Service1={`${import.meta.env.VITE_BASE_IMAGE_URL}/${wf.action?.service?.toLowerCase()}.png`}
+                  Service2={`${import.meta.env.VITE_BASE_IMAGE_URL}/${wf.reaction?.service?.toLowerCase()}.png`}
                   homePage={true}
                 />
               ))}
