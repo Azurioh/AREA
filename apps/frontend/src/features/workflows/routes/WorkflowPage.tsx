@@ -12,6 +12,7 @@ import { AppRoutesPaths } from '@/enums/routes';
 import { useFilter } from '@/features/workflows/hooks/useFilter';
 import { useListWorkflows } from '@/features/workflows/hooks/useListWorkflows';
 import { useToggleExecutionState } from '@/shared/hooks/useToggleExecutionState';
+import { MoveRight } from 'lucide-react';
 
 const WorkflowPage: React.FC = () => {
   const navigate = useNavigate();
@@ -76,10 +77,15 @@ const WorkflowPage: React.FC = () => {
                   filteredWorkflows.map((wf) => (
                     <WorkflowsCard
                       key={wf._id}
-                      title={wf.action?.service || 'Unknown'}
-                      Description={wf.action?.name || ''}
+                      title={wf.action?.service + ' | ' + wf.reaction?.service || 'Unknown'}
+                      Description={
+                        <span className="inline-flex items-center gap-2">
+                          <span>{wf.action?.name || 'Unknown action'}</span>
+                          <MoveRight className="h-4 w-4 text-muted-foreground" />
+                          <span>{wf.reaction?.name || 'Unknown reaction'}</span>
+                        </span>
+                      }
                       Value={wf.numberOfExecution}
-                      Last={wf.action?.params?.last || ''}
                       activated={wf.executionState}
                       Service1={`http://167.86.110.198:8085/images/${wf.action?.service?.toLowerCase()}.png`}
                       Service2={`http://167.86.110.198:8085/images/${wf.reaction?.service?.toLowerCase()}.png`}

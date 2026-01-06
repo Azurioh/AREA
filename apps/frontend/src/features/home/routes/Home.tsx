@@ -2,6 +2,8 @@ import SideBar from '@/components/SideBar';
 import { Card, CardContent } from '@/components/ui/card';
 import WorkflowsCard from '@/components/WorkflowsCard';
 import StatsCard from '@/features/home/components/StatsCard';
+import { useListWorkflows } from '@/features/workflows/hooks/useListWorkflows';
+import { MoveRight } from 'lucide-react';
 
 export default function HomePage() {
   const stats = [
@@ -11,38 +13,8 @@ export default function HomePage() {
     { title: 'Errors', value: '3' },
   ];
 
-  const workflows = [
-    {
-      title: 'Workflow 1',
-      Description: 'Description 1',
-      Value: '42',
-      Last: '5',
-      activated: true,
-      Service1: 'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png',
-      Service2:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png',
-    },
-    {
-      title: 'Workflow 2',
-      Description: 'Description 2',
-      Value: '123',
-      Last: '10',
-      activated: false,
-      Service1: 'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png',
-      Service2:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png',
-    },
-    {
-      title: 'Workflow 3',
-      Description: 'Description 3',
-      Value: '300',
-      Last: '60',
-      activated: true,
-      Service1: 'https://logos-world.net/wp-content/uploads/2020/12/Discord-Logo.png',
-      Service2:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png',
-    },
-  ];
+  const { workflows } = useListWorkflows();
+  const latestWorkflows = [...workflows].reverse().slice(0, 3);
 
   return (
     <div className="flex h-screen bg-background">
@@ -56,28 +28,34 @@ export default function HomePage() {
                 Manage and monitor your workflows all in one place with our intuitive dashboard
               </p>
             </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
-            {stats.map((stat, i) => (
-              <StatsCard key={i} title={stat.title} value={stat.value} />
-            ))}
-          </div>
-          <h1 className="text-4xl mt-28 mb-20 text-center font-button font-bold tracking-tighter text-primary">
-            Recents Workflows
-          </h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 px-4 mb-12">
-            {workflows.map((wf, idx) => (
-              <WorkflowsCard
-                key={idx}
-                title={wf.title}
-                Description={wf.Description}
-                Value={wf.Value}
-                Last={wf.Last}
-                activated={wf.activated}
-                Service1={wf.Service1}
-                Service2={wf.Service2}
-              />
-            ))}
-          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
+              {stats.map((stat, i) => (
+                <StatsCard key={i} title={stat.title} value={stat.value} />
+              ))}
+            </div>
+            <h1 className="text-4xl mt-28 mb-20 text-center font-button font-bold tracking-tighter text-primary">
+              Recents Workflows
+            </h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 px-4 mb-12">
+              {latestWorkflows.map((wf) => (
+                <WorkflowsCard
+                  key={wf._id}
+                  title={wf.action?.service + ' | ' + wf.reaction?.service || 'Unknown'}
+                  Description={
+                    <span className="inline-flex items-center gap-2">
+                      <span>{wf.action?.name || 'Unknown action'}</span>
+                      <MoveRight className="h-4 w-4 text-muted-foreground" />
+                      <span>{wf.reaction?.name || 'Unknown reaction'}</span>
+                    </span>
+                  }
+                  Value={wf.numberOfExecution}
+                  activated={wf.executionState}
+                  Service1={`http://167.86.110.198:8085/images/${wf.action?.service?.toLowerCase()}.png`}
+                  Service2={`http://167.86.110.198:8085/images/${wf.reaction?.service?.toLowerCase()}.png`}
+                  homePage={true}
+                />
+              ))}
+            </div>
           </CardContent>
         </Card>
       </main>
