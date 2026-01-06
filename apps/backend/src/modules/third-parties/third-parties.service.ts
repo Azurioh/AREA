@@ -46,7 +46,7 @@ export class ThirdPartiesService {
       ],
       [
         'spotify',
-        `https://accounts.spotify.com/authorize?response_type=code&client_id=${environment.SPOTIFY_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/spotify&scope=playlist-read-private%20playlist-read-collaborative%20playlist-modify-private%20playlist-modify-public%20user-library-read%20user-library-modify&state={state}`,
+        `https://accounts.spotify.com/authorize?response_type=code&client_id=${environment.SPOTIFY_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/spotify&scope=playlist-read-private%20playlist-read-collaborative%20playlist-modify-private%20playlist-modify-public%20user-library-read%20user-library-modify%20user-read-currently-playing&state={state}`,
       ],
     ]);
     this.servicesAuthorizationFunc = new Map([
