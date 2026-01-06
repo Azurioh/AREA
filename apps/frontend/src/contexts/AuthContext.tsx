@@ -6,6 +6,7 @@ import { ActionReactionClient, ServicesClient } from '@/features/workflows';
 import { TokenManager } from '@/lib/TokenManager';
 import { UserInformationClient } from '@/shared/api/UserInformationClient';
 import { ThirdPartiesInformation } from '@/features/connections/api/ThirdPartiesInformation';
+import { ExecutionState } from '@/shared/api/ExecutionState';
 import { UserAdminManagementClient } from '@/features/adminDashboard/api/UserAdminManagement';
 
 /**
@@ -29,6 +30,7 @@ export interface AuthContextType {
   authState: AuthState;
   tokenManager: TokenManager;
   thirdPartiesInformation: ThirdPartiesInformation;
+  executionStateClient: ExecutionState;
   userAdminManagementClient: UserAdminManagementClient;
   logout: () => void;
 }
@@ -52,6 +54,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const userInformationClient = useMemo(() => new UserInformationClient(BASE_URL, tokenManager), [tokenManager]);
   const authClient = useMemo(() => new AuthClient(BASE_URL, tokenManager), [tokenManager]);
   const thirdPartiesInformation = useMemo(() => new ThirdPartiesInformation(BASE_URL, tokenManager), [tokenManager]);
+  const executionStateClient = useMemo(() => new ExecutionState(BASE_URL, tokenManager), [tokenManager]);
+
   const userAdminManagementClient = useMemo(
     () => new UserAdminManagementClient(BASE_URL, tokenManager),
     [tokenManager],
@@ -86,6 +90,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       userInformationClient,
       authClient,
       thirdPartiesInformation,
+      executionStateClient,
       userAdminManagementClient,
       logout: tokenManager.logout.bind(tokenManager),
     }),
@@ -96,6 +101,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       servicesClient,
       userInformationClient,
       authClient,
+      executionStateClient,
+      thirdPartiesInformation,
       thirdPartiesInformation,
       userAdminManagementClient,
     ],
