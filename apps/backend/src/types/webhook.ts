@@ -20,3 +20,13 @@ export type GithubWebhookPayload = {
 export type DiscordWebhookPayload = {
   channelId: number;
 };
+
+/**
+ * @type SpotifyWebhookPayload
+ * @description The payload of the spotify webhook.
+ *
+ * @property {string} ids the ids relative to the triggered webhook
+ */
+export type SpotifyWebhookPayload = {
+  ids: string;
+};
