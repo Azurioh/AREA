@@ -36,7 +36,7 @@ const WorkflowPage: React.FC = () => {
             workflow._id === workflowId ? { ...workflow, executionState: !nextState } : workflow,
           ),
         );
-        toast.error("Impossible de mettre à jour l'état de ce workflow.");
+        toast.error('Unable to update the state of this workflow.');
       }
     },
     [setWorkflows, toggleExecutionState],

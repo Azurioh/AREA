@@ -2,7 +2,7 @@ import type { UpdateActionReactionExecutionStateBody } from '@area/shared/schema
 import { ApiClient } from '@/lib/ApiClient';
 
 /**
- * @class ActionReactionClient
+ * @class ExecutionState
  * @description Client for interacting with the Action-Reaction API.
  */
 export class ExecutionState extends ApiClient {
