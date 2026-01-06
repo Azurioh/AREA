@@ -17,6 +17,7 @@ import { servicesRoutes } from './modules/services';
 import thirdPartiesRoute from './modules/third-parties/third-parties.route';
 import { usersRoutes } from './modules/users';
 import { webhookRoutes } from './modules/webhook';
+import { setupPolling } from './config/setup-polling';
 
 async function build(): Promise<FastifyInstance> {
   const app: FastifyInstance = fastify({
@@ -34,6 +35,7 @@ async function build(): Promise<FastifyInstance> {
   setupZod(app);
   await setupDiscordBot();
   setupStaticFiles(app);
+  setupPolling(app);
 
   registerServices(app);
 
