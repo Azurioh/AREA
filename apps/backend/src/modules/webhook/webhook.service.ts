@@ -1,4 +1,4 @@
-import type { DiscordWebhookPayload, GithubWebhookPayload } from '@/types/webhook';
+import type { DiscordWebhookPayload, GithubWebhookPayload, SpotifyWebhookPayload } from '@/types/webhook';
 import type { ActionPayload } from '@/types/action-reaction';
 import type { ActionsReactionsService } from '@/modules/actions-reactions';
 
@@ -45,6 +45,25 @@ export class WebhookService {
       service: 'discord',
       name: event,
       trigger: `${event}/${body.channelId}`,
+      content: body,
+    };
+
+    this.actionsReactionsService.handleReactions(action);
+  }
+
+  /**
+   * @function spotifyCallback
+   * @description Handle the spotify callback.
+   *
+   * @param {string} event The event who triggered the callback.
+   * @param {DiscordWebhookPayload} body The body of the callback.
+   * @returns {Promise<void>}
+   */
+  async spotifyCallback(event: string, body: SpotifyWebhookPayload): Promise<void> {
+    const action: ActionPayload = {
+      service: 'spotify',
+      name: event,
+      trigger: `${event}/${body.ids}`,
       content: body,
     };
 

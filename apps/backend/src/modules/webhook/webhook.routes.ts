@@ -8,6 +8,8 @@ import { DiscordService } from '../discord';
 import { ThirdPartiesRepository } from '../third-parties/third-parties.repository';
 import { ThirdPartiesService } from '../third-parties';
 import { SpotifyService } from '../spotify';
+import { PollingRepository } from '../polling/polling.repository';
+import { PollingService } from '../polling/polling.service';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -17,12 +19,14 @@ export default async (app: FastifyInstance) => {
   const userRepository = new UsersRepository(app.mongo.db);
   const actionsReactionsRepository = new ActionsReactionsRepository(app.mongo.db);
   const thirdPartiesRepository = new ThirdPartiesRepository(app.mongo.db);
+  const pollingRepository = new PollingRepository(app.mongo.db);
 
+  const pollingService = new PollingService(pollingRepository);
   const usersService = new UsersService(userRepository);
   const thirdPartiesService = new ThirdPartiesService(thirdPartiesRepository, usersService);
   const githubService = new GithubService(thirdPartiesService);
   const discordService = new DiscordService(thirdPartiesService);
-  const spotifyService = new SpotifyService(thirdPartiesService);
+  const spotifyService = new SpotifyService(thirdPartiesService, pollingService);
   const actionsReactionsService = new ActionsReactionsService(
     actionsReactionsRepository,
     githubService,
@@ -51,6 +55,17 @@ export default async (app: FastifyInstance) => {
     schema: {
       summary: 'The callback of the discord webhook',
       description: 'Handle the callback of the discord webhook.',
+      tags: ['Webhooks'],
+    },
+  });
+
+  app.route({
+    method: 'POST',
+    url: '/v1/spotify/',
+    handler: controller.spotifyCallback.bind(controller),
+    schema: {
+      summary: 'The callback of the spotify webhook',
+      description: 'Handle the callback of the spotify webhook.',
       tags: ['Webhooks'],
     },
   });
