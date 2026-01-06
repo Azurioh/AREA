@@ -8,6 +8,7 @@ import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-
 import type { ActionPayload } from '@/types/action-reaction';
 import { Reaction } from '@/integrations';
 import type { WithId } from 'mongodb';
+import type { PollingService } from '../polling/polling.service';
 
 /**
  * @class SpotifyService
@@ -15,9 +16,11 @@ import type { WithId } from 'mongodb';
  */
 export class SpotifyService {
   private thirdPartiesService: ThirdPartiesService;
+  private pollingService: PollingService;
 
-  constructor(thirdPartiesService: ThirdPartiesService) {
+  constructor(thirdPartiesService: ThirdPartiesService, pollingService: PollingService) {
     this.thirdPartiesService = thirdPartiesService;
+    this.pollingService = pollingService;
   }
 
   /**
@@ -33,11 +36,37 @@ export class SpotifyService {
       'spotify',
       userId,
     );
-    const trigger = '';
 
-    action;
-    spotifyAccount;
-    return trigger;
+    switch (action.name) {
+      case 'listening_to_artist': {
+        return await this.listeningToArtist(spotifyAccount, action);
+      }
+    }
+    throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');
+  }
+
+  async listeningToArtist(spotifyAccount: WithId<SpotifyAccount>, action: CreateAction): Promise<string> {
+    let response = await this.search(
+      decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY),
+      action.params.artist,
+      'artist',
+    );
+
+    if (response.status === HttpStatusCode.UNAUTHORIZED) {
+      const accessToken = await this.refreshTokens(
+        spotifyAccount._id.toString(),
+        decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
+      );
+
+      response = await this.search(accessToken, action.params.artist, 'artist');
+    }
+    this.pollingService.addUserToPoll({
+      service: 'spotify',
+      userId: spotifyAccount.userId,
+      type: 'listening_to_artist',
+      trigger: response.search.artists.items[0].id,
+    });
+    return `listening_to_artist/${spotifyAccount.userId}/${response.search.artists.items[0].id}`;
   }
 
   /**
@@ -226,7 +255,6 @@ export class SpotifyService {
           'Content-Type': 'application/json',
         },
       });
-      console.log(response);
       return response;
     };
 
