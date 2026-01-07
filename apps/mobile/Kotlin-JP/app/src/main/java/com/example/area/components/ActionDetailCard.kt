@@ -1,6 +1,5 @@
 package com.example.area.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,13 +9,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,10 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.data.models.ActionDetail
 import com.example.area.ui.theme.Accent
-import com.example.area.ui.theme.CustomBlack
-import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.poppinsFontFamily
+import com.example.area.ui.theme.AppTheme
 import coil.compose.AsyncImage
 
 @Composable
@@ -49,7 +44,7 @@ fun ActionDetailCard(
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
+        colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
         modifier = Modifier
             .padding(12.dp)
             .fillMaxWidth()
@@ -95,7 +90,7 @@ fun ActionDetailCard(
                 fontFamily = montserratFontFamily,
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
-                color = CustomBlack,
+                color = AppTheme.colors.textPrimary,
                 lineHeight = 15.sp,
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth()

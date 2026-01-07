@@ -19,16 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.poppinsFontFamily
+import com.example.area.ui.theme.AppTheme
 import coil.compose.AsyncImage
 
 @Composable
@@ -40,7 +39,7 @@ fun AreaSelectedCard(
 ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
+        colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
         modifier = Modifier
             .padding(12.dp)
             .size(width = 350.dp, height = 120.dp)
@@ -81,7 +80,7 @@ fun AreaSelectedCard(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close",
-                    tint = CustomBlack,
+                    tint = AppTheme.colors.textPrimary,
                     modifier = Modifier
                         .size(24.dp)
                         .clickable { onMenuClick() }
@@ -93,7 +92,7 @@ fun AreaSelectedCard(
                 fontFamily = montserratFontFamily,
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
-                color = CustomBlack,
+                color = AppTheme.colors.textPrimary,
                 lineHeight = 15.sp,
                 textAlign = TextAlign.Start,
                 modifier = Modifier

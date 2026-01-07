@@ -20,9 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.UserViewModel
-import com.example.area.ui.theme.Secondary
 import androidx.compose.ui.Alignment
-import com.example.area.ui.theme.CustomBlack
+import com.example.area.ui.theme.AppTheme
 
 @Composable
 fun EditProfileCard(
@@ -37,7 +36,7 @@ fun EditProfileCard(
     ) {
         ElevatedCard(
             elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-            colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
+            colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
             modifier = Modifier
                 .padding(12.dp)
                 .size(width = 350.dp, height = 390.dp)
@@ -47,7 +46,7 @@ fun EditProfileCard(
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp,
-                color = CustomBlack,
+                color = AppTheme.colors.textPrimary,
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .padding(22.dp)

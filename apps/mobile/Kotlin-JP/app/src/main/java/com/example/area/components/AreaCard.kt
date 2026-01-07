@@ -15,14 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.example.area.ui.theme.Secondary
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.montserratFontFamily
+import com.example.area.ui.theme.AppTheme
 import coil.compose.AsyncImage
 
 @Composable
@@ -34,7 +33,7 @@ fun AreaCard(
     ElevatedCard(
         onClick = onMenuClick,
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
+        colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
         modifier = Modifier
             .padding(8.dp)
             .size(width = 350.dp, height = 60.dp)
@@ -62,7 +61,7 @@ fun AreaCard(
                     fontFamily = montserratFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 15.sp,
-                    color = CustomBlack,
+                    color = AppTheme.colors.textPrimary,
                     lineHeight = 15.sp,
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()

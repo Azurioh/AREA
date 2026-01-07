@@ -25,8 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
+import com.example.area.ui.theme.AppTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.scale
@@ -37,7 +37,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.CustomWhite
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.poppinsFontFamily
@@ -58,7 +57,7 @@ fun DisplayCard(
     var checked by remember { mutableStateOf(isEnabled) }
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
+        colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
         modifier = Modifier
             .padding(12.dp)
             .size(width = 350.dp, height = 180.dp)
@@ -126,7 +125,7 @@ fun DisplayCard(
                 Icon(
                     imageVector = Icons.Filled.Dehaze,
                     contentDescription = "Menu",
-                    tint = CustomBlack,
+                    tint = AppTheme.colors.textPrimary,
                     modifier = Modifier
                         .size(20.dp)
                         .offset(y = 13.dp)
@@ -155,7 +154,7 @@ fun DisplayCard(
                     fontFamily = montserratFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 13.sp,
-                    color = CustomBlack,
+                    color = AppTheme.colors.textPrimary,
                     lineHeight = 15.sp,
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
@@ -174,7 +173,7 @@ fun DisplayCard(
                     fontFamily = montserratFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 10.sp,
-                    color = CustomBlack,
+                    color = AppTheme.colors.textPrimary,
                     textAlign = TextAlign.End,
                 )
             }
@@ -213,7 +212,7 @@ fun DisplayCard(
                         fontFamily = montserratFontFamily,
                         fontWeight = FontWeight.Medium,
                         fontSize = 10.sp,
-                        color = CustomBlack,
+                        color = AppTheme.colors.textPrimary,
                         textAlign = TextAlign.End,
                     )
                 }

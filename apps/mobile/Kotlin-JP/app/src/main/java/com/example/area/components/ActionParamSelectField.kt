@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.data.models.ActionParam
 import com.example.area.ui.theme.Accent
-import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.poppinsFontFamily
+import com.example.area.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +45,7 @@ fun ActionParamSelectField(
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.Medium,
             fontSize = 14.sp,
-            color = CustomBlack,
+            color = AppTheme.colors.textPrimary,
             modifier = Modifier.padding(bottom = 4.dp)
         )
 
@@ -64,7 +64,7 @@ fun ActionParamSelectField(
                     .menuAnchor(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Accent,
-                    unfocusedBorderColor = CustomBlack.copy(alpha = 0.5f)
+                    unfocusedBorderColor = AppTheme.colors.textPrimary.copy(alpha = 0.5f)
                 )
             )
 
