@@ -1,5 +1,7 @@
 export const AppRoutesPaths = {
   HOME: '/',
+  PRIVACY: '/privacy',
+  TERMS: '/terms',
   LOGIN: '/login',
   REGISTER: '/register',
   ADMIN_DASHBOARD: '/admin-dashboard',
