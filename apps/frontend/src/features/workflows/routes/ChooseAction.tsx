@@ -118,7 +118,6 @@ const ChooseAction: React.FC = () => {
         </Card>
       </main>
 
-      {/* MODAL DÉPLACÉ ICI - en dehors du main */}
       <AnimatePresence>
         {selectedAction && (
           <motion.div
