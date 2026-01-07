@@ -28,6 +28,9 @@ describe('Auth Routes', () => {
   }, 30000);
 
   afterAll(async () => {
+    if (app?.mongo?.client) {
+      await app.mongo.client.close();
+    }
     await app?.close();
     await closeDiscordBot();
   });
