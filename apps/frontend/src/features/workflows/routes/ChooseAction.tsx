@@ -204,7 +204,9 @@ const ChooseAction: React.FC = () => {
                         <Button
                           className="flex-1"
                           onClick={() => {
-                            if (!selectedAction) return;
+                            if (!selectedAction) {
+                              return;
+                            }
 
                             const paramsObj = actionParams.reduce(
                               (acc, p) => {

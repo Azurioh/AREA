@@ -21,7 +21,9 @@ export function useServiceReactions(services: string[]) {
           setLoadingServices((prev) => [...prev, service]);
           try {
             const reactions = await servicesClient.listServiceReactions(service);
-            if (reactions) setServiceReactions((prev) => ({ ...prev, [service]: reactions }));
+            if (reactions) {
+              setServiceReactions((prev) => ({ ...prev, [service]: reactions }));
+            }
           } catch (error) {
             console.error(error);
           } finally {
@@ -31,7 +33,9 @@ export function useServiceReactions(services: string[]) {
       }
     };
 
-    if (services.length > 0) fetchAllReactions();
+    if (services.length > 0) {
+      fetchAllReactions();
+    }
   }, [services]);
 
   const selectReaction = async (service: string, reactionName: string) => {

@@ -21,7 +21,9 @@ export function useServiceActions(services: string[]) {
           setLoadingServices((prev) => [...prev, service]);
           try {
             const actions = await servicesClient.listServiceActions(service);
-            if (actions) setServiceActions((prev) => ({ ...prev, [service]: actions }));
+            if (actions) {
+              setServiceActions((prev) => ({ ...prev, [service]: actions }));
+            }
           } catch (error) {
             console.error(error);
           } finally {
@@ -31,7 +33,9 @@ export function useServiceActions(services: string[]) {
       }
     };
 
-    if (services.length > 0) fetchAllActions();
+    if (services.length > 0) {
+      fetchAllActions();
+    }
   }, [services]);
 
   const selectAction = async (service: string, actionName: string) => {
