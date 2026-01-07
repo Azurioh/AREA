@@ -12,20 +12,43 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
     private var tokenManager: TokenManager? = null
+    private var currentBaseUrl: String = ""
+    private var apiInstance: ApiService? = null
 
     private val _isUnauthorized = MutableStateFlow(false)
     val isUnauthorized: StateFlow<Boolean> = _isUnauthorized.asStateFlow()
 
     fun initialize(context: Context) {
         tokenManager = TokenManager(context)
+        currentBaseUrl = getBaseUrl()
     }
 
     fun resetUnauthorizedState() {
         _isUnauthorized.value = false
     }
 
-    private val okHttpClient by lazy {
-        OkHttpClient.Builder()
+    private fun getBaseUrl(): String {
+        return tokenManager?.getBaseUrl() ?: BuildConfig.API_BASE_URL
+    }
+
+    fun updateBaseUrl(newUrl: String) {
+        var url = newUrl.trim()
+        if (!url.endsWith("/")) {
+            url += "/"
+        }
+        tokenManager?.saveBaseUrl(url)
+        currentBaseUrl = url
+        apiInstance = null
+    }
+
+    fun resetBaseUrl() {
+        tokenManager?.clearBaseUrl()
+        currentBaseUrl = BuildConfig.API_BASE_URL
+        apiInstance = null
+    }
+
+    private fun createOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val originalRequest = chain.request()
                 val requestUrl = originalRequest.url.encodedPath
@@ -55,14 +78,20 @@ object RetrofitInstance {
             .build()
     }
 
-    val api: ApiService by lazy {
-        Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(BuildConfig.API_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiService::class.java)
-    }
+    val api: ApiService
+        get() {
+            val newBaseUrl = getBaseUrl()
+            if (apiInstance == null || currentBaseUrl != newBaseUrl) {
+                currentBaseUrl = newBaseUrl
+                apiInstance = Retrofit.Builder()
+                    .client(createOkHttpClient())
+                    .baseUrl(currentBaseUrl)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+                    .create(ApiService::class.java)
+            }
+            return apiInstance!!
+        }
 
     fun getTokenManager(): TokenManager = tokenManager!!
 }
