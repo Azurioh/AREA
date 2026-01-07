@@ -13,6 +13,8 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { ConnectionsPage } from './features/connections/';
 import { OauthCallbackPage } from '@/features/connections';
 import { LandingPage } from '@/features/landing';
+import { Terms } from '@/features/terms';
+import { Privacy } from '@/features/privacy';
 
 export default function App() {
   return (
@@ -24,6 +26,8 @@ export default function App() {
             <Route path={AppRoutesPaths.REGISTER} element={<RegisterPage />} />
             <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
             <Route path={AppRoutesPaths.LANDING} element={<LandingPage />} />
+            <Route path={AppRoutesPaths.PRIVACY} element={<Privacy />} />
+            <Route path={AppRoutesPaths.TERMS} element={<Terms />} />
             <Route element={<ProtectedRoute />}>
               <Route element={<AdminProtectedRoute />}>
                 <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
