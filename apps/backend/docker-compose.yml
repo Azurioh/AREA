@@ -37,6 +37,8 @@ services:
       - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
       - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
       - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - DROPBOX_CLIENT_ID=${DROPBOX_CLIENT_ID}
+      - DROPBOX_CLIENT_SECRET=${DROPBOX_CLIENT_SECRET}
     volumes:
       - ./src:/app/apps/backend/src
       - ../../packages:/app/packages

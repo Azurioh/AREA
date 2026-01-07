@@ -34,6 +34,9 @@ export interface Environment {
 
   SPOTIFY_CLIENT_ID: string;
   SPOTIFY_CLIENT_SECRET: string;
+
+  DROPBOX_CLIENT_ID: string;
+  DROPBOX_CLIENT_SECRET: string;
 }
 
 const variables: Record<string, string | undefined> = {
@@ -63,6 +66,9 @@ const variables: Record<string, string | undefined> = {
 
   SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
   SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
+
+  DROPBOX_CLIENT_ID: process.env.DROPBOX_CLIENT_ID,
+  DROPBOX_CLIENT_SECRET: process.env.DROPBOX_CLIENT_SECRET,
 };
 
 for (const [key, value] of Object.entries(variables)) {
@@ -110,4 +116,7 @@ export const environment: Environment = {
 
   SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID as string,
   SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET as string,
+
+  DROPBOX_CLIENT_ID: process.env.DROPBOX_CLIENT_ID as string,
+  DROPBOX_CLIENT_SECRET: process.env.DROPBOX_CLIENT_SECRET as string,
 };

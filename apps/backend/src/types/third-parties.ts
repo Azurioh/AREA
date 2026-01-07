@@ -32,7 +32,7 @@ export type ThirdPartyAuthorizationParams = z.infer<typeof thirdPartyAuthorizati
  */
 export type ThirdPartyAuthorization = ThirdPartyAuthorizationQueryString;
 
-export type ServiceType = 'github' | 'discord' | 'spotify';
+export type ServiceType = 'github' | 'discord' | 'spotify' | 'dropbox';
 
 /**
  * @type BaseAccount
@@ -85,7 +85,18 @@ export type SpotifyAccount = BaseAccount & {
   id: string;
 };
 
-export type ThirdPartyAccount = GithubAccount | DiscordAccount | SpotifyAccount;
+/**
+ * @type DropboxAccount
+ * @description DropboxAccount type.
+ *
+ * @property {'dropbox'} service The name of the service
+ */
+export type DropboxAccount = BaseAccount & {
+  service: 'dropbox';
+  id: string;
+};
+
+export type ThirdPartyAccount = GithubAccount | DiscordAccount | SpotifyAccount | DropboxAccount;
 
 /**********************************
  * SERVICE AUTHORIZATION RESPONSE *
@@ -135,4 +146,17 @@ export type DiscordAuthorizationResponse = {
 export type SpotifyAuthorizationResponse = {
   access_token: string;
   refresh_token: string;
+};
+
+/**
+ * @type DropboxAuthorizationResponse
+ * @description The content of the dropbox authorization response.
+ *
+ * @property {string} access_token - The response access token.
+ * @property {string} refresh_token - The response refresh token.
+ */
+export type DropboxAuthorizationResponse = {
+  access_token: string;
+  refresh_token: string;
+  account_id: string;
 };
