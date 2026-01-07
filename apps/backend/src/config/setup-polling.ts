@@ -1,10 +1,10 @@
+import type { FastifyInstance } from 'fastify';
 import { PollingRepository } from '@/modules/polling/polling.repository';
 import { PollingService } from '@/modules/polling/polling.service';
 import { SpotifyPollingService } from '@/modules/polling/spotify-polling.service';
 import { SpotifyService } from '@/modules/spotify';
 import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
 import { UsersRepository, UsersService } from '@/modules/users';
-import type { FastifyInstance } from 'fastify';
 
 export const setupPolling = async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -22,7 +22,12 @@ export const setupPolling = async (app: FastifyInstance) => {
   const spotifyService = new SpotifyService(thirdPartiesService, pollingService);
   const spotifyPolling = new SpotifyPollingService(pollingRepository, thirdPartiesService, spotifyService);
 
-  setInterval(async () => {
+  const intervalId = setInterval(async () => {
     await spotifyPolling.pollCurrentlyPlayingTrack();
   }, 30000);
+
+  app.addHook('onClose', (_instance, done) => {
+    clearInterval(intervalId);
+    done();
+  });
 };
