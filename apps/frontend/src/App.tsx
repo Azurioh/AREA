@@ -8,7 +8,7 @@ import { Profile } from '@/features/profile';
 import { CreateWorkflowsPage, WorkflowsPage, ChooseAction, ChooseReaction } from '@/features/workflows';
 import { ActionReactionProvider } from '@/features/workflows/context/ActionReactionContext';
 import { AuthProvider } from './contexts/AuthContext';
-import { ProtectedRoute } from './contexts/PorectedRoutes';
+import { ProtectedRoute, AdminProtectedRoute } from './contexts/PorectedRoutes';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ConnectionsPage } from './features/connections/';
 import { OauthCallbackPage } from '@/features/connections';
@@ -25,10 +25,12 @@ export default function App() {
             <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
             <Route path={AppRoutesPaths.LANDING} element={<LandingPage />} />
             <Route element={<ProtectedRoute />}>
+              <Route element={<AdminProtectedRoute />}>
+                <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
+              </Route>
               <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
               <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
               <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
-              <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
               <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
               <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
               <Route path={AppRoutesPaths.CONNECTIONS} element={<ConnectionsPage />} />

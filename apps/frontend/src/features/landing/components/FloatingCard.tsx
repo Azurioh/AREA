@@ -25,7 +25,7 @@ export default function FloatingCard({
       }}
       className="w-24 h-24"
     >
-      <Card className="w-full h-full flex items-center justify-center bg-card backdrop-blur-md shadow-xl shadow-primary/10 rounded-2xl">
+      <Card className="w-full h-full flex items-center justify-center bg-card backdrop-blur-md shadow-xl shadow-primary/10 hover:shadow-primary/50 transition-shadow duration-300 rounded-2xl">
         <img src={logo} alt="service logo" className="w-10 h-10 object-contain" />
       </Card>
     </motion.div>

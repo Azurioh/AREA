@@ -3,8 +3,13 @@ import type { FastifyInstance } from 'fastify';
 
 export const setupCors = (app: FastifyInstance): void => {
   app.register(fastifyCors, {
-    origin: ['http://localhost:3000', 'http://localhost:5173', 'http://167.86.110.198:8085'],
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'http://167.86.110.198:8085',
+      'http://167.86.110.198:4242',
+    ],
     credentials: true,
-    methods: 'GET, POST, DELETE, PATCH',
+    methods: 'GET, POST, PUT, DELETE, PATCH',
   });
 };

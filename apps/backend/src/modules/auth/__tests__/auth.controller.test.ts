@@ -58,7 +58,8 @@ describe('AuthController', () => {
         'encrypted_refresh_token_123',
         expect.objectContaining({
           httpOnly: true,
-          sameSite: 'strict',
+          sameSite: 'none',
+          secure: true,
         }),
       );
       expect(mockReply.status).toHaveBeenCalledWith(201);
