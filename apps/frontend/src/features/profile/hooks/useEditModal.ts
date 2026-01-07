@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
+import { useApp } from '@/hooks/useApp';
+import type { DysType } from '@area/shared/enums/user-enums';
 
-export function useSaveProfile(initialUsername: string, onEdit: (username: string) => void) {
+export function useSaveProfile(initialUsername: string, darkMode: boolean, dyslexiaType: DysType) {
   const [editedUsername, setEditedUsername] = useState(initialUsername);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { updateUser } = useApp();
 
   const handleSave = () => {
-    onEdit(editedUsername);
+    updateUser.updateExecutionState(editedUsername, darkMode, dyslexiaType);
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
   };
 
   const openModal = () => {
