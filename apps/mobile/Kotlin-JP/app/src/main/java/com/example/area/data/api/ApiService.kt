@@ -12,11 +12,13 @@ import com.example.area.data.models.ActionReactionDisplay
 import com.example.area.data.models.ActionReactionRequest
 import com.example.area.data.models.State
 import com.example.area.data.models.StateService
+import com.example.area.data.models.UserInfo
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ApiService {
@@ -61,4 +63,7 @@ interface ApiService {
 
     @PATCH("actions-reactions/v1/{id}/execution-state")
     suspend fun updateStateWorkflow(@Path("id") service: String, @Body request: State)
+
+    @PATCH("users/v1/me")
+    suspend fun updateUserInfo(@Body request: UserInfo)
 }
