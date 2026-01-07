@@ -6,19 +6,45 @@ import { useApp } from '@/hooks/useApp';
 export const useCreateActionReaction = () => {
   const { actionReactionClient } = useApp();
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [action, setAction] = useState<Omit<CreateAction, 'trigger'> | null>(null);
-  const [reaction, setReaction] = useState<Omit<CreateReaction, 'trigger'> | null>(null);
+  const [action, setActionState] = useState<Omit<CreateAction, 'trigger'> | null>(null);
+  const [reaction, setReactionState] = useState<Omit<CreateReaction, 'trigger'> | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const setActionParams = (params: Record<string, unknown>) => {
-    if (action) {
-      setAction({ ...action, params });
+  const [selectedActionService, setSelectedActionService] = useState<string | null>(null);
+  const [selectedReactionService, setSelectedReactionService] = useState<string | null>(null);
+
+  const [actionParams, setActionParams] = useState<
+    { key: string; label: string; placeholder: string; type: string; options?: any[]; value: any }[]
+  >([]);
+  const [reactionParams, setReactionParams] = useState<
+    { key: string; label: string; placeholder: string; type: string; options?: any[]; value: any }[]
+  >([]);
+
+  const setAction = (service: string, actionData: Omit<CreateAction, 'trigger'>, params?: any[]) => {
+    const normalizedActionData = {
+      ...actionData,
+      service: actionData.service.toLowerCase(),
+    };
+
+    setActionState(normalizedActionData);
+    setSelectedActionService(service);
+
+    if (params) {
+      setActionParams(params);
     }
   };
 
-  const setReactionParams = (params: Record<string, unknown>) => {
-    if (reaction) {
-      setReaction({ ...reaction, params });
+  const setReaction = (service: string, reactionData: Omit<CreateReaction, 'trigger'>, params?: any[]) => {
+    const normalizedReactionData = {
+      ...reactionData,
+      service: reactionData.service.toLowerCase(),
+    };
+
+    setReactionState(normalizedReactionData);
+    setSelectedReactionService(service);
+
+    if (params) {
+      setReactionParams(params);
     }
   };
 
@@ -26,34 +52,62 @@ export const useCreateActionReaction = () => {
     actionData: Omit<CreateAction, 'trigger'>,
     reactionData: Omit<CreateReaction, 'trigger'>,
   ) => {
-    if (!action) {
+    if (!actionData || !actionData.name) {
       toast.error('Please provide an action');
       return;
     }
-    if (!reaction) {
+    if (!reactionData || !reactionData.name) {
       toast.error('Please provide a reaction');
       return;
     }
+
     try {
       setLoading(true);
 
-      await actionReactionClient.createWorkflow({ action: actionData, reaction: reactionData });
+      const normalizedAction = {
+        ...actionData,
+        service: actionData.service.toLowerCase(),
+      };
+
+      const normalizedReaction = {
+        ...reactionData,
+        service: reactionData.service.toLowerCase(),
+      };
+
+      await actionReactionClient.createWorkflow({
+        action: normalizedAction,
+        reaction: normalizedReaction,
+      });
       toast.success('Workflow created successfully');
-    } catch (error) {
-      toast.error(`Failed to create workflow: ${error}`);
+
+      setActionState(null);
+      setReactionState(null);
+      setActionParams([]);
+      setReactionParams([]);
+      setSelectedActionService(null);
+      setSelectedReactionService(null);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to create workflow.');
     } finally {
       setLoading(false);
     }
   };
 
   return {
-    loading,
     action,
     reaction,
     setAction,
-    setActionParams,
     setReaction,
-    setReactionParams,
     createActionReaction,
+    loading,
+    selectedActionService,
+    setSelectedActionService,
+    selectedReactionService,
+    setSelectedReactionService,
+    actionParams,
+    setActionParams,
+    reactionParams,
+    setReactionParams,
   };
 };

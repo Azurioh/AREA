@@ -1,364 +1,110 @@
-import { motion } from 'framer-motion';
-import React from 'react';
-import { toast } from 'sonner';
 import SideBar from '@/components/SideBar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/wrappers/Button';
-import { Card, CardContent } from '@/components/wrappers/Card';
-import { Input } from '@/components/wrappers/Input';
-import { useCreateActionReaction } from '@/features/workflows/hooks/useCreateActionReaction';
-import { useListActions } from '@/features/workflows/hooks/useListActions';
-import { useListReactions } from '@/features/workflows/hooks/useListReactions';
-import { useListServices } from '@/features/workflows/hooks/useListServices';
-import { useApp } from '@/hooks/useApp';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useActionReaction } from '@/features/workflows/context/ActionReactionContext';
+import { toast } from 'sonner';
 
-const CreateWorkflows: React.FC = () => {
-  const { servicesClient } = useApp();
+export default function CreateWorkflows() {
+  const navigate = useNavigate();
+  const {
+    action,
+    reaction,
+    setAction,
+    setReaction,
+    createActionReaction,
+    loading: loadingCreation,
+    selectedActionService,
+    selectedReactionService,
+  } = useActionReaction();
 
-  const { services, fetchServices } = useListServices();
+  const handleCreateWorkflow = async () => {
+    if (!action?.name || !reaction?.name) {
+      toast.error('Please select both an action and a reaction');
+      return;
+    }
 
-  React.useEffect(() => {
-    fetchServices();
-  }, [fetchServices]);
-
-  const [selectedActionService, setSelectedActionService] = React.useState<string | null>(null);
-  const [selectedAction, setSelectedAction] = React.useState<string | null>(null);
-  const [actionParams, setActionParams] = React.useState<
-    {
-      key: string;
-      label: string;
-      placeholder: string;
-      type: string;
-      options?: { name: string; id: string }[];
-      value?: string | { name: string; id: string };
-    }[]
-  >([]);
-
-  const { actions, loading: loadingActions, fetchActions } = useListActions();
-
-  const [selectedReactionService, setSelectedReactionService] = React.useState<string | null>(null);
-  const [selectedReaction, setSelectedReaction] = React.useState<string | null>(null);
-  const [reactionParams, setReactionParams] = React.useState<
-    {
-      key: string;
-      label: string;
-      placeholder: string;
-      type: string;
-      options?: { name: string; id: string }[];
-      value?: string | { name: string; id: string };
-    }[]
-  >([]);
-
-  const { reactions, loading: loadingReactions, fetchReactions } = useListReactions();
-
-  const { setAction, setReaction, createActionReaction, loading: loadingCreation } = useCreateActionReaction();
-
-  const handleSelectAction = async (service: string, action: string) => {
-    setSelectedAction(action);
-    const details = await servicesClient.getActionDetails(service, action);
-    setAction({
-      service,
-      name: action,
-      params: {},
-    });
-    setActionParams(details?.params?.map((p: any) => ({ ...p, value: '' })) ?? []);
+    try {
+      await createActionReaction(action, reaction);
+      toast.success('Workflow created successfully!');
+      navigate('/workflows');
+    } catch (err) {
+      toast.error('Failed to create workflow.');
+    }
   };
 
-  const handleSelectReaction = async (service: string, reaction: string) => {
-    setSelectedReaction(reaction);
-    const details = await servicesClient.getReactionDetails(service, reaction);
-    setReaction({
-      service,
-      name: reaction,
-      params: {},
-    });
-    setReactionParams(details?.params?.map((p: any) => ({ ...p, value: '' })) ?? []);
+  const clearAction = () => {
+    setAction(selectedActionService || '', { service: '', name: '', params: {} }, []);
+  };
+
+  const clearReaction = () => {
+    setReaction(selectedReactionService || '', { service: '', name: '', params: {} }, []);
   };
 
   return (
     <div className="flex h-screen bg-background">
       <SideBar />
       <main className="flex-1 ml-24 pr-4 pt-4">
-        <Card className="h-full w-full rounded-b-none">
-          <CardContent className="p-6 h-full overflow-y-auto">
-            <div className="text-center space-y-2 mb-6">
-              <h1 className="font-bold tracking-tighter text-primary">Create Workflow</h1>
-              <p className="text-foreground">Connect actions and reactions to automate your tasks</p>
+        <Card className="w-full h-full flex flex-col items-center overflow-y-auto rounded-[var(--large-radius)] rounded-b-none">
+          <h1 className="text-5xl mt-12 mb-10 font-text text-center font-bold tracking-tighter text-primary">
+            Create Workflow
+          </h1>
+          <h2 className="text-2xl font-text text-center tracking-tighter">
+            Connect actions and reactions to automate your tasks
+          </h2>
+
+          <div className="mt-16 flex flex-col items-center justify-center w-full max-w-3xl px-4">
+            <div className="w-full h-36 relative">
+              <Button
+                className="w-full h-full flex items-center justify-center bg-primary rounded-[var(--small-radius)]"
+                onClick={() => navigate('/workflows/choose-action')}
+              >
+                <span className="text-5xl font-bold text-card">{action?.name ? action.name : 'Action'}</span>
+              </Button>
+
+              {action?.name && (
+                <Button
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-card hover:bg-muted rounded-[var(--small-radius)] w-10 h-10 p-0"
+                  onClick={clearAction}
+                >
+                  <X color="#6B7280" className="w-5 h-5" />
+                </Button>
+              )}
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="w-full max-w-3xl mx-auto space-y-6"
-            >
-              <Card className="bg-muted p-6">
-                <h2 className="text-xl font-semibold mb-4 text-primary">Choose an Action</h2>
+            <div className="w-4 h-16 bg-primary" />
 
-                <div className="space-y-4">
-                  <div className="w-full">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="w-full justify-start">
-                          {selectedActionService ?? 'Choose action service'}
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-full">
-                        {services.map((srv) => (
-                          <DropdownMenuItem
-                            key={srv}
-                            onClick={() => {
-                              setSelectedActionService(srv);
-                              setSelectedAction(null);
-                              fetchActions(srv);
-                            }}
-                          >
-                            {srv}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+            <div className="w-full h-36 relative">
+              <Button
+                className="w-full h-full flex items-center justify-center bg-primary rounded-[var(--small-radius)]"
+                onClick={() => navigate('/workflows/choose-reaction')}
+              >
+                <span className="text-5xl font-bold text-card">{reaction?.name ? reaction.name : 'Reaction'}</span>
+              </Button>
 
-                  <div className="w-full">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" disabled={!selectedActionService} className="w-full justify-start">
-                          {loadingActions ? 'Loading actions...' : (selectedAction ?? 'Choose action')}
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-full">
-                        {actions.map((a: any) => (
-                          <DropdownMenuItem
-                            key={a.name}
-                            onClick={() => handleSelectAction(selectedActionService!, a.name)}
-                          >
-                            {a.name}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-
-                  {selectedAction && actionParams.length > 0 && (
-                    <div className="w-full space-y-3 pt-2">
-                      <h3 className="font-semibold text-sm">Action Parameters</h3>
-                      {actionParams.map((param, index) => {
-                        const id = `param-${param.key}-${index}`;
-                        return (
-                          <div key={param.key} className="space-y-1">
-                            <label htmlFor={id} className="text-sm text-muted-foreground">
-                              {param.label}
-                            </label>
-                            {param.type === 'input' ? (
-                              <Input
-                                id={id}
-                                placeholder={param.placeholder}
-                                value={typeof param.value === 'string' ? param.value : ''}
-                                onChange={(e) => {
-                                  const newParams = [...actionParams];
-                                  newParams[index].value = e.target.value;
-                                  setActionParams(newParams);
-                                }}
-                              />
-                            ) : (
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    variant="outline"
-                                    className="w-full justify-start"
-                                    id={id}
-                                    aria-labelledby={id}
-                                  >
-                                    {typeof param.value === 'object' && param.value?.name
-                                      ? param.value.name
-                                      : param.placeholder}
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-full">
-                                  {(param.options && param.options.length > 0
-                                    ? param.options
-                                    : [{ name: 'test', id: 'test' }]
-                                  ).map((opt) => (
-                                    <DropdownMenuItem
-                                      key={opt.id}
-                                      onClick={() => {
-                                        const newParams = [...actionParams];
-                                        newParams[index].value = { name: opt.name, id: opt.id };
-                                        setActionParams(newParams);
-                                      }}
-                                    >
-                                      {opt.name}
-                                    </DropdownMenuItem>
-                                  ))}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </Card>
-
-              <div className="flex justify-center">
-                <div className="bg-primary rounded-full p-3">
-                  <svg className="w-6 h-6 text-card" fill="none" stroke="currentColor" viewBox="0 0 24 24" role="img">
-                    <title>Arrow separator between action and reaction</title>
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                </div>
-              </div>
-
-              <Card className="bg-muted p-6">
-                <h2 className="text-xl font-semibold mb-4 text-primary">Choose a Reaction</h2>
-
-                <div className="space-y-4">
-                  <div className="w-full">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="w-full justify-start">
-                          {selectedReactionService ?? 'Choose reaction service'}
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-full">
-                        {services.map((srv) => (
-                          <DropdownMenuItem
-                            key={srv}
-                            onClick={() => {
-                              setSelectedReactionService(srv);
-                              setSelectedReaction(null);
-                              fetchReactions(srv);
-                            }}
-                          >
-                            {srv}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-
-                  <div className="w-full">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" disabled={!selectedReactionService} className="w-full justify-start">
-                          {loadingReactions ? 'Loading reactions...' : (selectedReaction ?? 'Choose reaction')}
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-full">
-                        {reactions.map((r: any) => (
-                          <DropdownMenuItem
-                            key={r.name}
-                            onClick={() => handleSelectReaction(selectedReactionService!, r.name)}
-                          >
-                            {r.name}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-
-                  {selectedReaction && reactionParams.length > 0 && (
-                    <div className="w-full space-y-3 pt-2">
-                      <h3 className="font-semibold text-sm">Reaction Parameters</h3>
-                      {reactionParams.map((param, index) => {
-                        const id = `param-${param.key}-${index}`;
-                        return (
-                          <div key={param.key} className="space-y-1">
-                            <label htmlFor={id} className="text-sm text-muted-foreground">
-                              {param.label}
-                            </label>
-                            {param.type === 'input' ? (
-                              <Input
-                                id={id}
-                                placeholder={param.placeholder}
-                                value={typeof param.value === 'string' ? param.value : ''}
-                                onChange={(e) => {
-                                  const newParams = [...reactionParams];
-                                  newParams[index].value = e.target.value;
-                                  setReactionParams(newParams);
-                                }}
-                              />
-                            ) : (
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    variant="outline"
-                                    className="w-full justify-start"
-                                    id={id}
-                                    aria-labelledby={id}
-                                  >
-                                    {typeof param.value === 'object' && param.value?.name
-                                      ? param.value.name
-                                      : param.placeholder}
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-full">
-                                  {(param.options && param.options.length > 0
-                                    ? param.options
-                                    : [{ name: 'test', id: 'test' }]
-                                  ).map((opt) => (
-                                    <DropdownMenuItem
-                                      key={opt.id}
-                                      onClick={() => {
-                                        const newParams = [...reactionParams];
-                                        newParams[index].value = { name: opt.name, id: opt.id };
-                                        setReactionParams(newParams);
-                                      }}
-                                    >
-                                      {opt.name}
-                                    </DropdownMenuItem>
-                                  ))}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </Card>
-
-              <div className="flex justify-center pt-4 pb-6">
+              {reaction?.name && (
                 <Button
-                  onClick={async () => {
-                    const actionData = {
-                      service: selectedActionService?.toLowerCase() || '',
-                      name: selectedAction || '',
-                      params: actionParams.reduce((acc: any, p: any) => ({ ...acc, [p.key]: p.value }), {}),
-                    };
-
-                    const reactionData = {
-                      service: selectedReactionService?.toLowerCase() || '',
-                      name: selectedReaction || '',
-                      params: reactionParams.reduce((acc: any, p: any) => ({ ...acc, [p.key]: p.value }), {}),
-                    };
-
-                    setAction(actionData);
-                    setReaction(reactionData);
-
-                    await createActionReaction(actionData, reactionData);
-                    toast.success('Workflow created successfully !');
-                  }}
-                  className="w-full max-w-xs"
-                  disabled={!selectedAction || !selectedReaction || loadingCreation}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-card hover:bg-muted rounded-[var(--small-radius)] w-10 h-10 p-0"
+                  onClick={clearReaction}
                 >
-                  {loadingCreation ? 'Creating...' : 'Create Workflow'}
+                  <X color="#6B7280" className="w-5 h-5" />
                 </Button>
-              </div>
-            </motion.div>
-          </CardContent>
+              )}
+            </div>
+
+            {action?.name && reaction?.name && (
+              <Button
+                onClick={handleCreateWorkflow}
+                className="mt-8 w-full max-w-xs bg-primary text-card p-3 rounded-[var(--large-radius)]  text-xl"
+                disabled={loadingCreation}
+              >
+                {loadingCreation ? 'Creating...' : 'Create Workflow'}
+              </Button>
+            )}
+          </div>
         </Card>
       </main>
     </div>
   );
-};
-
-export default CreateWorkflows;
+}

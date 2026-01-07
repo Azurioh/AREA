@@ -1,11 +1,12 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Outlet } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { AppRoutesPaths } from '@/enums/routes';
 import { AdminDashboardPage } from '@/features/adminDashboard';
 import { LoginPage, RegisterPage } from '@/features/auth';
 import { HomePage } from '@/features/home';
 import { Profile } from '@/features/profile';
-import { CreateWorkflowsPage, WorkflowsPage } from '@/features/workflows';
+import { CreateWorkflowsPage, WorkflowsPage, ChooseAction, ChooseReaction } from '@/features/workflows';
+import { ActionReactionProvider } from '@/features/workflows/context/ActionReactionContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute, AdminProtectedRoute } from './contexts/PorectedRoutes';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -32,10 +33,20 @@ export default function App() {
               <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
               <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
               <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
-              <Route path={AppRoutesPaths.WORKFLOWS} element={<WorkflowsPage />} />
-              <Route path={AppRoutesPaths.CREATE} element={<CreateWorkflowsPage />} />
               <Route path={AppRoutesPaths.CONNECTIONS} element={<ConnectionsPage />} />
               <Route path={AppRoutesPaths.OAUTH_CALLBACK} element={<OauthCallbackPage />} />
+              <Route
+                element={
+                  <ActionReactionProvider>
+                    <Outlet />
+                  </ActionReactionProvider>
+                }
+              >
+                <Route path={AppRoutesPaths.WORKFLOWS} element={<WorkflowsPage />} />
+                <Route path={AppRoutesPaths.CREATE} element={<CreateWorkflowsPage />} />
+                <Route path={AppRoutesPaths.CHOOSEACTION} element={<ChooseAction />} />
+                <Route path={AppRoutesPaths.CHOOSEREACTION} element={<ChooseReaction />} />
+              </Route>
             </Route>
           </Routes>
         </AuthProvider>
