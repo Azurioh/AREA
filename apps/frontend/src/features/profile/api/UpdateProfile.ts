@@ -1,5 +1,6 @@
-import type { UpdateActionReactionExecutionStateBody } from '@area/shared/schemas/actions-reactions.schema';
+import type { UpdateUserMeBody } from '@area/shared/schemas/users.schema';
 import { ApiClient } from '@/lib/ApiClient';
+import type { DysType } from '@area/shared/enums/user-enums';
 
 /**
  * @class UpdateUser
@@ -10,13 +11,11 @@ export class UpdateUser extends ApiClient {
    * @function updateExecutionState
    * @description Updates the execution state of an existing workflow.
    *
-   * @param {string} id - Workflow identifier.
-   * @param {boolean} executionState - Desired execution state.
    */
-  async updateExecutionState(id: string, executionState: boolean): Promise<void> {
-    const body: UpdateActionReactionExecutionStateBody = { executionState };
+  async updateExecutionState(name: string, darkModeEnabled: boolean, dyslexiaType: DysType): Promise<void> {
+    const body: UpdateUserMeBody = { name, darkModeEnabled, dyslexiaType };
 
-    await this.fetch<void>(`/actions-reactions/v1/${id}/execution-state`, {
+    await this.fetch<UpdateUserMeBody>('/users/v1/me', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
