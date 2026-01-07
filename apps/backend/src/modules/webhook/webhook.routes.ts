@@ -1,15 +1,13 @@
 import type { FastifyInstance } from 'fastify';
 import { GithubService } from '@/modules/github';
 import { WebhookService } from '@/modules/webhook';
-import { UsersRepository, UsersService } from '../users';
+import { UsersRepository, UsersService } from '@/modules/users';
 import { WebhookController } from './webhook.controller';
 import { ActionsReactionsRepository, ActionsReactionsService } from '../actions-reactions';
-import { DiscordService } from '../discord';
-import { ThirdPartiesRepository } from '../third-parties/third-parties.repository';
-import { ThirdPartiesService } from '../third-parties';
-import { SpotifyService } from '../spotify';
-import { PollingRepository } from '../polling/polling.repository';
-import { PollingService } from '../polling/polling.service';
+import { DiscordService } from '@/modules/discord';
+import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
+import { SpotifyService } from '@/modules/spotify';
+import { PollingRepository, PollingService } from '@/modules/polling';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {

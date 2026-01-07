@@ -69,7 +69,6 @@ export class SpotifyPollingService {
             ids: `${user.userId}/${artist.id}`,
           };
 
-          console.log("Entrain d'écouter l'artiste");
           await fetch(`${environment.BASE_API_URL}/webhook/v1/spotify`, {
             method: 'POST',
             headers: {
@@ -83,15 +82,3 @@ export class SpotifyPollingService {
     }
   }
 }
-
-/*
-
-recupérer les ids des users qui veulent "être poll"
-
-récupérer les comptes spotify
-
-faire le call pour récupérer le son en cours
-
-regarder l'ariste et si il match avec l'artiste demander
-
-*/
