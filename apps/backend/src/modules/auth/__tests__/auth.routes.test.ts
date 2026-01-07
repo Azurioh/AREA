@@ -28,11 +28,17 @@ describe('Auth Routes', () => {
   }, 30000);
 
   afterAll(async () => {
-    if (app?.mongo?.client) {
-      await app.mongo.client.close();
+    // Clean up database records before closing connections
+    if (app?.mongo?.db) {
+      await removeValueFromDatabase(app.mongo.db, MongoCollections.USERS, 'email', profiles[0]!.email);
+      await removeValueFromDatabase(app.mongo.db, MongoCollections.USERS, 'email', profiles[1]!.email);
     }
-    await app?.close();
+
+    // Close Discord bot first
     await closeDiscordBot();
+
+    // Close Fastify app (which will close MongoDB connection)
+    await app?.close();
   });
 
   describe('POST /auth/v1/register', () => {
@@ -62,12 +68,6 @@ describe('Auth Routes', () => {
 
       expect(response.status).toBe(400);
     });
-    afterAll(async () => {
-      if (!app.mongo?.db) {
-        return;
-      }
-      await removeValueFromDatabase(app.mongo.db, MongoCollections.USERS, 'email', profiles[0]!.email);
-    });
   });
 
   describe('POST /auth/v1/login', () => {
@@ -89,12 +89,6 @@ describe('Auth Routes', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('accessToken');
-    });
-    afterAll(async () => {
-      if (!app.mongo?.db) {
-        return;
-      }
-      await removeValueFromDatabase(app.mongo.db, MongoCollections.USERS, 'email', profiles[1]!.email);
     });
   });
 });
