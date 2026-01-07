@@ -2,8 +2,9 @@ package com.example.area
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,7 +27,6 @@ fun AppNavigation(
     navController: NavHostController = rememberNavController(),
     userViewModel: UserViewModel = viewModel()
 ) {
-    val context = LocalContext.current
     val isLoggedIn = RetrofitInstance.getTokenManager().isLoggedIn()
     val startDestination = if (isLoggedIn) Screen.Main.route else Screen.Login.route
     val isUnauthorized by RetrofitInstance.isUnauthorized.collectAsState()
