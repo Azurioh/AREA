@@ -90,7 +90,6 @@ fun HomePage(
                 onToggle = { isChecked ->
                     val workflowId = actionReaction.id
                     if (workflowId != null) {
-                        // Mise à jour optimiste de l'état local
                         actionsReactions = actionsReactions.map { item ->
                             if (item.id == workflowId) {
                                 item.copy(executionState = isChecked)
@@ -106,7 +105,6 @@ fun HomePage(
                                 Toast.makeText(context, "Workflow state updated", Toast.LENGTH_SHORT).show()
                             },
                             onError = { error ->
-                                // Rollback en cas d'erreur
                                 actionsReactions = actionsReactions.map { item ->
                                     if (item.id == workflowId) {
                                         item.copy(executionState = !isChecked)
