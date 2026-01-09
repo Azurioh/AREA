@@ -1,5 +1,7 @@
 export const AppRoutesPaths = {
   HOME: '/',
+  PRIVACY: '/privacy',
+  TERMS: '/terms',
   LOGIN: '/login',
   REGISTER: '/register',
   ADMIN_DASHBOARD: '/admin-dashboard',
@@ -10,4 +12,6 @@ export const AppRoutesPaths = {
   CONNECTIONS: '/connections',
   OAUTH_CALLBACK: '/oauth/callback',
   LANDING: '/landing',
+  CHOOSEACTION: '/workflows/choose-action',
+  CHOOSEREACTION: '/workflows/choose-reaction',
 } as const;

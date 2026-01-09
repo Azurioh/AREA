@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { WebhookService } from '@/modules/webhook';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import ApiError from '@/utils/api-error';
-import type { DiscordWebhookPayload, GithubWebhookPayload } from '@/types/webhook';
+import type { DiscordWebhookPayload, GithubWebhookPayload, SpotifyWebhookPayload } from '@/types/webhook';
 
 /**
  * @class WebhookController
@@ -52,6 +52,26 @@ export class WebhookController {
     const event = request.headers['x-discord-event'] as string;
 
     this.service.discordCallback(event, body as DiscordWebhookPayload);
+    reply.status(HttpStatusCode.NO_CONTENT).send();
+  }
+
+  /**
+   * @function spotifyCallback
+   * @description Handles the callback for the spotify service.
+   *
+   * @param {FastifyRequest} request The Fastify request object containing the webhook data.
+   * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
+   */
+  async spotifyCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    if (!request.headers['x-spotify-event']) {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook informations are missing');
+    }
+
+    const body = request.body;
+    const event = request.headers['x-spotify-event'] as string;
+
+    this.service.spotifyCallback(event, body as SpotifyWebhookPayload);
     reply.status(HttpStatusCode.NO_CONTENT).send();
   }
 }

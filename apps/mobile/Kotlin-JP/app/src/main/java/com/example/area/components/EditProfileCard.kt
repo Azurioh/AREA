@@ -29,7 +29,6 @@ fun EditProfileCard(
     onDismiss: () -> Unit
 ) {
     var textFieldNewName by remember { mutableStateOf("") }
-    var textFieldNewEmail by remember { mutableStateOf("") }
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -39,7 +38,7 @@ fun EditProfileCard(
             colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
             modifier = Modifier
                 .padding(12.dp)
-                .size(width = 350.dp, height = 390.dp)
+                .size(width = 350.dp, height = 320.dp)
         ) {
             Text(
                 text = "Edit profile",
@@ -61,21 +60,12 @@ fun EditProfileCard(
                 modifier = Modifier.padding(top = 18.dp)
             )
 
-            LabeledTextField(
-                label = "New email",
-                value = textFieldNewEmail,
-                onValueChange = { textFieldNewEmail = it },
-                placeholder = "Enter your new email",
-                modifier = Modifier.padding(top = 18.dp)
-            )
-
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 ButtonEditProfileComponent(
                     textFieldNewName = textFieldNewName,
-                    textFieldNewEmail = textFieldNewEmail,
                     userViewModel = userViewModel,
                     onDismiss = onDismiss
                 )

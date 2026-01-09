@@ -6,6 +6,8 @@ import type {
   ClientType,
   DiscordAccount,
   DiscordAuthorizationResponse,
+  DropboxAccount,
+  DropboxAuthorizationResponse,
   GithubAccount,
   GitHubAuthorizationResponse,
   ServiceType,
@@ -17,6 +19,7 @@ import type { StateToken } from '@area/shared/types/users.types';
 import type { UsersService } from '@/modules/users';
 import type { ThirdPartiesRepository } from './third-parties.repository';
 import { encryptString } from '@/utils/crypt';
+import type { WithId } from 'mongodb';
 
 /**
  * @class ThirdPartiesService
@@ -45,13 +48,18 @@ export class ThirdPartiesService {
       ],
       [
         'spotify',
-        `https://accounts.spotify.com/authorize?response_type=code&client_id=${environment.SPOTIFY_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/spotify&scope=playlist-read-private%20playlist-read-collaborative%20playlist-modify-private%20playlist-modify-public%20user-library-read%20user-library-modify&state={state}`,
+        `https://accounts.spotify.com/authorize?response_type=code&client_id=${environment.SPOTIFY_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/spotify&scope=playlist-read-private%20playlist-read-collaborative%20playlist-modify-private%20playlist-modify-public%20user-library-read%20user-library-modify%20user-read-currently-playing&state={state}`,
+      ],
+      [
+        'dropbox',
+        `https://www.dropbox.com/oauth2/authorize?response_type=code&client_id=${environment.DROPBOX_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/dropbox&token_access_type=offline&state={state}`,
       ],
     ]);
     this.servicesAuthorizationFunc = new Map([
       ['github', this.authorizeToGithub],
       ['discord', this.authorizeToDiscord],
       ['spotify', this.authorizeToSpotify],
+      ['dropbox', this.authorizeToDropbox],
     ]);
   }
 
@@ -82,15 +90,18 @@ export class ThirdPartiesService {
    *
    * @param {ServiceType} service - The service name
    * @param {string} userId - The if of the user authenticating
-   * @returns {Promise<ThirdPartyAccount>} The third party account
+   * @returns {Promise<WithId<ThirdPartyAccount>>} The third party account
    */
-  async getThirdPartyAccountByUserId<T>(service: ServiceType, userId: string): Promise<T> {
-    const result = await this.repository.getThirdPartyAccountByUserId(userId, service);
+  async getThirdPartyAccountByUserId<T extends ThirdPartyAccount>(
+    service: ServiceType,
+    userId: string,
+  ): Promise<WithId<T>> {
+    const result = await this.repository.getThirdPartyAccountByUserId<T>(userId, service);
 
     if (!result) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'Third party account was not found');
     }
-    return result as T;
+    return result;
   }
 
   /**
@@ -284,6 +295,45 @@ export class ThirdPartiesService {
       accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
       refreshToken: encryptString(formattedResponse.refresh_token, environment.CRYPT_SECRET_KEY),
       id: await getUserId(),
+    };
+    return data;
+  }
+
+  /**
+   * @function authorizeToDropbox
+   * @description Authorize a user to discord
+   *
+   * @param {string} userId - The user id
+   * @param {string} code - The code provided by the service to get the tokens
+   * @returns {Promise<ThirdPartyAccount | null>} The create third party account
+   */
+  private async authorizeToDropbox(userId: string, code: string): Promise<ThirdPartyAccount | null> {
+    const response = await fetch('https://www.dropbox.com/oauth2/token', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        client_id: environment.DROPBOX_CLIENT_ID,
+        client_secret: environment.DROPBOX_CLIENT_SECRET,
+        code: code,
+        grant_type: 'authorization_code',
+        redirect_uri: `${environment.BASE_API_URL}/third-parties/v1/authorize/dropbox`,
+      }),
+    });
+
+    if (response.status !== HttpStatusCode.OK) {
+      return null;
+    }
+
+    const formattedResponse = (await response.json()) as DropboxAuthorizationResponse;
+
+    const data: DropboxAccount = {
+      userId,
+      service: 'dropbox',
+      accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
+      refreshToken: encryptString(formattedResponse.refresh_token, environment.CRYPT_SECRET_KEY),
+      id: formattedResponse.account_id,
     };
     return data;
   }
