@@ -1,14 +1,14 @@
 import type { User } from '@area/shared/types/users.types';
 import type React from 'react';
-import { createContext, type ReactNode, useMemo, useState, useEffect } from 'react';
+import { createContext, type ReactNode, useEffect, useMemo, useState } from 'react';
+import { UserAdminManagementClient } from '@/features/adminDashboard/api/UserAdminManagement';
 import { AuthClient } from '@/features/auth/api/AuthClient';
+import { ThirdPartiesInformation } from '@/features/connections/api/ThirdPartiesInformation';
+import { UpdateUser } from '@/features/profile/api/UpdateProfile';
 import { ActionReactionClient, ServicesClient } from '@/features/workflows';
 import { TokenManager } from '@/lib/TokenManager';
-import { UserInformationClient } from '@/shared/api/UserInformationClient';
-import { ThirdPartiesInformation } from '@/features/connections/api/ThirdPartiesInformation';
 import { ExecutionState } from '@/shared/api/ExecutionState';
-import { UserAdminManagementClient } from '@/features/adminDashboard/api/UserAdminManagement';
-import { UpdateUser } from '@/features/profile/api/UpdateProfile';
+import { UserInformationClient } from '@/shared/api/UserInformationClient';
 
 /**
  * @interface AuthState
@@ -105,7 +105,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       userInformationClient,
       authClient,
       executionStateClient,
-      thirdPartiesInformation,
       thirdPartiesInformation,
       userAdminManagementClient,
       updateUser,

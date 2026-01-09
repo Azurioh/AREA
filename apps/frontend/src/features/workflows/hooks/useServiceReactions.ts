@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from '@/hooks/useApp';
 
 interface ServiceReactionsData {
-  [serviceName: string]: any[];
+  [serviceName: string]: unknown[];
 }
 
 export function useServiceReactions(services: string[]) {
@@ -11,7 +11,7 @@ export function useServiceReactions(services: string[]) {
   const [serviceReactions, setServiceReactions] = useState<ServiceReactionsData>({});
   const [loadingServices, setLoadingServices] = useState<string[]>([]);
   const [selectedReaction, setSelectedReaction] = useState<{ service: string; reaction: string } | null>(null);
-  const [reactionParams, setReactionParams] = useState<any[]>([]);
+  const [reactionParams, setReactionParams] = useState<Record<string, unknown>[]>([]);
   const [loadingParams, setLoadingParams] = useState(false);
 
   useEffect(() => {
@@ -36,6 +36,7 @@ export function useServiceReactions(services: string[]) {
     if (services.length > 0) {
       fetchAllReactions();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [services]);
 
   const selectReaction = async (service: string, reactionName: string) => {
@@ -43,7 +44,7 @@ export function useServiceReactions(services: string[]) {
     setLoadingParams(true);
     try {
       const details = await servicesClient.getReactionDetails(service, reactionName);
-      setReactionParams(details?.params?.map((p: any) => ({ ...p, value: '' })) ?? []);
+      setReactionParams(details?.params?.map((p: Record<string, unknown>) => ({ ...p, value: '' })) ?? []);
     } catch {
       setReactionParams([]);
     } finally {
@@ -51,7 +52,7 @@ export function useServiceReactions(services: string[]) {
     }
   };
 
-  const updateParam = (index: number, value: any) => {
+  const updateParam = (index: number, value: unknown) => {
     const newParams = [...reactionParams];
     newParams[index].value = value;
     setReactionParams(newParams);

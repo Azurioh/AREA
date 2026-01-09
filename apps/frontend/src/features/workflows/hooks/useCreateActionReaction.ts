@@ -3,6 +3,15 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useApp } from '@/hooks/useApp';
 
+export interface ActionReactionParam {
+  key: string;
+  label: string;
+  placeholder: string;
+  type: string;
+  options?: unknown[];
+  value: unknown;
+}
+
 export const useCreateActionReaction = () => {
   const { actionReactionClient } = useApp();
 
@@ -13,14 +22,10 @@ export const useCreateActionReaction = () => {
   const [selectedActionService, setSelectedActionService] = useState<string | null>(null);
   const [selectedReactionService, setSelectedReactionService] = useState<string | null>(null);
 
-  const [actionParams, setActionParams] = useState<
-    { key: string; label: string; placeholder: string; type: string; options?: any[]; value: any }[]
-  >([]);
-  const [reactionParams, setReactionParams] = useState<
-    { key: string; label: string; placeholder: string; type: string; options?: any[]; value: any }[]
-  >([]);
+  const [actionParams, setActionParams] = useState<ActionReactionParam[]>([]);
+  const [reactionParams, setReactionParams] = useState<ActionReactionParam[]>([]);
 
-  const setAction = (service: string, actionData: Omit<CreateAction, 'trigger'>, params?: any[]) => {
+  const setAction = (service: string, actionData: Omit<CreateAction, 'trigger'>, params?: ActionReactionParam[]) => {
     const normalizedActionData = {
       ...actionData,
       service: actionData.service.toLowerCase(),
@@ -34,7 +39,11 @@ export const useCreateActionReaction = () => {
     }
   };
 
-  const setReaction = (service: string, reactionData: Omit<CreateReaction, 'trigger'>, params?: any[]) => {
+  const setReaction = (
+    service: string,
+    reactionData: Omit<CreateReaction, 'trigger'>,
+    params?: ActionReactionParam[],
+  ) => {
     const normalizedReactionData = {
       ...reactionData,
       service: reactionData.service.toLowerCase(),
