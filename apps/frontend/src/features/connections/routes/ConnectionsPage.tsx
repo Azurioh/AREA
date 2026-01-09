@@ -23,7 +23,7 @@ const ConnectionsPage: React.FC = () => {
                   <ConnectionCard
                     key={service.name}
                     serviceName={service.name}
-                    image={`http://167.86.110.198:8085/images/${service.name.toLowerCase()}.png`}
+                    image={`${import.meta.env.VITE_BASE_IMAGE_URL}/${service.name.toLowerCase()}.png`}
                     status={service.status}
                   />
                 ))}

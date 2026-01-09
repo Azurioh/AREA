@@ -1,0 +1,28 @@
+import type { UpdateUserMeBody } from '@area/shared/schemas/users.schema';
+import { ApiClient } from '@/lib/ApiClient';
+import type { DysType } from '@area/shared/enums/user-enums';
+
+/**
+ * @class UpdateUser
+ * @description Client for interacting with the Action-Reaction API.
+ */
+export class UpdateUser extends ApiClient {
+  /**
+   * @function updateExecutionState
+   * @description Updates the execution state of an existing workflow.
+   *
+   */
+  async updateExecutionState(name: string, darkModeEnabled: boolean, dyslexiaType: DysType): Promise<void> {
+    const body: UpdateUserMeBody = { name, darkModeEnabled, dyslexiaType };
+
+    await this.fetch<UpdateUserMeBody>('/users/v1/me', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify(body),
+      throwError: true,
+    });
+  }
+}
