@@ -25,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -36,8 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.BuildConfig
 import com.example.area.data.api.RetrofitInstance
 import com.example.area.ui.theme.Accent
-import com.example.area.ui.theme.Background
-import com.example.area.ui.theme.CustomBlack
+import com.example.area.ui.theme.AppTheme
 import com.example.area.ui.theme.CustomWhite
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.UserViewModel
@@ -59,7 +57,7 @@ fun SettingsPage(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = Background),
+            .background(color = AppTheme.colors.background),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -68,12 +66,39 @@ fun SettingsPage(
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
-            color = CustomBlack,
+            color = AppTheme.colors.textPrimary,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(top = 32.dp)
                 .fillMaxWidth()
         )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 32.dp, vertical = 24.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Dark Mode",
+                fontFamily = poppinsFontFamily,
+                fontWeight = FontWeight.Medium,
+                fontSize = 18.sp,
+                color = AppTheme.colors.textPrimary
+            )
+
+            Switch(
+                checked = darkModeEnabled,
+                onCheckedChange = { darkModeEnabled = it },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = Accent,
+                    uncheckedThumbColor = Color.White,
+                    uncheckedTrackColor = Color(0xFF5E5E5E)
+                )
+            )
+        }
 
         Switch(
             checked = checked,

@@ -27,9 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.UserViewModel
-import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
-import com.example.area.ui.theme.CustomBlack
+import com.example.area.ui.theme.AppTheme
 import com.example.area.ui.theme.CustomWhite
 import com.example.area.utils.getInitials
 
@@ -42,7 +41,7 @@ fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
+        colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
         modifier = Modifier
             .padding(12.dp)
             .size(width = 350.dp, height = 160.dp)
@@ -78,7 +77,7 @@ fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 20.sp,
-                        color = CustomBlack,
+                        color = AppTheme.colors.textPrimary,
                         modifier = Modifier
                             .padding(top = 20.dp)
                             .fillMaxWidth()
@@ -89,7 +88,7 @@ fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
                         fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Medium,
                         fontSize = 10.sp,
-                        color = CustomBlack,
+                        color = AppTheme.colors.textPrimary,
                         modifier = Modifier
                             .padding(top = 10.dp)
                             .fillMaxWidth()

@@ -25,8 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.components.DisplayCard
 import com.example.area.data.models.ActionReactionDisplay
-import com.example.area.ui.theme.Background
-import com.example.area.ui.theme.CustomBlack
+import com.example.area.ui.theme.AppTheme
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.utils.getServiceImage
@@ -56,7 +55,7 @@ fun HomePage(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(color = Background),
+            .background(color = AppTheme.colors.background),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 80.dp)
@@ -67,7 +66,7 @@ fun HomePage(
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 30.sp,
-                color = CustomBlack,
+                color = AppTheme.colors.textPrimary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 32.dp)
@@ -121,9 +120,7 @@ fun HomePage(
                         Toast.makeText(context, "Error: Workflow ID is null", Toast.LENGTH_LONG).show()
                     }
                 },
-                onMenuClick = {
-                    println("Menu clicked")
-                }
+                onMenuClick = {}
             )
         }
     }

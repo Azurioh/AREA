@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.Accent
-import com.example.area.ui.theme.CustomBlack
+import com.example.area.ui.theme.AppTheme
 
 @Composable
 fun TwoTexts(
@@ -43,7 +43,7 @@ fun TwoTexts(
             Text(
                 text = "Remember me",
                 style = textStyle.copy(
-                    color = CustomBlack,
+                    color = AppTheme.colors.textPrimary,
                 ),
             )
         }
@@ -56,9 +56,7 @@ fun TwoTexts(
             ),
             modifier = Modifier
                 .padding(end = 16.dp)
-                .clickable {
-                    println("Click forgot password")
-                }
+                .clickable {}
         )
     }
 }

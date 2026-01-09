@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -20,9 +19,8 @@ import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.UserViewModel
-import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
-import com.example.area.ui.theme.CustomBlack
+import com.example.area.ui.theme.AppTheme
 
 @Composable
 fun LoginCard(
@@ -35,7 +33,7 @@ fun LoginCard(
     var rememberMe by remember { mutableStateOf(false) }
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
+        colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
         modifier = Modifier
             .padding(12.dp)
             .size(width = 350.dp, height = 490.dp)
@@ -57,7 +55,7 @@ fun LoginCard(
             fontSize = 14.sp,
             fontFamily = montserratFontFamily,
             fontWeight = FontWeight.Normal,
-            color = CustomBlack,
+            color = AppTheme.colors.textPrimary,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(top = 12.dp)
@@ -96,7 +94,6 @@ fun LoginCard(
 
         MultiColorText(
             text1 = "Don't have an account? ",
-            color1 = Color.White,
             text2 = "Sign up",
             color2 = Accent,
             fontSize = 14.sp,

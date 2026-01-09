@@ -6,8 +6,12 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.data.api.RetrofitInstance
 import com.example.area.ui.theme.PocTheme
+import com.example.area.viewModel.UserViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,8 +21,12 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            PocTheme {
-                AppNavigation()
+            val userViewModel: UserViewModel = viewModel()
+            val userProfile by userViewModel.userProfile.collectAsState()
+            val darkTheme = userProfile?.darkModeEnabled ?: false
+
+            PocTheme(darkTheme = darkTheme) {
+                AppNavigation(userViewModel = userViewModel)
             }
         }
 
