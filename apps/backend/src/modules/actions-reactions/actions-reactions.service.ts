@@ -24,7 +24,7 @@ export class ActionsReactionsService {
     string,
     (userId: string, reaction: CreateReaction, action: ActionPayload) => Promise<boolean>
   >;
-  private actionMiddlewareFunc: Map<string, (action: ActionPayload) => Promise<string[]>>;
+  private actionReceptionFunc: Map<string, (action: ActionPayload) => Promise<ActionPayload[]>>;
 
   constructor(
     repository: ActionsReactionsRepository,
@@ -45,7 +45,7 @@ export class ActionsReactionsService {
       ['discord', discordService.createReaction.bind(discordService)],
       ['spotify', spotifyService.createReaction.bind(spotifyService)],
     ]);
-    this.actionMiddlewareFunc = new Map([['dropbox', dropboxService.actionMiddleware.bind(dropboxService)]]);
+    this.actionReceptionFunc = new Map([['dropbox', dropboxService.actionReception.bind(dropboxService)]]);
   }
 
   /**
@@ -66,6 +66,25 @@ export class ActionsReactionsService {
   }
 
   /**
+   * @function handleActionReception
+   * @description handle the reception of an action
+   *
+   * @param {ActionPayload} action The payload of the action
+   * @returns {Promise<void>} Nothing
+   */
+  async handleActionReception(action: ActionPayload): Promise<void> {
+    const actionReceptionFunc = this.actionReceptionFunc.get(action.service);
+
+    if (actionReceptionFunc) {
+      for (const newAction of await actionReceptionFunc(action)) {
+        this.handleReactions(newAction);
+      }
+    } else {
+      this.handleReactions(action);
+    }
+  }
+
+  /**
    * @function handleReactions
    * @description handle the redirection of reaction creation
    *
@@ -73,16 +92,8 @@ export class ActionsReactionsService {
    * @returns {Promise<void>} Nothing
    */
   async handleReactions(action: ActionPayload): Promise<void> {
-    let actionsReactions: WithId<ActionReaction>[] = [];
-    const actionMiddlewareFunc = this.actionMiddlewareFunc.get(action.service);
+    const actionsReactions: WithId<ActionReaction>[] = await this.repository.getActionsReactionsByTrigger(action.trigger);
 
-    if (actionMiddlewareFunc) {
-      for (const trigger of await actionMiddlewareFunc(action)) {
-        actionsReactions = actionsReactions.concat(await this.getActionsReactionsByTrigger(trigger));
-      }
-    } else {
-      actionsReactions = await this.getActionsReactionsByTrigger(action.trigger);
-    }
     for (const actionReaction of actionsReactions) {
       if (!actionReaction.executionState) {
         continue;
