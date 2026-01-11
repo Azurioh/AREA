@@ -8,7 +8,7 @@ import { DiscordService } from '@/modules/discord';
 import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
 import { SpotifyService } from '@/modules/spotify';
 import { PollingRepository, PollingService } from '@/modules/polling';
-import { DropboxService } from '../dropbox';
+import { DropboxRepository, DropboxService } from '../dropbox';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -19,6 +19,7 @@ export default async (app: FastifyInstance) => {
   const actionsReactionsRepository = new ActionsReactionsRepository(app.mongo.db);
   const thirdPartiesRepository = new ThirdPartiesRepository(app.mongo.db);
   const pollingRepository = new PollingRepository(app.mongo.db);
+  const dropboxRepository = new DropboxRepository(app.mongo.db);
 
   const pollingService = new PollingService(pollingRepository);
   const usersService = new UsersService(userRepository);
@@ -26,7 +27,7 @@ export default async (app: FastifyInstance) => {
   const githubService = new GithubService(thirdPartiesService);
   const discordService = new DiscordService(thirdPartiesService);
   const spotifyService = new SpotifyService(thirdPartiesService, pollingService);
-  const dropboxService = new DropboxService(thirdPartiesService);
+  const dropboxService = new DropboxService(dropboxRepository, thirdPartiesService);
   const actionsReactionsService = new ActionsReactionsService(
     actionsReactionsRepository,
     githubService,

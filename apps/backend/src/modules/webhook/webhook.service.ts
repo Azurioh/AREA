@@ -34,7 +34,7 @@ export class WebhookService {
       content: body,
     };
 
-    this.actionsReactionsService.handleReactions(action);
+    this.actionsReactionsService.handleActionReception(action);
   }
 
   /**
@@ -53,7 +53,7 @@ export class WebhookService {
       content: body,
     };
 
-    this.actionsReactionsService.handleReactions(action);
+    this.actionsReactionsService.handleActionReception(action);
   }
 
   /**
@@ -72,7 +72,7 @@ export class WebhookService {
       content: body,
     };
 
-    this.actionsReactionsService.handleReactions(action);
+    this.actionsReactionsService.handleActionReception(action);
   }
 
   /**
@@ -93,6 +93,6 @@ export class WebhookService {
       },
     };
 
-    this.actionsReactionsService.handleReactions(action);
+    this.actionsReactionsService.handleActionReception(action);
   }
 }
