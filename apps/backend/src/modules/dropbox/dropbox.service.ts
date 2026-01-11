@@ -6,15 +6,19 @@ import ApiError from '@/utils/api-error';
 import { decryptString, encryptString } from '@/utils/crypt';
 import type { CreateAction } from '@area/shared/schemas/actions-reactions.schema';
 import type { ActionPayload } from '@/types/action-reaction';
+import type { DropboxRepository } from './dropbox.repository';
+import type { DropboxResource } from '@/types/dropbox';
 
 /**
  * @class DropboxService
  * @description The dropbox service.
  */
 export class DropboxService {
+  private repository: DropboxRepository;
   private thirdPartiesService: ThirdPartiesService;
 
-  constructor(thirdPartiesService: ThirdPartiesService) {
+  constructor(repository: DropboxRepository, thirdPartiesService: ThirdPartiesService) {
+    this.repository = repository;
     this.thirdPartiesService = thirdPartiesService;
   }
 
@@ -32,6 +36,14 @@ export class DropboxService {
       userId,
     );
 
+    this.thirdPartiesService.updateThirdPartyAccount('dropbox', userId, {
+      cursor: {
+        ref: dropboxAccount.cursor.ref,
+        paths: dropboxAccount.cursor.paths.includes(action.params.path)
+          ? dropboxAccount.cursor.paths
+          : [...dropboxAccount.cursor.paths, action.params.path],
+      },
+    });
     return `${action.name}/(${action.params.path})/${dropboxAccount.id}`;
   }
 
@@ -80,13 +92,15 @@ export class DropboxService {
   }
 
   /**
-   * @function actionMiddleware
-   * @description The action middleware of the dropbox service
+   * @function actionReception
+   * @description The action reception of the dropbox service
    *
    * @param {ActionPayload} action - The payload of the action
-   * @returns {Promise<string[]>} A list of trigger
+   * @returns {Promise<ActionPayload[]>} A list of action payloads to handle
    */
-  async actionMiddleware(action: ActionPayload): Promise<string[]> {
+  async actionReception(action: ActionPayload): Promise<ActionPayload[]> {
+    const actions: ActionPayload[] = [];
+
     for (const id of action.content.ids) {
       const dropboxAccount = await this.thirdPartiesService.getThirdPartyAccountByServiceAccountId<DropboxAccount>(
         'dropbox',
@@ -126,6 +140,34 @@ export class DropboxService {
       if (response.ok) {
         const formattedResponse = await response.json();
 
+        for (const entry of formattedResponse.entries) {
+          for (const path of dropboxAccount.cursor.paths) {
+            if (!entry.path_lower.startsWith(path.toLowerCase())) {
+              continue;
+            }
+            const action: ActionPayload = {
+              service: 'dropbox',
+              name: '',
+              trigger: '',
+              content: { name: entry.name, path: path },
+            };
+
+            if (entry['.tag'] === 'file' || entry['.tag'] === 'folder') {
+              if (await this.repository.getDropboxResourceById(entry.id)) {
+                action.name = `${entry['.tag']}_modified`;
+              } else {
+                action.name = `${entry['.tag']}_created`;
+                await this.createDropboxResource(entry['.tag'], entry.id);
+              }
+            }
+            if (!entry.path_lower.startsWith(path.toLowerCase())) {
+              continue;
+            }
+            action.trigger = `${action.name}/(${path})/${dropboxAccount.id}`;
+            actions.push(action);
+          }
+        }
+
         this.thirdPartiesService.updateThirdPartyAccount('dropbox', dropboxAccount.userId, {
           cursor: {
             ref: formattedResponse.cursor,
@@ -134,7 +176,7 @@ export class DropboxService {
         });
       }
     }
-    return [];
+    return actions;
   }
 
   /**
@@ -173,5 +215,34 @@ export class DropboxService {
 
     this.thirdPartiesService.updateThirdPartyAccount('dropbox', userId, account);
     return accessToken;
+  }
+
+  /**
+   * @function createDropboxResource
+   * @description Create a dropbox resource
+   *
+   * @param {string} tag - The tag of the resource
+   * @param {string} id - The id of the resource
+   * @returns {Promise<void>}
+   */
+  async createDropboxResource(tag: 'file' | 'folder', id: string): Promise<void> {
+    await this.repository.createDropboxResource({ tag, id });
+    return;
+  }
+
+  async getDropboxResourceById(id: string): Promise<DropboxResource | null> {
+    return await this.repository.getDropboxResourceById(id);
+  }
+
+  /**
+   * @function deleteDropboxResource
+   * @description Delete a dropbox resource
+   *
+   * @param {string} id - The id of the resource
+   * @returns {Promise<void>}
+   */
+  async deleteDropboxResource(id: string): Promise<void> {
+    await this.repository.deleteDropboxResource(id);
+    return;
   }
 }
