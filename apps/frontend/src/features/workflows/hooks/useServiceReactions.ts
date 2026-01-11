@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { ActionReactionParam } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useApp } from '@/hooks/useApp';
 
 interface ServiceReactionsData {
@@ -11,7 +12,7 @@ export function useServiceReactions(services: string[]) {
   const [serviceReactions, setServiceReactions] = useState<ServiceReactionsData>({});
   const [loadingServices, setLoadingServices] = useState<string[]>([]);
   const [selectedReaction, setSelectedReaction] = useState<{ service: string; reaction: string } | null>(null);
-  const [reactionParams, setReactionParams] = useState<Record<string, unknown>[]>([]);
+  const [reactionParams, setReactionParams] = useState<ActionReactionParam[]>([]);
   const [loadingParams, setLoadingParams] = useState(false);
 
   useEffect(() => {
@@ -44,7 +45,9 @@ export function useServiceReactions(services: string[]) {
     setLoadingParams(true);
     try {
       const details = await servicesClient.getReactionDetails(service, reactionName);
-      setReactionParams(details?.params?.map((p: Record<string, unknown>) => ({ ...p, value: '' })) ?? []);
+      setReactionParams(
+        details?.params?.map((p: Record<string, unknown>) => ({ ...p, value: '' }) as ActionReactionParam) ?? [],
+      );
     } catch {
       setReactionParams([]);
     } finally {

@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideBar from '@/components/SideBar';
@@ -12,13 +12,9 @@ import { Button } from '@/components/wrappers/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/wrappers/Card';
 import { Input } from '@/components/wrappers/Input';
 import { useActionReaction } from '@/features/workflows/context/ActionReactionContext';
+import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceReactions } from '@/features/workflows/hooks/useServiceReactions';
-
-interface ParamOption {
-  name: string;
-  id: string;
-}
 
 const ChooseReaction: React.FC = () => {
   const { services, fetchServices } = useListServices();
@@ -174,8 +170,8 @@ const ChooseReaction: React.FC = () => {
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button variant="outline" className="w-full justify-start" id={id}>
-                                    {typeof param.value === 'object' && param.value?.name
-                                      ? param.value.name
+                                    {typeof param.value === 'object' && (param.value as ParamOption)?.name
+                                      ? (param.value as ParamOption).name
                                       : param.placeholder}
                                   </Button>
                                 </DropdownMenuTrigger>

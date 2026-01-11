@@ -3,12 +3,17 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useApp } from '@/hooks/useApp';
 
+export interface ParamOption {
+  name: string;
+  id: string;
+}
+
 export interface ActionReactionParam {
   key: string;
   label: string;
   placeholder: string;
   type: string;
-  options?: unknown[];
+  options?: ParamOption[];
   value: unknown;
 }
 
