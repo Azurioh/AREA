@@ -2,7 +2,12 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { WebhookService } from '@/modules/webhook';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import ApiError from '@/utils/api-error';
-import type { DiscordWebhookPayload, GithubWebhookPayload, SpotifyWebhookPayload } from '@/types/webhook';
+import type {
+  DiscordWebhookPayload,
+  DropboxWebhookPayload,
+  GithubWebhookPayload,
+  SpotifyWebhookPayload,
+} from '@/types/webhook';
 
 /**
  * @class WebhookController
@@ -73,5 +78,32 @@ export class WebhookController {
 
     this.service.spotifyCallback(event, body as SpotifyWebhookPayload);
     reply.status(HttpStatusCode.NO_CONTENT).send();
+  }
+
+  /**
+   * @function dropboxWebhookValidator
+   * @description Handles the callback for dropbox webhook validator.
+   *
+   * @param {FastifyRequest} request The Fastify request object containing the webhook data.
+   * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
+   */
+  async dropboxWebhookValidator(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    reply.status(HttpStatusCode.OK).send((request.query as { challenge: string }).challenge);
+  }
+
+  /**
+   * @function dropboxCallback
+   * @description Handles the callback for the dropbox service.
+   *
+   * @param {FastifyRequest} request The Fastify request object containing the webhook data.
+   * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
+   */
+  async dropboxCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    const body = request.body;
+
+    this.service.dropboxCallback(body as DropboxWebhookPayload);
+    reply.status(HttpStatusCode.OK).send();
   }
 }

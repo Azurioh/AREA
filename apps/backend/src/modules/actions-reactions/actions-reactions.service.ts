@@ -11,6 +11,7 @@ import ApiError from '@/utils/api-error';
 import type { ActionsReactionsRepository } from './actions-reactions.repository';
 import type { WithId } from 'mongodb';
 import type { SpotifyService } from '../spotify';
+import type { DropboxService } from '../dropbox';
 
 /**
  * @class ActionsReactionsService
@@ -23,24 +24,28 @@ export class ActionsReactionsService {
     string,
     (userId: string, reaction: CreateReaction, action: ActionPayload) => Promise<boolean>
   >;
+  private actionMiddlewareFunc: Map<string, (action: ActionPayload) => Promise<string[]>>;
 
   constructor(
     repository: ActionsReactionsRepository,
     githubService: GithubService,
     discordService: DiscordService,
     spotifyService: SpotifyService,
+    dropboxService: DropboxService,
   ) {
     this.repository = repository;
     this.actionsCreationFunc = new Map([
       ['github', githubService.createAction.bind(githubService)],
       ['discord', discordService.createAction.bind(discordService)],
       ['spotify', spotifyService.createAction.bind(spotifyService)],
+      ['dropbox', dropboxService.createAction.bind(dropboxService)],
     ]);
     this.reactionsCreationFunc = new Map([
       ['github', githubService.createReaction.bind(githubService)],
       ['discord', discordService.createReaction.bind(discordService)],
       ['spotify', spotifyService.createReaction.bind(spotifyService)],
     ]);
+    this.actionMiddlewareFunc = new Map([['dropbox', dropboxService.actionMiddleware.bind(dropboxService)]]);
   }
 
   /**
@@ -68,8 +73,16 @@ export class ActionsReactionsService {
    * @returns {Promise<void>} Nothing
    */
   async handleReactions(action: ActionPayload): Promise<void> {
-    const actionsReactions = await this.getActionsReactionsByTrigger(action.trigger);
+    let actionsReactions: WithId<ActionReaction>[] = [];
+    const actionMiddlewareFunc = this.actionMiddlewareFunc.get(action.service);
 
+    if (actionMiddlewareFunc) {
+      for (const trigger of await actionMiddlewareFunc(action)) {
+        actionsReactions = actionsReactions.concat(await this.getActionsReactionsByTrigger(trigger));
+      }
+    } else {
+      actionsReactions = await this.getActionsReactionsByTrigger(action.trigger);
+    }
     for (const actionReaction of actionsReactions) {
       if (!actionReaction.executionState) {
         continue;

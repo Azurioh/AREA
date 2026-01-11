@@ -7,7 +7,6 @@ import { decryptString, encryptString } from '@/utils/crypt';
 import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-reactions.schema';
 import type { ActionPayload } from '@/types/action-reaction';
 import { Reaction } from '@/integrations';
-import type { WithId } from 'mongodb';
 import type { PollingService } from '../polling/polling.service';
 
 /**
@@ -45,7 +44,7 @@ export class SpotifyService {
     throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');
   }
 
-  async listeningToArtist(spotifyAccount: WithId<SpotifyAccount>, action: CreateAction): Promise<string> {
+  async listeningToArtist(spotifyAccount: SpotifyAccount, action: CreateAction): Promise<string> {
     let response = await this.search(
       decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY),
       action.params.artist,
@@ -54,7 +53,7 @@ export class SpotifyService {
 
     if (response.status === HttpStatusCode.UNAUTHORIZED) {
       const accessToken = await this.refreshTokens(
-        spotifyAccount._id.toString(),
+        spotifyAccount.userId,
         decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
       );
 
@@ -105,7 +104,7 @@ export class SpotifyService {
    * @returns {Promise<boolean>} If the reaction was created
    */
   async addTrackToPlayList(
-    spotifyAccount: WithId<SpotifyAccount>,
+    spotifyAccount: SpotifyAccount,
     reaction: CreateReaction,
     action: ActionPayload,
   ): Promise<boolean> {
@@ -147,7 +146,7 @@ export class SpotifyService {
 
     if (response.status === HttpStatusCode.UNAUTHORIZED) {
       const accessToken = await this.refreshTokens(
-        spotifyAccount._id.toString(),
+        spotifyAccount.userId,
         decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
       );
 
@@ -165,11 +164,7 @@ export class SpotifyService {
    * @param {ActionPayload} action - The information about the issued action
    * @returns {Promise<boolean>} If the reaction was created
    */
-  async saveEpisode(
-    spotifyAccount: WithId<SpotifyAccount>,
-    reaction: CreateReaction,
-    action: ActionPayload,
-  ): Promise<boolean> {
+  async saveEpisode(spotifyAccount: SpotifyAccount, reaction: CreateReaction, action: ActionPayload): Promise<boolean> {
     const [episode] = Reaction.parseActionVariables(action, [reaction.params.episode]);
 
     if (!episode) {
@@ -206,7 +201,7 @@ export class SpotifyService {
 
     if (response.status === HttpStatusCode.UNAUTHORIZED) {
       const accessToken = await this.refreshTokens(
-        spotifyAccount._id.toString(),
+        spotifyAccount.userId,
         decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
       );
 
@@ -224,11 +219,7 @@ export class SpotifyService {
    * @param {ActionPayload} action - The information about the issued action
    * @returns {Promise<boolean>} If the reaction was created
    */
-  async saveShow(
-    spotifyAccount: WithId<SpotifyAccount>,
-    reaction: CreateReaction,
-    action: ActionPayload,
-  ): Promise<boolean> {
+  async saveShow(spotifyAccount: SpotifyAccount, reaction: CreateReaction, action: ActionPayload): Promise<boolean> {
     const [show] = Reaction.parseActionVariables(action, [reaction.params.show]);
 
     if (!show) {
@@ -262,7 +253,7 @@ export class SpotifyService {
 
     if (response.status === HttpStatusCode.UNAUTHORIZED) {
       const accessToken = await this.refreshTokens(
-        spotifyAccount._id.toString(),
+        spotifyAccount.userId,
         decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
       );
 
@@ -293,11 +284,11 @@ export class SpotifyService {
    * @function refreshDiscordTokens
    * @description Refresh a user spotify tokens
    *
-   * @param {state} accountId - The id of the account
+   * @param {state} userId - The id of the user
    * @param {state} refreshToken - The refresh token
    * @returns {Promise<string>} The refreshed token
    */
-  async refreshTokens(accountId: string, refreshToken: string): Promise<string> {
+  async refreshTokens(userId: string, refreshToken: string): Promise<string> {
     const response = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
@@ -322,7 +313,7 @@ export class SpotifyService {
       accessToken: encryptString(accessToken, environment.CRYPT_SECRET_KEY),
     };
 
-    this.thirdPartiesService.updateThirdPartyAccount('spotify', accountId, account);
+    this.thirdPartiesService.updateThirdPartyAccount('spotify', userId, account);
     return accessToken;
   }
 }
