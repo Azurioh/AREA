@@ -16,7 +16,6 @@ const HomePage = lazy(() => import('@/features/home/routes/Home'));
 const Privacy = lazy(() => import('@/features/privacy/routes/Privacy'));
 const Terms = lazy(() => import('@/features/terms/routes/Terms'));
 const AdminDashboardPage = lazy(() => import('@/features/adminDashboard/routes/AdminDashboardPage'));
-const Profile = lazy(() => import('@/features/profile/routes/Profile'));
 const ConnectionsPage = lazy(() => import('@/features/connections/routes/ConnectionsPage'));
 const OauthCallbackPage = lazy(() => import('@/features/connections/routes/OauthCallbackPage'));
 const WorkflowsPage = lazy(() => import('@/features/workflows/routes/WorkflowPage'));
@@ -54,7 +53,6 @@ export default function App() {
                       <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
                     </Route>
 
-                    <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
                     <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
                     <Route path={AppRoutesPaths.CONNECTIONS} element={<ConnectionsPage />} />
                     <Route path={AppRoutesPaths.OAUTH_CALLBACK} element={<OauthCallbackPage />} />
