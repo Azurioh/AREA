@@ -34,4 +34,8 @@ object AppTheme {
     val colors: CustomColors
         @Composable
         get() = LocalCustomColors.current
+
+    val fonts: CustomFonts
+        @Composable
+        get() = LocalCustomFonts.current
 }

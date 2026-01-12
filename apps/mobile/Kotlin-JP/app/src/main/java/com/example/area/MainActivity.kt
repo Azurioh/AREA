@@ -24,8 +24,9 @@ class MainActivity : ComponentActivity() {
             val userViewModel: UserViewModel = viewModel()
             val userProfile by userViewModel.userProfile.collectAsState()
             val darkTheme = userProfile?.darkModeEnabled ?: false
+            val dyslexiaMode = (userProfile?.dyslexiaType ?: 0) == 1
 
-            PocTheme(darkTheme = darkTheme) {
+            PocTheme(darkTheme = darkTheme, dyslexiaMode = dyslexiaMode) {
                 AppNavigation(userViewModel = userViewModel)
             }
         }

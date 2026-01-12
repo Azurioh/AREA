@@ -44,7 +44,7 @@ export class SpotifyPollingService {
 
       if (response.status === HttpStatusCode.UNAUTHORIZED) {
         const accessToken = await this.spotifyService.refreshTokens(
-          userSpotifyAccount._id.toString(),
+          userSpotifyAccount.userId,
           decryptString(userSpotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
         );
 

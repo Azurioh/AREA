@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.AppTheme
 import coil.compose.AsyncImage
 
@@ -58,7 +57,7 @@ fun AreaCard(
                 )
                 Text(
                     text = description,
-                    fontFamily = montserratFontFamily,
+                    fontFamily = AppTheme.fonts.secondary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 15.sp,
                     color = AppTheme.colors.textPrimary,

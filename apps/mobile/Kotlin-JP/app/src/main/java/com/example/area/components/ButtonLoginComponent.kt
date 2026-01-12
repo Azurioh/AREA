@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.viewModel.UserViewModel
 import com.example.area.ui.theme.Accent
+import com.example.area.ui.theme.AppTheme
 import com.example.area.ui.theme.CustomWhite
 
 @Composable
@@ -43,6 +44,7 @@ fun ButtonLoginComponent(
         Text(
             text = "Sign in",
             fontSize = 18.sp,
+            fontFamily = AppTheme.fonts.primary,
             fontWeight = FontWeight.SemiBold,
             color = CustomWhite
         )

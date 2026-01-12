@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 const BASE_IMAGE_URL = import.meta.env.VITE_BASE_IMAGE_URL;
 
@@ -8,20 +8,17 @@ interface ServiceLogo {
 }
 
 export function useServiceLogo(serviceName?: string) {
-  const [logo, setLogo] = useState<ServiceLogo | null>(null);
-
-  useEffect(() => {
+  const logo = useMemo<ServiceLogo | null>(() => {
     if (!serviceName) {
-      setLogo(null);
-      return;
+      return null;
     }
 
     const lowerName = serviceName.toLowerCase();
 
-    setLogo({
+    return {
       name: lowerName,
       imageUrl: `${BASE_IMAGE_URL}/${lowerName}.png`,
-    });
+    };
   }, [serviceName]);
 
   return logo;

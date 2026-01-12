@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Checkbox as ShadcnCheckbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 
-export interface CheckboxProps extends ShadcnCheckboxProps {}
+export type CheckboxProps = ShadcnCheckboxProps;
 
 const Checkbox = React.forwardRef<React.ElementRef<typeof ShadcnCheckbox>, CheckboxProps>(
   ({ className, ...props }, ref) => {

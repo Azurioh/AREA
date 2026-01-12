@@ -14,6 +14,7 @@ export interface Environment {
 
   ADMIN_SECRET: string;
   CRYPT_SECRET_KEY: string;
+  CORS_ORIGINS: string;
 
   WEB_OAUTH_CALLBACK_URL: string;
   MOBILE_OAUTH_CALLBACK_URL: string;
@@ -48,6 +49,7 @@ const variables: Record<string, string | undefined> = {
 
   ADMIN_SECRET: process.env.ADMIN_SECRET,
   CRYPT_SECRET_KEY: process.env.CRYPT_SECRET_KEY,
+  CORS_ORIGINS: process.env.CORS_ORIGINS,
 
   WEB_OAUTH_CALLBACK_URL: process.env.WEB_OAUTH_CALLBACK_URL,
   MOBILE_OAUTH_CALLBACK_URL: process.env.MOBILE_OAUTH_CALLBACK_URL,
@@ -100,6 +102,7 @@ export const environment: Environment = {
 
   ADMIN_SECRET: process.env.ADMIN_SECRET as string,
   CRYPT_SECRET_KEY: process.env.CRYPT_SECRET_KEY as string,
+  CORS_ORIGINS: process.env.CORS_ORIGINS as string,
 
   WEB_OAUTH_CALLBACK_URL: process.env.WEB_OAUTH_CALLBACK_URL as string,
   MOBILE_OAUTH_CALLBACK_URL: process.env.MOBILE_OAUTH_CALLBACK_URL as string,

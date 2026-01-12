@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.CustomWhite
-import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.AppTheme
 import coil.compose.AsyncImage
 
@@ -63,7 +62,7 @@ fun ConnectionCard(
 
                 Text(
                     text = serviceName,
-                    fontFamily = montserratFontFamily,
+                    fontFamily = AppTheme.fonts.secondary,
                     fontWeight = FontWeight.Medium,
                     fontSize = 15.sp,
                     color = AppTheme.colors.textPrimary,
@@ -85,6 +84,7 @@ fun ConnectionCard(
                     Text(
                         text = if (isConnected) "Connected" else "Connect",
                         fontSize = 15.sp,
+                        fontFamily = AppTheme.fonts.primary,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
