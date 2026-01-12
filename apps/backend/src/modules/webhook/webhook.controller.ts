@@ -2,7 +2,12 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { WebhookService } from '@/modules/webhook';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import ApiError from '@/utils/api-error';
-import type { DiscordWebhookPayload, GithubWebhookPayload, SpotifyWebhookPayload } from '@/types/webhook';
+import type {
+  DiscordWebhookPayload,
+  GithubWebhookPayload,
+  SpotifyWebhookPayload,
+  UnsplashWebhookPayload,
+} from '@/types/webhook';
 
 /**
  * @class WebhookController
@@ -72,6 +77,27 @@ export class WebhookController {
     const event = request.headers['x-spotify-event'] as string;
 
     this.service.spotifyCallback(event, body as SpotifyWebhookPayload);
+    reply.status(HttpStatusCode.NO_CONTENT).send();
+  }
+
+  /**
+   * @function unsplashCallback
+   * @description Handles the callback for the unsplash service.
+   *
+   * @param {FastifyRequest} request The Fastify request object containing the webhook data.
+   * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
+   */
+  async unsplashCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    if (!request.headers['x-unsplash-event'] || !request.headers['x-user-id']) {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook informations are missing');
+    }
+
+    const body = request.body;
+    const event = request.headers['x-unsplash-event'] as string;
+    const userId = request.headers['x-user-id'] as string;
+
+    this.service.unsplashCallback(userId, event, body as UnsplashWebhookPayload);
     reply.status(HttpStatusCode.NO_CONTENT).send();
   }
 }
