@@ -10,7 +10,8 @@ import type { ActionPayload, ActionReaction } from '@/types/action-reaction';
 import ApiError from '@/utils/api-error';
 import type { ActionsReactionsRepository } from './actions-reactions.repository';
 import type { WithId } from 'mongodb';
-import type { SpotifyService } from '../spotify';
+import type { SpotifyService } from '@/modules/spotify';
+import type { UnsplashService } from '@/modules/unsplash';
 
 /**
  * @class ActionsReactionsService
@@ -29,12 +30,14 @@ export class ActionsReactionsService {
     githubService: GithubService,
     discordService: DiscordService,
     spotifyService: SpotifyService,
+    unsplashService: UnsplashService,
   ) {
     this.repository = repository;
     this.actionsCreationFunc = new Map([
       ['github', githubService.createAction.bind(githubService)],
       ['discord', discordService.createAction.bind(discordService)],
       ['spotify', spotifyService.createAction.bind(spotifyService)],
+      ['unsplash', unsplashService.createAction.bind(unsplashService)],
     ]);
     this.reactionsCreationFunc = new Map([
       ['github', githubService.createReaction.bind(githubService)],
