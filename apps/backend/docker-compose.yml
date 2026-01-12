@@ -39,6 +39,7 @@ services:
       - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
       - DROPBOX_CLIENT_ID=${DROPBOX_CLIENT_ID}
       - DROPBOX_CLIENT_SECRET=${DROPBOX_CLIENT_SECRET}
+      - UNSPLASH_CLIENT_ID=${UNSPLASH_CLIENT_ID}
     volumes:
       - ./src:/app/apps/backend/src
       - ../../packages:/app/packages
