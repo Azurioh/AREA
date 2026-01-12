@@ -1,7 +1,7 @@
 import { Action } from '@/integrations/_definitions/action.interface';
 import type { SpotifyService } from '@/modules/spotify';
 
-export class SpotifyListeningToArtist extends Action {
+export class SpotifyListeningToArtistAction extends Action {
   constructor(_spotifyService: SpotifyService) {
     super(
       'listening_to_artist',
