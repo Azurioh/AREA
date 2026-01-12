@@ -1,5 +1,11 @@
 import type { FastifyInstance } from 'fastify';
-import { createDiscordService, createGithubService, createSpotifyService, ServiceManager } from '@/integrations';
+import {
+  createDiscordService,
+  createGithubService,
+  createUnsplashService,
+  createSpotifyService,
+  ServiceManager,
+} from '@/integrations';
 import { DiscordService } from '@/modules/discord';
 import { GithubService } from '@/modules/github';
 import { ThirdPartiesService } from '@/modules/third-parties';
@@ -28,4 +34,5 @@ export const registerServices = (app: FastifyInstance): void => {
   ServiceManager.instance.register(createGithubService(githubService));
   ServiceManager.instance.register(createDiscordService(discordService));
   ServiceManager.instance.register(createSpotifyService(spotifyService));
+  ServiceManager.instance.register(createUnsplashService());
 };
