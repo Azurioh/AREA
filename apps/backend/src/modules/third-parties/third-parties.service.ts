@@ -10,10 +10,12 @@ import type {
   DropboxAuthorizationResponse,
   GitHubAuthorizationResponse,
   GithubAccount,
+  OAuthServiceType,
   ServiceType,
   SpotifyAccount,
   SpotifyAuthorizationResponse,
   ThirdPartyAccount,
+  TwitchAccount,
 } from '@/types/third-parties';
 import ApiError from '@/utils/api-error';
 import { encryptString } from '@/utils/crypt';
@@ -28,9 +30,9 @@ import type { ThirdPartiesRepository } from './third-parties.repository';
 export class ThirdPartiesService {
   private usersService: UsersService;
   private repository: ThirdPartiesRepository;
-  private authorizationUrls: Map<ServiceType, string>;
+  private authorizationUrls: Map<OAuthServiceType, string>;
   private servicesAuthorizationFunc: Map<
-    ServiceType,
+    OAuthServiceType,
     (userId: string, code: string) => Promise<ThirdPartyAccount | null>
   >;
 
@@ -54,12 +56,17 @@ export class ThirdPartiesService {
         'dropbox',
         `https://www.dropbox.com/oauth2/authorize?response_type=code&client_id=${environment.DROPBOX_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/dropbox&token_access_type=offline&state={state}`,
       ],
+      [
+        'twitch',
+        `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${environment.TWITCH_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/twitch&scope=moderator:read:followers%20user:read:follows&state={state}`,
+      ],
     ]);
     this.servicesAuthorizationFunc = new Map([
       ['github', this.authorizeToGithub],
       ['discord', this.authorizeToDiscord],
       ['spotify', this.authorizeToSpotify],
       ['dropbox', this.authorizeToDropbox],
+      ['twitch', this.authorizeToTwitch],
     ]);
   }
 
@@ -157,7 +164,7 @@ export class ThirdPartiesService {
         const account = await this.repository.getThirdPartyAccountByUserId(decoded._id, service);
 
         if (account) {
-          const update = await this.repository.updateThirdPartyAccount(account._id.toString(), service, data);
+          const update = await this.repository.updateThirdPartyAccount(account.userId, service, data);
 
           success = update.acknowledged && update.matchedCount > 0;
         } else {
@@ -382,6 +389,68 @@ export class ThirdPartiesService {
         ref: cursor,
         paths: [],
       },
+    };
+    return data;
+  }
+
+  /**
+   * @function authorizeToTwitch
+   * @description Authorize a user to twitch
+   *
+   * @param {string} userId - The user id
+   * @param {string} code - The code provided by the service to get the tokens
+   * @returns {Promise<ThirdPartyAccount | null>} The create third party account
+   */
+  private async authorizeToTwitch(userId: string, code: string): Promise<ThirdPartyAccount | null> {
+    const response = await fetch('https://id.twitch.tv/oauth2/token', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        client_id: environment.TWITCH_CLIENT_ID,
+        client_secret: environment.TWITCH_CLIENT_SECRET,
+        code: code,
+        grant_type: 'authorization_code',
+        redirect_uri: `${environment.BASE_API_URL}/third-parties/v1/authorize/twitch`,
+      }),
+    });
+
+    if (response.status !== HttpStatusCode.OK) {
+      return null;
+    }
+
+    const formattedResponse = (await response.json()) as DiscordAuthorizationResponse;
+
+    const getId = async (accessToken: string): Promise<string | null> => {
+      const response = await fetch('https://api.twitch.tv/helix/users', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Client-Id': environment.TWITCH_CLIENT_ID,
+        },
+      });
+
+      const formattedResponse = await response.json();
+
+      if (response.status !== HttpStatusCode.OK || !formattedResponse.data || formattedResponse.data.length === 0) {
+        return null;
+      }
+      return formattedResponse.data[0].id;
+    };
+
+    const id = await getId(formattedResponse.access_token);
+
+    if (!id) {
+      return null;
+    }
+
+    const data: TwitchAccount = {
+      userId,
+      service: 'twitch',
+      accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
+      refreshToken: encryptString(formattedResponse.refresh_token, environment.CRYPT_SECRET_KEY),
+      id,
     };
     return data;
   }
