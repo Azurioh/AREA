@@ -11,7 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.viewModel.UserViewModel
 
 import com.example.area.components.LoginCard
-import com.example.area.ui.theme.Background
+import com.example.area.ui.theme.AppTheme
 
 @Composable
 fun LoginPage(
@@ -23,7 +23,7 @@ fun LoginPage(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = Background),
+            .background(color = AppTheme.colors.background),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

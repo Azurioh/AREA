@@ -10,6 +10,7 @@ import com.example.area.data.api.RetrofitInstance
 import com.example.area.data.models.Register
 import com.example.area.data.models.Login
 import com.example.area.data.models.User
+import com.example.area.data.models.UserInfo
 
 class UserViewModel : ViewModel() {
 
@@ -78,6 +79,30 @@ class UserViewModel : ViewModel() {
             try {
                 val user = RetrofitInstance.api.getUserProfile()
                 _userProfile.value = user
+            } catch (e: Exception) {
+                onError(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun updateUser(
+        name: String,
+        darkModeEnabled: Boolean,
+        dyslexiaType: Int,
+        onSuccess: () -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val request = UserInfo(
+                    name = name,
+                    darkModeEnabled = darkModeEnabled,
+                    dyslexiaType = dyslexiaType
+                )
+
+                RetrofitInstance.api.updateUserInfo(request)
+                fetchUserProfile()
+                onSuccess()
             } catch (e: Exception) {
                 onError(e.message ?: "Unknown error")
             }

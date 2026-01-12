@@ -7,7 +7,7 @@ const OauthCallbackPage: React.FC = () => {
 
   useEffect(() => {
     handleMount();
-  }, []);
+  }, [handleMount]);
 
   return null;
 };

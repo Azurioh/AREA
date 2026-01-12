@@ -1,24 +1,18 @@
 package com.example.area.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Dehaze
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,11 +23,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.area.ui.theme.Secondary
 import com.example.area.ui.theme.Accent
-import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.CustomWhite
 import com.example.area.ui.theme.montserratFontFamily
+import com.example.area.ui.theme.AppTheme
 import coil.compose.AsyncImage
 
 @Composable
@@ -45,7 +38,7 @@ fun ConnectionCard(
 ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
+        colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
         modifier = Modifier
             .padding(12.dp)
             .size(width = 350.dp, height = 80.dp)
@@ -73,7 +66,7 @@ fun ConnectionCard(
                     fontFamily = montserratFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 15.sp,
-                    color = CustomBlack,
+                    color = AppTheme.colors.textPrimary,
                     modifier = Modifier.weight(1f)
                 )
 

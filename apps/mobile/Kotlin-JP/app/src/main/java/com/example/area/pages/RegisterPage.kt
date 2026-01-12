@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import com.example.area.viewModel.UserViewModel
 
 import com.example.area.components.RegisterCard
-import com.example.area.ui.theme.Background
+import com.example.area.ui.theme.AppTheme
 
 @Composable
 fun RegisterPage(
@@ -22,7 +22,7 @@ fun RegisterPage(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = Background),
+            .background(color = AppTheme.colors.background),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

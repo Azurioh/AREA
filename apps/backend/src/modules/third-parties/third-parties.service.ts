@@ -1,25 +1,25 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import ApiError from '@/utils/api-error';
-import { environment } from '@/utils/environment';
-import { generateStateToken, verifyToken } from '@/utils/token';
+import type { StateToken } from '@area/shared/types/users.types';
+import type { WithId } from 'mongodb';
+import type { UsersService } from '@/modules/users';
 import type {
   ClientType,
   DiscordAccount,
   DiscordAuthorizationResponse,
   DropboxAccount,
   DropboxAuthorizationResponse,
-  GithubAccount,
   GitHubAuthorizationResponse,
+  GithubAccount,
   ServiceType,
   SpotifyAccount,
   SpotifyAuthorizationResponse,
   ThirdPartyAccount,
 } from '@/types/third-parties';
-import type { StateToken } from '@area/shared/types/users.types';
-import type { UsersService } from '@/modules/users';
-import type { ThirdPartiesRepository } from './third-parties.repository';
+import ApiError from '@/utils/api-error';
 import { encryptString } from '@/utils/crypt';
-import type { WithId } from 'mongodb';
+import { environment } from '@/utils/environment';
+import { generateStateToken, verifyToken } from '@/utils/token';
+import type { ThirdPartiesRepository } from './third-parties.repository';
 
 /**
  * @class ThirdPartiesService
@@ -166,6 +166,7 @@ export class ThirdPartiesService {
       }
       return { success, clientType: decoded.clientType };
     } catch (err: unknown) {
+      console.error('Third-party authorization failed:', err);
       return { success: false, clientType: decoded.clientType };
     }
   }

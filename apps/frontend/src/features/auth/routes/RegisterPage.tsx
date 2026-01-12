@@ -8,6 +8,8 @@ import { Input } from '@/components/wrappers/Input';
 import { AppRoutesPaths } from '@/enums/routes';
 import { useRegister } from '@/features/auth/hooks/useRegister';
 import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
+import { usePasswordValidation } from '@/features/auth/hooks/usePasswordValidation';
+import { PasswordStrengthBar } from '@/features/auth/components/PasswordStrengthBar';
 import { useClearUserData } from '@/shared/hooks/useClearUserData';
 
 const RegisterPage: React.FC = () => {
@@ -26,6 +28,7 @@ const RegisterPage: React.FC = () => {
     error,
     handleSubmit,
   } = useRegister();
+  const { criteria, strength, isValid } = usePasswordValidation(password);
   useClearUserData();
 
   return (
@@ -95,6 +98,7 @@ const RegisterPage: React.FC = () => {
                   {showPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                 </Button>
               </div>
+              {password && <PasswordStrengthBar criteria={criteria} strength={strength} />}
             </div>
             <div className="space-y-2">
               <label htmlFor="confirm-password" className="text-foreground">
@@ -119,7 +123,7 @@ const RegisterPage: React.FC = () => {
                 </Button>
               </div>
             </div>
-            <Button type="submit" className="w-full !mt-7" disabled={isLoading}>
+            <Button type="submit" className="w-full !mt-7" disabled={isLoading || !isValid}>
               {isLoading ? 'Creating account...' : 'Sign up'}
             </Button>
             <div className="text-center text-sm text-foreground">

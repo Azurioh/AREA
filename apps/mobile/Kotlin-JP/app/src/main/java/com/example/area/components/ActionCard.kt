@@ -12,9 +12,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.area.ui.theme.CustomBlack
 import com.example.area.ui.theme.poppinsFontFamily
-import com.example.area.ui.theme.Secondary
+import com.example.area.ui.theme.AppTheme
 
 @Composable
 fun ActionCard(
@@ -24,7 +23,7 @@ fun ActionCard(
     ElevatedCard(
         onClick = onClick,
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Secondary),
+        colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
         modifier = Modifier
             .padding(top = 12.dp)
             .size(width = 350.dp, height = 80.dp)
@@ -34,7 +33,7 @@ fun ActionCard(
             fontFamily = poppinsFontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 30.sp,
-            color = CustomBlack,
+            color = AppTheme.colors.textPrimary,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(top = 18.dp)

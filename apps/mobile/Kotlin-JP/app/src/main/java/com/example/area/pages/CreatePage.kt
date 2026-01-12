@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -37,12 +35,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.Accent
-import com.example.area.ui.theme.Background
+import com.example.area.ui.theme.AppTheme
 import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.components.ActionCard
 import com.example.area.components.AreaCard
-import com.example.area.ui.theme.CustomBlack
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.R
 import com.example.area.components.AreaSelectedCard
@@ -80,7 +77,7 @@ fun CreatePage(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = Background),
+            .background(color = AppTheme.colors.background),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -493,7 +490,7 @@ private fun MainView(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 30.sp,
-        color = CustomBlack,
+        color = AppTheme.colors.textPrimary,
         textAlign = TextAlign.Center,
         modifier = Modifier
             .padding(top = 32.dp)
@@ -517,7 +514,7 @@ private fun MainView(
         fontSize = 14.sp,
         fontFamily = montserratFontFamily,
         fontWeight = FontWeight.Normal,
-        color = CustomBlack,
+        color = AppTheme.colors.textPrimary,
         textAlign = TextAlign.Center,
         modifier = Modifier
             .padding(12.dp)

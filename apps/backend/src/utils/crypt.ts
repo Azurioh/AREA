@@ -18,7 +18,7 @@ export async function hashPassword(password: string): Promise<string> {
     return hashedPassword;
   } catch (err: unknown) {
     console.error(`\r\x1b[31mError:\x1b[0m Password hashing went wrong.\n${err}`);
-    throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Unknow error occured');
+    throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Unknown error occured');
   }
 }
 
@@ -37,7 +37,7 @@ export async function comparePasswords(password: string, hashedPassword: string)
     return result;
   } catch (err: unknown) {
     console.error(`\r\x1b[31mError:\x1b[0m Passwords comparaison went wrong.\n${err}`);
-    throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Unknow error occured');
+    throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Unknown error occured');
   }
 }
 
@@ -121,6 +121,9 @@ export const safeEqualCheck = (a: string, b: string): boolean => {
 
   const aBuffer = Buffer.from(a);
   const bBuffer = Buffer.from(b);
-
+  if (aBuffer.length !== bBuffer.length) {
+    crypto.timingSafeEqual(aBuffer, bBuffer);
+    return false;
+  }
   return crypto.timingSafeEqual(aBuffer, bBuffer);
 };

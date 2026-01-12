@@ -10,22 +10,14 @@ export default class ApiError extends Error {
    * @description The http status code
    */
   public httpCode: HttpStatusCode;
-  /**
-   * @property data
-   * @description The data
-   */
-  public data: Record<string, unknown> | undefined;
 
   /**
    * @constructor
    * @param httpCode - The http status code
-   * @param statusCode - The status code
    * @param message - The message
-   * @param data - The data
    */
-  constructor(httpCode: HttpStatusCode, message: string, data?: Record<string, unknown>) {
+  constructor(httpCode: HttpStatusCode, message: string) {
     super(message);
     this.httpCode = httpCode;
-    this.data = data;
   }
 }

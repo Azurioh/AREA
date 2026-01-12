@@ -4,13 +4,22 @@ import { ZodError } from 'zod';
 import ApiError from '@/utils/api-error';
 import { environment } from '@/utils/environment';
 
+const isFastifyValidationError = (error: unknown): boolean => {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    (error as { code: string }).code === 'FST_ERR_VALIDATION'
+  );
+};
+
 export const setupErrorHandler = (app: FastifyInstance) => {
   app.setErrorHandler((error: unknown, _: FastifyRequest, reply: FastifyReply) => {
     if (error instanceof ApiError) {
       reply.status(error.httpCode).send({
         data: error.message,
       });
-    } else if (error instanceof ZodError || (error as any).code === 'FST_ERR_VALIDATION') {
+    } else if (error instanceof ZodError || isFastifyValidationError(error)) {
       reply.status(HttpStatusCode.BAD_REQUEST).send({
         data: (error as any).message,
       });

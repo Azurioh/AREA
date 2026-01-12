@@ -1,30 +1,27 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import SideBar from '@/components/SideBar';
-import { Button } from '@/components/wrappers/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/wrappers/Card';
-import { Input } from '@/components/wrappers/Input';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/wrappers/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/wrappers/Card';
+import { Input } from '@/components/wrappers/Input';
+import { useActionReaction } from '@/features/workflows/context/ActionReactionContext';
+import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceActions } from '@/features/workflows/hooks/useServiceActions';
-import { useNavigate } from 'react-router-dom';
-import { useActionReaction } from '@/features/workflows/context/ActionReactionContext';
-
-interface ParamOption {
-  name: string;
-  id: string;
-}
 
 const ChooseAction: React.FC = () => {
   const { services, fetchServices } = useListServices();
 
   React.useEffect(() => {
     fetchServices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const {
@@ -75,7 +72,7 @@ const ChooseAction: React.FC = () => {
                         <div className="text-center py-8 text-muted-foreground">No actions available</div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                          {serviceActions[service].map((action: any) => {
+                          {(serviceActions[service] as { name: string; description?: string }[]).map((action) => {
                             const lowerName = service.toLowerCase();
                             const logoUrl = `${import.meta.env.VITE_BASE_IMAGE_URL}/${lowerName}.png`;
 
@@ -171,8 +168,8 @@ const ChooseAction: React.FC = () => {
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button variant="outline" className="w-full justify-start" id={id}>
-                                    {typeof param.value === 'object' && param.value?.name
-                                      ? param.value.name
+                                    {typeof param.value === 'object' && (param.value as ParamOption)?.name
+                                      ? (param.value as ParamOption).name
                                       : param.placeholder}
                                   </Button>
                                 </DropdownMenuTrigger>
@@ -213,7 +210,7 @@ const ChooseAction: React.FC = () => {
                                 acc[p.key] = p.value;
                                 return acc;
                               },
-                              {} as Record<string, any>,
+                              {} as Record<string, unknown>,
                             );
 
                             setAction(

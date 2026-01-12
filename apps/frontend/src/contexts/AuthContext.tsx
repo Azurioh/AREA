@@ -1,13 +1,14 @@
 import type { User } from '@area/shared/types/users.types';
 import type React from 'react';
-import { createContext, type ReactNode, useMemo, useState, useEffect } from 'react';
+import { createContext, type ReactNode, useEffect, useMemo, useState } from 'react';
+import { UserAdminManagementClient } from '@/features/adminDashboard/api/UserAdminManagement';
 import { AuthClient } from '@/features/auth/api/AuthClient';
+import { ThirdPartiesInformation } from '@/features/connections/api/ThirdPartiesInformation';
+import { UpdateUser } from '@/features/profile/api/UpdateProfile';
 import { ActionReactionClient, ServicesClient } from '@/features/workflows';
 import { TokenManager } from '@/lib/TokenManager';
-import { UserInformationClient } from '@/shared/api/UserInformationClient';
-import { ThirdPartiesInformation } from '@/features/connections/api/ThirdPartiesInformation';
 import { ExecutionState } from '@/shared/api/ExecutionState';
-import { UserAdminManagementClient } from '@/features/adminDashboard/api/UserAdminManagement';
+import { UserInformationClient } from '@/shared/api/UserInformationClient';
 
 /**
  * @interface AuthState
@@ -32,6 +33,7 @@ export interface AuthContextType {
   thirdPartiesInformation: ThirdPartiesInformation;
   executionStateClient: ExecutionState;
   userAdminManagementClient: UserAdminManagementClient;
+  updateUser: UpdateUser;
   logout: () => void;
 }
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
@@ -55,7 +57,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const authClient = useMemo(() => new AuthClient(BASE_URL, tokenManager), [tokenManager]);
   const thirdPartiesInformation = useMemo(() => new ThirdPartiesInformation(BASE_URL, tokenManager), [tokenManager]);
   const executionStateClient = useMemo(() => new ExecutionState(BASE_URL, tokenManager), [tokenManager]);
-
+  const updateUser = useMemo(() => new UpdateUser(BASE_URL, tokenManager), [tokenManager]);
   const userAdminManagementClient = useMemo(
     () => new UserAdminManagementClient(BASE_URL, tokenManager),
     [tokenManager],
@@ -92,6 +94,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       thirdPartiesInformation,
       executionStateClient,
       userAdminManagementClient,
+      updateUser,
       logout: tokenManager.logout.bind(tokenManager),
     }),
     [
@@ -103,8 +106,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       authClient,
       executionStateClient,
       thirdPartiesInformation,
-      thirdPartiesInformation,
       userAdminManagementClient,
+      updateUser,
     ],
   );
 

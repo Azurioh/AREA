@@ -16,9 +16,6 @@ export class UserAdminManagementClient extends ApiClient {
   async getAllUsers(): Promise<MaybeUndefined<GetAllUsers>> {
     const response = await this.fetch<GetAllUsers>('/users/v1/', {
       method: 'GET',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-      }
     });
 
     return response;
@@ -34,11 +31,6 @@ export class UserAdminManagementClient extends ApiClient {
   async deleteUser(userId: string): Promise<MaybeUndefined<void>> {
     const response = await this.fetch<void>(`/users/v1/${userId}`, {
       method: 'DELETE',
-      headers: {
-        "Access-Control-Allow-Methods": "DELETE",
-        "Access-Control-Allow-Origin": "*",
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-      }
     });
 
     return response;

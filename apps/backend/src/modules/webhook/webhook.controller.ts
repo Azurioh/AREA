@@ -1,6 +1,6 @@
+import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { WebhookService } from '@/modules/webhook';
-import { HttpStatusCode } from '@area/shared/enums/http-status';
 import ApiError from '@/utils/api-error';
 import type {
   DiscordWebhookPayload,
@@ -30,7 +30,7 @@ export class WebhookController {
    */
   async githubCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     if (!request.headers['x-github-event']) {
-      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook informations are missing');
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook information are missing');
     }
 
     const body = request.body;
@@ -50,7 +50,7 @@ export class WebhookController {
    */
   async discordCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     if (!request.headers['x-discord-event']) {
-      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook informations are missing');
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook information are missing');
     }
 
     const body = request.body;
@@ -70,7 +70,7 @@ export class WebhookController {
    */
   async spotifyCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     if (!request.headers['x-spotify-event']) {
-      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook informations are missing');
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook information are missing');
     }
 
     const body = request.body;

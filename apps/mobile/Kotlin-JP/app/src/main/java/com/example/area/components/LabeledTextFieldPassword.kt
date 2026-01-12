@@ -23,7 +23,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.Accent
-import com.example.area.ui.theme.CustomBlack
+import com.example.area.ui.theme.AppTheme
 import com.example.area.ui.theme.montserratFontFamily
 
 @Composable
@@ -46,7 +46,7 @@ fun LabeledTextFieldPassword(
             fontSize = 14.sp,
             fontFamily = montserratFontFamily,
             fontWeight = FontWeight.Bold,
-            color = CustomBlack,
+            color = AppTheme.colors.textPrimary,
             modifier = Modifier.padding(bottom = 4.dp)
         )
 
@@ -72,14 +72,14 @@ fun LabeledTextFieldPassword(
                         } else {
                             "Show password"
                         },
-                        tint = CustomBlack
+                        tint = AppTheme.colors.textPrimary
                     )
                 }
             },
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Accent,
-                unfocusedBorderColor = CustomBlack.copy(alpha = 0.5f)
+                unfocusedBorderColor = AppTheme.colors.textPrimary.copy(alpha = 0.5f)
             )
         )
     }

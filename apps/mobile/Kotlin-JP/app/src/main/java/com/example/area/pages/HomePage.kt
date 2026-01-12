@@ -25,8 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.components.DisplayCard
 import com.example.area.data.models.ActionReactionDisplay
-import com.example.area.ui.theme.Background
-import com.example.area.ui.theme.CustomBlack
+import com.example.area.ui.theme.AppTheme
 import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.utils.getServiceImage
@@ -56,9 +55,10 @@ fun HomePage(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(color = Background),
+            .background(color = AppTheme.colors.background),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 80.dp)
     ) {
         item {
             Text(
@@ -66,7 +66,7 @@ fun HomePage(
                 fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 30.sp,
-                color = CustomBlack,
+                color = AppTheme.colors.textPrimary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 32.dp)
@@ -74,7 +74,10 @@ fun HomePage(
             )
         }
 
-        items(actionsReactions) { actionReaction ->
+        items(
+            items = actionsReactions,
+            key = { actionReaction -> actionReaction.id ?: actionReaction.hashCode() }
+        ) { actionReaction ->
             DisplayCard(
                 actionServiceImage = getServiceImage(actionReaction.action.service),
                 reactionServiceImage = getServiceImage(actionReaction.reaction.service),
@@ -86,6 +89,14 @@ fun HomePage(
                 onToggle = { isChecked ->
                     val workflowId = actionReaction.id
                     if (workflowId != null) {
+                        actionsReactions = actionsReactions.map { item ->
+                            if (item.id == workflowId) {
+                                item.copy(executionState = isChecked)
+                            } else {
+                                item
+                            }
+                        }
+
                         serviceViewModel.updateStateWorkflow(
                             workflowId = workflowId,
                             executionState = isChecked,
@@ -93,6 +104,13 @@ fun HomePage(
                                 Toast.makeText(context, "Workflow state updated", Toast.LENGTH_SHORT).show()
                             },
                             onError = { error ->
+                                actionsReactions = actionsReactions.map { item ->
+                                    if (item.id == workflowId) {
+                                        item.copy(executionState = !isChecked)
+                                    } else {
+                                        item
+                                    }
+                                }
                                 if (!error.contains("401") && !error.contains("Unauthorized")) {
                                     Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
                                 }
@@ -102,9 +120,7 @@ fun HomePage(
                         Toast.makeText(context, "Error: Workflow ID is null", Toast.LENGTH_LONG).show()
                     }
                 },
-                onMenuClick = {
-                    println("Menu clicked")
-                }
+                onMenuClick = {}
             )
         }
     }

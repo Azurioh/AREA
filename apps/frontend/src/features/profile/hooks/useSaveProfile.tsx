@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export function useSaveProfile(
   initialUsername: string,
@@ -12,11 +12,22 @@ export function useSaveProfile(
     onEdit(editedUsername, editedEmail);
   };
 
+  const resetChanges = () => {
+    setEditedUsername(initialUsername);
+    setEditedEmail(initialEmail);
+  };
+
+  useEffect(() => {
+    setEditedUsername(initialUsername);
+    setEditedEmail(initialEmail);
+  }, [initialUsername, initialEmail]);
+
   return {
     editedUsername,
     editedEmail,
     setEditedUsername,
     setEditedEmail,
     handleSave,
+    resetChanges,
   };
 }

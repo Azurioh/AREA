@@ -49,9 +49,12 @@ const WorkflowPage: React.FC = () => {
       <main className="flex-1 ml-24 pr-4 pt-4">
         <Card className="h-full w-full rounded-b-none flex flex-col items-center justify-start">
           <CardContent className="p-6 h-full w-full overflow-y-auto">
-            <h1 className="text-5xl mt-12 mb-14 font-text text-center !font-text font-bold tracking-tighter text-primary">
-              Build &amp; Manage Your Workflows
-            </h1>
+            <div className="text-center space-y-2 mb-6">
+              <h1 className="font-bold tracking-tighter text-primary">Build &amp; Manage Your Workflows</h1>
+              <p className="text-foreground">
+                Manage your workflows, activate them, and monitor their performance all in one place.
+              </p>
+            </div>
             <div className="w-full flex justify-center mb-8">
               <div className="relative w-full max-w-4xl">
                 <Input

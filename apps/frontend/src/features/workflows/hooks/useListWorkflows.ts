@@ -25,7 +25,7 @@ export function useListWorkflows() {
     };
 
     fetchWorkflows();
-  }, []);
+  }, [actionReactionClient]);
 
   return { workflows, loading, setWorkflows };
 }
