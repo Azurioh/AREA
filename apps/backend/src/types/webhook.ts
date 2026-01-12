@@ -30,3 +30,16 @@ export type DiscordWebhookPayload = {
 export type SpotifyWebhookPayload = {
   ids: string;
 };
+
+/**
+ * @type DropboxWebhookPayload
+ * @description The payload of the dropbox webhook.
+ *
+ * @property {Object} list_folder The information about who got changes
+ * @property {string[]} list_folder.accounts The accounts who were changed
+ */
+export type DropboxWebhookPayload = {
+  list_folder: {
+    accounts: string[];
+  };
+};

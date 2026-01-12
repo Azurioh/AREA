@@ -90,10 +90,18 @@ export type SpotifyAccount = BaseAccount & {
  * @description DropboxAccount type.
  *
  * @property {'dropbox'} service The name of the service
+ * @property {string} id The account id of the user
+ * @property {Object[]} cursors An array of the user cursors
+ * @property {string} cursors[].cursor The tag of the cursor
+ * @property {string} cursors[].tag The type of the cursor
  */
 export type DropboxAccount = BaseAccount & {
   service: 'dropbox';
   id: string;
+  cursor: {
+    ref: string;
+    paths: string[];
+  };
 };
 
 export type ThirdPartyAccount = GithubAccount | DiscordAccount | SpotifyAccount | DropboxAccount;

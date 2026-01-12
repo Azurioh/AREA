@@ -8,6 +8,7 @@ import { UsersRepository, UsersService } from '@/modules/users';
 import { SpotifyService } from '@/modules/spotify';
 import { PollingService } from '@/modules/polling/polling.service';
 import { PollingRepository } from '@/modules/polling/polling.repository';
+import { createDropboxService } from '@/integrations/dropbox';
 
 export const registerServices = (app: FastifyInstance): void => {
   if (!app.mongo.db) {
@@ -28,4 +29,5 @@ export const registerServices = (app: FastifyInstance): void => {
   ServiceManager.instance.register(createGithubService(githubService));
   ServiceManager.instance.register(createDiscordService(discordService));
   ServiceManager.instance.register(createSpotifyService(spotifyService));
+  ServiceManager.instance.register(createDropboxService());
 };

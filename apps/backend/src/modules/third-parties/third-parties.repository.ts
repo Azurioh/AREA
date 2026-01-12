@@ -1,7 +1,7 @@
 import { MongoCollections } from '@/enums/mongo-collection';
 import type { ServiceType, ThirdPartyAccount } from '@/types/third-parties';
 import type { MaybeNull } from '@area/shared/utils/common';
-import { ObjectId, type UpdateResult, type Db, type WithId } from 'mongodb';
+import type { UpdateResult, Db, WithId } from 'mongodb';
 
 /**
  * @class ThirdPartiesRepository
@@ -47,21 +47,38 @@ export class ThirdPartiesRepository {
   }
 
   /**
+   * @function getThirdPartyAccountByServiceAccountId
+   * @description Get a third party account from the databse.
+   *
+   * @param {string} id The service id related to the third party account.
+   * @param {ServiceType} service The service type.
+   * @returns {Promise<MaybeNull<WithId<T>>>} The third party account.
+   */
+  async getThirdPartyAccountByServiceAccountId<T extends ThirdPartyAccount>(
+    id: string,
+    service: ServiceType,
+  ): Promise<MaybeNull<WithId<T>>> {
+    return (await this.db
+      .collection<ThirdPartyAccount>(MongoCollections.THIRD_PARTIES_ACCOUNT)
+      .findOne({ id: id, service: service })) as WithId<T> | null;
+  }
+
+  /**
    * @function updateThirdPartyAccount
    * @description Updates a third party account in the database.
    *
-   * @param {string} id The if of the document.
+   * @param {string} userId The id of the user.
    * @param {ServiceType} service The service type.
    * @param {Partial<GithubAccount>} account The github account data.
    * @returns {Promise<UpdateResult<GithubAccount>>} The result of the update.
    */
   async updateThirdPartyAccount(
-    id: string,
+    userId: string,
     service: ServiceType,
     account: Partial<ThirdPartyAccount>,
   ): Promise<UpdateResult<ThirdPartyAccount>> {
     return await this.db
       .collection<ThirdPartyAccount>(MongoCollections.THIRD_PARTIES_ACCOUNT)
-      .updateOne({ _id: new ObjectId(id), service: service }, { $set: account });
+      .updateOne({ userId: userId, service: service }, { $set: account });
   }
 }

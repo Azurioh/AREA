@@ -8,6 +8,7 @@ import { DiscordService } from '@/modules/discord';
 import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
 import { SpotifyService } from '@/modules/spotify';
 import { PollingRepository, PollingService } from '@/modules/polling';
+import { DropboxRepository, DropboxService } from '../dropbox';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -18,6 +19,7 @@ export default async (app: FastifyInstance) => {
   const actionsReactionsRepository = new ActionsReactionsRepository(app.mongo.db);
   const thirdPartiesRepository = new ThirdPartiesRepository(app.mongo.db);
   const pollingRepository = new PollingRepository(app.mongo.db);
+  const dropboxRepository = new DropboxRepository(app.mongo.db);
 
   const pollingService = new PollingService(pollingRepository);
   const usersService = new UsersService(userRepository);
@@ -25,11 +27,13 @@ export default async (app: FastifyInstance) => {
   const githubService = new GithubService(thirdPartiesService);
   const discordService = new DiscordService(thirdPartiesService);
   const spotifyService = new SpotifyService(thirdPartiesService, pollingService);
+  const dropboxService = new DropboxService(dropboxRepository, thirdPartiesService);
   const actionsReactionsService = new ActionsReactionsService(
     actionsReactionsRepository,
     githubService,
     discordService,
     spotifyService,
+    dropboxService,
   );
   const service = new WebhookService(actionsReactionsService);
 
@@ -64,6 +68,28 @@ export default async (app: FastifyInstance) => {
     schema: {
       summary: 'The callback of the spotify webhook',
       description: 'Handle the callback of the spotify webhook.',
+      tags: ['Webhooks'],
+    },
+  });
+
+  app.route({
+    method: 'GET',
+    url: '/v1/dropbox/',
+    handler: controller.dropboxCallback.bind(controller),
+    schema: {
+      summary: 'The callback of the dropbox webhook',
+      description: 'Handle the callback of the dropbox webhook.',
+      tags: ['Webhooks'],
+    },
+  });
+
+  app.route({
+    method: 'POST',
+    url: '/v1/dropbox/',
+    handler: controller.dropboxCallback.bind(controller),
+    schema: {
+      summary: 'The callback of the dropbox webhook',
+      description: 'Handle the callback of the dropbox webhook.',
       tags: ['Webhooks'],
     },
   });
