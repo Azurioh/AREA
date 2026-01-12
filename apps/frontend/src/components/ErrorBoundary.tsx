@@ -88,7 +88,6 @@ const RouteErrorBoundary: React.FC<{ children: ReactNode }> = ({ children }) => 
   return (
     <ErrorBoundary
       onError={(error, errorInfo) => {
-        // Could send to error tracking service (e.g., Sentry)
         console.error('Route error:', error.message, errorInfo.componentStack);
       }}
     >

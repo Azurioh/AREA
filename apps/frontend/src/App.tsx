@@ -9,7 +9,6 @@ import { AuthProvider } from './contexts/AuthContext';
 import { AdminProtectedRoute, ProtectedRoute } from './contexts/ProtectedRoutes';
 import { ThemeProvider } from './contexts/ThemeContext';
 
-// Lazy-loaded route components for code splitting
 const LoginPage = lazy(() => import('@/features/auth/routes/LoginPage'));
 const RegisterPage = lazy(() => import('@/features/auth/routes/RegisterPage'));
 const LandingPage = lazy(() => import('@/features/landing/routes/LandingPage'));
@@ -43,28 +42,23 @@ export default function App() {
             <Toaster position="top-center" richColors closeButton />
             <Suspense fallback={<LoadingScreen />}>
               <Routes>
-                {/* Public routes */}
                 <Route path={AppRoutesPaths.REGISTER} element={<RegisterPage />} />
                 <Route path={AppRoutesPaths.LOGIN} element={<LoginPage />} />
                 <Route path={AppRoutesPaths.LANDING} element={<LandingPage />} />
                 <Route path={AppRoutesPaths.PRIVACY} element={<Privacy />} />
                 <Route path={AppRoutesPaths.TERMS} element={<Terms />} />
 
-                {/* Protected routes - all wrapped with error boundary via ProtectedLayout */}
                 <Route element={<ProtectedRoute />}>
                   <Route element={<ProtectedLayout />}>
-                    {/* Admin routes */}
                     <Route element={<AdminProtectedRoute />}>
                       <Route path={AppRoutesPaths.ADMIN_DASHBOARD} element={<AdminDashboardPage />} />
                     </Route>
 
-                    {/* User routes */}
                     <Route path={AppRoutesPaths.PROFILE} element={<Profile />} />
                     <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
                     <Route path={AppRoutesPaths.CONNECTIONS} element={<ConnectionsPage />} />
                     <Route path={AppRoutesPaths.OAUTH_CALLBACK} element={<OauthCallbackPage />} />
 
-                    {/* Workflow routes */}
                     <Route
                       element={
                         <ActionReactionProvider>
