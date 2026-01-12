@@ -45,6 +45,14 @@ export class SpotifyService {
     throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');
   }
 
+  /**
+   * @function listeningToArtist
+   * @description Create a listening to artist action
+   *
+   * @param {WithId<SpotifyAccount>} spotifyAccount - The spotify account of the user
+   * @param {CreateAction} action - The information about the action
+   * @returns {Promise<string>} The trigger action to store in the db
+   */
   async listeningToArtist(spotifyAccount: WithId<SpotifyAccount>, action: CreateAction): Promise<string> {
     let response = await this.search(
       decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY),
