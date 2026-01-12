@@ -4,7 +4,6 @@ import SideBar from '@/components/SideBar';
 import { Card, CardContent } from '@/components/wrappers/Card';
 import ProfileCard from '@/features/profile/components/ProfileCard';
 import { useUserInformation } from '@/shared/hooks/useUserInformation';
-import { DysType } from '@area/shared/enums/user-enums';
 
 const Profile: React.FC = () => {
   const { user } = useUserInformation();
@@ -34,7 +33,7 @@ const Profile: React.FC = () => {
                     window.location.reload();
                   }}
                   darkMode={user?.darkModeEnabled || false}
-                  dyslexiaType={user?.dyslexiaType || DysType.NOTHING}
+                  dyslexia={user?.dyslexiaEnabled || false}
                 />
               </div>
             </div>
