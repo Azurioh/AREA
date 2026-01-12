@@ -31,3 +31,10 @@ val montserratFontFamily = FontFamily (
     Font(R.font.montserrat_regular, FontWeight.Normal),
     Font(R.font.montserrat_semibold, FontWeight.SemiBold),
 )
+
+val openDyslexicFontFamily = FontFamily (
+    Font(R.font.opendyslexic_bold, FontWeight.Bold),
+    Font(R.font.opendyslexic_bold, FontWeight.SemiBold),
+    Font(R.font.opendyslexic_bold, FontWeight.Medium),
+    Font(R.font.opendyslexic_regular, FontWeight.Normal),
+)

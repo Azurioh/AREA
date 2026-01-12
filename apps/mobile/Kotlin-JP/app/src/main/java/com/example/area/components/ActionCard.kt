@@ -12,7 +12,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.ui.theme.AppTheme
 
 @Composable
@@ -30,7 +29,7 @@ fun ActionCard(
     ) {
         Text(
             text = text,
-            fontFamily = poppinsFontFamily,
+            fontFamily = AppTheme.fonts.primary,
             fontWeight = FontWeight.SemiBold,
             fontSize = 30.sp,
             color = AppTheme.colors.textPrimary,

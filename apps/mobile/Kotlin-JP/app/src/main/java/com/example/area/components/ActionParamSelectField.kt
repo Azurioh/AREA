@@ -16,12 +16,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.data.models.ActionParam
 import com.example.area.ui.theme.Accent
-import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +42,7 @@ fun ActionParamSelectField(
     Column {
         Text(
             text = param.label,
-            fontFamily = poppinsFontFamily,
+            fontFamily = AppTheme.fonts.primary,
             fontWeight = FontWeight.Medium,
             fontSize = 14.sp,
             color = AppTheme.colors.textPrimary,
@@ -57,11 +57,20 @@ fun ActionParamSelectField(
                 value = selectedLabel,
                 onValueChange = {},
                 readOnly = true,
-                placeholder = { Text(param.placeholder) },
+                placeholder = {
+                    Text(
+                        text = param.placeholder,
+                        fontFamily = AppTheme.fonts.secondary
+                    )
+                },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .menuAnchor(),
+                textStyle = TextStyle(
+                    fontFamily = AppTheme.fonts.secondary,
+                    fontSize = 16.sp
+                ),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Accent,
                     unfocusedBorderColor = AppTheme.colors.textPrimary.copy(alpha = 0.5f)
@@ -74,7 +83,12 @@ fun ActionParamSelectField(
             ) {
                 param.options.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option.label) },
+                        text = {
+                            Text(
+                                text = option.label,
+                                fontFamily = AppTheme.fonts.secondary
+                            )
+                        },
                         onClick = {
                             onValueChange(option.value)
                             expanded = false

@@ -26,6 +26,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun PocTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    dyslexiaMode: Boolean = false,
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -40,8 +41,12 @@ fun PocTheme(
     }
 
     val customColors = if (darkTheme) DarkCustomColors else LightCustomColors
+    val customFonts = if (dyslexiaMode) DyslexicFonts else BasicFonts
 
-    CompositionLocalProvider(LocalCustomColors provides customColors) {
+    CompositionLocalProvider(
+        LocalCustomColors provides customColors,
+        LocalCustomFonts provides customFonts
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = Typography,
