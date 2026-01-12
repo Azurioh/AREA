@@ -30,7 +30,6 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
   const [darkMode, setDarkMode] = React.useState(initialDarkMode);
   const [dyslexiaMode, setDyslexiaMode] = React.useState(initialDyslexiaType);
 
-  // Passe les valeurs actuelles de darkMode et dyslexiaMode
   const { editedUsername, setEditedUsername, handleModalSave, handleModalCancel } = useSaveProfile(
     username,
     darkMode,
@@ -55,7 +54,6 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
     }
   }, [dyslexiaMode]);
 
-  // Synchronise les états locaux avec les props
   React.useEffect(() => {
     setDarkMode(initialDarkMode);
     setDyslexiaMode(initialDyslexiaType);
@@ -73,7 +71,6 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
 
   const handleCancelEdit = () => {
     handleModalCancel();
-    // Reset les valeurs aux valeurs initiales
     setDarkMode(initialDarkMode);
     setDyslexiaMode(initialDyslexiaType);
     setIsSettingsOpen(false);
