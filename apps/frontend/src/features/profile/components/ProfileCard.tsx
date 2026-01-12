@@ -14,7 +14,7 @@ interface ProfileDropdownProps {
   onClose: () => void;
   onLogout: () => void;
   darkMode: boolean;
-  dyslexiaType: any;
+  dyslexiaType: boolean;
 }
 
 const ProfileCard: React.FC<ProfileDropdownProps> = ({
@@ -27,23 +27,15 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
   dyslexiaType: initialDyslexiaType,
 }) => {
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+  const [darkMode, setDarkMode] = React.useState(initialDarkMode);
+  const [dyslexiaMode, setDyslexiaMode] = React.useState(initialDyslexiaType);
 
-  const { editedUsername, setEditedUsername, isModalOpen, openModal, handleModalSave, handleModalCancel } =
-    useSaveProfile(username, initialDarkMode, initialDyslexiaType);
-
-  const [darkMode, setDarkMode] = React.useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('darkMode') === 'true' || initialDarkMode;
-    }
-    return initialDarkMode;
-  });
-
-  const [dyslexiaMode, setDyslexiaMode] = React.useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('dyslexiaMode') === 'true';
-    }
-    return false;
-  });
+  // Passe les valeurs actuelles de darkMode et dyslexiaMode
+  const { editedUsername, setEditedUsername, handleModalSave, handleModalCancel } = useSaveProfile(
+    username,
+    darkMode,
+    dyslexiaMode,
+  );
 
   const getInitials = (name: string) => name.slice(0, 2).toUpperCase();
 
@@ -53,7 +45,6 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
     } else {
       document.documentElement.classList.remove('dark');
     }
-    localStorage.setItem('darkMode', darkMode.toString());
   }, [darkMode]);
 
   React.useEffect(() => {
@@ -62,8 +53,13 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
     } else {
       document.body.classList.remove('theme-dyslexia');
     }
-    localStorage.setItem('dyslexiaMode', dyslexiaMode.toString());
   }, [dyslexiaMode]);
+
+  // Synchronise les états locaux avec les props
+  React.useEffect(() => {
+    setDarkMode(initialDarkMode);
+    setDyslexiaMode(initialDyslexiaType);
+  }, [initialDarkMode, initialDyslexiaType]);
 
   const handleLogout = () => {
     onClose();
@@ -77,6 +73,9 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
 
   const handleCancelEdit = () => {
     handleModalCancel();
+    // Reset les valeurs aux valeurs initiales
+    setDarkMode(initialDarkMode);
+    setDyslexiaMode(initialDyslexiaType);
     setIsSettingsOpen(false);
   };
 

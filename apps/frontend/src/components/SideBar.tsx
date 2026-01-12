@@ -8,7 +8,6 @@ import { Avatar } from '@/components/ui/avatar';
 import { useUserInitials } from '@/shared/hooks/useUserInitials';
 import { useApp } from '@/hooks/useApp';
 import { useUserInformation } from '@/shared/hooks/useUserInformation';
-import { DysType } from '@area/shared/enums/user-enums';
 import Profile from '@/features/profile/components/ProfileCard';
 
 const SideBar = () => {
@@ -97,7 +96,7 @@ const SideBar = () => {
           window.location.reload();
         }}
         darkMode={user?.darkModeEnabled || false}
-        dyslexiaType={user?.dyslexiaType || DysType.NOTHING}
+        dyslexiaType={user?.dyslexiaEnabled || false}
       />
     </>
   );
