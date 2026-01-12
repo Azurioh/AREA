@@ -16,8 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.area.ui.theme.montserratFontFamily
-import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.UserViewModel
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.AppTheme
@@ -40,7 +38,7 @@ fun LoginCard(
     ) {
         Text(
             text = "Welcome Back",
-            fontFamily = poppinsFontFamily,
+            fontFamily = AppTheme.fonts.primary,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
             color = Accent,
@@ -53,7 +51,7 @@ fun LoginCard(
         Text(
             text = "Sign in to your account to continue",
             fontSize = 14.sp,
-            fontFamily = montserratFontFamily,
+            fontFamily = AppTheme.fonts.secondary,
             fontWeight = FontWeight.Normal,
             color = AppTheme.colors.textPrimary,
             textAlign = TextAlign.Center,

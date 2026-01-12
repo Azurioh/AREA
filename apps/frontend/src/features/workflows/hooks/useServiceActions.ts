@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import type { ActionReactionParam } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useApp } from '@/hooks/useApp';
 
 interface ServiceActionsData {
-  [serviceName: string]: any[];
+  [serviceName: string]: unknown[];
 }
 
 export function useServiceActions(services: string[]) {
@@ -11,7 +12,7 @@ export function useServiceActions(services: string[]) {
   const [serviceActions, setServiceActions] = useState<ServiceActionsData>({});
   const [loadingServices, setLoadingServices] = useState<string[]>([]);
   const [selectedAction, setSelectedAction] = useState<{ service: string; action: string } | null>(null);
-  const [actionParams, setActionParams] = useState<any[]>([]);
+  const [actionParams, setActionParams] = useState<ActionReactionParam[]>([]);
   const [loadingParams, setLoadingParams] = useState(false);
 
   useEffect(() => {
@@ -36,6 +37,7 @@ export function useServiceActions(services: string[]) {
     if (services.length > 0) {
       fetchAllActions();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [services]);
 
   const selectAction = async (service: string, actionName: string) => {
@@ -44,7 +46,9 @@ export function useServiceActions(services: string[]) {
 
     try {
       const details = await servicesClient.getActionDetails(service, actionName);
-      setActionParams(details?.params?.map((p: any) => ({ ...p, value: '' })) ?? []);
+      setActionParams(
+        details?.params?.map((p: Record<string, unknown>) => ({ ...p, value: '' }) as ActionReactionParam) ?? [],
+      );
     } catch {
       setActionParams([]);
     } finally {
@@ -52,7 +56,7 @@ export function useServiceActions(services: string[]) {
     }
   };
 
-  const updateParam = (index: number, value: any) => {
+  const updateParam = (index: number, value: unknown) => {
     const newParams = [...actionParams];
     newParams[index].value = value;
     setActionParams(newParams);

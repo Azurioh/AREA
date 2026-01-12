@@ -11,15 +11,19 @@ import {
 } from '@area/shared/schemas/actions-reactions.schema';
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';
-import { ActionsReactionsRepository, ActionsReactionsService } from '@/modules/actions-reactions';
+import {
+  ActionsReactionsController,
+  ActionsReactionsRepository,
+  ActionsReactionsService,
+} from '@/modules/actions-reactions';
 import { DiscordService } from '@/modules/discord';
 import { GithubService } from '@/modules/github';
 import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
 import { UsersRepository, UsersService } from '@/modules/users';
-import { ActionsReactionsController } from './actions-reactions.controller';
-import { SpotifyService } from '../spotify';
-import { PollingService } from '../polling/polling.service';
-import { PollingRepository } from '../polling/polling.repository';
+import { SpotifyService } from '@/modules/spotify';
+import { PollingService, PollingRepository } from '@/modules/polling';
+import { UnsplashService } from '@/modules/unsplash';
+import { DropboxRepository, DropboxService } from '@/modules/dropbox';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -28,6 +32,7 @@ export default async (app: FastifyInstance) => {
 
   const thirdPartiesRepository = new ThirdPartiesRepository(app.mongo.db);
   const pollingRepository = new PollingRepository(app.mongo.db);
+  const dropboxRepository = new DropboxRepository(app.mongo.db);
 
   const usersService = new UsersService(new UsersRepository(app.mongo.db));
   const thirdPartiesService = new ThirdPartiesService(thirdPartiesRepository, usersService);
@@ -36,9 +41,18 @@ export default async (app: FastifyInstance) => {
   const githubService = new GithubService(thirdPartiesService);
   const discordService = new DiscordService(thirdPartiesService);
   const spotifyService = new SpotifyService(thirdPartiesService, pollingService);
+  const unsplashService = new UnsplashService(pollingService);
+  const dropboxService = new DropboxService(dropboxRepository, thirdPartiesService);
 
   const repository = new ActionsReactionsRepository(app.mongo.db);
-  const service = new ActionsReactionsService(repository, githubService, discordService, spotifyService);
+  const service = new ActionsReactionsService(
+    repository,
+    githubService,
+    discordService,
+    spotifyService,
+    unsplashService,
+    dropboxService,
+  );
   const controller = new ActionsReactionsController(service);
 
   app.route<{ Body: CreateActionReactionBody }>({

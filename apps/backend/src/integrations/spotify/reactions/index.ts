@@ -1,5 +1,5 @@
-import { SpotifySaveTrackToPlaylist } from './save-track-to-playlist';
-import { SpotifySaveEpisode } from './save-episode';
-import { SpotifySaveShow } from './save-show';
+import { SpotifySaveTrackToPlaylistReaction } from './save-track-to-playlist';
+import { SpotifySaveEpisodeReaction } from './save-episode';
+import { SpotifySaveShowReaction } from './save-show';
 
-export { SpotifySaveTrackToPlaylist, SpotifySaveEpisode, SpotifySaveShow };
+export { SpotifySaveTrackToPlaylistReaction, SpotifySaveEpisodeReaction, SpotifySaveShowReaction };

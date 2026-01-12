@@ -10,6 +10,7 @@ jest.mock('./src/utils/environment', () => ({
     PORT: 3000,
     BASE_API_URL: 'http://localhost:3000',
     ADMIN_SECRET: 'test',
+    CORS_ORIGINS: 'http://localhost:3000',
     MONGO_URI: process.env.MONGO_URI,
     MONGO_DATABASE: 'area-test',
     CRYPT_SECRET_KEY: 'cc0e4ca4aaa19656747de47a835ccaea2bd4adb5a8f7ca44d1362bac6cd01c5d',

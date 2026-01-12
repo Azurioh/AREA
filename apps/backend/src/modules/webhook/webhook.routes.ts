@@ -3,11 +3,13 @@ import { GithubService } from '@/modules/github';
 import { WebhookService } from '@/modules/webhook';
 import { UsersRepository, UsersService } from '@/modules/users';
 import { WebhookController } from './webhook.controller';
-import { ActionsReactionsRepository, ActionsReactionsService } from '../actions-reactions';
+import { ActionsReactionsRepository, ActionsReactionsService } from '@/modules/actions-reactions';
 import { DiscordService } from '@/modules/discord';
 import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
 import { SpotifyService } from '@/modules/spotify';
 import { PollingRepository, PollingService } from '@/modules/polling';
+import { UnsplashService } from '@/modules/unsplash';
+import { DropboxRepository, DropboxService } from '@/modules/dropbox';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -18,6 +20,7 @@ export default async (app: FastifyInstance) => {
   const actionsReactionsRepository = new ActionsReactionsRepository(app.mongo.db);
   const thirdPartiesRepository = new ThirdPartiesRepository(app.mongo.db);
   const pollingRepository = new PollingRepository(app.mongo.db);
+  const dropboxRepository = new DropboxRepository(app.mongo.db);
 
   const pollingService = new PollingService(pollingRepository);
   const usersService = new UsersService(userRepository);
@@ -25,11 +28,15 @@ export default async (app: FastifyInstance) => {
   const githubService = new GithubService(thirdPartiesService);
   const discordService = new DiscordService(thirdPartiesService);
   const spotifyService = new SpotifyService(thirdPartiesService, pollingService);
+  const unsplashService = new UnsplashService(pollingService);
+  const dropboxService = new DropboxService(dropboxRepository, thirdPartiesService);
   const actionsReactionsService = new ActionsReactionsService(
     actionsReactionsRepository,
     githubService,
     discordService,
     spotifyService,
+    unsplashService,
+    dropboxService,
   );
   const service = new WebhookService(actionsReactionsService);
 
@@ -64,6 +71,39 @@ export default async (app: FastifyInstance) => {
     schema: {
       summary: 'The callback of the spotify webhook',
       description: 'Handle the callback of the spotify webhook.',
+      tags: ['Webhooks'],
+    },
+  });
+
+  app.route({
+    method: 'POST',
+    url: '/v1/unsplash/',
+    handler: controller.unsplashCallback.bind(controller),
+    schema: {
+      summary: 'The callback of the unsplash webhook',
+      description: 'Handle the callback of the unsplash webhook.',
+      tags: ['Webhooks'],
+    },
+  });
+
+  app.route({
+    method: 'GET',
+    url: '/v1/dropbox/',
+    handler: controller.dropboxCallback.bind(controller),
+    schema: {
+      summary: 'The callback of the dropbox webhook',
+      description: 'Handle the callback of the dropbox webhook.',
+      tags: ['Webhooks'],
+    },
+  });
+
+  app.route({
+    method: 'POST',
+    url: '/v1/dropbox/',
+    handler: controller.dropboxCallback.bind(controller),
+    schema: {
+      summary: 'The callback of the dropbox webhook',
+      description: 'Handle the callback of the dropbox webhook.',
       tags: ['Webhooks'],
     },
   });

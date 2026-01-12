@@ -15,7 +15,8 @@ export const useToggleExecutionState = () => {
         await executionStateClient.updateExecutionState(workflowId, nextState);
       } finally {
         setPending((prev) => {
-          const { [workflowId]: _removed, ...rest } = prev;
+          const rest = { ...prev };
+          delete rest[workflowId];
           return rest;
         });
       }

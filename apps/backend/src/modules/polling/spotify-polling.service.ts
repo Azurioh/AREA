@@ -22,9 +22,9 @@ export class SpotifyPollingService {
   }
 
   async pollCurrentlyPlayingTrack() {
-    const userToPoll = await this.repository.getUsersToPoll('spotify', ['listening_to_artist']);
+    const usersToPoll = await this.repository.getUsersToPoll('spotify', ['listening_to_artist']);
 
-    for (const user of userToPoll) {
+    for (const user of usersToPoll) {
       const userSpotifyAccount = await this.thirdPartiesService.getThirdPartyAccountByUserId('spotify', user.userId);
 
       const tryToGetCurrentlyPlayingTrack = async (accessToken: string) => {
@@ -44,7 +44,7 @@ export class SpotifyPollingService {
 
       if (response.status === HttpStatusCode.UNAUTHORIZED) {
         const accessToken = await this.spotifyService.refreshTokens(
-          userSpotifyAccount._id.toString(),
+          userSpotifyAccount.userId,
           decryptString(userSpotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
         );
 

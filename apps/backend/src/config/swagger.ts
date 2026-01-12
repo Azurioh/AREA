@@ -7,6 +7,10 @@ import { environment } from '@/utils/environment';
 export const setupSwagger = (app: FastifyInstance): void => {
   const apibaseUrl: string = environment.BASE_API_URL;
 
+  if (environment.NODE_ENV !== 'development') {
+    return;
+  }
+
   app.register(fastifySwagger, {
     openapi: {
       info: {

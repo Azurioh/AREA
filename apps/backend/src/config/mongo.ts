@@ -15,8 +15,6 @@ export const setupMongoDB = async (app: FastifyInstance): Promise<void> => {
     if (!app.mongo?.client || !app.mongo?.db) {
       throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'MongoDB client or database not found');
     }
-
-    request.mongoClient = app.mongo.client;
     request.db = app.mongo.db;
   });
 };

@@ -1,10 +1,10 @@
-import SideBar from '@/components/SideBar';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useActionReaction } from '@/features/workflows/context/ActionReactionContext';
 import { toast } from 'sonner';
+import SideBar from '@/components/SideBar';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { useActionReaction } from '@/features/workflows/context/ActionReactionContext';
 
 export default function CreateWorkflows() {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function CreateWorkflows() {
       await createActionReaction(action, reaction);
       toast.success('Workflow created successfully!');
       navigate('/workflows');
-    } catch (err) {
+    } catch {
       toast.error('Failed to create workflow.');
     }
   };

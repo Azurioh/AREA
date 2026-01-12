@@ -1,25 +1,25 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import ApiError from '@/utils/api-error';
-import { environment } from '@/utils/environment';
-import { generateStateToken, verifyToken } from '@/utils/token';
+import type { StateToken } from '@area/shared/types/users.types';
+import type { WithId } from 'mongodb';
+import type { UsersService } from '@/modules/users';
 import type {
   ClientType,
   DiscordAccount,
   DiscordAuthorizationResponse,
   DropboxAccount,
   DropboxAuthorizationResponse,
-  GithubAccount,
   GitHubAuthorizationResponse,
+  GithubAccount,
   ServiceType,
   SpotifyAccount,
   SpotifyAuthorizationResponse,
   ThirdPartyAccount,
 } from '@/types/third-parties';
-import type { StateToken } from '@area/shared/types/users.types';
-import type { UsersService } from '@/modules/users';
-import type { ThirdPartiesRepository } from './third-parties.repository';
+import ApiError from '@/utils/api-error';
 import { encryptString } from '@/utils/crypt';
-import type { WithId } from 'mongodb';
+import { environment } from '@/utils/environment';
+import { generateStateToken, verifyToken } from '@/utils/token';
+import type { ThirdPartiesRepository } from './third-parties.repository';
 
 /**
  * @class ThirdPartiesService
@@ -105,6 +105,26 @@ export class ThirdPartiesService {
   }
 
   /**
+   * @function getThirdPartyAccountByServiceAccountId
+   * @description Get a third party account by service id
+   *
+   * @param {ServiceType} service - The service name
+   * @param {string} id - The service id of the user
+   * @returns {Promise<WithId<ThirdPartyAccount>>} The third party account
+   */
+  async getThirdPartyAccountByServiceAccountId<T extends ThirdPartyAccount>(
+    service: ServiceType,
+    id: string,
+  ): Promise<WithId<T>> {
+    const result = await this.repository.getThirdPartyAccountByServiceAccountId<T>(id, service);
+
+    if (!result) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Third party account was not found');
+    }
+    return result;
+  }
+
+  /**
    * @function authorizeToService
    * @description Authorize a user to a service
    *
@@ -146,6 +166,7 @@ export class ThirdPartiesService {
       }
       return { success, clientType: decoded.clientType };
     } catch (err: unknown) {
+      console.error('Third-party authorization failed:', err);
       return { success: false, clientType: decoded.clientType };
     }
   }
@@ -328,12 +349,39 @@ export class ThirdPartiesService {
 
     const formattedResponse = (await response.json()) as DropboxAuthorizationResponse;
 
+    const getCursor = async () => {
+      const response = await fetch('https://api.dropboxapi.com/2/files/list_folder', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${formattedResponse.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          path: '',
+          recursive: true,
+        }),
+      });
+      if (!response.ok) {
+        return null;
+      }
+      return (await response.json()).cursor;
+    };
+
+    const cursor = await getCursor();
+
+    if (!cursor) {
+      return null;
+    }
     const data: DropboxAccount = {
       userId,
       service: 'dropbox',
       accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
       refreshToken: encryptString(formattedResponse.refresh_token, environment.CRYPT_SECRET_KEY),
       id: formattedResponse.account_id,
+      cursor: {
+        ref: cursor,
+        paths: [],
+      },
     };
     return data;
   }
