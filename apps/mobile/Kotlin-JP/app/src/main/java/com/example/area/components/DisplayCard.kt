@@ -25,8 +25,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.AppTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.offset
@@ -36,8 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.CustomWhite
-import com.example.area.ui.theme.montserratFontFamily
-import com.example.area.ui.theme.poppinsFontFamily
 import coil.compose.AsyncImage
 
 @Composable
@@ -46,7 +42,6 @@ fun DisplayCard(
     reactionServiceImage: String,
     title: String,
     description: String,
-    lastExecution: String,
     executionCount: Int,
     isEnabled: Boolean,
     onToggle: (Boolean) -> Unit,
@@ -135,7 +130,7 @@ fun DisplayCard(
             ) {
                 Text(
                     text = title,
-                    fontFamily = poppinsFontFamily,
+                    fontFamily = AppTheme.fonts.primary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 17.sp,
                     color = Accent,
@@ -145,30 +140,13 @@ fun DisplayCard(
 
                 Text(
                     text = description,
-                    fontFamily = montserratFontFamily,
+                    fontFamily = AppTheme.fonts.secondary,
                     fontWeight = FontWeight.Medium,
                     fontSize = 13.sp,
                     color = AppTheme.colors.textPrimary,
                     lineHeight = 15.sp,
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            Row(
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 14.dp, end = 12.dp)
-            ) {
-                Text(
-                    text = lastExecution,
-                    fontFamily = montserratFontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 10.sp,
-                    color = AppTheme.colors.textPrimary,
-                    textAlign = TextAlign.End,
                 )
             }
 
@@ -193,7 +171,7 @@ fun DisplayCard(
                         ) {
                             Text(
                                 text = executionCount.toString(),
-                                fontFamily = poppinsFontFamily,
+                                fontFamily = AppTheme.fonts.primary,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 12.sp,
                                 color = CustomWhite,
@@ -203,7 +181,7 @@ fun DisplayCard(
                     }
                     Text(
                         text = "Executions",
-                        fontFamily = montserratFontFamily,
+                        fontFamily = AppTheme.fonts.secondary,
                         fontWeight = FontWeight.Medium,
                         fontSize = 10.sp,
                         color = AppTheme.colors.textPrimary,

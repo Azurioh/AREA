@@ -8,12 +8,12 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.AppTheme
-import com.example.area.ui.theme.montserratFontFamily
 
 @Composable
 fun LabeledTextField(
@@ -31,7 +31,7 @@ fun LabeledTextField(
         Text(
             text = label,
             fontSize = 14.sp,
-            fontFamily = montserratFontFamily,
+            fontFamily = AppTheme.fonts.secondary,
             fontWeight = FontWeight.Bold,
             color = AppTheme.colors.textPrimary,
             modifier = Modifier.padding(bottom = 4.dp)
@@ -40,8 +40,17 @@ fun LabeledTextField(
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            placeholder = { Text(placeholder) },
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    fontFamily = AppTheme.fonts.secondary
+                )
+            },
             modifier = Modifier.fillMaxWidth(),
+            textStyle = TextStyle(
+                fontFamily = AppTheme.fonts.secondary,
+                fontSize = 16.sp
+            ),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Accent,
                 unfocusedBorderColor = AppTheme.colors.textPrimary.copy(alpha = 0.5f)

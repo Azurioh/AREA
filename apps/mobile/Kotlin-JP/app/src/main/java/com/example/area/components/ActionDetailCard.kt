@@ -29,8 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.data.models.ActionDetail
 import com.example.area.ui.theme.Accent
-import com.example.area.ui.theme.montserratFontFamily
-import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.ui.theme.AppTheme
 import coil.compose.AsyncImage
 
@@ -74,7 +72,7 @@ fun ActionDetailCard(
 
                     Text(
                         text = actionDetail.name.replace('_', ' ', ignoreCase = true).capitalize(),
-                        fontFamily = poppinsFontFamily,
+                        fontFamily = AppTheme.fonts.primary,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 17.sp,
                         color = Accent,
@@ -87,7 +85,7 @@ fun ActionDetailCard(
 
             Text(
                 text = actionDetail.description,
-                fontFamily = montserratFontFamily,
+                fontFamily = AppTheme.fonts.secondary,
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
                 color = AppTheme.colors.textPrimary,
@@ -150,7 +148,7 @@ fun ActionDetailCard(
             ) {
                 Text(
                     text = "Validate",
-                    fontFamily = poppinsFontFamily,
+                    fontFamily = AppTheme.fonts.primary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
                 )

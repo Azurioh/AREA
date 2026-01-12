@@ -36,8 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.AppTheme
-import com.example.area.ui.theme.montserratFontFamily
-import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.components.ActionCard
 import com.example.area.components.AreaCard
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -403,7 +401,7 @@ private fun ConfigureDetailView(
 ) {
     Text(
         text = title,
-        fontFamily = poppinsFontFamily,
+        fontFamily = AppTheme.fonts.primary,
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         color = Accent,
@@ -435,7 +433,7 @@ private fun ServiceListView(
 
     Text(
         text = title,
-        fontFamily = poppinsFontFamily,
+        fontFamily = AppTheme.fonts.primary,
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         color = Accent,
@@ -487,7 +485,7 @@ private fun MainView(
 ) {
     Text(
         text = "Create page",
-        fontFamily = poppinsFontFamily,
+        fontFamily = AppTheme.fonts.primary,
         fontWeight = FontWeight.Bold,
         fontSize = 30.sp,
         color = AppTheme.colors.textPrimary,
@@ -499,7 +497,7 @@ private fun MainView(
 
     Text(
         text = "Action → Reaction",
-        fontFamily = poppinsFontFamily,
+        fontFamily = AppTheme.fonts.primary,
         fontWeight = FontWeight.Bold,
         fontSize = 30.sp,
         color = Accent,
@@ -512,7 +510,7 @@ private fun MainView(
     Text(
         text = "Click on an Action and then define what should happen next.",
         fontSize = 14.sp,
-        fontFamily = montserratFontFamily,
+        fontFamily = AppTheme.fonts.secondary,
         fontWeight = FontWeight.Normal,
         color = AppTheme.colors.textPrimary,
         textAlign = TextAlign.Center,
@@ -569,7 +567,7 @@ private fun MainView(
             ) {
                 Text(
                     text = "Create Action-Reaction",
-                    fontFamily = poppinsFontFamily,
+                    fontFamily = AppTheme.fonts.primary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )

@@ -26,7 +26,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.components.DisplayCard
 import com.example.area.data.models.ActionReactionDisplay
 import com.example.area.ui.theme.AppTheme
-import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.utils.getServiceImage
 
@@ -63,7 +62,7 @@ fun HomePage(
         item {
             Text(
                 text = "Home page",
-                fontFamily = poppinsFontFamily,
+                fontFamily = AppTheme.fonts.primary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 30.sp,
                 color = AppTheme.colors.textPrimary,
@@ -83,7 +82,6 @@ fun HomePage(
                 reactionServiceImage = getServiceImage(actionReaction.reaction.service),
                 title = "${actionReaction.action.name.replace('_', ' ', ignoreCase = true).capitalize()} → ${actionReaction.reaction.name.replace('_', ' ', ignoreCase = true).capitalize()}",
                 description = "Action: ${actionReaction.action.service} | Reaction: ${actionReaction.reaction.service}",
-                lastExecution = "Last execution: 0s ago",
                 executionCount = actionReaction.numberOfExecution.toInt(),
                 isEnabled = actionReaction.executionState,
                 onToggle = { isChecked ->
