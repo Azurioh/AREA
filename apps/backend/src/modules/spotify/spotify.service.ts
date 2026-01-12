@@ -8,6 +8,7 @@ import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-
 import type { ActionPayload } from '@/types/action-reaction';
 import { Reaction } from '@/integrations';
 import type { PollingService } from '../polling/polling.service';
+import type { SpotifyPlaylist } from '@/types/spotify';
 
 /**
  * @class SpotifyService
@@ -323,5 +324,55 @@ export class SpotifyService {
 
     this.thirdPartiesService.updateThirdPartyAccount('spotify', userId, account);
     return accessToken;
+  }
+
+  /**
+   * @function listPlaylisst
+   * @description List all repositories for the given user
+   *
+   * @param {string} userId The id of the user
+   * @returns {Promise<GithubRepositories>} Array of repository names
+   */
+  async listPlaylist(userId: string): Promise<SpotifyPlaylist[]> {
+    const spotifyAccount = await this.thirdPartiesService.getThirdPartyAccountByUserId<SpotifyAccount>(
+      'spotify',
+      userId,
+    );
+
+    const tryToListPlaylists = async (accessToken: string) => {
+      const response = await fetch(`https://api.spotify.com/v1/users/${spotifyAccount.id}/playlists`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: 'application/vnd.github+json',
+        },
+      });
+      return response;
+    };
+    let response = await tryToListPlaylists(decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY));
+
+    if (response.status === HttpStatusCode.UNAUTHORIZED) {
+      const accessToken = await this.refreshTokens(
+        spotifyAccount.userId,
+        decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
+      );
+
+      response = await tryToListPlaylists(accessToken);
+    }
+
+    if (!response.ok) {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Failed to list playlists');
+    }
+
+    const data = await response.json();
+
+    const playlists: SpotifyPlaylist[] = data.items
+      .filter((playlist: any) => playlist.owner?.id === spotifyAccount.id || false)
+      .map((playlist: any) => {
+        return {
+          name: playlist.name,
+          id: `${playlist.id}`,
+        };
+      });
+    return playlists;
   }
 }
