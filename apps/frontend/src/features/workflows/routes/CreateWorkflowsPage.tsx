@@ -81,7 +81,9 @@ export default function CreateWorkflows() {
                   action?.name ? 'bg-primary' : 'bg-muted cursor-not-allowed'
                 }`}
                 onClick={() => {
-                  if (!action?.name) return;
+                  if (!action?.name) {
+                    return;
+                  }
                   navigate('/workflows/choose-reaction');
                 }}
                 disabled={!action?.name}
