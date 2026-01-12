@@ -1,5 +1,12 @@
 import type { FastifyInstance } from 'fastify';
-import { createDiscordService, createGithubService, createSpotifyService, ServiceManager } from '@/integrations';
+import {
+  createDiscordService,
+  createGithubService,
+  createUnsplashService,
+  createSpotifyService,
+  createDropboxService,
+  ServiceManager,
+} from '@/integrations';
 import { DiscordService } from '@/modules/discord';
 import { GithubService } from '@/modules/github';
 import { ThirdPartiesService } from '@/modules/third-parties';
@@ -8,7 +15,6 @@ import { UsersRepository, UsersService } from '@/modules/users';
 import { SpotifyService } from '@/modules/spotify';
 import { PollingService } from '@/modules/polling/polling.service';
 import { PollingRepository } from '@/modules/polling/polling.repository';
-import { createDropboxService } from '@/integrations/dropbox';
 
 export const registerServices = (app: FastifyInstance): void => {
   if (!app.mongo.db) {
@@ -29,5 +35,6 @@ export const registerServices = (app: FastifyInstance): void => {
   ServiceManager.instance.register(createGithubService(githubService));
   ServiceManager.instance.register(createDiscordService(discordService));
   ServiceManager.instance.register(createSpotifyService(spotifyService));
+  ServiceManager.instance.register(createUnsplashService());
   ServiceManager.instance.register(createDropboxService());
 };

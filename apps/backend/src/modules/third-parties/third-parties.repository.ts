@@ -1,5 +1,5 @@
 import { MongoCollections } from '@/enums/mongo-collection';
-import type { ServiceType, ThirdPartyAccount } from '@/types/third-parties';
+import type { OAuthServiceType, ThirdPartyAccount } from '@/types/third-parties';
 import type { MaybeNull } from '@area/shared/utils/common';
 import type { UpdateResult, Db, WithId } from 'mongodb';
 
@@ -34,12 +34,12 @@ export class ThirdPartiesRepository {
    * @description Get a third party account from the databse.
    *
    * @param {string} userId The user id related to the third party account.
-   * @param {ServiceType} service The service type.
+   * @param {OAuthServiceType} service The service type.
    * @returns {Promise<MaybeNull<WithId<T>>>} The third party account.
    */
   async getThirdPartyAccountByUserId<T extends ThirdPartyAccount>(
     userId: string,
-    service: ServiceType,
+    service: OAuthServiceType,
   ): Promise<MaybeNull<WithId<T>>> {
     return (await this.db
       .collection<ThirdPartyAccount>(MongoCollections.THIRD_PARTIES_ACCOUNT)
@@ -51,12 +51,12 @@ export class ThirdPartiesRepository {
    * @description Get a third party account from the databse.
    *
    * @param {string} id The service id related to the third party account.
-   * @param {ServiceType} service The service type.
+   * @param {OAuthServiceType} service The service type.
    * @returns {Promise<MaybeNull<WithId<T>>>} The third party account.
    */
   async getThirdPartyAccountByServiceAccountId<T extends ThirdPartyAccount>(
     id: string,
-    service: ServiceType,
+    service: OAuthServiceType,
   ): Promise<MaybeNull<WithId<T>>> {
     return (await this.db
       .collection<ThirdPartyAccount>(MongoCollections.THIRD_PARTIES_ACCOUNT)
@@ -68,13 +68,13 @@ export class ThirdPartiesRepository {
    * @description Updates a third party account in the database.
    *
    * @param {string} userId The id of the user.
-   * @param {ServiceType} service The service type.
+   * @param {OAuthServiceType} service The service type.
    * @param {Partial<GithubAccount>} account The github account data.
    * @returns {Promise<UpdateResult<GithubAccount>>} The result of the update.
    */
   async updateThirdPartyAccount(
     userId: string,
-    service: ServiceType,
+    service: OAuthServiceType,
     account: Partial<ThirdPartyAccount>,
   ): Promise<UpdateResult<ThirdPartyAccount>> {
     return await this.db

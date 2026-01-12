@@ -4,9 +4,10 @@ import type { WebhookService } from '@/modules/webhook';
 import ApiError from '@/utils/api-error';
 import type {
   DiscordWebhookPayload,
-  DropboxWebhookPayload,
   GithubWebhookPayload,
   SpotifyWebhookPayload,
+  DropboxWebhookPayload,
+  UnsplashWebhookPayload,
 } from '@/types/webhook';
 
 /**
@@ -105,5 +106,26 @@ export class WebhookController {
 
     this.service.dropboxCallback(body as DropboxWebhookPayload);
     reply.status(HttpStatusCode.OK).send();
+  }
+
+  /**
+   * @function unsplashCallback
+   * @description Handles the callback for the unsplash service.
+   *
+   * @param {FastifyRequest} request The Fastify request object containing the webhook data.
+   * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
+   */
+  async unsplashCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    if (!request.headers['x-unsplash-event'] || !request.headers['x-user-id']) {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook informations are missing');
+    }
+
+    const body = request.body;
+    const event = request.headers['x-unsplash-event'] as string;
+    const userId = request.headers['x-user-id'] as string;
+
+    this.service.unsplashCallback(userId, event, body as UnsplashWebhookPayload);
+    reply.status(HttpStatusCode.NO_CONTENT).send();
   }
 }

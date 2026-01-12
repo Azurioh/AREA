@@ -2,10 +2,10 @@ import { Reaction } from '@/integrations/_definitions/reaction.interface';
 import type { SpotifyService } from '@/modules/spotify';
 
 /**
- * @class SpotifySaveEpisode
+ * @class SpotifySaveEpisodeReaction
  * @description The reaction to save an episode on spotify
  */
-export class SpotifySaveEpisode extends Reaction {
+export class SpotifySaveEpisodeReaction extends Reaction {
   constructor(_spotifyService: SpotifyService) {
     super('save_episode', 'Save an episode', [
       {

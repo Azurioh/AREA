@@ -2,10 +2,10 @@ import { Reaction } from '@/integrations/_definitions/reaction.interface';
 import type { SpotifyService } from '@/modules/spotify';
 
 /**
- * @class SpotifySaveTrackToPlaylist
+ * @class SpotifySaveTrackToPlaylistReaction
  * @description The reaction to save a track to a spotify playlist
  */
-export class SpotifySaveTrackToPlaylist extends Reaction {
+export class SpotifySaveTrackToPlaylistReaction extends Reaction {
   private spotifyService: SpotifyService;
 
   constructor(spotifyService: SpotifyService) {

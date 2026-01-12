@@ -1,8 +1,9 @@
 import type {
   DiscordWebhookPayload,
-  DropboxWebhookPayload,
   GithubWebhookPayload,
   SpotifyWebhookPayload,
+  UnsplashWebhookPayload,
+  DropboxWebhookPayload,
 } from '@/types/webhook';
 import type { ActionPayload } from '@/types/action-reaction';
 import type { ActionsReactionsService } from '@/modules/actions-reactions';
@@ -94,5 +95,26 @@ export class WebhookService {
     };
 
     this.actionsReactionsService.handleActionReception(action);
+  }
+
+  /**
+   * @function unsplashCallback
+   * @description Handle the unsplash callback.
+   *
+   * @param {string} userId The id of the user.
+   * @param {string} event The event who triggered the callback.
+   * @param {UnsplashWebhookPayload} body The body of the callback.
+   * @returns {Promise<void>}
+   */
+  async unsplashCallback(userId: string, event: string, body: UnsplashWebhookPayload): Promise<void> {
+    const action: ActionPayload = {
+      service: 'unsplash',
+      name: event,
+      trigger: `${event}/${body.image.topic}/${userId}`,
+      content: body,
+    };
+
+    console.log('Unsplash webhook action:', action);
+    this.actionsReactionsService.handleReactions(action);
   }
 }

@@ -32,7 +32,8 @@ export type ThirdPartyAuthorizationParams = z.infer<typeof thirdPartyAuthorizati
  */
 export type ThirdPartyAuthorization = ThirdPartyAuthorizationQueryString;
 
-export type ServiceType = 'github' | 'discord' | 'spotify' | 'dropbox';
+export type ServiceType = 'github' | 'discord' | 'spotify' | 'dropbox' | 'unsplash';
+export type OAuthServiceType = Omit<ServiceType, 'unsplash'>;
 
 /**
  * @type BaseAccount
@@ -45,7 +46,7 @@ export type ServiceType = 'github' | 'discord' | 'spotify' | 'dropbox';
  */
 export type BaseAccount = {
   userId: string;
-  service: ServiceType;
+  service: OAuthServiceType;
   accessToken: string;
   refreshToken: string | null;
 };

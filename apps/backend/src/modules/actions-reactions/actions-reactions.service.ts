@@ -10,8 +10,9 @@ import type { ActionPayload, ActionReaction } from '@/types/action-reaction';
 import ApiError from '@/utils/api-error';
 import type { ActionsReactionsRepository } from './actions-reactions.repository';
 import type { WithId } from 'mongodb';
-import type { SpotifyService } from '../spotify';
-import type { DropboxService } from '../dropbox';
+import type { SpotifyService } from '@/modules/spotify';
+import type { UnsplashService } from '@/modules/unsplash';
+import type { DropboxService } from '@/modules/dropbox';
 
 /**
  * @class ActionsReactionsService
@@ -31,6 +32,7 @@ export class ActionsReactionsService {
     githubService: GithubService,
     discordService: DiscordService,
     spotifyService: SpotifyService,
+    unsplashService: UnsplashService,
     dropboxService: DropboxService,
   ) {
     this.repository = repository;
@@ -38,6 +40,7 @@ export class ActionsReactionsService {
       ['github', githubService.createAction.bind(githubService)],
       ['discord', discordService.createAction.bind(discordService)],
       ['spotify', spotifyService.createAction.bind(spotifyService)],
+      ['unsplash', unsplashService.createAction.bind(unsplashService)],
       ['dropbox', dropboxService.createAction.bind(dropboxService)],
     ]);
     this.reactionsCreationFunc = new Map([
@@ -92,7 +95,9 @@ export class ActionsReactionsService {
    * @returns {Promise<void>} Nothing
    */
   async handleReactions(action: ActionPayload): Promise<void> {
-    const actionsReactions: WithId<ActionReaction>[] = await this.repository.getActionsReactionsByTrigger(action.trigger);
+    const actionsReactions: WithId<ActionReaction>[] = await this.repository.getActionsReactionsByTrigger(
+      action.trigger,
+    );
 
     for (const actionReaction of actionsReactions) {
       if (!actionReaction.executionState) {

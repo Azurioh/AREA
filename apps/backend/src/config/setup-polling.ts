@@ -5,6 +5,7 @@ import { SpotifyPollingService } from '@/modules/polling/spotify-polling.service
 import { SpotifyService } from '@/modules/spotify';
 import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
 import { UsersRepository, UsersService } from '@/modules/users';
+import { UnsplashPollingService } from '@/modules/polling/unsplash-polling.service';
 
 export const setupPolling = async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -21,13 +22,27 @@ export const setupPolling = async (app: FastifyInstance) => {
 
   const spotifyService = new SpotifyService(thirdPartiesService, pollingService);
   const spotifyPolling = new SpotifyPollingService(pollingRepository, thirdPartiesService, spotifyService);
+  const unsplashPolling = new UnsplashPollingService(pollingRepository);
 
-  const intervalId = setInterval(async () => {
-    await spotifyPolling.pollCurrentlyPlayingTrack();
+  const spotifyIntervalId = setInterval(async () => {
+    try {
+      await spotifyPolling.pollCurrentlyPlayingTrack();
+    } catch (error) {
+      console.error('Error polling Spotify:', error);
+    }
+  }, 30000);
+
+  const unsplashIntervalId = setInterval(async () => {
+    try {
+      await unsplashPolling.pollDailyRandomImage();
+    } catch (error) {
+      console.error('Error polling Unsplash:', error);
+    }
   }, 30000);
 
   app.addHook('onClose', (_instance, done) => {
-    clearInterval(intervalId);
+    clearInterval(spotifyIntervalId);
+    clearInterval(unsplashIntervalId);
     done();
   });
 };
