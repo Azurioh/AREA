@@ -28,8 +28,11 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
 }) => {
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
 
-  const { editedUsername, setEditedUsername, isModalOpen, openModal, handleModalSave, handleModalCancel } =
-    useSaveProfile(username, initialDarkMode, initialDyslexiaType);
+  const { editedUsername, setEditedUsername, handleModalSave, handleModalCancel } = useSaveProfile(
+    username,
+    initialDarkMode,
+    initialDyslexiaType,
+  );
 
   const [darkMode, setDarkMode] = React.useState(() => {
     if (typeof window !== 'undefined') {
