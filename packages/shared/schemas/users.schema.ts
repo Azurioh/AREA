@@ -16,7 +16,7 @@ export type GetUserMeResponse = z.infer<typeof getUserMeResponseSchema>;
 export const updateUserMeBodySchema = z.object({
   name: userFields.name,
   darkModeEnabled: userFields.darkModeEnabled,
-  dyslexiaType: userFields.dyslexiaType,
+  dyslexiaEnabled: userFields.dyslexiaEnabled,
 });
 
 /**
@@ -91,7 +91,7 @@ export const updateUserByIdBodySchema = z.object({
   name: userFields.name,
   email: userFields.email,
   darkModeEnabled: userFields.darkModeEnabled,
-  dyslexiaType: userFields.dyslexiaType,
+  dyslexiaEnabled: userFields.dyslexiaEnabled,
 });
 
 /**

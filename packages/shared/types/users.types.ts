@@ -1,5 +1,5 @@
 import z from 'zod';
-import { DysType, UserRoles } from '../enums/user-enums';
+import { UserRoles } from '../enums/user-enums';
 
 export const userFields = {
   name: z.string().min(1).max(200).meta({
@@ -22,9 +22,9 @@ export const userFields = {
     description: 'User dark mode enabled',
     example: true,
   }),
-  dyslexiaType: z.enum(DysType).meta({
-    description: 'User dyslexia type',
-    example: DysType.DYSLEXIA,
+  dyslexiaEnabled: z.boolean().meta({
+    description: 'User dyslexia enabled',
+    example: true,
   }),
   createdAt: z.date().meta({
     description: 'User creation date',
@@ -51,7 +51,7 @@ export const accessTokenSchema = z.object({
   }),
   role: userFields.role,
   darkModeEnabled: userFields.darkModeEnabled,
-  dyslexiaType: userFields.dyslexiaType,
+  dyslexiaEnabled: userFields.dyslexiaEnabled,
 });
 
 export type AccessToken = z.infer<typeof accessTokenSchema>;

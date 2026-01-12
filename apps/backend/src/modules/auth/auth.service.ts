@@ -43,7 +43,7 @@ export class AuthService {
         _id: result.insertedId.toString(),
         role: data.role,
         darkModeEnabled: data.darkModeEnabled,
-        dyslexiaType: data.dyslexiaType,
+        dyslexiaEnabled: data.dyslexiaEnabled,
       });
       const refreshToken = generateRefreshToken({ _id: result.insertedId.toString() });
 
@@ -78,7 +78,7 @@ export class AuthService {
       _id: user._id.toString(),
       role: user.role,
       darkModeEnabled: user.darkModeEnabled,
-      dyslexiaType: user.dyslexiaType,
+      dyslexiaEnabled: user.dyslexiaEnabled,
     });
     const refreshToken = generateRefreshToken({ _id: user._id.toString() }, data.rememberMe);
 
@@ -97,7 +97,7 @@ export class AuthService {
       _id: user._id.toString(),
       role: user.role,
       darkModeEnabled: user.darkModeEnabled,
-      dyslexiaType: user.dyslexiaType,
+      dyslexiaEnabled: user.dyslexiaEnabled,
     });
 
     return { accessToken };
