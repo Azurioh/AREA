@@ -1,4 +1,4 @@
-import { DysType, UserRoles } from '@area/shared/enums/user-enums';
+import { UserRoles } from '@area/shared/enums/user-enums';
 import type { LoginBody, RegisterBody, RegisterHeaders } from '@area/shared/schemas/auth.schema';
 import type { User } from '@area/shared/types/users.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
@@ -37,7 +37,7 @@ export class AuthController {
         ? UserRoles.ADMIN
         : UserRoles.USER,
       darkModeEnabled: false,
-      dyslexiaType: DysType.NOTHING,
+      dyslexiaEnabled: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

@@ -4,19 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/wrappers/Input';
 import { useSaveProfile } from '@/features/profile/hooks/useEditModal';
-import type { DysType } from '@area/shared/enums/user-enums';
+import type {} from '@area/shared/enums/user-enums';
 
 interface ProfileCardProps {
   username: string;
   email: string;
   onLogout: () => void;
   darkMode: boolean;
-  dyslexiaType: DysType;
+  dyslexia: boolean;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ username, email, onLogout, darkMode, dyslexiaType }) => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ username, email, onLogout, darkMode, dyslexia }) => {
   const { editedUsername, setEditedUsername, isModalOpen, openModal, handleModalSave, handleModalCancel } =
-    useSaveProfile(username, darkMode, dyslexiaType);
+    useSaveProfile(username, darkMode, dyslexia);
 
   const getInitials = (name: string) => {
     return name.slice(0, 2).toUpperCase();
