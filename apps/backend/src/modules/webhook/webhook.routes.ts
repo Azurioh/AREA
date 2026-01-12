@@ -89,10 +89,10 @@ export default async (app: FastifyInstance) => {
   app.route({
     method: 'GET',
     url: '/v1/dropbox/',
-    handler: controller.dropboxCallback.bind(controller),
+    handler: controller.dropboxWebhookValidator.bind(controller),
     schema: {
-      summary: 'The callback of the dropbox webhook',
-      description: 'Handle the callback of the dropbox webhook.',
+      summary: 'The callback of the dropbox webhook validator',
+      description: 'Handle the callback of the dropbox webhook validator.',
       tags: ['Webhooks'],
     },
   });
