@@ -11,8 +11,8 @@ export class UpdateUser extends ApiClient {
    * @description Updates the execution state of an existing workflow.
    *
    */
-  async updateExecutionState(name: string, darkModeEnabled: boolean, dyslexiaType: boolean): Promise<void> {
-    const body: UpdateUserMeBody = { name, darkModeEnabled, dyslexiaType };
+  async updateExecutionState(name: string, darkModeEnabled: boolean, dyslexiaEnabled: boolean): Promise<void> {
+    const body: UpdateUserMeBody = { name, darkModeEnabled, dyslexiaEnabled };
 
     await this.fetch<UpdateUserMeBody>('/users/v1/me', {
       method: 'PATCH',
