@@ -27,11 +27,11 @@ export const generateRefreshToken = (payload: RefreshToken, rememberMe: boolean 
 };
 
 /**
- * @function generateAccessToken
- * @description Generate the access token.
+ * @function generateStateToken
+ * @description Generate the state token.
  *
- * @param {AccessToken} payload - The payload to add in the access token
- * @returns {string} The created access token.
+ * @param {StateToken} payload - The payload to add in the state token
+ * @returns {string} The created state token.
  */
 export const generateStateToken = (payload: StateToken): string => {
   return jwt.sign(payload, environment.JWT_STATE_TOKEN_SECRET, { expiresIn: '10m' });

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useApp } from '@/hooks/useApp';
 import type { GetAllUsers } from '@area/shared/schemas/users.schema';
+import { useCallback, useEffect, useState } from 'react';
+import { useApp } from '@/hooks/useApp';
 
 export const useGetAllUsers = () => {
   const { userAdminManagementClient } = useApp();
@@ -8,7 +8,7 @@ export const useGetAllUsers = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -21,11 +21,11 @@ export const useGetAllUsers = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userAdminManagementClient]);
 
   useEffect(() => {
     fetchUsers();
-  }, [userAdminManagementClient]);
+  }, [fetchUsers]);
 
   return { users, loading, error, refetch: fetchUsers };
 };

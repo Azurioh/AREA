@@ -1,3 +1,4 @@
+import { UserRoles } from '@area/shared/enums/user-enums';
 import { Navigate, Outlet } from 'react-router-dom';
 import { AppRoutesPaths } from '@/enums/routes';
 import { useApp } from '@/hooks/useApp';
@@ -16,9 +17,9 @@ export const AdminProtectedRoute = () => {
   const { authState } = useApp();
 
   console.log('Auth State in AdminProtectedRoute:', authState.user?.role);
-  if (!authState.isAuthenticated || authState.user?.role !== 1) {
+  if (!authState.isAuthenticated || authState.user?.role !== UserRoles.ADMIN) {
     return <Navigate to={AppRoutesPaths.HOME} replace />;
   }
 
   return <Outlet />;
-}
+};

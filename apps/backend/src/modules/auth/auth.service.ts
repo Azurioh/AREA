@@ -30,16 +30,7 @@ export class AuthService {
   async registerUser(data: User): Promise<Tokens> {
     try {
       data.password = await hashPassword(data.password);
-      let result: InsertOneResult<User>;
-
-      try {
-        result = await this.repository.createUser(data);
-      } catch (error) {
-        if (error instanceof MongoServerError && error.code === 11000) {
-          throw new ApiError(HttpStatusCode.CONFLICT, 'Failed to create user, user already exists.');
-        }
-        throw error;
-      }
+      const result: InsertOneResult<User> = await this.repository.createUser(data);
 
       if (!result.acknowledged) {
         throw new ApiError(

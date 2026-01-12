@@ -1,14 +1,12 @@
 import fastifyCors from '@fastify/cors';
 import type { FastifyInstance } from 'fastify';
+import { environment } from '@/utils/environment';
+
+const allowedOrigins = (environment.CORS_ORIGINS ?? '').split(',').filter(Boolean);
 
 export const setupCors = (app: FastifyInstance): void => {
   app.register(fastifyCors, {
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'http://167.86.110.198:8085',
-      'http://167.86.110.198:4242',
-    ],
+    origin: allowedOrigins,
     credentials: true,
     methods: 'GET, POST, PUT, DELETE, PATCH',
   });
