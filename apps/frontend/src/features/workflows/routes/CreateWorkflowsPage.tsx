@@ -73,17 +73,23 @@ export default function CreateWorkflows() {
               )}
             </div>
 
-            <div className="w-4 h-16 bg-primary" />
+            <div className={`w-4 h-16 ${action?.name ? 'bg-primary' : 'bg-gradient-to-b from-primary to-muted'}`} />
 
             <div className="w-full h-36 relative">
               <Button
-                className="w-full h-full flex items-center justify-center bg-primary rounded-[var(--small-radius)]"
-                onClick={() => navigate('/workflows/choose-reaction')}
+                className={`w-full h-full flex items-center justify-center rounded-[var(--small-radius)] transition-colors ${
+                  action?.name ? 'bg-primary' : 'bg-muted cursor-not-allowed'
+                }`}
+                onClick={() => {
+                  if (!action?.name) return;
+                  navigate('/workflows/choose-reaction');
+                }}
+                disabled={!action?.name}
               >
                 <span className="text-5xl font-bold text-card">{reaction?.name ? reaction.name : 'Reaction'}</span>
               </Button>
 
-              {reaction?.name && (
+              {action?.name && reaction?.name && (
                 <Button
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-card hover:bg-muted rounded-[var(--small-radius)] w-10 h-10 p-0"
                   onClick={clearReaction}
