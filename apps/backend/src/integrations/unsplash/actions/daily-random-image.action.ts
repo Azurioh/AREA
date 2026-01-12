@@ -7,10 +7,18 @@ export class UnsplashDailyRandomImageAction extends Action {
       'Action triggered to get a daily random image from Unsplash',
       [
         {
-          type: 'input',
+          type: 'select',
           key: 'topic',
           label: 'Topic',
-          placeholder: 'Enter the topic of the image',
+          placeholder: 'Select the topic of the image',
+          options: [
+            { name: 'Nature', id: 'nature' },
+            { name: 'Technology', id: 'technology' },
+            { name: 'People', id: 'people' },
+            { name: 'Architecture', id: 'architecture' },
+            { name: 'Food', id: 'food' },
+            { name: 'Travel', id: 'travel' },
+          ],
         },
       ],
       [
