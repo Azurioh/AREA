@@ -1,4 +1,4 @@
-import { DysType, UserRoles } from '@area/shared/enums/user-enums';
+import { UserRoles } from '@area/shared/enums/user-enums';
 import type { User } from '@area/shared/types/users.types';
 import { MongoServerError } from 'mongodb';
 import type { UsersRepository } from '@/modules/users';
@@ -30,7 +30,7 @@ describe('AuthService', () => {
         password: 'password123',
         role: UserRoles.USER,
         darkModeEnabled: false,
-        dyslexiaType: DysType.NOTHING,
+        dyslexiaEnabled: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -54,7 +54,7 @@ describe('AuthService', () => {
         password: 'password123',
         role: UserRoles.USER,
         darkModeEnabled: false,
-        dyslexiaType: DysType.NOTHING,
+        dyslexiaEnabled: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
