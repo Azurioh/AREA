@@ -1,6 +1,5 @@
 import type { UpdateUserMeBody } from '@area/shared/schemas/users.schema';
 import { ApiClient } from '@/lib/ApiClient';
-import type { DysType } from '@area/shared/enums/user-enums';
 
 /**
  * @class UpdateUser
@@ -12,7 +11,7 @@ export class UpdateUser extends ApiClient {
    * @description Updates the execution state of an existing workflow.
    *
    */
-  async updateExecutionState(name: string, darkModeEnabled: boolean, dyslexiaType: DysType): Promise<void> {
+  async updateExecutionState(name: string, darkModeEnabled: boolean, dyslexiaType: boolean): Promise<void> {
     const body: UpdateUserMeBody = { name, darkModeEnabled, dyslexiaType };
 
     await this.fetch<UpdateUserMeBody>('/users/v1/me', {

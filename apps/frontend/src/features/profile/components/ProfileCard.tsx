@@ -34,19 +34,8 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
     initialDyslexiaType,
   );
 
-  const [darkMode, setDarkMode] = React.useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('darkMode') === 'true' || initialDarkMode;
-    }
-    return initialDarkMode;
-  });
-
-  const [dyslexiaMode, setDyslexiaMode] = React.useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('dyslexiaMode') === 'true';
-    }
-    return false;
-  });
+  const [darkMode, setDarkMode] = React.useState(initialDarkMode);
+  const [dyslexiaMode, setDyslexiaMode] = React.useState(initialDyslexiaType);
 
   const getInitials = (name: string) => name.slice(0, 2).toUpperCase();
 
@@ -56,7 +45,6 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
     } else {
       document.documentElement.classList.remove('dark');
     }
-    localStorage.setItem('darkMode', darkMode.toString());
   }, [darkMode]);
 
   React.useEffect(() => {
@@ -65,7 +53,6 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
     } else {
       document.body.classList.remove('theme-dyslexia');
     }
-    localStorage.setItem('dyslexiaMode', dyslexiaMode.toString());
   }, [dyslexiaMode]);
 
   const handleLogout = () => {
