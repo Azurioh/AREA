@@ -34,4 +34,23 @@ export class PollingService {
   async getUsersToPoll(service: ServiceToPoll, type: string[]): Promise<Polling[]> {
     return await this.repository.getUsersToPoll(service, type);
   }
+
+  /**
+   * @function updateUserToPoll
+   * @description Update a user that is being polled
+   *
+   * @param {ServiceToPoll} service The service polling
+   * @param {string} userId The id of the user being polled
+   * @param {string} type The type of the polling
+   * @param {Partial<Polling>} data The data to update
+   * @returns {Promise<void>} Nothing
+   */
+  async updateUserToPoll(
+    service: ServiceToPoll,
+    userId: string,
+    type: string,
+    data: Partial<Omit<Polling, 'service' | 'userId' | 'type'>>,
+  ): Promise<void> {
+    await this.repository.updateUserToPoll(service, userId, type, data);
+  }
 }
