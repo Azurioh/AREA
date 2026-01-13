@@ -49,3 +49,42 @@ export type TwitchAppAccessToken = {
   accessToken: string;
   expiresAt: number;
 };
+
+/**
+ * @type FollowedChannel
+ * @description The type representing a followed channel.
+ *
+ * @property {string} broadcaster_id - The id of the broadcaster.
+ * @property {string} broadcaster_name - The name of the broadcaster.
+ */
+export type FollowedChannel = {
+  broadcaster_id: string;
+  broadcaster_name: string;
+};
+
+/**
+ * @type FollowedChannelsResponse
+ * @description The response of the followed channels request.
+ *
+ * @property {FollowedChannel[]} data - The list of followed channels.
+ * @property {object} pagination - The pagination information.
+ * @property {string} pagination.cursor - The cursor for the next page.
+ */
+export type FollowedChannelsResponse = {
+  data: FollowedChannel[];
+  pagination: {
+    cursor: string | undefined;
+  };
+};
+
+/**
+ * @type TwitchStreamer
+ * @description The type representing a twitch streamer.
+ *
+ * @property {string} name - The name of the streamer.
+ * @property {string} id - The id of the streamer.
+ */
+export type TwitchStreamer = {
+  name: string;
+  id: string;
+};
