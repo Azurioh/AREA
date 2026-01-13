@@ -14,6 +14,8 @@ import type { SpotifyService } from '@/modules/spotify';
 import type { UnsplashService } from '@/modules/unsplash';
 import type { DropboxService } from '@/modules/dropbox';
 import type { TwitchService } from '../twitch/twitch.service';
+import { ServiceManager } from '@/integrations';
+import type { IAction, IReaction } from '@area/shared/types/services.types';
 
 /**
  * @class ActionsReactionsService
@@ -119,6 +121,30 @@ export class ActionsReactionsService {
   }
 
   /**
+   * @function validateActionReaction
+   * @description Validate if the action and reaction are compatible
+   *
+   * @param {CreateAction} action The action to validate
+   * @param {CreateReaction} reaction The reaction to validate
+   * @returns {void} Nothing
+   */
+  private validateActionReaction(action: CreateAction, reaction: CreateReaction): void {
+    const actionService = ServiceManager.instance.get(action.service);
+    const reactionService = ServiceManager.instance.get(reaction.service);
+
+    if (!actionService || !reactionService) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Service not found');
+    }
+
+    if (!actionService.actions.find((value: IAction) => value.name === action.name)) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, `Action '${action.name}' not found`);
+    }
+    if (!reactionService.reactions.find((value: IReaction) => value.name === reaction.name)) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, `Reaction '${reaction.name}' not found`);
+    }
+  }
+
+  /**
    * @function createActionReaction
    * @description Create a new action reaction
    *
@@ -128,6 +154,8 @@ export class ActionsReactionsService {
    * @returns {Promise<boolean>} If the action and reaction could be created
    */
   async createActionReaction(userId: string, action: CreateAction, reaction: CreateReaction): Promise<void> {
+    this.validateActionReaction(action, reaction);
+
     const trigger = await this.handleActions(userId, action);
 
     const data: ActionReaction = {
