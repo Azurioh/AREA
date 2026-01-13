@@ -1,13 +1,14 @@
 import { motion } from 'framer-motion';
-import organizationIcon from '@/assets/organization.png';
 import { Card } from '@/components/ui/card';
+import { Activity, AlignEndHorizontal, Workflow } from 'lucide-react';
 
 interface StatsCardProps {
   title: string;
   value: string | number;
+  type: 'active' | 'all' | 'actions';
 }
 
-export default function StatsCard({ title, value }: StatsCardProps) {
+export default function StatsCard({ title, value, type }: StatsCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
@@ -22,7 +23,9 @@ export default function StatsCard({ title, value }: StatsCardProps) {
         </div>
 
         <div className="h-full flex items-center">
-          <img src={organizationIcon} alt="icon" className="h-full object-contain" />
+          {(type === 'active' && <Activity className="h-10 w-10" />) ||
+            (type === 'all' && <Workflow className="h-10 w-10" />) ||
+            (type === 'actions' && <AlignEndHorizontal className="h-10 w-10" />)}
         </div>
       </Card>
     </motion.div>

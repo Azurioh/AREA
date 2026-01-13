@@ -23,9 +23,9 @@ export default function HomePage() {
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-20 mt-10 px-4 mb-5">
-              <StatsCard title="Active workflows" value={activeWorkflows.toString()} />
-              <StatsCard title="All workflows" value={totalWorkflows.toString()} />
-              <StatsCard title="Total actions" value={totalActions.toString()} />
+              <StatsCard title="Active workflows" value={activeWorkflows.toString()} type="active" />
+              <StatsCard title="All workflows" value={totalWorkflows.toString()} type="all" />
+              <StatsCard title="Total actions" value={totalActions.toString()} type="actions" />
             </div>
             <h1 className="text-4xl mt-28 mb-20 text-center font-button font-bold tracking-tighter text-primary">
               Recents Workflows
