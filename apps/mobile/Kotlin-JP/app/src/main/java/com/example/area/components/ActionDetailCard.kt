@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.data.models.ActionDetail
+import com.example.area.data.models.ReturnedValue
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.AppTheme
 import coil.compose.AsyncImage
@@ -36,6 +38,7 @@ import coil.compose.AsyncImage
 fun ActionDetailCard(
     actionServiceImage: String,
     actionDetail: ActionDetail,
+    returnedValues: List<ReturnedValue> = emptyList(),
     onValidate: (Map<String, Any>) -> Unit
 ) {
     var paramValues by remember { mutableStateOf(mutableMapOf<String, Any>()) }
@@ -143,6 +146,53 @@ fun ActionDetailCard(
                                 }
                             }
                         )
+
+                        if (returnedValues.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Available variables:",
+                                fontFamily = AppTheme.fonts.secondary,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 12.sp,
+                                color = AppTheme.colors.textPrimary.copy(alpha = 0.7f)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                returnedValues.forEach { returnedValue ->
+                                    Button(
+                                        onClick = {
+                                            val currentValue = paramValues[param.key]?.toString() ?: ""
+                                            val variableFormat = "\${${returnedValue.key}}"
+                                            val newValue = if (currentValue.isEmpty()) {
+                                                variableFormat
+                                            } else {
+                                                "$currentValue $variableFormat"
+                                            }
+                                            paramValues = paramValues.toMutableMap().apply {
+                                                this[param.key] = newValue
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Accent.copy(alpha = 0.1f),
+                                            contentColor = Accent
+                                        ),
+                                        modifier = Modifier.height(32.dp),
+                                        shape = RoundedCornerShape(8.dp),
+                                        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                                    ) {
+                                        Text(
+                                            text = "\${${returnedValue.key}}",
+                                            fontFamily = AppTheme.fonts.secondary,
+                                            fontWeight = FontWeight.Medium,
+                                            fontSize = 11.sp
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
