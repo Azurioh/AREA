@@ -121,6 +121,35 @@ export class ActionsReactionsService {
   }
 
   /**
+   * @function validateActionOrReactionParams
+   * @description Validate the params of an action or a reaction
+   *
+   * @param {any} params The params to validate
+   * @returns {void} Nothing
+   */
+  private validateActionOrReactionParams(type: 'Action' | 'Reaction', params: any, paramsToValidate: any): void {
+    if (typeof paramsToValidate !== 'object') {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, `${type} is invalid`);
+    }
+    for (const param of params) {
+      if (Object.hasOwn((paramsToValidate as Object), param.key)) {
+        if (param.type === 'input') {
+          continue;
+        }
+        if (
+          param.type === 'select' &&
+          typeof paramsToValidate[param.key] === 'object' &&
+          Object.hasOwn((paramsToValidate[param.key] as Object), 'name') &&
+          Object.hasOwn((paramsToValidate[param.key] as Object), 'id')
+        ) {
+          continue;
+        }
+      }
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, `${type} is invalid`);
+    }
+  }
+
+  /**
    * @function validateActionReaction
    * @description Validate if the action and reaction are compatible
    *
@@ -128,20 +157,26 @@ export class ActionsReactionsService {
    * @param {CreateReaction} reaction The reaction to validate
    * @returns {void} Nothing
    */
-  private validateActionReaction(action: CreateAction, reaction: CreateReaction): void {
-    const actionService = ServiceManager.instance.get(action.service);
-    const reactionService = ServiceManager.instance.get(reaction.service);
+  private validateActionReaction(actionToValidate: CreateAction, reactionToValidate: CreateReaction): void {
+    const actionService = ServiceManager.instance.get(actionToValidate.service);
+    const reactionService = ServiceManager.instance.get(reactionToValidate.service);
 
     if (!actionService || !reactionService) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'Service not found');
     }
 
-    if (!actionService.actions.find((value: IAction) => value.name === action.name)) {
-      throw new ApiError(HttpStatusCode.NOT_FOUND, `Action '${action.name}' not found`);
+    const action = actionService.actions.find((value: IAction) => value.name === actionToValidate.name);
+    const reaction = reactionService.reactions.find((value: IReaction) => value.name === reactionToValidate.name);
+
+    if (!action) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');
     }
-    if (!reactionService.reactions.find((value: IReaction) => value.name === reaction.name)) {
-      throw new ApiError(HttpStatusCode.NOT_FOUND, `Reaction '${reaction.name}' not found`);
+    this.validateActionOrReactionParams('Action', action.params, actionToValidate.params);
+
+    if (!reaction) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Reaction not found');
     }
+    this.validateActionOrReactionParams('Reaction', reaction.params, reactionToValidate.params);
   }
 
   /**
