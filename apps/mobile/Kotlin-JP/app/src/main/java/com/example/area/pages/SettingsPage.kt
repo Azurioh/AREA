@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Language
@@ -66,13 +68,15 @@ fun SettingsPage(
     LaunchedEffect(userProfile) {
         baseUrl = RetrofitInstance.getTokenManager().getBaseUrl() ?: BuildConfig.API_BASE_URL
         darkModeEnabled = userProfile?.darkModeEnabled ?: false
-        dyslexiaMode = (userProfile?.dyslexiaType ?: 0) == 1
+        dyslexiaMode = userProfile?.dyslexiaEnabled ?: false
     }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = AppTheme.colors.background),
+            .background(color = AppTheme.colors.background)
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = 100.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -139,7 +143,7 @@ fun SettingsPage(
                             userViewModel.updateUser(
                                 name = profile.name,
                                 darkModeEnabled = newValue,
-                                dyslexiaType = profile.dyslexiaType,
+                                dyslexiaEnabled = profile.dyslexiaEnabled,
                                 onError = { error ->
                                     Toast.makeText(context, "Error updating dark mode: $error", Toast.LENGTH_SHORT).show()
                                 }
@@ -207,7 +211,7 @@ fun SettingsPage(
                             userViewModel.updateUser(
                                 name = profile.name,
                                 darkModeEnabled = profile.darkModeEnabled,
-                                dyslexiaType = if (newValue) 1 else 0,
+                                dyslexiaEnabled = newValue,
                                 onError = { error ->
                                     Toast.makeText(context, "Error updating dyslexia mode: $error", Toast.LENGTH_SHORT).show()
                                 }
