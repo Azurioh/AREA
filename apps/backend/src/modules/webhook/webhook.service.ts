@@ -4,6 +4,7 @@ import type {
   SpotifyWebhookPayload,
   UnsplashWebhookPayload,
   DropboxWebhookPayload,
+  TwitchWebhookPayload,
 } from '@/types/webhook';
 import type { ActionPayload } from '@/types/action-reaction';
 import type { ActionsReactionsService } from '@/modules/actions-reactions';
@@ -114,7 +115,33 @@ export class WebhookService {
       content: body,
     };
 
-    console.log('Unsplash webhook action:', action);
     this.actionsReactionsService.handleReactions(action);
+  }
+
+  /**
+   * @function twitchCallback
+   * @description Handle the twitch callback.
+   *
+   * @param {TwitchWebhookPayload} body The body of the callback.
+   * @returns {Promise<void>}
+   */
+  async twitchCallback(event: string, body: TwitchWebhookPayload): Promise<void> {
+    let actionName = '';
+
+    switch (event) {
+      case 'channel.follow': {
+        actionName = 'new_follower';
+        break;
+      }
+    }
+
+    const action: ActionPayload = {
+      service: 'twitch',
+      name: actionName,
+      trigger: `${actionName}/${body.subscription.condition.broadcaster_user_id}`,
+      content: body,
+    };
+
+    this.actionsReactionsService.handleActionReception(action);
   }
 }
