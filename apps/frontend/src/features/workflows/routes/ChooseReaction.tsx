@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Button } from '@/components/wrappers/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/wrappers/Card';
 import { Input } from '@/components/wrappers/Input';
@@ -17,6 +18,7 @@ import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReac
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceReactions } from '@/features/workflows/hooks/useServiceReactions';
 import { useActionReturnedValues } from '@/features/workflows/hooks/useActionReturnedValues';
+import { CircleQuestionMark, ChevronRight } from 'lucide-react';
 
 const ChooseReaction: React.FC = () => {
   const { services, fetchServices } = useListServices();
@@ -183,28 +185,46 @@ const ChooseReaction: React.FC = () => {
                                   placeholder={param.placeholder}
                                   value={typeof param.value === 'string' ? param.value : ''}
                                   onChange={(e) => updateParam(index, e.target.value)}
+                                  required
                                 />
                                 {returnedValues.length > 0 && (
                                   <div className="text-xs text-muted-foreground">
                                     Available variables: {returnedValues.map((v) => `\${${v.key}}`).join(', ')}
+                                    <HoverCard>
+                                      <HoverCardTrigger asChild>
+                                        <CircleQuestionMark className="inline-block ml-1 w-4 h-4 text-primary cursor-pointer" />
+                                      </HoverCardTrigger>
+                                      <HoverCardContent className="w-80">
+                                        <div className="space-y-2">
+                                          <h4 className="text-sm font-semibold">How to use variables</h4>
+                                          <p className="text-xs text-muted-foreground">
+                                            Simply type the variable name with the ${'{'}...{'}'} syntax in any input
+                                            field. For example, if you have a variable named "username", you can use it
+                                            like this: Hello ${'{username}'}.
+                                          </p>
+                                        </div>
+                                      </HoverCardContent>
+                                    </HoverCard>
                                   </div>
                                 )}
                               </div>
                             ) : (
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button variant="outline" className="w-full justify-start" id={id}>
+                                  <Button variant="outline" className="w-full justify-start relative" id={id}>
                                     {typeof param.value === 'object' && (param.value as ParamOption)?.name
                                       ? (param.value as ParamOption).name
                                       : param.placeholder}
+                                    <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" />
                                   </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-full">
+                                <DropdownMenuContent align="start" className="w-full">
                                   {(param.options && param.options.length > 0
                                     ? param.options
                                     : [{ name: 'No options available', id: 'none' }]
                                   ).map((opt: ParamOption) => (
                                     <DropdownMenuItem
+                                      className="cursor-pointer"
                                       key={opt.id}
                                       onClick={() =>
                                         updateParam(index, {
@@ -223,46 +243,52 @@ const ChooseReaction: React.FC = () => {
                         );
                       })}
 
-                      <div className="pt-4 flex gap-3">
-                        <Button
-                          className="flex-1"
-                          onClick={() => {
-                            if (!selectedReaction) {
-                              return;
-                            }
+                      <div className="pt-4 space-y-3">
+                        <div className="text-[10px] text-muted-foreground italic">* All fields are required</div>
+                        <div className="flex gap-3">
+                          <Button
+                            className="flex-1"
+                            disabled={reactionParams.some(
+                              (p) => !p.value || (typeof p.value === 'string' && p.value.trim() === ''),
+                            )}
+                            onClick={() => {
+                              if (!selectedReaction) {
+                                return;
+                              }
 
-                            const paramsObj = reactionParams.reduce(
-                              (acc, p) => {
-                                acc[p.key] = p.value;
-                                return acc;
-                              },
-                              {} as Record<string, unknown>,
-                            );
+                              const paramsObj = reactionParams.reduce(
+                                (acc, p) => {
+                                  acc[p.key] = p.value;
+                                  return acc;
+                                },
+                                {} as Record<string, unknown>,
+                              );
 
-                            setReaction(
-                              selectedReaction.service,
-                              {
-                                service: selectedReaction.service,
-                                name: selectedReaction.reaction,
-                                params: paramsObj,
-                              },
-                              reactionParams,
-                            );
+                              setReaction(
+                                selectedReaction.service,
+                                {
+                                  service: selectedReaction.service,
+                                  name: selectedReaction.reaction,
+                                  params: paramsObj,
+                                },
+                                reactionParams,
+                              );
 
-                            setSelectedReaction(null);
-                            navigate('/create');
-                          }}
-                        >
-                          Save Configuration
-                        </Button>
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedReaction(null);
-                          }}
-                        >
-                          Cancel
-                        </Button>
+                              setSelectedReaction(null);
+                              navigate('/create');
+                            }}
+                          >
+                            Save Configuration
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedReaction(null);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   )}

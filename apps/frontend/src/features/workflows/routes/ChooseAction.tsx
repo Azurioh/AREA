@@ -16,6 +16,7 @@ import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReac
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceActions } from '@/features/workflows/hooks/useServiceActions';
 import { useServicesClient } from '@/features/connections/hooks/useServicesClient';
+import { ChevronRight } from 'lucide-react';
 
 const ChooseAction: React.FC = () => {
   const { services, fetchServices } = useListServices();
@@ -176,17 +177,19 @@ const ChooseAction: React.FC = () => {
                                 placeholder={param.placeholder}
                                 value={typeof param.value === 'string' ? param.value : ''}
                                 onChange={(e) => updateParam(index, e.target.value)}
+                                required
                               />
                             ) : (
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button variant="outline" className="w-full justify-start" id={id}>
+                                  <Button variant="outline" className="w-full justify-start relative" id={id}>
                                     {typeof param.value === 'object' && (param.value as ParamOption)?.name
                                       ? (param.value as ParamOption).name
                                       : param.placeholder}
+                                    <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" />
                                   </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-full">
+                                <DropdownMenuContent align="start" className="w-full">
                                   {(param.options && param.options.length > 0
                                     ? param.options
                                     : [{ name: 'No options available', id: 'none' }]
@@ -210,46 +213,52 @@ const ChooseAction: React.FC = () => {
                         );
                       })}
 
-                      <div className="pt-4 flex gap-3">
-                        <Button
-                          className="flex-1"
-                          onClick={() => {
-                            if (!selectedAction) {
-                              return;
-                            }
+                      <div className="pt-4 space-y-3">
+                        <div className="text-[10px] text-muted-foreground italic">* All fields are required</div>
+                        <div className="flex gap-3">
+                          <Button
+                            className="flex-1"
+                            disabled={actionParams.some(
+                              (p) => !p.value || (typeof p.value === 'string' && p.value.trim() === ''),
+                            )}
+                            onClick={() => {
+                              if (!selectedAction) {
+                                return;
+                              }
 
-                            const paramsObj = actionParams.reduce(
-                              (acc, p) => {
-                                acc[p.key] = p.value;
-                                return acc;
-                              },
-                              {} as Record<string, unknown>,
-                            );
+                              const paramsObj = actionParams.reduce(
+                                (acc, p) => {
+                                  acc[p.key] = p.value;
+                                  return acc;
+                                },
+                                {} as Record<string, unknown>,
+                              );
 
-                            setAction(
-                              selectedAction.service,
-                              {
-                                service: selectedAction.service,
-                                name: selectedAction.action,
-                                params: paramsObj,
-                              },
-                              actionParams,
-                            );
+                              setAction(
+                                selectedAction.service,
+                                {
+                                  service: selectedAction.service,
+                                  name: selectedAction.action,
+                                  params: paramsObj,
+                                },
+                                actionParams,
+                              );
 
-                            setSelectedAction(null);
-                            navigate('/create');
-                          }}
-                        >
-                          Save Configuration
-                        </Button>
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedAction(null);
-                          }}
-                        >
-                          Cancel
-                        </Button>
+                              setSelectedAction(null);
+                              navigate('/create');
+                            }}
+                          >
+                            Save Configuration
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedAction(null);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   )}
