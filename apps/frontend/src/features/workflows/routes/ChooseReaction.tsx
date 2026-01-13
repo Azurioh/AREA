@@ -16,6 +16,7 @@ import { useActionReaction } from '@/features/workflows/context/ActionReactionCo
 import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceReactions } from '@/features/workflows/hooks/useServiceReactions';
+import { useActionReturnedValues } from '@/features/workflows/hooks/useActionReturnedValues';
 
 const ChooseReaction: React.FC = () => {
   const { services, fetchServices } = useListServices();
@@ -39,7 +40,9 @@ const ChooseReaction: React.FC = () => {
   } = useServiceReactions(services);
 
   const navigate = useNavigate();
-  const { setReaction } = useActionReaction();
+  const { setReaction, action } = useActionReaction();
+
+  const { values: returnedValues } = useActionReturnedValues(action?.service, action?.name);
 
   const isServiceConnected = (serviceName: string) => {
     const service = servicesStatus.find((s) => s.name === serviceName);
@@ -174,12 +177,19 @@ const ChooseReaction: React.FC = () => {
                             </label>
 
                             {param.type === 'input' ? (
-                              <Input
-                                id={id}
-                                placeholder={param.placeholder}
-                                value={typeof param.value === 'string' ? param.value : ''}
-                                onChange={(e) => updateParam(index, e.target.value)}
-                              />
+                              <div className="space-y-1">
+                                <Input
+                                  id={id}
+                                  placeholder={param.placeholder}
+                                  value={typeof param.value === 'string' ? param.value : ''}
+                                  onChange={(e) => updateParam(index, e.target.value)}
+                                />
+                                {returnedValues.length > 0 && (
+                                  <div className="text-xs text-muted-foreground">
+                                    Available variables: {returnedValues.map((v) => `{{${v.key}}}`).join(', ')}
+                                  </div>
+                                )}
+                              </div>
                             ) : (
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
