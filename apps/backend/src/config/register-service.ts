@@ -6,6 +6,7 @@ import {
   createSpotifyService,
   createDropboxService,
   ServiceManager,
+  createTwitchService,
 } from '@/integrations';
 import { DiscordService } from '@/modules/discord';
 import { GithubService } from '@/modules/github';
@@ -15,6 +16,7 @@ import { UsersRepository, UsersService } from '@/modules/users';
 import { SpotifyService } from '@/modules/spotify';
 import { PollingService } from '@/modules/polling/polling.service';
 import { PollingRepository } from '@/modules/polling/polling.repository';
+import { TwitchService } from '@/modules/twitch/twitch.service';
 
 export const registerServices = (app: FastifyInstance): void => {
   if (!app.mongo.db) {
@@ -31,10 +33,12 @@ export const registerServices = (app: FastifyInstance): void => {
   const githubService = new GithubService(thirdPartiesService);
   const discordService = new DiscordService(thirdPartiesService);
   const spotifyService = new SpotifyService(thirdPartiesService, pollingService);
+  const twitchService = new TwitchService(thirdPartiesService);
 
   ServiceManager.instance.register(createGithubService(githubService));
   ServiceManager.instance.register(createDiscordService(discordService));
   ServiceManager.instance.register(createSpotifyService(spotifyService));
   ServiceManager.instance.register(createUnsplashService());
   ServiceManager.instance.register(createDropboxService());
+  ServiceManager.instance.register(createTwitchService(twitchService));
 };
