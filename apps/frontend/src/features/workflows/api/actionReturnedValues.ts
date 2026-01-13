@@ -3,7 +3,7 @@ import type { GetActionReturnedValuesResponse } from '@area/shared/schemas/servi
 export async function getActionReturnedValues(
   service: string,
   action: string,
-): Promise<GetActionReturnedValuesResponse[]> {
+): Promise<GetActionReturnedValuesResponse> {
   const res = await fetch(
     `${import.meta.env.VITE_BACKEND_URL}/services/v1/${service}/actions/${action}/returned-values`,
   );
