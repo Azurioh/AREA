@@ -1,3 +1,4 @@
+import { useServicesClient } from '@/features/connections/hooks/useServicesClient';
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +21,8 @@ import { useActionReturnedValues } from '@/features/workflows/hooks/useActionRet
 const ChooseReaction: React.FC = () => {
   const { services, fetchServices } = useListServices();
 
+  const servicesStatus = useServicesClient();
+
   React.useEffect(() => {
     fetchServices();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -40,6 +43,11 @@ const ChooseReaction: React.FC = () => {
   const { setReaction, action } = useActionReaction();
 
   const { values: returnedValues } = useActionReturnedValues(action?.service, action?.name);
+
+  const isServiceConnected = (serviceName: string) => {
+    const service = servicesStatus.find((s) => s.name === serviceName);
+    return service?.status === true;
+  };
 
   return (
     <div className="flex h-screen bg-background">
@@ -88,7 +96,13 @@ const ChooseReaction: React.FC = () => {
                                     : 'outline'
                                 }
                                 className="w-full justify-start h-auto py-3 relative overflow-hidden"
-                                onClick={() => selectReaction(service, reaction.name)}
+                                onClick={() => {
+                                  if (!isServiceConnected(service)) {
+                                    navigate('/connections');
+                                    return;
+                                  }
+                                  selectReaction(service, reaction.name);
+                                }}
                               >
                                 <img
                                   src={logoUrl}
