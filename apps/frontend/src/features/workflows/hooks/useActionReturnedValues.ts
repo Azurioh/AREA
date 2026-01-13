@@ -1,9 +1,9 @@
 import React from 'react';
-import type { ReturnedValue } from '@/features/workflows/hooks/useReturnedValuesTypes';
+import type { GetActionReturnedValuesResponse } from '@area/shared/schemas/services.schema';
 import { getActionReturnedValues } from '@/features/workflows/api/actionReturnedValues';
 
 export function useActionReturnedValues(service?: string, action?: string) {
-  const [values, setValues] = React.useState<ReturnedValue[]>([]);
+  const [values, setValues] = React.useState<GetActionReturnedValuesResponse[]>([]);
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {

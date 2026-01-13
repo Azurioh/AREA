@@ -1,6 +1,9 @@
-import type { ReturnedValue } from '@/features/workflows/hooks/useReturnedValuesTypes';
+import type { GetActionReturnedValuesResponse } from '@area/shared/schemas/services.schema';
 
-export async function getActionReturnedValues(service: string, action: string): Promise<ReturnedValue[]> {
+export async function getActionReturnedValues(
+  service: string,
+  action: string,
+): Promise<GetActionReturnedValuesResponse[]> {
   const res = await fetch(
     `${import.meta.env.VITE_BACKEND_URL}/services/v1/${service}/actions/${action}/returned-values`,
   );
