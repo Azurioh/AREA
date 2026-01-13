@@ -186,7 +186,7 @@ const ChooseReaction: React.FC = () => {
                                 />
                                 {returnedValues.length > 0 && (
                                   <div className="text-xs text-muted-foreground">
-                                    Available variables: {returnedValues.map((v) => `{{${v.key}}}`).join(', ')}
+                                    Available variables: {returnedValues.map((v) => `\${${v.key}}`).join(', ')}
                                   </div>
                                 )}
                               </div>
