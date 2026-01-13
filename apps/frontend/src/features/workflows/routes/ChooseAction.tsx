@@ -15,9 +15,11 @@ import { useActionReaction } from '@/features/workflows/context/ActionReactionCo
 import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceActions } from '@/features/workflows/hooks/useServiceActions';
+import { useServicesClient } from '@/features/connections/hooks/useServicesClient';
 
 const ChooseAction: React.FC = () => {
   const { services, fetchServices } = useListServices();
+  const servicesStatus = useServicesClient();
 
   React.useEffect(() => {
     fetchServices();
@@ -37,6 +39,11 @@ const ChooseAction: React.FC = () => {
 
   const navigate = useNavigate();
   const { setAction } = useActionReaction();
+
+  const isServiceConnected = (serviceName: string) => {
+    const service = servicesStatus.find((s) => s.name === serviceName);
+    return service?.status === true;
+  };
 
   return (
     <div className="flex h-screen bg-background">
@@ -85,7 +92,13 @@ const ChooseAction: React.FC = () => {
                                     : 'outline'
                                 }
                                 className="w-full justify-start h-auto py-3 relative overflow-hidden"
-                                onClick={() => selectAction(service, action.name)}
+                                onClick={() => {
+                                  if (!isServiceConnected(service)) {
+                                    navigate('/connections');
+                                    return;
+                                  }
+                                  selectAction(service, action.name);
+                                }}
                               >
                                 <img
                                   src={logoUrl}
