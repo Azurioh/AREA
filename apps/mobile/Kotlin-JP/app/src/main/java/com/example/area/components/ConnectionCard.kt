@@ -82,7 +82,7 @@ fun ConnectionCard(
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = if (isConnected) "Connected" else "Connect",
+                        text = if (isConnected) "Disconnect" else "Connect",
                         fontSize = 15.sp,
                         fontFamily = AppTheme.fonts.primary,
                         fontWeight = FontWeight.SemiBold

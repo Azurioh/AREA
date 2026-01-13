@@ -34,7 +34,7 @@ fun ButtonEditProfileComponent(
                 userViewModel.updateUser(
                     name = textFieldNewName,
                     darkModeEnabled = user.darkModeEnabled,
-                    dyslexiaType = user.dyslexiaType,
+                    dyslexiaEnabled = user.dyslexiaEnabled,
                     onSuccess = {
                         Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show()
                         onDismiss()
