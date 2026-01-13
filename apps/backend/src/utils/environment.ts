@@ -40,6 +40,9 @@ export interface Environment {
   DROPBOX_CLIENT_SECRET: string;
 
   UNSPLASH_CLIENT_ID: string;
+
+  TWITCH_CLIENT_ID: string;
+  TWITCH_CLIENT_SECRET: string;
 }
 
 const variables: Record<string, string | undefined> = {
@@ -75,6 +78,9 @@ const variables: Record<string, string | undefined> = {
   DROPBOX_CLIENT_SECRET: process.env.DROPBOX_CLIENT_SECRET,
 
   UNSPLASH_CLIENT_ID: process.env.UNSPLASH_CLIENT_ID,
+
+  TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID,
+  TWITCH_CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET,
 };
 
 for (const [key, value] of Object.entries(variables)) {
@@ -128,4 +134,7 @@ export const environment: Environment = {
   DROPBOX_CLIENT_SECRET: process.env.DROPBOX_CLIENT_SECRET as string,
 
   UNSPLASH_CLIENT_ID: process.env.UNSPLASH_CLIENT_ID as string,
+
+  TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID as string,
+  TWITCH_CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET as string,
 };
