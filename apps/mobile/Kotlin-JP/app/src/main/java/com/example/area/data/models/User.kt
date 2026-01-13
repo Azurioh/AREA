@@ -5,7 +5,7 @@ data class User(
     val email: String,
     val role: Int,
     val darkModeEnabled: Boolean,
-    val dyslexiaType: Int,
+    val dyslexiaEnabled: Boolean,
     val createdAt: String,
     val updatedAt: String
 )

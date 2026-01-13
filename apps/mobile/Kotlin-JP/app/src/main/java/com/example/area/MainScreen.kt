@@ -176,6 +176,10 @@ fun ContentScreen(
     onLogout: () -> Unit = {},
     bottomPadding: androidx.compose.ui.unit.Dp = 0.dp
 ) {
+    LaunchedEffect(selectedIndex) {
+        userViewModel.fetchUserProfile()
+    }
+
     when(selectedIndex) {
         0 -> HomePage(modifier = modifier)
         1 -> CreatePage(modifier = modifier, serviceViewModel = serviceViewModel)

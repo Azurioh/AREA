@@ -40,6 +40,16 @@ fun ActionDetailCard(
 ) {
     var paramValues by remember { mutableStateOf(mutableMapOf<String, Any>()) }
 
+    val allFieldsFilled = actionDetail.params.all { param ->
+        val value = paramValues[param.key]
+        when {
+            value == null -> false
+            value is String -> value.isNotBlank()
+            value is Map<*, *> -> value.isNotEmpty()
+            else -> true
+        }
+    }
+
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
@@ -139,9 +149,24 @@ fun ActionDetailCard(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
+            if (!allFieldsFilled && actionDetail.params.isNotEmpty()) {
+                Text(
+                    text = "* All fields are required",
+                    fontFamily = AppTheme.fonts.secondary,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 12.sp,
+                    color = Accent,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+
             Button(
                 onClick = { onValidate(paramValues) },
-                colors = ButtonDefaults.buttonColors(containerColor = Accent),
+                enabled = allFieldsFilled,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Accent,
+                    disabledContainerColor = Accent.copy(alpha = 0.5f)
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
