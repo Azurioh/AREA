@@ -88,7 +88,7 @@ class UserViewModel : ViewModel() {
     fun updateUser(
         name: String,
         darkModeEnabled: Boolean,
-        dyslexiaType: Int,
+        dyslexiaEnabled: Boolean,
         onSuccess: () -> Unit = {},
         onError: (String) -> Unit = {}
     ) {
@@ -97,7 +97,7 @@ class UserViewModel : ViewModel() {
                 val request = UserInfo(
                     name = name,
                     darkModeEnabled = darkModeEnabled,
-                    dyslexiaType = dyslexiaType
+                    dyslexiaEnabled = dyslexiaEnabled
                 )
 
                 RetrofitInstance.api.updateUserInfo(request)

@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -170,7 +172,10 @@ fun CreatePage(
             }
             onAction -> {
                 Column(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(bottom = 100.dp)
                 ) {
                     val serviceGroups = actionServices.groupBy { it.service }
 
@@ -226,7 +231,10 @@ fun CreatePage(
             }
             onReaction -> {
                 Column(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(bottom = 100.dp)
                 ) {
                     val serviceGroups = reactionServices.groupBy { it.service }
 
@@ -399,23 +407,30 @@ private fun ConfigureDetailView(
     serviceImage: String,
     onValidate: (Map<String, Any>) -> Unit
 ) {
-    Text(
-        text = title,
-        fontFamily = AppTheme.fonts.primary,
-        fontWeight = FontWeight.Bold,
-        fontSize = 20.sp,
-        color = Accent,
-        textAlign = TextAlign.Start,
+    Column(
         modifier = Modifier
-            .padding(top = 20.dp, start = 32.dp)
-            .fillMaxWidth()
-    )
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = 100.dp)
+    ) {
+        Text(
+            text = title,
+            fontFamily = AppTheme.fonts.primary,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            color = Accent,
+            textAlign = TextAlign.Start,
+            modifier = Modifier
+                .padding(top = 20.dp, start = 32.dp)
+                .fillMaxWidth()
+        )
 
-    ActionDetailCard(
-        actionServiceImage = serviceImage,
-        actionDetail = detail,
-        onValidate = onValidate
-    )
+        ActionDetailCard(
+            actionServiceImage = serviceImage,
+            actionDetail = detail,
+            onValidate = onValidate
+        )
+    }
 }
 
 @Composable
