@@ -32,7 +32,8 @@ export type ThirdPartyAuthorizationParams = z.infer<typeof thirdPartyAuthorizati
  */
 export type ThirdPartyAuthorization = ThirdPartyAuthorizationQueryString;
 
-export type ServiceType = 'github' | 'discord' | 'spotify' | 'dropbox';
+export type ServiceType = 'github' | 'discord' | 'spotify' | 'dropbox' | 'unsplash' | 'twitch';
+export type OAuthServiceType = Omit<ServiceType, 'unsplash'>;
 
 /**
  * @type BaseAccount
@@ -45,7 +46,7 @@ export type ServiceType = 'github' | 'discord' | 'spotify' | 'dropbox';
  */
 export type BaseAccount = {
   userId: string;
-  service: ServiceType;
+  service: OAuthServiceType;
   accessToken: string;
   refreshToken: string | null;
 };
@@ -90,13 +91,33 @@ export type SpotifyAccount = BaseAccount & {
  * @description DropboxAccount type.
  *
  * @property {'dropbox'} service The name of the service
+ * @property {string} id The account id of the user
+ * @property {Object[]} cursors An array of the user cursors
+ * @property {string} cursors[].cursor The tag of the cursor
+ * @property {string} cursors[].tag The type of the cursor
  */
 export type DropboxAccount = BaseAccount & {
   service: 'dropbox';
   id: string;
+  cursor: {
+    ref: string;
+    paths: string[];
+  };
 };
 
-export type ThirdPartyAccount = GithubAccount | DiscordAccount | SpotifyAccount | DropboxAccount;
+/**
+ * @type TwitchAccount
+ * @description TwitchAccount type.
+ *
+ * @property {'twitch'} service The name of the service
+ * @property {string} id The id of the twitch user
+ */
+export type TwitchAccount = BaseAccount & {
+  service: 'twitch';
+  id: string;
+};
+
+export type ThirdPartyAccount = GithubAccount | DiscordAccount | SpotifyAccount | DropboxAccount | TwitchAccount;
 
 /**********************************
  * SERVICE AUTHORIZATION RESPONSE *
@@ -159,4 +180,16 @@ export type DropboxAuthorizationResponse = {
   access_token: string;
   refresh_token: string;
   account_id: string;
+};
+
+/**
+ * @type TwitchAuthorizationResponse
+ * @description The content of the twitch authorization response.
+ *
+ * @property {string} access_token - The response access token.
+ * @property {string} refresh_token - The response refresh token.
+ */
+export type TwitchAuthorizationResponse = {
+  access_token: string;
+  refresh_token: string;
 };

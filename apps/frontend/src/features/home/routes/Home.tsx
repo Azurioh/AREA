@@ -2,19 +2,13 @@ import SideBar from '@/components/SideBar';
 import { Card, CardContent } from '@/components/ui/card';
 import WorkflowsCard from '@/components/WorkflowsCard';
 import StatsCard from '@/features/home/components/StatsCard';
-import { useListWorkflows } from '@/features/workflows/hooks/useListWorkflows';
+import { useListWorkflows } from '@/features/home/hooks/getAllStats';
 import { MoveRight } from 'lucide-react';
 
 export default function HomePage() {
-  const stats = [
-    { title: 'Active workflows', value: '12' },
-    { title: 'Executions today', value: '847' },
-    { title: 'Success rate', value: '100%' },
-    { title: 'Errors', value: '3' },
-  ];
-
-  const { workflows } = useListWorkflows();
+  const { workflows, stats } = useListWorkflows();
   const latestWorkflows = [...workflows].reverse().slice(0, 3);
+  const { totalWorkflows, activeWorkflows, totalActions } = stats;
 
   return (
     <div className="flex h-screen bg-background">
@@ -25,13 +19,13 @@ export default function HomePage() {
             <div className="text-center space-y-2 mb-6">
               <h1 className="font-bold tracking-tighter text-primary"> Automate Everything Effortlessly </h1>
               <p className="text-foreground">
-                Manage and monitor your workflows all in one place with our intuitive dashboard
+                Discover your workflows analytics at a glance and take control of your automation like never before.
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
-              {stats.map((stat, i) => (
-                <StatsCard key={i} title={stat.title} value={stat.value} />
-              ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-20 mt-10 px-4 mb-5">
+              <StatsCard title="Active workflows" value={activeWorkflows.toString()} type="active" />
+              <StatsCard title="All workflows" value={totalWorkflows.toString()} type="all" />
+              <StatsCard title="Total actions" value={totalActions.toString()} type="actions" />
             </div>
             <h1 className="text-4xl mt-28 mb-20 text-center font-button font-bold tracking-tighter text-primary">
               Recents Workflows

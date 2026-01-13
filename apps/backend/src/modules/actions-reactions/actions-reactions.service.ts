@@ -10,7 +10,9 @@ import type { ActionPayload, ActionReaction } from '@/types/action-reaction';
 import ApiError from '@/utils/api-error';
 import type { ActionsReactionsRepository } from './actions-reactions.repository';
 import type { WithId } from 'mongodb';
-import type { SpotifyService } from '../spotify';
+import type { SpotifyService } from '@/modules/spotify';
+import type { UnsplashService } from '@/modules/unsplash';
+import type { DropboxService } from '@/modules/dropbox';
 
 /**
  * @class ActionsReactionsService
@@ -23,24 +25,30 @@ export class ActionsReactionsService {
     string,
     (userId: string, reaction: CreateReaction, action: ActionPayload) => Promise<boolean>
   >;
+  private actionReceptionFunc: Map<string, (action: ActionPayload) => Promise<ActionPayload[]>>;
 
   constructor(
     repository: ActionsReactionsRepository,
     githubService: GithubService,
     discordService: DiscordService,
     spotifyService: SpotifyService,
+    unsplashService: UnsplashService,
+    dropboxService: DropboxService,
   ) {
     this.repository = repository;
     this.actionsCreationFunc = new Map([
       ['github', githubService.createAction.bind(githubService)],
       ['discord', discordService.createAction.bind(discordService)],
       ['spotify', spotifyService.createAction.bind(spotifyService)],
+      ['unsplash', unsplashService.createAction.bind(unsplashService)],
+      ['dropbox', dropboxService.createAction.bind(dropboxService)],
     ]);
     this.reactionsCreationFunc = new Map([
       ['github', githubService.createReaction.bind(githubService)],
       ['discord', discordService.createReaction.bind(discordService)],
       ['spotify', spotifyService.createReaction.bind(spotifyService)],
     ]);
+    this.actionReceptionFunc = new Map([['dropbox', dropboxService.actionReception.bind(dropboxService)]]);
   }
 
   /**
@@ -61,6 +69,25 @@ export class ActionsReactionsService {
   }
 
   /**
+   * @function handleActionReception
+   * @description handle the reception of an action
+   *
+   * @param {ActionPayload} action The payload of the action
+   * @returns {Promise<void>} Nothing
+   */
+  async handleActionReception(action: ActionPayload): Promise<void> {
+    const actionReceptionFunc = this.actionReceptionFunc.get(action.service);
+
+    if (actionReceptionFunc) {
+      for (const newAction of await actionReceptionFunc(action)) {
+        this.handleReactions(newAction);
+      }
+    } else {
+      this.handleReactions(action);
+    }
+  }
+
+  /**
    * @function handleReactions
    * @description handle the redirection of reaction creation
    *
@@ -68,7 +95,9 @@ export class ActionsReactionsService {
    * @returns {Promise<void>} Nothing
    */
   async handleReactions(action: ActionPayload): Promise<void> {
-    const actionsReactions = await this.getActionsReactionsByTrigger(action.trigger);
+    const actionsReactions: WithId<ActionReaction>[] = await this.repository.getActionsReactionsByTrigger(
+      action.trigger,
+    );
 
     for (const actionReaction of actionsReactions) {
       if (!actionReaction.executionState) {

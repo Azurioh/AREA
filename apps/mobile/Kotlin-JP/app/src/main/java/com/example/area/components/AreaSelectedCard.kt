@@ -25,8 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.example.area.ui.theme.montserratFontFamily
-import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.ui.theme.AppTheme
 import coil.compose.AsyncImage
 
@@ -69,7 +67,7 @@ fun AreaSelectedCard(
 
                     Text(
                         text = title,
-                        fontFamily = poppinsFontFamily,
+                        fontFamily = AppTheme.fonts.primary,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 17.sp,
                         color = Accent,
@@ -89,7 +87,7 @@ fun AreaSelectedCard(
 
             Text(
                 text = description,
-                fontFamily = montserratFontFamily,
+                fontFamily = AppTheme.fonts.secondary,
                 fontWeight = FontWeight.Medium,
                 fontSize = 13.sp,
                 color = AppTheme.colors.textPrimary,

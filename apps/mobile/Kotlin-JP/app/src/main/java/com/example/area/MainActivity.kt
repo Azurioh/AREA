@@ -8,29 +8,40 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.data.api.RetrofitInstance
 import com.example.area.ui.theme.PocTheme
 import com.example.area.viewModel.UserViewModel
 
 class MainActivity : ComponentActivity() {
+    private lateinit var userViewModel: UserViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         RetrofitInstance.initialize(applicationContext)
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
         enableEdgeToEdge()
         setContent {
-            val userViewModel: UserViewModel = viewModel()
             val userProfile by userViewModel.userProfile.collectAsState()
             val darkTheme = userProfile?.darkModeEnabled ?: false
+            val dyslexiaMode = userProfile?.dyslexiaEnabled ?: false
 
-            PocTheme(darkTheme = darkTheme) {
+            PocTheme(darkTheme = darkTheme, dyslexiaMode = dyslexiaMode) {
                 AppNavigation(userViewModel = userViewModel)
             }
         }
 
         handleOAuthCallback(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (RetrofitInstance.getTokenManager().isLoggedIn()) {
+            userViewModel.fetchUserProfile()
+        }
     }
 
     override fun onNewIntent(intent: Intent) {

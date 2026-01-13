@@ -12,7 +12,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.AppTheme
 
 @Composable
@@ -51,7 +50,7 @@ fun MultiColorText(
         },
         style = androidx.compose.ui.text.TextStyle(
             fontSize = fontSize,
-            fontFamily = montserratFontFamily,
+            fontFamily = AppTheme.fonts.secondary,
             textAlign = TextAlign.Center
         ),
         modifier = modifier

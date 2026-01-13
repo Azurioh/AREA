@@ -1,3 +1,3 @@
-import { SpotifyListeningToArtist } from './listening-to-artist';
+import { SpotifyListeningToArtistAction } from './listening-to-artist';
 
-export { SpotifyListeningToArtist };
+export { SpotifyListeningToArtistAction };

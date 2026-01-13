@@ -7,8 +7,8 @@ import { decryptString, encryptString } from '@/utils/crypt';
 import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-reactions.schema';
 import type { ActionPayload } from '@/types/action-reaction';
 import { Reaction } from '@/integrations';
-import type { WithId } from 'mongodb';
 import type { PollingService } from '../polling/polling.service';
+import type { SpotifyPlaylist } from '@/types/spotify';
 
 /**
  * @class SpotifyService
@@ -45,7 +45,15 @@ export class SpotifyService {
     throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');
   }
 
-  async listeningToArtist(spotifyAccount: WithId<SpotifyAccount>, action: CreateAction): Promise<string> {
+  /**
+   * @function listeningToArtist
+   * @description Create a listening to artist action
+   *
+   * @param {SpotifyAccount} spotifyAccount - The spotify account of the user
+   * @param {CreateAction} action - The information about the action
+   * @returns {Promise<string>} The trigger action to store in the db
+   */
+  async listeningToArtist(spotifyAccount: SpotifyAccount, action: CreateAction): Promise<string> {
     let response = await this.search(
       decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY),
       action.params.artist,
@@ -54,7 +62,7 @@ export class SpotifyService {
 
     if (response.status === HttpStatusCode.UNAUTHORIZED) {
       const accessToken = await this.refreshTokens(
-        spotifyAccount._id.toString(),
+        spotifyAccount.userId,
         decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
       );
 
@@ -105,7 +113,7 @@ export class SpotifyService {
    * @returns {Promise<boolean>} If the reaction was created
    */
   async addTrackToPlayList(
-    spotifyAccount: WithId<SpotifyAccount>,
+    spotifyAccount: SpotifyAccount,
     reaction: CreateReaction,
     action: ActionPayload,
   ): Promise<boolean> {
@@ -147,7 +155,7 @@ export class SpotifyService {
 
     if (response.status === HttpStatusCode.UNAUTHORIZED) {
       const accessToken = await this.refreshTokens(
-        spotifyAccount._id.toString(),
+        spotifyAccount.userId,
         decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
       );
 
@@ -165,11 +173,7 @@ export class SpotifyService {
    * @param {ActionPayload} action - The information about the issued action
    * @returns {Promise<boolean>} If the reaction was created
    */
-  async saveEpisode(
-    spotifyAccount: WithId<SpotifyAccount>,
-    reaction: CreateReaction,
-    action: ActionPayload,
-  ): Promise<boolean> {
+  async saveEpisode(spotifyAccount: SpotifyAccount, reaction: CreateReaction, action: ActionPayload): Promise<boolean> {
     const [episode] = Reaction.parseActionVariables(action, [reaction.params.episode]);
 
     if (!episode) {
@@ -206,7 +210,7 @@ export class SpotifyService {
 
     if (response.status === HttpStatusCode.UNAUTHORIZED) {
       const accessToken = await this.refreshTokens(
-        spotifyAccount._id.toString(),
+        spotifyAccount.userId,
         decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
       );
 
@@ -224,11 +228,7 @@ export class SpotifyService {
    * @param {ActionPayload} action - The information about the issued action
    * @returns {Promise<boolean>} If the reaction was created
    */
-  async saveShow(
-    spotifyAccount: WithId<SpotifyAccount>,
-    reaction: CreateReaction,
-    action: ActionPayload,
-  ): Promise<boolean> {
+  async saveShow(spotifyAccount: SpotifyAccount, reaction: CreateReaction, action: ActionPayload): Promise<boolean> {
     const [show] = Reaction.parseActionVariables(action, [reaction.params.show]);
 
     if (!show) {
@@ -262,7 +262,7 @@ export class SpotifyService {
 
     if (response.status === HttpStatusCode.UNAUTHORIZED) {
       const accessToken = await this.refreshTokens(
-        spotifyAccount._id.toString(),
+        spotifyAccount.userId,
         decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
       );
 
@@ -293,11 +293,11 @@ export class SpotifyService {
    * @function refreshDiscordTokens
    * @description Refresh a user spotify tokens
    *
-   * @param {state} accountId - The id of the account
+   * @param {state} userId - The id of the user
    * @param {state} refreshToken - The refresh token
    * @returns {Promise<string>} The refreshed token
    */
-  async refreshTokens(accountId: string, refreshToken: string): Promise<string> {
+  async refreshTokens(userId: string, refreshToken: string): Promise<string> {
     const response = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
@@ -322,7 +322,57 @@ export class SpotifyService {
       accessToken: encryptString(accessToken, environment.CRYPT_SECRET_KEY),
     };
 
-    this.thirdPartiesService.updateThirdPartyAccount('spotify', accountId, account);
+    this.thirdPartiesService.updateThirdPartyAccount('spotify', userId, account);
     return accessToken;
+  }
+
+  /**
+   * @function listPlaylisst
+   * @description List all repositories for the given user
+   *
+   * @param {string} userId The id of the user
+   * @returns {Promise<GithubRepositories>} Array of repository names
+   */
+  async listPlaylist(userId: string): Promise<SpotifyPlaylist[]> {
+    const spotifyAccount = await this.thirdPartiesService.getThirdPartyAccountByUserId<SpotifyAccount>(
+      'spotify',
+      userId,
+    );
+
+    const tryToListPlaylists = async (accessToken: string) => {
+      const response = await fetch(`https://api.spotify.com/v1/users/${spotifyAccount.id}/playlists`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: 'application/vnd.github+json',
+        },
+      });
+      return response;
+    };
+    let response = await tryToListPlaylists(decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY));
+
+    if (response.status === HttpStatusCode.UNAUTHORIZED) {
+      const accessToken = await this.refreshTokens(
+        spotifyAccount.userId,
+        decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
+      );
+
+      response = await tryToListPlaylists(accessToken);
+    }
+
+    if (!response.ok) {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Failed to list playlists');
+    }
+
+    const data = await response.json();
+
+    const playlists: SpotifyPlaylist[] = data.items
+      .filter((playlist: any) => playlist.owner?.id === spotifyAccount.id || false)
+      .map((playlist: any) => {
+        return {
+          name: playlist.name,
+          id: `${playlist.id}`,
+        };
+      });
+    return playlists;
   }
 }

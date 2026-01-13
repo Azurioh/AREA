@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -20,6 +22,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,8 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.AppTheme
-import com.example.area.ui.theme.montserratFontFamily
-import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.components.ActionCard
 import com.example.area.components.AreaCard
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -47,6 +48,7 @@ import com.example.area.components.ActionDetailCard
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.data.models.ServicesValue
 import com.example.area.data.models.ActionDetail
+import com.example.area.data.models.ReturnedValue
 import com.example.area.ui.theme.CustomWhite
 import com.example.area.utils.getServiceImage
 
@@ -54,7 +56,8 @@ import com.example.area.utils.getServiceImage
 @Composable
 fun CreatePage(
     modifier: Modifier = Modifier,
-    serviceViewModel: ServiceViewModel = viewModel()
+    serviceViewModel: ServiceViewModel = viewModel(),
+    onNavigateToProfile: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val aboutJson by serviceViewModel.aboutJson.collectAsState()
@@ -163,6 +166,8 @@ fun CreatePage(
                     title = "Configure Reaction",
                     detail = reactionDetail!!,
                     serviceImage = getServiceImage(selectedReaction!!.service),
+                    serviceViewModel = serviceViewModel,
+                    selectedAction = selectedAction,
                     onValidate = { paramValues ->
                         reactionParams = paramValues
                         reactionSelected = true
@@ -172,7 +177,10 @@ fun CreatePage(
             }
             onAction -> {
                 Column(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(bottom = 100.dp)
                 ) {
                     val serviceGroups = actionServices.groupBy { it.service }
 
@@ -206,19 +214,32 @@ fun CreatePage(
                             isAction = true,
                             serviceViewModel = serviceViewModel,
                             onServiceClick = { service ->
-                                serviceViewModel.getActionDetails(
-                                    service = service.service,
-                                    action = service.name,
-                                    onSuccess = { details ->
-                                        actionDetail = details
-                                        selectedAction = service
-                                        showActionDetail = true
-                                        onAction = false
+                                serviceViewModel.getServiceStatus(
+                                    serviceName = service.service,
+                                    onSuccess = { status ->
+                                        if (status.connected) {
+                                            serviceViewModel.getActionDetails(
+                                                service = service.service,
+                                                action = service.name,
+                                                onSuccess = { details ->
+                                                    actionDetail = details
+                                                    selectedAction = service
+                                                    showActionDetail = true
+                                                    onAction = false
+                                                },
+                                                onError = { error ->
+                                                    if (!error.contains("401") && !error.contains("Unauthorized")) {
+                                                        Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                                                    }
+                                                }
+                                            )
+                                        } else {
+                                            Toast.makeText(context, "Please connect to ${service.service.capitalize()} first", Toast.LENGTH_LONG).show()
+                                            onNavigateToProfile()
+                                        }
                                     },
                                     onError = { error ->
-                                        if (!error.contains("401") && !error.contains("Unauthorized")) {
-                                            Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
-                                        }
+                                        Toast.makeText(context, "Error checking service status: $error", Toast.LENGTH_SHORT).show()
                                     }
                                 )
                             }
@@ -228,7 +249,10 @@ fun CreatePage(
             }
             onReaction -> {
                 Column(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(bottom = 100.dp)
                 ) {
                     val serviceGroups = reactionServices.groupBy { it.service }
 
@@ -262,19 +286,32 @@ fun CreatePage(
                             isAction = false,
                             serviceViewModel = serviceViewModel,
                             onServiceClick = { service ->
-                                serviceViewModel.getReactionDetails(
-                                    service = service.service,
-                                    reaction = service.name,
-                                    onSuccess = { details ->
-                                        reactionDetail = details
-                                        selectedReaction = service
-                                        showReactionDetail = true
-                                        onReaction = false
+                                serviceViewModel.getServiceStatus(
+                                    serviceName = service.service,
+                                    onSuccess = { status ->
+                                        if (status.connected) {
+                                            serviceViewModel.getReactionDetails(
+                                                service = service.service,
+                                                reaction = service.name,
+                                                onSuccess = { details ->
+                                                    reactionDetail = details
+                                                    selectedReaction = service
+                                                    showReactionDetail = true
+                                                    onReaction = false
+                                                },
+                                                onError = { error ->
+                                                    if (!error.contains("401") && !error.contains("Unauthorized")) {
+                                                        Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                                                    }
+                                                }
+                                            )
+                                        } else {
+                                            Toast.makeText(context, "Please connect to ${service.service.capitalize()} first", Toast.LENGTH_LONG).show()
+                                            onNavigateToProfile()
+                                        }
                                     },
                                     onError = { error ->
-                                        if (!error.contains("401") && !error.contains("Unauthorized")) {
-                                            Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
-                                        }
+                                        Toast.makeText(context, "Error checking service status: $error", Toast.LENGTH_SHORT).show()
                                     }
                                 )
                             }
@@ -399,25 +436,52 @@ private fun ConfigureDetailView(
     title: String,
     detail: ActionDetail,
     serviceImage: String,
+    serviceViewModel: ServiceViewModel = viewModel(),
+    selectedAction: ServicesValue? = null,
     onValidate: (Map<String, Any>) -> Unit
 ) {
-    Text(
-        text = title,
-        fontFamily = poppinsFontFamily,
-        fontWeight = FontWeight.Bold,
-        fontSize = 20.sp,
-        color = Accent,
-        textAlign = TextAlign.Start,
-        modifier = Modifier
-            .padding(top = 20.dp, start = 32.dp)
-            .fillMaxWidth()
-    )
+    var returnedValues by remember { mutableStateOf<List<ReturnedValue>>(emptyList()) }
 
-    ActionDetailCard(
-        actionServiceImage = serviceImage,
-        actionDetail = detail,
-        onValidate = onValidate
-    )
+    LaunchedEffect(selectedAction) {
+        if (selectedAction != null && title.contains("Reaction")) {
+            serviceViewModel.getActionReturnedValues(
+                service = selectedAction.service,
+                action = selectedAction.name,
+                onSuccess = { values ->
+                    returnedValues = values
+                },
+                onError = { error ->
+                    println("Error fetching returned values: $error")
+                }
+            )
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = 100.dp)
+    ) {
+        Text(
+            text = title,
+            fontFamily = AppTheme.fonts.primary,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            color = Accent,
+            textAlign = TextAlign.Start,
+            modifier = Modifier
+                .padding(top = 20.dp, start = 32.dp)
+                .fillMaxWidth()
+        )
+
+        ActionDetailCard(
+            actionServiceImage = serviceImage,
+            actionDetail = detail,
+            returnedValues = returnedValues,
+            onValidate = onValidate
+        )
+    }
 }
 
 @Composable
@@ -435,7 +499,7 @@ private fun ServiceListView(
 
     Text(
         text = title,
-        fontFamily = poppinsFontFamily,
+        fontFamily = AppTheme.fonts.primary,
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         color = Accent,
@@ -487,7 +551,7 @@ private fun MainView(
 ) {
     Text(
         text = "Create page",
-        fontFamily = poppinsFontFamily,
+        fontFamily = AppTheme.fonts.primary,
         fontWeight = FontWeight.Bold,
         fontSize = 30.sp,
         color = AppTheme.colors.textPrimary,
@@ -499,7 +563,7 @@ private fun MainView(
 
     Text(
         text = "Action → Reaction",
-        fontFamily = poppinsFontFamily,
+        fontFamily = AppTheme.fonts.primary,
         fontWeight = FontWeight.Bold,
         fontSize = 30.sp,
         color = Accent,
@@ -512,7 +576,7 @@ private fun MainView(
     Text(
         text = "Click on an Action and then define what should happen next.",
         fontSize = 14.sp,
-        fontFamily = montserratFontFamily,
+        fontFamily = AppTheme.fonts.secondary,
         fontWeight = FontWeight.Normal,
         color = AppTheme.colors.textPrimary,
         textAlign = TextAlign.Center,
@@ -569,7 +633,7 @@ private fun MainView(
             ) {
                 Text(
                     text = "Create Action-Reaction",
-                    fontFamily = poppinsFontFamily,
+                    fontFamily = AppTheme.fonts.primary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )

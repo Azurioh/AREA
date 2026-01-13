@@ -25,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.UserViewModel
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.AppTheme
@@ -65,7 +64,7 @@ fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
                         fontSize = 40.sp,
                         fontWeight = FontWeight.Bold,
                         color = CustomWhite,
-                        fontFamily = poppinsFontFamily
+                        fontFamily = AppTheme.fonts.primary
                     )
                 }
 
@@ -74,7 +73,7 @@ fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
                 ) {
                     Text(
                         text = userName,
-                        fontFamily = poppinsFontFamily,
+                        fontFamily = AppTheme.fonts.primary,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 20.sp,
                         color = AppTheme.colors.textPrimary,
@@ -85,7 +84,7 @@ fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
 
                     Text(
                         text = userEmail,
-                        fontFamily = poppinsFontFamily,
+                        fontFamily = AppTheme.fonts.primary,
                         fontWeight = FontWeight.Medium,
                         fontSize = 10.sp,
                         color = AppTheme.colors.textPrimary,
@@ -112,6 +111,7 @@ fun ProfileCard(userViewModel: UserViewModel, onEditClick: () -> Unit) {
                 Text(
                     text = "Edit",
                     fontSize = 14.sp,
+                    fontFamily = AppTheme.fonts.primary,
                     fontWeight = FontWeight.SemiBold
                 )
             }

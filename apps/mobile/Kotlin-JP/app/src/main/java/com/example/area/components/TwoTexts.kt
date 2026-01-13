@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.area.ui.theme.montserratFontFamily
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.AppTheme
 
@@ -25,7 +24,7 @@ fun TwoTexts(
 ) {
     val textStyle = androidx.compose.ui.text.TextStyle(
         fontSize = 14.sp,
-        fontFamily = montserratFontFamily
+        fontFamily = AppTheme.fonts.secondary
     )
 
     Row(

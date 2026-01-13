@@ -40,6 +40,7 @@ import com.example.area.pages.ProfilePage
 import com.example.area.pages.CreatePage
 import com.example.area.pages.SettingsPage
 import com.example.area.ui.theme.Accent
+import com.example.area.ui.theme.AppTheme
 import com.example.area.ui.theme.CustomWhite
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.viewModel.UserViewModel
@@ -112,7 +113,10 @@ fun MainScreenWithNav(
                             BadgedBox(badge = {
                                 if (item.hasBadge) Badge()
                                 if (item.messages != 0) Badge {
-                                    Text(text = "${item.messages}")
+                                    Text(
+                                        text = "${item.messages}",
+                                        fontFamily = AppTheme.fonts.primary
+                                    )
                                 }
                             }) {
                                 Icon(
@@ -122,7 +126,12 @@ fun MainScreenWithNav(
                                 )
                             }
                         },
-                        label = { Text(text = item.title) },
+                        label = {
+                            Text(
+                                text = item.title,
+                                fontFamily = AppTheme.fonts.primary
+                            )
+                        },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CustomWhite,
                             unselectedIconColor = CustomWhite,
@@ -152,6 +161,7 @@ fun MainScreenWithNav(
                 userViewModel = userViewModel,
                 serviceViewModel = serviceViewModel,
                 onLogout = onLogout,
+                onNavigateToProfile = { bottomNavState = 2 },
                 bottomPadding = paddingValues.calculateBottomPadding()
             )
         }
@@ -165,12 +175,17 @@ fun ContentScreen(
     userViewModel: UserViewModel,
     serviceViewModel: ServiceViewModel,
     onLogout: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
     bottomPadding: androidx.compose.ui.unit.Dp = 0.dp
 ) {
+    LaunchedEffect(selectedIndex) {
+        userViewModel.fetchUserProfile()
+    }
+
     when(selectedIndex) {
         0 -> HomePage(modifier = modifier)
-        1 -> CreatePage(modifier = modifier, serviceViewModel = serviceViewModel)
+        1 -> CreatePage(modifier = modifier, serviceViewModel = serviceViewModel, onNavigateToProfile = onNavigateToProfile)
         2 -> ProfilePage(modifier = modifier, userViewModel = userViewModel, serviceViewModel = serviceViewModel)
-        3 -> SettingsPage(modifier = modifier, onLogout = onLogout)
+        3 -> SettingsPage(modifier = modifier, userViewModel = userViewModel, onLogout = onLogout)
     }
 }

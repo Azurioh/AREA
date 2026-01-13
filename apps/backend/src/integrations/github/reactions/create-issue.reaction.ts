@@ -41,10 +41,10 @@ export class GithubCreateIssueReaction extends Reaction {
    * @returns {Promise<void>} Nothing
    */
   override async refreshParams(userId: string): Promise<void> {
-    const repositortyParam = this.params[0];
+    const repositoryParam = this.params[0];
 
-    if (repositortyParam?.type === 'select') {
-      repositortyParam.options = await this.githubService.listRepositories(userId);
+    if (repositoryParam?.type === 'select') {
+      repositoryParam.options = await this.githubService.listRepositories(userId);
     }
     return Promise.resolve();
   }

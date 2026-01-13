@@ -4,10 +4,13 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,7 +31,6 @@ import com.example.area.components.ConnectionCard
 import com.example.area.components.ProfileCard
 import com.example.area.components.EditProfileCard
 import com.example.area.ui.theme.AppTheme
-import com.example.area.ui.theme.poppinsFontFamily
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.viewModel.UserViewModel
 import com.example.area.utils.getServiceImage
@@ -56,38 +58,37 @@ fun ProfilePage(
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(color = AppTheme.colors.background),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = modifier.fillMaxSize()
     ) {
-        Text(
-            text = if (isEditing) "Edit Profile" else "Profile page",
-            fontFamily = poppinsFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 30.sp,
-            color = AppTheme.colors.textPrimary,
-            textAlign = TextAlign.Center,
+        Column(
             modifier = Modifier
-                .padding(top = 32.dp)
-                .fillMaxWidth()
-        )
-
-        if (isEditing) {
-            EditProfileCard(
-                userViewModel = userViewModel,
-                onDismiss = { isEditing = false }
+                .fillMaxSize()
+                .background(color = AppTheme.colors.background)
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 100.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Profile page",
+                fontFamily = AppTheme.fonts.primary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                color = AppTheme.colors.textPrimary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 32.dp)
+                    .fillMaxWidth()
             )
-        } else {
+
             ProfileCard(
                 userViewModel = userViewModel,
                 onEditClick = { isEditing = true }
             )
             Text(
                 text = "Services",
-                fontFamily = poppinsFontFamily,
+                fontFamily = AppTheme.fonts.primary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 color = AppTheme.colors.textPrimary,
@@ -112,6 +113,19 @@ fun ProfilePage(
                             onError = {}
                         )
                     }
+                )
+            }
+        }
+
+        if (isEditing) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = AppTheme.colors.background.copy(alpha = 0.7f))
+            ) {
+                EditProfileCard(
+                    userViewModel = userViewModel,
+                    onDismiss = { isEditing = false }
                 )
             }
         }

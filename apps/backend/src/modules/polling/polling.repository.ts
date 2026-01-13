@@ -1,6 +1,6 @@
 import { MongoCollections } from '@/enums/mongo-collection';
 import type { Polling, ServiceToPoll } from '@/types/polling';
-import type { WithId, Db } from 'mongodb';
+import type { WithId, Db, UpdateResult } from 'mongodb';
 
 /**
  * @class PollingRepository
@@ -39,5 +39,24 @@ export class PollingRepository {
       .collection<Polling>(MongoCollections.POLLING)
       .find({ service: service, type: { $in: type } })
       .toArray();
+  }
+
+  /**
+   * @function updateUserToPoll
+   * @description Update a user that is being polled
+   *
+   * @param {ServiceToPoll} service The service polling
+   * @param {Partial<Polling>} data The data to update
+   * @returns {Promise<boolean>} If the user to poll was updated
+   */
+  async updateUserToPoll(
+    service: ServiceToPoll,
+    userId: string,
+    type: string,
+    data: Partial<Omit<Polling, 'service' | 'userId' | 'type'>>,
+  ): Promise<UpdateResult<Polling>> {
+    return await this.db
+      .collection<Polling>(MongoCollections.POLLING)
+      .updateOne({ service: service, userId: userId, type: type }, { $set: data });
   }
 }

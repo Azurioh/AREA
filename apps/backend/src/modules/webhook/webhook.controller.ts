@@ -1,7 +1,13 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { WebhookService } from '@/modules/webhook';
-import type { DiscordWebhookPayload, GithubWebhookPayload, SpotifyWebhookPayload } from '@/types/webhook';
+import type {
+  DiscordWebhookPayload,
+  DropboxWebhookPayload,
+  GithubWebhookPayload,
+  SpotifyWebhookPayload,
+  UnsplashWebhookPayload,
+} from '@/types/webhook';
 import ApiError from '@/utils/api-error';
 
 /**
@@ -72,6 +78,54 @@ export class WebhookController {
     const event = request.headers['x-spotify-event'] as string;
 
     this.service.spotifyCallback(event, body as SpotifyWebhookPayload);
+    reply.status(HttpStatusCode.NO_CONTENT).send();
+  }
+
+  /**
+   * @function dropboxWebhookValidator
+   * @description Handles the callback for dropbox webhook validator.
+   *
+   * @param {FastifyRequest} request The Fastify request object containing the webhook data.
+   * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
+   */
+  async dropboxWebhookValidator(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    reply.status(HttpStatusCode.OK).send((request.query as { challenge: string }).challenge);
+  }
+
+  /**
+   * @function dropboxCallback
+   * @description Handles the callback for the dropbox service.
+   *
+   * @param {FastifyRequest} request The Fastify request object containing the webhook data.
+   * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
+   */
+  async dropboxCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    const body = request.body;
+
+    this.service.dropboxCallback(body as DropboxWebhookPayload);
+    reply.status(HttpStatusCode.OK).send();
+  }
+
+  /**
+   * @function unsplashCallback
+   * @description Handles the callback for the unsplash service.
+   *
+   * @param {FastifyRequest} request The Fastify request object containing the webhook data.
+   * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
+   */
+  async unsplashCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    if (!request.headers['x-unsplash-event'] || !request.headers['x-user-id']) {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook informations are missing');
+    }
+
+    const body = request.body;
+    const event = request.headers['x-unsplash-event'] as string;
+    const userId = request.headers['x-user-id'] as string;
+
+    this.service.unsplashCallback(userId, event, body as UnsplashWebhookPayload);
     reply.status(HttpStatusCode.NO_CONTENT).send();
   }
 }
