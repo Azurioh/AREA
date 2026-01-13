@@ -56,7 +56,8 @@ import com.example.area.utils.getServiceImage
 @Composable
 fun CreatePage(
     modifier: Modifier = Modifier,
-    serviceViewModel: ServiceViewModel = viewModel()
+    serviceViewModel: ServiceViewModel = viewModel(),
+    onNavigateToProfile: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val aboutJson by serviceViewModel.aboutJson.collectAsState()
@@ -213,19 +214,32 @@ fun CreatePage(
                             isAction = true,
                             serviceViewModel = serviceViewModel,
                             onServiceClick = { service ->
-                                serviceViewModel.getActionDetails(
-                                    service = service.service,
-                                    action = service.name,
-                                    onSuccess = { details ->
-                                        actionDetail = details
-                                        selectedAction = service
-                                        showActionDetail = true
-                                        onAction = false
+                                serviceViewModel.getServiceStatus(
+                                    serviceName = service.service,
+                                    onSuccess = { status ->
+                                        if (status.connected) {
+                                            serviceViewModel.getActionDetails(
+                                                service = service.service,
+                                                action = service.name,
+                                                onSuccess = { details ->
+                                                    actionDetail = details
+                                                    selectedAction = service
+                                                    showActionDetail = true
+                                                    onAction = false
+                                                },
+                                                onError = { error ->
+                                                    if (!error.contains("401") && !error.contains("Unauthorized")) {
+                                                        Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                                                    }
+                                                }
+                                            )
+                                        } else {
+                                            Toast.makeText(context, "Please connect to ${service.service.capitalize()} first", Toast.LENGTH_LONG).show()
+                                            onNavigateToProfile()
+                                        }
                                     },
                                     onError = { error ->
-                                        if (!error.contains("401") && !error.contains("Unauthorized")) {
-                                            Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
-                                        }
+                                        Toast.makeText(context, "Error checking service status: $error", Toast.LENGTH_SHORT).show()
                                     }
                                 )
                             }
@@ -272,19 +286,32 @@ fun CreatePage(
                             isAction = false,
                             serviceViewModel = serviceViewModel,
                             onServiceClick = { service ->
-                                serviceViewModel.getReactionDetails(
-                                    service = service.service,
-                                    reaction = service.name,
-                                    onSuccess = { details ->
-                                        reactionDetail = details
-                                        selectedReaction = service
-                                        showReactionDetail = true
-                                        onReaction = false
+                                serviceViewModel.getServiceStatus(
+                                    serviceName = service.service,
+                                    onSuccess = { status ->
+                                        if (status.connected) {
+                                            serviceViewModel.getReactionDetails(
+                                                service = service.service,
+                                                reaction = service.name,
+                                                onSuccess = { details ->
+                                                    reactionDetail = details
+                                                    selectedReaction = service
+                                                    showReactionDetail = true
+                                                    onReaction = false
+                                                },
+                                                onError = { error ->
+                                                    if (!error.contains("401") && !error.contains("Unauthorized")) {
+                                                        Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                                                    }
+                                                }
+                                            )
+                                        } else {
+                                            Toast.makeText(context, "Please connect to ${service.service.capitalize()} first", Toast.LENGTH_LONG).show()
+                                            onNavigateToProfile()
+                                        }
                                     },
                                     onError = { error ->
-                                        if (!error.contains("401") && !error.contains("Unauthorized")) {
-                                            Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
-                                        }
+                                        Toast.makeText(context, "Error checking service status: $error", Toast.LENGTH_SHORT).show()
                                     }
                                 )
                             }

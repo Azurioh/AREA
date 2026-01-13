@@ -83,7 +83,7 @@ fun ConnectionCard(
                 ) {
                     Text(
                         text = if (isConnected) "Disconnect" else "Connect",
-                        fontSize = 15.sp,
+                        fontSize = 12.sp,
                         fontFamily = AppTheme.fonts.primary,
                         fontWeight = FontWeight.SemiBold
                     )
