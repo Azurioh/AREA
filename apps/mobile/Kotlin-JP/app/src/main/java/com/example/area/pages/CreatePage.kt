@@ -22,6 +22,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +48,7 @@ import com.example.area.components.ActionDetailCard
 import com.example.area.viewModel.ServiceViewModel
 import com.example.area.data.models.ServicesValue
 import com.example.area.data.models.ActionDetail
+import com.example.area.data.models.ReturnedValue
 import com.example.area.ui.theme.CustomWhite
 import com.example.area.utils.getServiceImage
 
@@ -163,6 +165,8 @@ fun CreatePage(
                     title = "Configure Reaction",
                     detail = reactionDetail!!,
                     serviceImage = getServiceImage(selectedReaction!!.service),
+                    serviceViewModel = serviceViewModel,
+                    selectedAction = selectedAction,
                     onValidate = { paramValues ->
                         reactionParams = paramValues
                         reactionSelected = true
@@ -405,8 +409,27 @@ private fun ConfigureDetailView(
     title: String,
     detail: ActionDetail,
     serviceImage: String,
+    serviceViewModel: ServiceViewModel = viewModel(),
+    selectedAction: ServicesValue? = null,
     onValidate: (Map<String, Any>) -> Unit
 ) {
+    var returnedValues by remember { mutableStateOf<List<ReturnedValue>>(emptyList()) }
+
+    LaunchedEffect(selectedAction) {
+        if (selectedAction != null && title.contains("Reaction")) {
+            serviceViewModel.getActionReturnedValues(
+                service = selectedAction.service,
+                action = selectedAction.name,
+                onSuccess = { values ->
+                    returnedValues = values
+                },
+                onError = { error ->
+                    println("Error fetching returned values: $error")
+                }
+            )
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -428,6 +451,7 @@ private fun ConfigureDetailView(
         ActionDetailCard(
             actionServiceImage = serviceImage,
             actionDetail = detail,
+            returnedValues = returnedValues,
             onValidate = onValidate
         )
     }

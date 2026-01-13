@@ -13,6 +13,7 @@ import com.example.area.data.models.ActionReactionRequest
 import com.example.area.data.models.State
 import com.example.area.data.models.StateService
 import com.example.area.data.models.UserInfo
+import com.example.area.data.models.ReturnedValue
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -51,6 +52,9 @@ interface ApiService {
 
     @GET("services/v1/{service}/reactions/{reaction}")
     suspend fun getReactionDetails(@Path("service") service: String, @Path("reaction") reaction: String) : ActionDetail
+
+    @GET("services/v1/{service}/actions/{action}/returned-values")
+    suspend fun getActionReturnedValues(@Path("service") service: String, @Path("action") action: String) : List<ReturnedValue>
 
     @POST("actions-reactions/v1")
     suspend fun createActionReaction(@Body request: ActionReactionRequest)

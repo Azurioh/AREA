@@ -13,6 +13,7 @@ import com.example.area.data.models.ActionReactionRequest
 import com.example.area.data.models.ActionReactionParams
 import com.example.area.data.models.State
 import com.example.area.data.models.StateService
+import com.example.area.data.models.ReturnedValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -97,6 +98,23 @@ class ServiceViewModel : ViewModel() {
             try {
                 val reactionDetails = RetrofitInstance.api.getReactionDetails(service, reaction)
                 onSuccess(reactionDetails)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onError(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun getActionReturnedValues(
+        service: String,
+        action: String,
+        onSuccess: (List<ReturnedValue>) -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val returnedValues = RetrofitInstance.api.getActionReturnedValues(service, action)
+                onSuccess(returnedValues)
             } catch (e: Exception) {
                 e.printStackTrace()
                 onError(e.message ?: "Unknown error")
