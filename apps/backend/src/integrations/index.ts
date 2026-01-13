@@ -5,6 +5,7 @@ import { createDiscordService } from './discord';
 import { createSpotifyService } from './spotify';
 import { createUnsplashService } from './unsplash';
 import { createDropboxService } from './dropbox';
+import { createTwitchService } from './twitch';
 
 export {
   createGithubService,
@@ -12,6 +13,7 @@ export {
   createSpotifyService,
   createUnsplashService,
   createDropboxService,
+  createTwitchService,
   ServiceManager,
   Action,
   Reaction,

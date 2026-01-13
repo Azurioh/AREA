@@ -13,6 +13,7 @@ import type { WithId } from 'mongodb';
 import type { SpotifyService } from '@/modules/spotify';
 import type { UnsplashService } from '@/modules/unsplash';
 import type { DropboxService } from '@/modules/dropbox';
+import type { TwitchService } from '../twitch/twitch.service';
 
 /**
  * @class ActionsReactionsService
@@ -34,6 +35,7 @@ export class ActionsReactionsService {
     spotifyService: SpotifyService,
     unsplashService: UnsplashService,
     dropboxService: DropboxService,
+    twitchService: TwitchService,
   ) {
     this.repository = repository;
     this.actionsCreationFunc = new Map([
@@ -42,6 +44,7 @@ export class ActionsReactionsService {
       ['spotify', spotifyService.createAction.bind(spotifyService)],
       ['unsplash', unsplashService.createAction.bind(unsplashService)],
       ['dropbox', dropboxService.createAction.bind(dropboxService)],
+      ['twitch', twitchService.createAction.bind(twitchService)],
     ]);
     this.reactionsCreationFunc = new Map([
       ['github', githubService.createReaction.bind(githubService)],

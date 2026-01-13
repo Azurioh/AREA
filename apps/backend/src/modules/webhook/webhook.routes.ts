@@ -10,6 +10,7 @@ import { SpotifyService } from '@/modules/spotify';
 import { PollingRepository, PollingService } from '@/modules/polling';
 import { UnsplashService } from '@/modules/unsplash';
 import { DropboxRepository, DropboxService } from '@/modules/dropbox';
+import { TwitchService } from '../twitch/twitch.service';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -30,6 +31,7 @@ export default async (app: FastifyInstance) => {
   const spotifyService = new SpotifyService(thirdPartiesService, pollingService);
   const unsplashService = new UnsplashService(pollingService);
   const dropboxService = new DropboxService(dropboxRepository, thirdPartiesService);
+  const twitchService = new TwitchService(thirdPartiesService);
   const actionsReactionsService = new ActionsReactionsService(
     actionsReactionsRepository,
     githubService,
@@ -37,6 +39,7 @@ export default async (app: FastifyInstance) => {
     spotifyService,
     unsplashService,
     dropboxService,
+    twitchService,
   );
   const service = new WebhookService(actionsReactionsService);
 
@@ -104,6 +107,17 @@ export default async (app: FastifyInstance) => {
     schema: {
       summary: 'The callback of the dropbox webhook',
       description: 'Handle the callback of the dropbox webhook.',
+      tags: ['Webhooks'],
+    },
+  });
+
+  app.route({
+    method: 'POST',
+    url: '/v1/twitch/',
+    handler: controller.twitchCallback.bind(controller),
+    schema: {
+      summary: 'The callback of the twitch webhook',
+      description: 'Handle the callback of the twitch webhook.',
       tags: ['Webhooks'],
     },
   });

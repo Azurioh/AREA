@@ -24,6 +24,7 @@ import { SpotifyService } from '@/modules/spotify';
 import { PollingService, PollingRepository } from '@/modules/polling';
 import { UnsplashService } from '@/modules/unsplash';
 import { DropboxRepository, DropboxService } from '@/modules/dropbox';
+import { TwitchService } from '../twitch/twitch.service';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -43,6 +44,7 @@ export default async (app: FastifyInstance) => {
   const spotifyService = new SpotifyService(thirdPartiesService, pollingService);
   const unsplashService = new UnsplashService(pollingService);
   const dropboxService = new DropboxService(dropboxRepository, thirdPartiesService);
+  const twitchService = new TwitchService(thirdPartiesService);
 
   const repository = new ActionsReactionsRepository(app.mongo.db);
   const service = new ActionsReactionsService(
@@ -52,6 +54,7 @@ export default async (app: FastifyInstance) => {
     spotifyService,
     unsplashService,
     dropboxService,
+    twitchService,
   );
   const controller = new ActionsReactionsController(service);
 
