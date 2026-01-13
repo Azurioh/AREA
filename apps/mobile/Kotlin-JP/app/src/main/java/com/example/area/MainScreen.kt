@@ -161,6 +161,7 @@ fun MainScreenWithNav(
                 userViewModel = userViewModel,
                 serviceViewModel = serviceViewModel,
                 onLogout = onLogout,
+                onNavigateToProfile = { bottomNavState = 2 },
                 bottomPadding = paddingValues.calculateBottomPadding()
             )
         }
@@ -174,6 +175,7 @@ fun ContentScreen(
     userViewModel: UserViewModel,
     serviceViewModel: ServiceViewModel,
     onLogout: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {},
     bottomPadding: androidx.compose.ui.unit.Dp = 0.dp
 ) {
     LaunchedEffect(selectedIndex) {
@@ -182,7 +184,7 @@ fun ContentScreen(
 
     when(selectedIndex) {
         0 -> HomePage(modifier = modifier)
-        1 -> CreatePage(modifier = modifier, serviceViewModel = serviceViewModel)
+        1 -> CreatePage(modifier = modifier, serviceViewModel = serviceViewModel, onNavigateToProfile = onNavigateToProfile)
         2 -> ProfilePage(modifier = modifier, userViewModel = userViewModel, serviceViewModel = serviceViewModel)
         3 -> SettingsPage(modifier = modifier, userViewModel = userViewModel, onLogout = onLogout)
     }
