@@ -133,6 +133,10 @@ export class WebhookService {
         actionName = 'new_follower';
         break;
       }
+      case 'stream.online': {
+        actionName = 'stream_online';
+        break;
+      }
     }
 
     const action: ActionPayload = {
