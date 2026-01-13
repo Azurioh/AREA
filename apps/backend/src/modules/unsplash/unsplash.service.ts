@@ -1,5 +1,3 @@
-import { HttpStatusCode } from '@area/shared/enums/http-status';
-import ApiError from '@/utils/api-error';
 import type { CreateAction } from '@area/shared/schemas/actions-reactions.schema';
 import type { PollingService } from '../polling/polling.service';
 
@@ -23,6 +21,8 @@ export class UnsplashService {
    * @returns {Promise<boolean>} If the action was created
    */
   async createAction(userId: string, action: CreateAction): Promise<string> {
+    let trigger = '';
+
     switch (action.name) {
       case 'daily_random_image': {
         this.pollingService.addUserToPoll({
@@ -34,9 +34,9 @@ export class UnsplashService {
             lastPoll: null,
           },
         });
-        return `${action.name}/${action.params.topic}/${userId}`;
+        trigger = `${action.name}/${action.params.topic}/${userId}`;
       }
     }
-    throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');
+    return trigger;
   }
 }

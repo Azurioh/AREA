@@ -52,10 +52,6 @@ export class TwitchService {
       }
     }
 
-    if (!subscription) {
-      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');
-    }
-
     const response = await fetch(`https://api.twitch.tv/helix/eventsub/subscriptions`, {
       method: 'POST',
       headers: {
