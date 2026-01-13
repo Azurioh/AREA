@@ -16,7 +16,7 @@ export class SpotifyListeningToArtistAction extends Action {
       ],
       [
         {
-          key: 'artist_name',
+          key: 'artistName',
           description: 'The name of the artist',
           type: 'string',
           path: 'artist.name',
