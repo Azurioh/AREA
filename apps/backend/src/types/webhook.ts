@@ -25,10 +25,15 @@ export type DiscordWebhookPayload = {
  * @type SpotifyWebhookPayload
  * @description The payload of the spotify webhook.
  *
- * @property {string} ids the ids relative to the triggered webhook
+ * @property {Object} artist The information about the artist
+ * @property {string} artist.name The name of the artist
+ * @property {string} artist.id The id of the artist
  */
 export type SpotifyWebhookPayload = {
-  ids: string;
+  artist: {
+    name: string;
+    id: string;
+  };
 };
 
 /**

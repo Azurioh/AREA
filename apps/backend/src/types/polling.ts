@@ -28,6 +28,7 @@ export type Polling = {
  * @property {Object[]} item.artists - The informations about the artists.
  * @property {string} item.artists.id - The id of the artist.
  * @property {string} item.artists.name - The name of the artist.
+ * @property {string} item.id - The id of the track.
  */
 export type SpotifyCurrentlyPlayingTrack = {
   item: {
@@ -37,6 +38,7 @@ export type SpotifyCurrentlyPlayingTrack = {
         name: string;
       },
     ];
+    id: string;
   };
 };
 
