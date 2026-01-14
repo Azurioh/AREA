@@ -67,3 +67,24 @@ export type DropboxWebhookPayload = {
     accounts: string[];
   };
 };
+
+/**
+ * @type TwitchWebhookPayload
+ * @description The payload of the twitch webhook.
+ *
+ * @property {Object} subscription The information about the subscription
+ * @property {Object} subscription.condition The condition of the subscription
+ * @property {string} subscription.condition.broadcaster_user_id The id of the broadcaster
+ * @property {Object} event The information about the event
+ * @property {string} event.user_name The name of the follower
+ */
+export type TwitchWebhookPayload = {
+  subscription: {
+    condition: {
+      broadcaster_user_id: string;
+    };
+  };
+  event: {
+    user_name: string;
+  };
+};

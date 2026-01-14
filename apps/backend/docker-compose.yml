@@ -42,6 +42,7 @@ services:
       - UNSPLASH_CLIENT_ID=${UNSPLASH_CLIENT_ID}
       - TWITCH_CLIENT_ID=${TWITCH_CLIENT_ID}
       - TWITCH_CLIENT_SECRET=${TWITCH_CLIENT_SECRET}
+      - TWITCH_WEBHOOK_SECRET=${TWITCH_WEBHOOK_SECRET}
     volumes:
       - ./src:/app/apps/backend/src
       - ../../packages:/app/packages

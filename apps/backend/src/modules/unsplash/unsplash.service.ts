@@ -30,11 +30,11 @@ export class UnsplashService {
           userId: userId,
           type: 'daily_random_image',
           trigger: {
-            topic: action.params.topic,
+            topic: action.params.topic.id,
             lastPoll: null,
           },
         });
-        return `${action.name}/${action.params.topic}/${userId}`;
+        return `${action.name}/${action.params.topic.id}/${userId}`;
       }
     }
     throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');

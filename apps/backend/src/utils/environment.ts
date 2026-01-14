@@ -43,6 +43,7 @@ export interface Environment {
 
   TWITCH_CLIENT_ID: string;
   TWITCH_CLIENT_SECRET: string;
+  TWITCH_WEBHOOK_SECRET: string;
 }
 
 const variables: Record<string, string | undefined> = {
@@ -81,6 +82,7 @@ const variables: Record<string, string | undefined> = {
 
   TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID,
   TWITCH_CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET,
+  TWITCH_WEBHOOK_SECRET: process.env.TWITCH_WEBHOOK_SECRET,
 };
 
 for (const [key, value] of Object.entries(variables)) {
@@ -137,4 +139,5 @@ export const environment: Environment = {
 
   TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID as string,
   TWITCH_CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET as string,
+  TWITCH_WEBHOOK_SECRET: process.env.TWITCH_WEBHOOK_SECRET as string,
 };

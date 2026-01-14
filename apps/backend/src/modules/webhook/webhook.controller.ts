@@ -7,6 +7,7 @@ import type {
   GithubWebhookPayload,
   SpotifyWebhookPayload,
   UnsplashWebhookPayload,
+  TwitchWebhookPayload,
 } from '@/types/webhook';
 import ApiError from '@/utils/api-error';
 
@@ -126,6 +127,30 @@ export class WebhookController {
     const userId = request.headers['x-user-id'] as string;
 
     this.service.unsplashCallback(userId, event, body as UnsplashWebhookPayload);
+    reply.status(HttpStatusCode.NO_CONTENT).send();
+  }
+
+  /**
+   * @function twitchCallback
+   * @description Handles the callback for the twitch service.
+   *
+   * @param {FastifyRequest} request The Fastify request object containing the webhook data.
+   * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
+   */
+  async twitchCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    if (request.body && (request.body as { challenge: string }).challenge) {
+      return reply.status(HttpStatusCode.OK).send((request.body as { challenge: string }).challenge);
+    }
+
+    if (!request.headers['twitch-eventsub-subscription-type']) {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook information are missing');
+    }
+
+    const body = request.body;
+    const event = request.headers['twitch-eventsub-subscription-type'] as string;
+
+    this.service.twitchCallback(event, body as TwitchWebhookPayload);
     reply.status(HttpStatusCode.NO_CONTENT).send();
   }
 }

@@ -23,25 +23,25 @@ export class UnsplashDailyRandomImageAction extends Action {
       ],
       [
         {
-          key: 'image',
+          key: 'imageUrl',
           description: 'The actual image',
           type: 'string',
           path: 'image.url',
         },
         {
-          key: 'likes',
+          key: 'imageLikes',
           description: 'The number of likes the image has received',
           type: 'number',
           path: 'image.likes',
         },
         {
-          key: 'username',
+          key: 'photographerName',
           description: 'The username of the photographer',
           type: 'string',
           path: 'user.username',
         },
         {
-          key: 'bio',
+          key: 'photographerBio',
           description: 'The bio of the photographer',
           type: 'string',
           path: 'user.bio',
