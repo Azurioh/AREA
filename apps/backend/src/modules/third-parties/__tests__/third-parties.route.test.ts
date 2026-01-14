@@ -3,7 +3,6 @@ import { ObjectId } from 'mongodb';
 import supertest from 'supertest';
 import build from '@/app';
 import { closeDiscordBot } from '@/config/discord-bot';
-import { initEnvironment } from '@/utils/environment';
 import thirdPartiesRoutes from '../third-parties.routes';
 
 // Mock Discord bot to avoid connection timeouts
@@ -18,7 +17,6 @@ describe('Third Parties Integration Tests', () => {
   let userId: string;
 
   beforeAll(async () => {
-    initEnvironment();
     app = await build();
     await app.ready();
 

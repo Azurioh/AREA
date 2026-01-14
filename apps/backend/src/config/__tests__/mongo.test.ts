@@ -4,10 +4,10 @@ import type { FastifyInstance } from 'fastify';
 import { setupMongoDB } from '../mongo';
 
 jest.mock('@/utils/environment', () => ({
-  getEnvironment: jest.fn(() => ({
+  environment: {
     MONGO_URI: 'mongodb://localhost:27017/test',
     MONGO_DATABASE: 'test_db',
-  })),
+  },
 }));
 
 describe('setupMongoDB', () => {

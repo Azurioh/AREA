@@ -2,10 +2,9 @@ import { HttpStatusCode } from '@area/shared/enums/http-status';
 import fastifyMongo from '@fastify/mongodb';
 import type { FastifyInstance } from 'fastify';
 import ApiError from '@/utils/api-error';
-import { getEnvironment } from '@/utils/environment';
+import { environment } from '@/utils/environment';
 
 export const setupMongoDB = async (app: FastifyInstance): Promise<void> => {
-  const environment = getEnvironment();
   await app.register(fastifyMongo, {
     forceClose: true,
     url: environment.MONGO_URI,

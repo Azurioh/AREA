@@ -2,7 +2,7 @@ import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { ZodError } from 'zod';
 import ApiError from '@/utils/api-error';
-import { getEnvironment } from '@/utils/environment';
+import { environment } from '@/utils/environment';
 
 const isFastifyValidationError = (error: unknown): boolean => {
   return (
@@ -15,7 +15,6 @@ const isFastifyValidationError = (error: unknown): boolean => {
 
 export const setupErrorHandler = (app: FastifyInstance) => {
   app.setErrorHandler((error: unknown, _: FastifyRequest, reply: FastifyReply) => {
-    const environment = getEnvironment();
     if (error instanceof ApiError) {
       reply.status(error.httpCode).send({
         data: error.message,
