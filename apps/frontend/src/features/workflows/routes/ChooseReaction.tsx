@@ -162,66 +162,68 @@ const ChooseReaction: React.FC = () => {
                 <CardContent className="mt-6">
                   {loadingParams ? (
                     <div className="text-center py-8 text-muted-foreground">Loading parameters...</div>
-                  ) : reactionParams.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No parameters required for this reaction
-                    </div>
                   ) : (
                     <div className="space-y-4">
-                      {reactionParams.map((param, index) => {
-                        const id = `param-${param.key}-${index}`;
-                        return (
-                          <div key={param.key} className="space-y-2">
-                            <label htmlFor={id} className="text-sm font-medium">
-                              {param.label}
-                            </label>
+                      {reactionParams.length === 0 ? (
+                        <div className="text-center py-4 text-muted-foreground">
+                          No parameters required for this reaction
+                        </div>
+                      ) : (
+                        reactionParams.map((param, index) => {
+                          const id = `param-${param.key}-${index}`;
+                          return (
+                            <div key={param.key} className="space-y-2">
+                              <label htmlFor={id} className="text-sm font-medium">
+                                {param.label}
+                              </label>
 
-                            {param.type === 'input' ? (
-                              <div className="space-y-1">
-                                <Input
-                                  id={id}
-                                  placeholder={param.placeholder}
-                                  value={typeof param.value === 'string' ? param.value : ''}
-                                  onChange={(e) => updateParam(index, e.target.value)}
-                                />
-                                {returnedValues.length > 0 && (
-                                  <div className="text-xs text-muted-foreground">
-                                    Available variables: {returnedValues.map((v) => `\${${v.key}}`).join(', ')}
-                                  </div>
-                                )}
-                              </div>
-                            ) : (
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="outline" className="w-full justify-start" id={id}>
-                                    {typeof param.value === 'object' && (param.value as ParamOption)?.name
-                                      ? (param.value as ParamOption).name
-                                      : param.placeholder}
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-full">
-                                  {(param.options && param.options.length > 0
-                                    ? param.options
-                                    : [{ name: 'No options available', id: 'none' }]
-                                  ).map((opt: ParamOption) => (
-                                    <DropdownMenuItem
-                                      key={opt.id}
-                                      onClick={() =>
-                                        updateParam(index, {
-                                          name: opt.name,
-                                          id: opt.id,
-                                        })
-                                      }
-                                    >
-                                      {opt.name}
-                                    </DropdownMenuItem>
-                                  ))}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            )}
-                          </div>
-                        );
-                      })}
+                              {param.type === 'input' ? (
+                                <div className="space-y-1">
+                                  <Input
+                                    id={id}
+                                    placeholder={param.placeholder}
+                                    value={typeof param.value === 'string' ? param.value : ''}
+                                    onChange={(e) => updateParam(index, e.target.value)}
+                                  />
+                                  {returnedValues.length > 0 && (
+                                    <div className="text-xs text-muted-foreground">
+                                      Available variables: {returnedValues.map((v) => `\${${v.key}}`).join(', ')}
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" className="w-full justify-start" id={id}>
+                                      {typeof param.value === 'object' && (param.value as ParamOption)?.name
+                                        ? (param.value as ParamOption).name
+                                        : param.placeholder}
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent className="w-full">
+                                    {(param.options && param.options.length > 0
+                                      ? param.options
+                                      : [{ name: 'No options available', id: 'none' }]
+                                    ).map((opt: ParamOption) => (
+                                      <DropdownMenuItem
+                                        key={opt.id}
+                                        onClick={() =>
+                                          updateParam(index, {
+                                            name: opt.name,
+                                            id: opt.id,
+                                          })
+                                        }
+                                      >
+                                        {opt.name}
+                                      </DropdownMenuItem>
+                                    ))}
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
 
                       <div className="pt-4 flex gap-3">
                         <Button
@@ -255,6 +257,7 @@ const ChooseReaction: React.FC = () => {
                         >
                           Save Configuration
                         </Button>
+
                         <Button
                           variant="outline"
                           onClick={() => {
