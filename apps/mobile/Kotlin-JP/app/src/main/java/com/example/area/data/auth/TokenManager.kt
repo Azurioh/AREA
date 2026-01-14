@@ -26,8 +26,19 @@ class TokenManager(context: Context) {
         return sharedPreferences.getString(KEY_TOKEN, null)
     }
 
+    fun saveRefreshToken(refreshToken: String) {
+        sharedPreferences.edit().putString(KEY_REFRESH_TOKEN, refreshToken).apply()
+    }
+
+    fun getRefreshToken(): String? {
+        return sharedPreferences.getString(KEY_REFRESH_TOKEN, null)
+    }
+
     fun clearToken() {
-        sharedPreferences.edit().remove(KEY_TOKEN).apply()
+        sharedPreferences.edit()
+            .remove(KEY_TOKEN)
+            .remove(KEY_REFRESH_TOKEN)
+            .apply()
     }
 
     fun isLoggedIn(): Boolean {
@@ -48,6 +59,7 @@ class TokenManager(context: Context) {
 
     companion object {
         private const val KEY_TOKEN = "auth_token"
+        private const val KEY_REFRESH_TOKEN = "refresh_token"
         private const val KEY_BASE_URL = "base_url"
     }
 }

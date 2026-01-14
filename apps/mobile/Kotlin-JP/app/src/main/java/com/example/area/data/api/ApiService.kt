@@ -4,6 +4,7 @@ import com.example.area.data.models.AboutJson
 import com.example.area.data.models.Register
 import com.example.area.data.models.Login
 import com.example.area.data.models.AuthResponse
+import com.example.area.data.models.RefreshTokenRequest
 import com.example.area.data.models.ServicesUrl
 import com.example.area.data.models.ServicesValue
 import com.example.area.data.models.User
@@ -28,6 +29,9 @@ interface ApiService {
 
     @POST("auth/v1/login")
     suspend fun loginUser(@Body request: Login) : AuthResponse
+
+    @POST("auth/v1/refresh")
+    suspend fun refreshToken(@Body request: RefreshTokenRequest) : AuthResponse
 
     @GET("users/v1/me")
     suspend fun getUserProfile() : User

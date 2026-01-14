@@ -2,11 +2,13 @@ package com.example.area.data.api
 
 import android.content.Context
 import com.example.area.data.auth.TokenManager
+import com.example.area.data.models.RefreshTokenRequest
 import okhttp3.OkHttpClient
 import com.example.area.BuildConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.runBlocking
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -54,10 +56,10 @@ object RetrofitInstance {
                 val requestUrl = originalRequest.url.encodedPath
 
                 val isAuthRoute = requestUrl.contains("/auth/v1/login") ||
-                                 requestUrl.contains("/auth/v1/register")
+                                 requestUrl.contains("/auth/v1/register") ||
+                                 requestUrl.contains("/auth/v1/refresh")
 
                 val token = tokenManager?.getToken()
-
                 val newRequest = if (token != null && !isAuthRoute) {
                     originalRequest.newBuilder()
                         .header("Authorization", "Bearer $token")
@@ -66,11 +68,54 @@ object RetrofitInstance {
                     originalRequest
                 }
 
-                val response = chain.proceed(newRequest)
+                var response = chain.proceed(newRequest)
 
-                if (response.code == 401 && !isAuthRoute && !_isUnauthorized.value) {
-                    tokenManager?.clearToken()
-                    _isUnauthorized.value = true
+                if (response.code == 401 && !isAuthRoute) {
+                    response.close()
+
+                    val refreshToken = tokenManager?.getRefreshToken()
+                    if (refreshToken != null) {
+                        val refreshSuccess = runBlocking {
+                            try {
+                                val refreshApi = Retrofit.Builder()
+                                    .baseUrl(currentBaseUrl)
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .build()
+                                    .create(ApiService::class.java)
+
+                                val refreshResponse = refreshApi.refreshToken(
+                                    RefreshTokenRequest(refreshToken)
+                                )
+
+                                tokenManager?.saveToken(refreshResponse.accessToken)
+                                refreshResponse.refreshToken?.let {
+                                    tokenManager?.saveRefreshToken(it)
+                                }
+
+                                true
+                            } catch (e: Exception) {
+                                tokenManager?.clearToken()
+                                false
+                            }
+                        }
+
+                        if (refreshSuccess) {
+                            val newToken = tokenManager?.getToken()
+                            val retryRequest = originalRequest.newBuilder()
+                                .header("Authorization", "Bearer $newToken")
+                                .build()
+                            response = chain.proceed(retryRequest)
+                        } else {
+                            if (!_isUnauthorized.value) {
+                                _isUnauthorized.value = true
+                            }
+                        }
+                    } else {
+                        tokenManager?.clearToken()
+                        if (!_isUnauthorized.value) {
+                            _isUnauthorized.value = true
+                        }
+                    }
                 }
 
                 response
