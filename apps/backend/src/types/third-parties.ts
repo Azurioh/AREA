@@ -32,8 +32,8 @@ export type ThirdPartyAuthorizationParams = z.infer<typeof thirdPartyAuthorizati
  */
 export type ThirdPartyAuthorization = ThirdPartyAuthorizationQueryString;
 
-export type ServiceType = 'github' | 'discord' | 'spotify' | 'dropbox' | 'unsplash' | 'twitch';
-export type OAuthServiceType = Omit<ServiceType, 'unsplash'>;
+export type NoOAuthServiceType = 'unsplash';
+export type ServiceType = 'github' | 'discord' | 'spotify' | 'dropbox' | 'twitch' | NoOAuthServiceType;
 
 /**
  * @type BaseAccount
@@ -46,7 +46,7 @@ export type OAuthServiceType = Omit<ServiceType, 'unsplash'>;
  */
 export type BaseAccount = {
   userId: string;
-  service: OAuthServiceType;
+  service: ServiceType;
   accessToken: string;
   refreshToken: string | null;
 };
@@ -117,7 +117,23 @@ export type TwitchAccount = BaseAccount & {
   id: string;
 };
 
-export type ThirdPartyAccount = GithubAccount | DiscordAccount | SpotifyAccount | DropboxAccount | TwitchAccount;
+/**
+ * @type UnsplashAccount
+ * @description UnsplashAccount type.
+ *
+ * @property {'unsplash'} service The name of the service
+ */
+export type NoOAuthAccount = BaseAccount & {
+  service: 'unsplash';
+};
+
+export type ThirdPartyAccount =
+  | NoOAuthAccount
+  | GithubAccount
+  | DiscordAccount
+  | SpotifyAccount
+  | DropboxAccount
+  | TwitchAccount;
 
 /**********************************
  * SERVICE AUTHORIZATION RESPONSE *

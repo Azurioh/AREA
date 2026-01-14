@@ -10,7 +10,8 @@ import type {
   DropboxAuthorizationResponse,
   GitHubAuthorizationResponse,
   GithubAccount,
-  OAuthServiceType,
+  NoOAuthAccount,
+  NoOAuthServiceType,
   ServiceType,
   SpotifyAccount,
   SpotifyAuthorizationResponse,
@@ -30,9 +31,9 @@ import type { ThirdPartiesRepository } from './third-parties.repository';
 export class ThirdPartiesService {
   private usersService: UsersService;
   private repository: ThirdPartiesRepository;
-  private authorizationUrls: Map<OAuthServiceType, string>;
+  private authorizationUrls: Map<ServiceType, string>;
   private servicesAuthorizationFunc: Map<
-    OAuthServiceType,
+    ServiceType,
     (userId: string, code: string) => Promise<ThirdPartyAccount | null>
   >;
 
@@ -60,6 +61,7 @@ export class ThirdPartiesService {
         'twitch',
         `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${environment.TWITCH_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/twitch&scope=moderator:read:followers%20user:read:follows&state={state}`,
       ],
+      ['unsplash', 'no_oauth'],
     ]);
     this.servicesAuthorizationFunc = new Map([
       ['github', this.authorizeToGithub],
@@ -68,6 +70,28 @@ export class ThirdPartiesService {
       ['dropbox', this.authorizeToDropbox],
       ['twitch', this.authorizeToTwitch],
     ]);
+  }
+
+  /**
+   * @function handleNoOAuth
+   * @description Handle services with no OAuth process
+   *
+   * @param {ServiceType} service The service type
+   * @param {string} userId The user id
+   */
+  private async handleNoOAuth(service: NoOAuthServiceType, userId: string): Promise<void> {
+    const account = await this.repository.getThirdPartyAccountByUserId(userId, service);
+
+    if (!account) {
+      const data: NoOAuthAccount = {
+        userId,
+        service: service,
+        accessToken: '',
+        refreshToken: null,
+      };
+
+      await this.repository.createThirdPartyAccount(data);
+    }
   }
 
   /**
@@ -85,6 +109,12 @@ export class ThirdPartiesService {
     if (!authorizationUrl) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, "Requested third party service doesn't exist");
     }
+
+    if (authorizationUrl === 'no_oauth') {
+      await this.handleNoOAuth(service as NoOAuthServiceType, userId);
+      return authorizationUrl;
+    }
+
     const stateToken = generateStateToken({ _id: userId, clientType: clientType });
     const url = authorizationUrl.replace('{state}', stateToken);
 
