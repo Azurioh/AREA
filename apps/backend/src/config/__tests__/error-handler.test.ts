@@ -81,7 +81,9 @@ describe('setupErrorHandler', () => {
   it('should handle Generic Error in development (with stack)', () => {
     jest.resetModules();
     jest.doMock('@/utils/environment', () => ({
-      environment: { NODE_ENV: 'development' },
+      environment: {
+        NODE_ENV: 'development',
+      },
     }));
 
     const { setupErrorHandler: setupErrorHandlerDev } = require('../error-handler');
@@ -112,7 +114,9 @@ describe('setupErrorHandler', () => {
   it('should NOT log Generic Error in production', () => {
     jest.resetModules();
     jest.doMock('@/utils/environment', () => ({
-      environment: { NODE_ENV: 'production' },
+      environment: {
+        NODE_ENV: 'production',
+      },
     }));
 
     const { setupErrorHandler: setupErrorHandlerProd } = require('../error-handler');
