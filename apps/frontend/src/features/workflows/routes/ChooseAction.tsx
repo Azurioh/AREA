@@ -168,7 +168,7 @@ const ChooseAction: React.FC = () => {
                         return (
                           <div key={param.key} className="space-y-2">
                             <label htmlFor={id} className="text-sm font-medium">
-                              {param.label}
+                              {param.label} <span className="text-destructive">*</span>
                             </label>
 
                             {param.type === 'input' ? (
@@ -195,6 +195,7 @@ const ChooseAction: React.FC = () => {
                                     : [{ name: 'No options available', id: 'none' }]
                                   ).map((opt: ParamOption) => (
                                     <DropdownMenuItem
+                                      className="cursor-pointer"
                                       key={opt.id}
                                       onClick={() =>
                                         updateParam(index, {

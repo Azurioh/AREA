@@ -175,7 +175,7 @@ const ChooseReaction: React.FC = () => {
                         return (
                           <div key={param.key} className="space-y-2">
                             <label htmlFor={id} className="text-sm font-medium">
-                              {param.label}
+                              {param.label} <span className="text-destructive">*</span>
                             </label>
 
                             {param.type === 'input' ? (
@@ -192,15 +192,15 @@ const ChooseReaction: React.FC = () => {
                                     Available variables: {returnedValues.map((v) => `\${${v.key}}`).join(', ')}
                                     <HoverCard>
                                       <HoverCardTrigger asChild>
-                                        <CircleQuestionMark className="inline-block ml-1 w-4 h-4 text-primary cursor-pointer" />
+                                        <CircleQuestionMark className="inline-block ml-1 w-4 h-4 text-primary cursor-help" />
                                       </HoverCardTrigger>
                                       <HoverCardContent className="w-80">
                                         <div className="space-y-2">
                                           <h4 className="text-sm font-semibold">How to use variables</h4>
                                           <p className="text-xs text-muted-foreground">
-                                            Simply type the variable name with the ${'{'}...{'}'} syntax in any input
-                                            field. For example, if you have a variable named "username", you can use it
-                                            like this: Hello ${'{username}'}.
+                                            You can use variables from the action in your reaction parameters. Simply
+                                            type the variable name with the ${'{'}...{'}'} syntax in any input field.
+                                            For example: ${'{'}user.email{'}'} or ${'{'}message.content{'}'}
                                           </p>
                                         </div>
                                       </HoverCardContent>

@@ -15,7 +15,7 @@ export class DropboxFolderCreatedAction extends Action {
       ],
       [
         {
-          key: 'name',
+          key: 'fileName',
           description: 'The name of the file that triggered the action',
           type: 'string',
           path: 'name',

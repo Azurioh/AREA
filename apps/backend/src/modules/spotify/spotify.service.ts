@@ -36,13 +36,14 @@ export class SpotifyService {
       'spotify',
       userId,
     );
+    let trigger = '';
 
     switch (action.name) {
       case 'listening_to_artist': {
-        return await this.listeningToArtist(spotifyAccount, action);
+        trigger = await this.listeningToArtist(spotifyAccount, action);
       }
     }
-    throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');
+    return trigger;
   }
 
   /**

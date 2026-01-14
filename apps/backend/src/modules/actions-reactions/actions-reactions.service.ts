@@ -13,6 +13,9 @@ import type { WithId } from 'mongodb';
 import type { SpotifyService } from '@/modules/spotify';
 import type { UnsplashService } from '@/modules/unsplash';
 import type { DropboxService } from '@/modules/dropbox';
+import type { TwitchService } from '../twitch/twitch.service';
+import { ServiceManager } from '@/integrations';
+import type { IAction, IReaction } from '@area/shared/types/services.types';
 
 /**
  * @class ActionsReactionsService
@@ -34,6 +37,7 @@ export class ActionsReactionsService {
     spotifyService: SpotifyService,
     unsplashService: UnsplashService,
     dropboxService: DropboxService,
+    twitchService: TwitchService,
   ) {
     this.repository = repository;
     this.actionsCreationFunc = new Map([
@@ -42,6 +46,7 @@ export class ActionsReactionsService {
       ['spotify', spotifyService.createAction.bind(spotifyService)],
       ['unsplash', unsplashService.createAction.bind(unsplashService)],
       ['dropbox', dropboxService.createAction.bind(dropboxService)],
+      ['twitch', twitchService.createAction.bind(twitchService)],
     ]);
     this.reactionsCreationFunc = new Map([
       ['github', githubService.createReaction.bind(githubService)],
@@ -116,6 +121,65 @@ export class ActionsReactionsService {
   }
 
   /**
+   * @function validateActionOrReactionParams
+   * @description Validate the params of an action or a reaction
+   *
+   * @param {any} params The params to validate
+   * @returns {void} Nothing
+   */
+  private validateActionOrReactionParams(type: 'Action' | 'Reaction', params: any, paramsToValidate: any): void {
+    if (typeof paramsToValidate !== 'object') {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, `${type} is invalid`);
+    }
+    for (const param of params) {
+      if (Object.hasOwn(paramsToValidate as Object, param.key)) {
+        if (param.type === 'input') {
+          continue;
+        }
+        if (
+          param.type === 'select' &&
+          typeof paramsToValidate[param.key] === 'object' &&
+          Object.hasOwn(paramsToValidate[param.key] as Object, 'name') &&
+          Object.hasOwn(paramsToValidate[param.key] as Object, 'id')
+        ) {
+          continue;
+        }
+      }
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, `${type} is invalid`);
+    }
+  }
+
+  /**
+   * @function validateActionReaction
+   * @description Validate if the action and reaction are compatible
+   *
+   * @param {CreateAction} action The action to validate
+   * @param {CreateReaction} reaction The reaction to validate
+   * @returns {void} Nothing
+   */
+  private validateActionReaction(actionToValidate: CreateAction, reactionToValidate: CreateReaction): void {
+    const actionService = ServiceManager.instance.get(actionToValidate.service);
+    const reactionService = ServiceManager.instance.get(reactionToValidate.service);
+
+    if (!actionService || !reactionService) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Service not found');
+    }
+
+    const action = actionService.actions.find((value: IAction) => value.name === actionToValidate.name);
+    const reaction = reactionService.reactions.find((value: IReaction) => value.name === reactionToValidate.name);
+
+    if (!action) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');
+    }
+    this.validateActionOrReactionParams('Action', action.params, actionToValidate.params);
+
+    if (!reaction) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Reaction not found');
+    }
+    this.validateActionOrReactionParams('Reaction', reaction.params, reactionToValidate.params);
+  }
+
+  /**
    * @function createActionReaction
    * @description Create a new action reaction
    *
@@ -125,6 +189,8 @@ export class ActionsReactionsService {
    * @returns {Promise<boolean>} If the action and reaction could be created
    */
   async createActionReaction(userId: string, action: CreateAction, reaction: CreateReaction): Promise<void> {
+    this.validateActionReaction(action, reaction);
+
     const trigger = await this.handleActions(userId, action);
 
     const data: ActionReaction = {
