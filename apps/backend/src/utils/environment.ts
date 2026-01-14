@@ -92,7 +92,7 @@ for (const [key, value] of Object.entries(variables)) {
   }
 }
 
-const port = Number.parseInt(process.env.PORT, 10);
+const port = Number.parseInt(process.env.PORT as string, 10);
 
 if (Number.isNaN(port)) {
   console.error('\r\x1b[31mError:\x1b[0m Variable PORT is not a number');
