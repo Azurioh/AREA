@@ -30,11 +30,11 @@ export class UnsplashService {
           userId: userId,
           type: 'daily_random_image',
           trigger: {
-            topic: action.params.topic,
+            topic: action.params.topic.id,
             lastPoll: null,
           },
         });
-        trigger = `${action.name}/${action.params.topic}/${userId}`;
+        trigger = `${action.name}/${action.params.topic.id}/${userId}`;
       }
     }
     return trigger;
