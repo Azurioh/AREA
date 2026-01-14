@@ -15,7 +15,8 @@ export const useLogin = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const response = await authClient.login({ email, password, rememberMe });
+    const lowerEmail = email.toLowerCase();
+    const response = await authClient.login({ email: lowerEmail, password, rememberMe });
     setIsLoading(false);
     if (response !== undefined) {
       await tokenManager.setToken(response.accessToken);

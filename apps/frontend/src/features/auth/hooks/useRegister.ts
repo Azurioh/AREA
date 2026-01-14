@@ -24,8 +24,8 @@ export const useRegister = () => {
       setIsLoading(false);
       return;
     }
-
-    const response = await authClient.register({ name, email, password });
+    const lowerEmail = email.toLowerCase();
+    const response = await authClient.register({ name, email: lowerEmail, password });
     setIsLoading(false);
 
     if (response !== undefined) {
