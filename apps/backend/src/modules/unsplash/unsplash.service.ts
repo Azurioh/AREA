@@ -1,4 +1,6 @@
+import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { CreateAction } from '@area/shared/schemas/actions-reactions.schema';
+import ApiError from '@/utils/api-error';
 import type { PollingService } from '../polling/polling.service';
 
 /**
@@ -35,6 +37,10 @@ export class UnsplashService {
           },
         });
         trigger = `${action.name}/${action.params.topic.id}/${userId}`;
+        break;
+      }
+      default: {
+        throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');
       }
     }
     return trigger;

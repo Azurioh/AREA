@@ -11,11 +11,11 @@ import {
 import { Button } from '@/components/wrappers/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/wrappers/Card';
 import { Input } from '@/components/wrappers/Input';
+import { useServicesClient } from '@/features/connections/hooks/useServicesClient';
 import { useActionReaction } from '@/features/workflows/context/ActionReactionContext';
 import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceActions } from '@/features/workflows/hooks/useServiceActions';
-import { useServicesClient } from '@/features/connections/hooks/useServicesClient';
 
 const ChooseAction: React.FC = () => {
   const { services, fetchServices } = useListServices();

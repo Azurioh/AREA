@@ -4,27 +4,25 @@ import {
   createActionReactionResponseSchema,
   getMeActionsReactionsResponseSchema,
   type UpdateActionReactionExecutionStateBody,
-  updateActionReactionExecutionStateBodySchema,
   type UpdateActionReactionExecutionStateParams,
+  updateActionReactionExecutionStateBodySchema,
   updateActionReactionExecutionStateParamsSchema,
   updateActionReactionExecutionStateResponseSchema,
 } from '@area/shared/schemas/actions-reactions.schema';
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';
-import {
-  ActionsReactionsController,
-  ActionsReactionsRepository,
-  ActionsReactionsService,
-} from '@/modules/actions-reactions';
 import { DiscordService } from '@/modules/discord';
-import { GithubService } from '@/modules/github';
-import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
-import { UsersRepository, UsersService } from '@/modules/users';
-import { SpotifyService } from '@/modules/spotify';
-import { PollingService, PollingRepository } from '@/modules/polling';
-import { UnsplashService } from '@/modules/unsplash';
 import { DropboxRepository, DropboxService } from '@/modules/dropbox';
-import { TwitchService } from '../twitch/twitch.service';
+import { GithubService } from '@/modules/github';
+import { PollingRepository, PollingService } from '@/modules/polling';
+import { SpotifyService } from '@/modules/spotify';
+import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
+import { TwitchService } from '@/modules/twitch/twitch.service';
+import { UnsplashService } from '@/modules/unsplash';
+import { UsersRepository, UsersService } from '@/modules/users';
+import { ActionsReactionsController } from './actions-reactions.controller';
+import { ActionsReactionsRepository } from './actions-reactions.repository';
+import { ActionsReactionsService } from './actions-reactions.service';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {

@@ -7,8 +7,8 @@ import type {
   UpdateUserMeBody,
 } from '@area/shared/schemas/users.schema';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { UsersService } from './users.service';
 import { generateStateToken } from '@/utils/token';
+import type { UsersService } from './users.service';
 
 /**
  * @class UsersController
@@ -60,7 +60,8 @@ export class UsersController {
    * @returns {Promise<void>} Nothing
    */
   async updateUserMe(request: FastifyRequest<{ Body: UpdateUserMeBody }>, reply: FastifyReply): Promise<void> {
-    await this.service.updateUser(request.user._id, request.body);
+    const body = Object.fromEntries(Object.entries(request.body).filter(([_, v]) => v !== undefined));
+    await this.service.updateUser(request.user._id, body);
 
     return reply.status(HttpStatusCode.NO_CONTENT).send();
   }
@@ -119,7 +120,8 @@ export class UsersController {
     request: FastifyRequest<{ Params: UpdateUserByIdParams; Body: UpdateUserByIdBody }>,
     reply: FastifyReply,
   ): Promise<void> {
-    await this.service.updateUser(request.params.id, request.body);
+    const body = Object.fromEntries(Object.entries(request.body).filter(([_, v]) => v !== undefined));
+    await this.service.updateUser(request.params.id, body);
 
     return reply.status(HttpStatusCode.NO_CONTENT).send();
   }

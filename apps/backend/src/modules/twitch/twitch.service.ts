@@ -1,9 +1,6 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import ApiError from '@/utils/api-error';
 import type { CreateAction } from '@area/shared/schemas/actions-reactions.schema';
-import type { ThirdPartiesService } from '../third-parties';
 import type { TwitchAccount, TwitchAuthorizationResponse } from '@/types/third-parties';
-import { environment } from '@/utils/environment';
 import type {
   FollowedChannel,
   FollowedChannelsResponse,
@@ -12,8 +9,11 @@ import type {
   TwitchEventSubscription,
   TwitchStreamer,
 } from '@/types/twitch';
-import { decryptString, encryptString } from '@/utils/crypt';
+import ApiError from '@/utils/api-error';
 import { getFromCache, setInCache } from '@/utils/caching';
+import { decryptString, encryptString } from '@/utils/crypt';
+import { environment } from '@/utils/environment';
+import type { ThirdPartiesService } from '../third-parties';
 
 /**
  * @class TwitchService
@@ -49,6 +49,9 @@ export class TwitchService {
         subscription = await this.streamOnline(action);
         trigger = `${action.name}/${action.params.streamer.id}`;
         break;
+      }
+      default: {
+        throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');
       }
     }
 
@@ -241,6 +244,7 @@ export class TwitchService {
 
       const formattedResponse = (await response.json()) as FollowedChannelsResponse;
 
+      data.data.push(...formattedResponse.data);
       data.pagination.cursor = formattedResponse.pagination.cursor;
     }
 

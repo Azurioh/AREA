@@ -1,6 +1,6 @@
 import type { IAction, IReaction, ReactionParams } from '@area/shared/types/services.types';
-import { ServiceManager } from '../_manager/service.manager';
 import type { ActionPayload } from '@/types/action-reaction';
+import { ServiceManager } from '../_manager/service.manager';
 
 /**
  * @class Reaction
@@ -38,13 +38,16 @@ export abstract class Reaction implements IReaction {
       return inputs;
     }
 
-    const getValueInObject = (object: Record<string, any>, path: string): any => {
+    const getValueInObject = (object: Record<string, any> | undefined, path: string): any => {
+      if (!object) {
+        return undefined;
+      }
       const splitted = path.split('.');
 
       if (splitted.length === 1 && splitted[0]) {
         return object[splitted[0]];
       } else if (splitted.length >= 2 && splitted[0]) {
-        return getValueInObject(object[splitted[0]], splitted.slice(1, splitted.length).join());
+        return getValueInObject(object[splitted[0]], splitted.slice(1, splitted.length).join('.'));
       }
       return undefined;
     };
@@ -55,10 +58,11 @@ export abstract class Reaction implements IReaction {
     }));
 
     return inputs.map((input) => {
+      let result = input;
       for (const replaceValue of replaceValues) {
-        input = input.replaceAll(`$\{${replaceValue.key.key}}`, replaceValue.value);
+        result = result.replaceAll(`$\{${replaceValue.key.key}}`, replaceValue.value);
       }
-      return input;
+      return result;
     });
   }
 

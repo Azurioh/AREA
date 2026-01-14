@@ -1,13 +1,13 @@
-import type { DropboxAccount, DropboxAuthorizationResponse } from '@/types/third-parties';
-import type { ThirdPartiesService } from '../third-parties';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import { environment } from '@/utils/environment';
+import type { CreateAction } from '@area/shared/schemas/actions-reactions.schema';
+import type { ThirdPartiesService } from '@/modules/third-parties';
+import type { ActionPayload } from '@/types/action-reaction';
+import type { DropboxResource } from '@/types/dropbox';
+import type { DropboxAccount, DropboxAuthorizationResponse } from '@/types/third-parties';
 import ApiError from '@/utils/api-error';
 import { decryptString, encryptString } from '@/utils/crypt';
-import type { CreateAction } from '@area/shared/schemas/actions-reactions.schema';
-import type { ActionPayload } from '@/types/action-reaction';
+import { environment } from '@/utils/environment';
 import type { DropboxRepository } from './dropbox.repository';
-import type { DropboxResource } from '@/types/dropbox';
 
 /**
  * @class DropboxService
@@ -160,14 +160,12 @@ export class DropboxService {
                 await this.createDropboxResource(entry['.tag'], entry.id);
               }
             }
-            if (!entry.path_lower.startsWith(path.toLowerCase())) {
-              continue;
+            if (action.name !== '') {
+              action.trigger = `${action.name}/(${path})/${dropboxAccount.id}`;
+              actions.push(action);
             }
-            action.trigger = `${action.name}/(${path})/${dropboxAccount.id}`;
-            actions.push(action);
           }
         }
-
         this.thirdPartiesService.updateThirdPartyAccount('dropbox', dropboxAccount.userId, {
           cursor: {
             ref: formattedResponse.cursor,
@@ -233,7 +231,6 @@ export class DropboxService {
   async getDropboxResourceById(id: string): Promise<DropboxResource | null> {
     return await this.repository.getDropboxResourceById(id);
   }
-
   /**
    * @function deleteDropboxResource
    * @description Delete a dropbox resource

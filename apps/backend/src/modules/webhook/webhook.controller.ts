@@ -1,15 +1,15 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { WebhookService } from '@/modules/webhook';
-import ApiError from '@/utils/api-error';
 import type {
   DiscordWebhookPayload,
+  DropboxWebhookPayload,
   GithubWebhookPayload,
   SpotifyWebhookPayload,
-  DropboxWebhookPayload,
   UnsplashWebhookPayload,
   TwitchWebhookPayload,
 } from '@/types/webhook';
+import ApiError from '@/utils/api-error';
 
 /**
  * @class WebhookController

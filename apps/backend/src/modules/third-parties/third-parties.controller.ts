@@ -1,4 +1,8 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
+import type {
+  GetThirdPartyAuthorizationUrlParams,
+  GetThirdPartyStatusParams,
+} from '@area/shared/schemas/third-parties.schema';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type {
   ClientType,
@@ -6,12 +10,8 @@ import type {
   ThirdPartyAuthorizationParams,
   ThirdPartyAuthorizationQueryString,
 } from '@/types/third-parties';
-import type { ThirdPartiesService } from './third-parties.service';
-import type {
-  GetThirdPartyAuthorizationUrlParams,
-  GetThirdPartyStatusParams,
-} from '@area/shared/schemas/third-parties.schema';
 import { environment } from '@/utils/environment';
+import type { ThirdPartiesService } from './third-parties.service';
 
 /**
  * @class UsersController
@@ -81,7 +81,6 @@ export class ThirdPartiesController {
       }
     }
     reply.redirect(`${callbackUrl}?status=${status.text}`);
-    reply.status(status.code).send();
   }
 
   /**

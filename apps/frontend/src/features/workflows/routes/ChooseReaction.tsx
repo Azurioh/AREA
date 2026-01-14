@@ -1,4 +1,3 @@
-import { useServicesClient } from '@/features/connections/hooks/useServicesClient';
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,11 +11,12 @@ import {
 import { Button } from '@/components/wrappers/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/wrappers/Card';
 import { Input } from '@/components/wrappers/Input';
+import { useServicesClient } from '@/features/connections/hooks/useServicesClient';
 import { useActionReaction } from '@/features/workflows/context/ActionReactionContext';
+import { useActionReturnedValues } from '@/features/workflows/hooks/useActionReturnedValues';
 import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceReactions } from '@/features/workflows/hooks/useServiceReactions';
-import { useActionReturnedValues } from '@/features/workflows/hooks/useActionReturnedValues';
 
 const ChooseReaction: React.FC = () => {
   const { services, fetchServices } = useListServices();
