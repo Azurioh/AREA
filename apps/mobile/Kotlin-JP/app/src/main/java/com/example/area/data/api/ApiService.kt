@@ -4,7 +4,6 @@ import com.example.area.data.models.AboutJson
 import com.example.area.data.models.Register
 import com.example.area.data.models.Login
 import com.example.area.data.models.AuthResponse
-import com.example.area.data.models.RefreshTokenRequest
 import com.example.area.data.models.ServicesUrl
 import com.example.area.data.models.ServicesValue
 import com.example.area.data.models.User
@@ -25,13 +24,22 @@ import retrofit2.http.Path
 
 interface ApiService {
     @POST("auth/v1/register")
-    suspend fun registerUser(@Body request: Register) : AuthResponse
+    suspend fun registerUser(
+        @Body request: Register,
+        @Header("x-client-type") clientType: String = "mobile"
+    ) : AuthResponse
 
     @POST("auth/v1/login")
-    suspend fun loginUser(@Body request: Login) : AuthResponse
+    suspend fun loginUser(
+        @Body request: Login,
+        @Header("x-client-type") clientType: String = "mobile"
+    ) : AuthResponse
 
     @POST("auth/v1/refresh")
-    suspend fun refreshToken(@Body request: RefreshTokenRequest) : AuthResponse
+    suspend fun refreshToken(
+        @Header("x-refresh-token") refreshToken: String,
+        @Header("x-client-type") clientType: String = "mobile"
+    ) : AuthResponse
 
     @GET("users/v1/me")
     suspend fun getUserProfile() : User

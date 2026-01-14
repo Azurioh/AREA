@@ -2,7 +2,6 @@ package com.example.area.data.api
 
 import android.content.Context
 import com.example.area.data.auth.TokenManager
-import com.example.area.data.models.RefreshTokenRequest
 import okhttp3.OkHttpClient
 import com.example.area.BuildConfig
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,9 +82,7 @@ object RetrofitInstance {
                                     .build()
                                     .create(ApiService::class.java)
 
-                                val refreshResponse = refreshApi.refreshToken(
-                                    RefreshTokenRequest(refreshToken)
-                                )
+                                val refreshResponse = refreshApi.refreshToken(refreshToken)
 
                                 tokenManager?.saveToken(refreshResponse.accessToken)
                                 refreshResponse.refreshToken?.let {
