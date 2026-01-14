@@ -46,7 +46,7 @@ export class AuthController {
 
     reply.setCookie('refresh-token', encryptString(refreshToken, environment.CRYPT_SECRET_KEY), {
       httpOnly: true,
-      secure: environment.NODE_ENV !== 'development',
+      secure: true,
       sameSite: environment.NODE_ENV !== 'development' ? 'lax' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
@@ -68,7 +68,7 @@ export class AuthController {
 
     reply.setCookie('refresh-token', encryptString(refreshToken, environment.CRYPT_SECRET_KEY), {
       httpOnly: true,
-      secure: environment.NODE_ENV !== 'development',
+      secure: true,
       sameSite: environment.NODE_ENV !== 'development' ? 'lax' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,

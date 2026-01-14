@@ -330,7 +330,7 @@ export class ThirdPartiesService {
 
     const formattedResponse = (await response.json()) as SpotifyAuthorizationResponse;
 
-    const getUserId = async () => {
+    const getId = async () => {
       const response = await fetch('https://api.spotify.com/v1/me', {
         method: 'GET',
         headers: {
@@ -352,7 +352,7 @@ export class ThirdPartiesService {
       service: 'spotify',
       accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
       refreshToken: encryptString(formattedResponse.refresh_token, environment.CRYPT_SECRET_KEY),
-      id: await getUserId(),
+      id: await getId(),
     };
     return data;
   }
