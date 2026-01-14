@@ -59,13 +59,11 @@ fun HomePage(
     var expandedAction by remember { mutableStateOf(false) }
     var expandedReaction by remember { mutableStateOf(false) }
 
-    // Récupérer la liste des services disponibles
     val services = remember(aboutJson) {
         val servicesList = aboutJson?.server?.services?.map { it.name.capitalize() } ?: emptyList()
         listOf("All") + servicesList
     }
 
-    // Filtrer les actions/réactions en fonction des sélections
     val filteredActionsReactions = remember(actionsReactions, selectedActionService, selectedReactionService) {
         actionsReactions.filter { actionReaction ->
             val matchAction = selectedActionService == "All" ||
@@ -118,7 +116,6 @@ fun HomePage(
                     .padding(horizontal = 16.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Selector pour Action Service
                 ExposedDropdownMenuBox(
                     expanded = expandedAction,
                     onExpandedChange = { expandedAction = !expandedAction },
@@ -175,7 +172,6 @@ fun HomePage(
                     }
                 }
 
-                // Selector pour Reaction Service
                 ExposedDropdownMenuBox(
                     expanded = expandedReaction,
                     onExpandedChange = { expandedReaction = !expandedReaction },
