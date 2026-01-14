@@ -18,7 +18,7 @@ const Privacy = lazy(() => import('@/features/privacy/routes/Privacy'));
 const Terms = lazy(() => import('@/features/terms/routes/Terms'));
 const AdminDashboardPage = lazy(() => import('@/features/adminDashboard/routes/AdminDashboardPage'));
 const ConnectionsPage = lazy(() => import('@/features/connections/routes/ConnectionsPage'));
-const OauthCallbackPage = lazy(() => import('@/features/connections/routes/OauthCallbackPage'));
+const OAuthCallbackPage = lazy(() => import('@/features/connections/routes/OAuthCallbackPage'));
 const WorkflowsPage = lazy(() => import('@/features/workflows/routes/WorkflowPage'));
 const CreateWorkflowsPage = lazy(() => import('@/features/workflows/routes/CreateWorkflowsPage'));
 const ChooseAction = lazy(() => import('@/features/workflows/routes/ChooseAction'));
@@ -48,7 +48,6 @@ export default function App() {
                   <Route path={AppRoutesPaths.LANDING} element={<LandingPage />} />
                   <Route path={AppRoutesPaths.PRIVACY} element={<Privacy />} />
                   <Route path={AppRoutesPaths.TERMS} element={<Terms />} />
-                  <Route path={AppRoutesPaths.OAUTH_CALLBACK} element={<OauthCallbackPage />} />
 
                   <Route element={<ProtectedRoute />}>
                     <Route element={<ProtectedLayout />}>
@@ -58,7 +57,7 @@ export default function App() {
 
                       <Route path={AppRoutesPaths.HOME} element={<HomePage />} />
                       <Route path={AppRoutesPaths.CONNECTIONS} element={<ConnectionsPage />} />
-                      <Route path={AppRoutesPaths.OAUTH_CALLBACK} element={<OauthCallbackPage />} />
+                      <Route path={AppRoutesPaths.OAUTH_CALLBACK} element={<OAuthCallbackPage />} />
 
                       <Route
                         element={

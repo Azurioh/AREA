@@ -1,15 +1,10 @@
 import type React from 'react';
-import { useEffect } from 'react';
-import { useOauthCallback } from '../hooks/useOauthCallback';
+import { useOAuthCallback } from '@/features/connections/hooks/useOAuthCallback';
 
-const OauthCallbackPage: React.FC = () => {
-  const { handleMount } = useOauthCallback();
-
-  useEffect(() => {
-    handleMount();
-  }, [handleMount]);
+const OAuthCallbackPage: React.FC = () => {
+  useOAuthCallback();
 
   return null;
 };
 
-export default OauthCallbackPage;
+export default OAuthCallbackPage;
