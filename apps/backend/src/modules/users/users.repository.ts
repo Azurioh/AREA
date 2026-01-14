@@ -12,8 +12,6 @@ export class UsersRepository {
 
   constructor(db: Db) {
     this.db = db;
-
-    this.createIndex();
   }
 
   /**

@@ -1,5 +1,5 @@
 /// <reference path="./types/fastify.d.ts" />
-import { environment } from '@/utils/environment';
+import { initEnvironment } from '@/utils/environment';
 import build from './app';
 
 /**
@@ -8,6 +8,9 @@ import build from './app';
  * @description Starts the server.
  */
 async function start(): Promise<void> {
+  // Initialize environment variables first
+  const environment = initEnvironment();
+
   const app = await build();
 
   await app.listen({ port: environment.PORT, host: '0.0.0.0' });

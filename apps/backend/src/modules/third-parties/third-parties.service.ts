@@ -164,7 +164,7 @@ export class ThirdPartiesService {
         const account = await this.repository.getThirdPartyAccountByUserId(decoded._id, service);
 
         if (account) {
-          const update = await this.repository.updateThirdPartyAccount(account.userId, service, data);
+          const update = await this.repository.updateThirdPartyAccount(decoded._id, service, data);
 
           success = update.acknowledged && update.matchedCount > 0;
         } else {

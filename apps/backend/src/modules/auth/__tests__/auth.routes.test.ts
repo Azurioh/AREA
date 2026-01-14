@@ -5,6 +5,7 @@ import build from '@/app';
 import { closeDiscordBot } from '@/config/discord-bot';
 import { MongoCollections } from '@/enums/mongo-collection';
 import { removeValueFromDatabase } from '@/utils/db-cleaner';
+import authRoutes from '../auth.routes';
 
 const profiles = [
   {
@@ -35,6 +36,17 @@ describe('Auth Routes', () => {
     await closeDiscordBot();
   });
 
+  describe('Route registration', () => {
+    it('should throw error when MongoDB is not initialized', async () => {
+      const mockApp = {
+        mongo: { db: null },
+        route: jest.fn(),
+      } as unknown as FastifyInstance;
+
+      await expect(authRoutes(mockApp)).rejects.toThrow('MongoDB not initialized');
+    });
+  });
+
   describe('POST /auth/v1/register', () => {
     it('should register a new user with valid data', async () => {
       const response = await request(app.server)
@@ -48,6 +60,7 @@ describe('Auth Routes', () => {
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('accessToken');
+      expect(response.headers['set-cookie']).toBeDefined();
     });
 
     it('should return 400 for invalid email', async () => {
@@ -62,6 +75,7 @@ describe('Auth Routes', () => {
 
       expect(response.status).toBe(400);
     });
+
     afterAll(async () => {
       if (!app.mongo?.db) {
         return;
@@ -72,6 +86,7 @@ describe('Auth Routes', () => {
 
   describe('POST /auth/v1/login', () => {
     it('should login user with valid credentials', async () => {
+      // Create user first
       await request(app.server).post('/auth/v1/register').set({ 'Content-Type': 'application/json' }).send({
         name: profiles[1]!.name,
         email: profiles[1]!.email,
@@ -90,11 +105,46 @@ describe('Auth Routes', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('accessToken');
     });
+
     afterAll(async () => {
       if (!app.mongo?.db) {
         return;
       }
       await removeValueFromDatabase(app.mongo.db, MongoCollections.USERS, 'email', profiles[1]!.email);
+    });
+  });
+
+  describe('POST /auth/v1/refresh', () => {
+    it('should refresh token with valid cookie', async () => {
+      // 1. Register a user to get tokens
+      const registerResponse = await request(app.server)
+        .post('/auth/v1/register')
+        .set({ 'Content-Type': 'application/json' })
+        .send({
+          name: 'Refresh User',
+          email: `refresh-${v4()}@example.com`,
+          password: 'password123',
+        });
+
+      const cookies = registerResponse.headers['set-cookie'];
+      expect(cookies).toBeDefined();
+
+      // 2. Use the cookie to refresh token
+      const response = await request(app.server).post('/auth/v1/refresh').set('Cookie', cookies);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('accessToken');
+
+      // Cleanup
+      if (app.mongo?.db) {
+        await removeValueFromDatabase(app.mongo.db, MongoCollections.USERS, 'email', `refresh-${v4()}@example.com`);
+      }
+    });
+
+    it('should fail if no refresh token cookie', async () => {
+      const response = await request(app.server).post('/auth/v1/refresh');
+
+      expect(response.status).toBe(401);
     });
   });
 });
