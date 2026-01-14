@@ -13,6 +13,7 @@ import { useFilter } from '@/features/workflows/hooks/useFilter';
 import { useListWorkflows } from '@/features/workflows/hooks/useListWorkflows';
 import { useToggleExecutionState } from '@/shared/hooks/useToggleExecutionState';
 import { MoveRight } from 'lucide-react';
+import { formatActionReactionName } from '@/lib/utils';
 
 const WorkflowPage: React.FC = () => {
   const navigate = useNavigate();
@@ -80,12 +81,16 @@ const WorkflowPage: React.FC = () => {
                   filteredWorkflows.map((wf) => (
                     <WorkflowsCard
                       key={wf._id}
-                      title={wf.action?.service + ' | ' + wf.reaction?.service || 'Unknown'}
+                      title={
+                        formatActionReactionName(wf.action?.service) +
+                          ' | ' +
+                          formatActionReactionName(wf.reaction?.service) || 'Unknown'
+                      }
                       Description={
                         <span className="inline-flex items-center gap-2">
-                          <span>{wf.action?.name || 'Unknown action'}</span>
+                          <span>{formatActionReactionName(wf.action?.name) || 'Unknown action'}</span>
                           <MoveRight className="h-4 w-4 text-muted-foreground" />
-                          <span>{wf.reaction?.name || 'Unknown reaction'}</span>
+                          <span>{formatActionReactionName(wf.reaction?.name) || 'Unknown reaction'}</span>
                         </span>
                       }
                       Value={wf.numberOfExecution}

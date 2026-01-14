@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
+import type React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideBar from '@/components/SideBar';
 import {
@@ -16,15 +16,11 @@ import { useActionReaction } from '@/features/workflows/context/ActionReactionCo
 import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceActions } from '@/features/workflows/hooks/useServiceActions';
+import { formatActionReactionName } from '@/lib/utils';
 
 const ChooseAction: React.FC = () => {
-  const { services, fetchServices } = useListServices();
+  const { services } = useListServices();
   const servicesStatus = useServicesClient();
-
-  React.useEffect(() => {
-    fetchServices();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const {
     serviceActions,
@@ -79,7 +75,12 @@ const ChooseAction: React.FC = () => {
                         <div className="text-center py-8 text-muted-foreground">No actions available</div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                          {(serviceActions[service] as { name: string; description?: string }[]).map((action) => {
+                          {(
+                            serviceActions[service] as {
+                              name: string;
+                              description?: string;
+                            }[]
+                          ).map((action) => {
                             const lowerName = service.toLowerCase();
                             const logoUrl = `${import.meta.env.VITE_BASE_IMAGE_URL}/${lowerName}.png`;
 
@@ -107,7 +108,7 @@ const ChooseAction: React.FC = () => {
                                 />
 
                                 <div className="text-left">
-                                  <div className="font-semibold">{action.name}</div>
+                                  <div className="font-semibold">{formatActionReactionName(action.name)}</div>
                                   {action.description && (
                                     <div className="text-xs opacity-80 mt-1 whitespace-normal break-words">
                                       {action.description}
@@ -150,7 +151,7 @@ const ChooseAction: React.FC = () => {
               <Card className="border-primary overflow-hidden">
                 <CardHeader className="bg-primary">
                   <CardTitle className="text-lg text-card text-center">
-                    {selectedAction.action}
+                    {formatActionReactionName(selectedAction.action)}
                     {loadingParams && <span className="text-sm font-normal ml-2">(Loading...)</span>}
                   </CardTitle>
                 </CardHeader>
@@ -192,7 +193,12 @@ const ChooseAction: React.FC = () => {
                                   <DropdownMenuContent className="w-full">
                                     {(param.options && param.options.length > 0
                                       ? param.options
-                                      : [{ name: 'No options available', id: 'none' }]
+                                      : [
+                                          {
+                                            name: 'No options available',
+                                            id: 'none',
+                                          },
+                                        ]
                                     ).map((opt: ParamOption) => (
                                       <DropdownMenuItem
                                         key={opt.id}
