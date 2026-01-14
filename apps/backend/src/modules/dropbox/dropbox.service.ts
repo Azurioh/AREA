@@ -1,12 +1,12 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { CreateAction } from '@area/shared/schemas/actions-reactions.schema';
+import type { ThirdPartiesService } from '@/modules/third-parties';
 import type { ActionPayload } from '@/types/action-reaction';
 import type { DropboxResource } from '@/types/dropbox';
 import type { DropboxAccount, DropboxAuthorizationResponse } from '@/types/third-parties';
 import ApiError from '@/utils/api-error';
 import { decryptString, encryptString } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
-import type { ThirdPartiesService } from '../third-parties';
 import type { DropboxRepository } from './dropbox.repository';
 
 /**

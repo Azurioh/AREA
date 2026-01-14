@@ -40,11 +40,7 @@ export class TwitchStreamOnlineAction extends Action {
     const streamerParam = this.params[0];
 
     if (streamerParam?.type === 'select') {
-      const streamers = await this.twitchService.listFollowedChannels(userId);
-      streamerParam.options = streamers.map((streamer) => ({
-        name: streamer.name,
-        id: streamer.id,
-      }));
+      streamerParam.options = await this.twitchService.listFollowedChannels(userId);
     }
     return Promise.resolve();
   }

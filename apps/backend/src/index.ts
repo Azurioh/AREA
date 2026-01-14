@@ -8,7 +8,6 @@ import build from './app';
  * @description Starts the server.
  */
 async function start(): Promise<void> {
-  // Initialize environment variables first
   const environment = initEnvironment();
 
   const app = await build();

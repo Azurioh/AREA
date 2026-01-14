@@ -1,14 +1,14 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-reactions.schema';
 import { Reaction } from '@/integrations';
+import type { PollingService } from '@/modules/polling/polling.service';
+import type { ThirdPartiesService } from '@/modules/third-parties';
 import type { ActionPayload } from '@/types/action-reaction';
 import type { SpotifyPlaylist } from '@/types/spotify';
 import type { SpotifyAccount, SpotifyAuthorizationResponse } from '@/types/third-parties';
 import ApiError from '@/utils/api-error';
 import { decryptString, encryptString } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
-import type { PollingService } from '../polling/polling.service';
-import type { ThirdPartiesService } from '../third-parties';
 
 /**
  * @class SpotifyService
