@@ -8,5 +8,6 @@
       "@area/shared": ["../../packages/shared/dist"],
       "@area/shared/*": ["../../packages/shared/dist/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "**/__tests__"]
 }

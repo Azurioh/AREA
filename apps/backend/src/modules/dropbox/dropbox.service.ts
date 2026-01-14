@@ -1,6 +1,7 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { CreateAction } from '@area/shared/schemas/actions-reactions.schema';
 import type { ActionPayload } from '@/types/action-reaction';
+import type { DropboxResource } from '@/types/dropbox';
 import type { DropboxAccount, DropboxAuthorizationResponse } from '@/types/third-parties';
 import ApiError from '@/utils/api-error';
 import { decryptString, encryptString } from '@/utils/crypt';
