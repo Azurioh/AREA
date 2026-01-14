@@ -16,6 +16,7 @@ import { useActionReaction } from '@/features/workflows/context/ActionReactionCo
 import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceActions } from '@/features/workflows/hooks/useServiceActions';
+import { AppRoutesPaths } from '@/enums/routes';
 
 const ChooseAction: React.FC = () => {
   const { services, fetchServices } = useListServices();
@@ -66,9 +67,9 @@ const ChooseAction: React.FC = () => {
                     transition={{ duration: 0.3 }}
                     className="relative"
                   >
-                    <Card className="bg-primary text-center text-card overflow-hidden">
+                    <Card className="bg-primary text-center text-text-white overflow-hidden">
                       <CardHeader className="p-2">
-                        <CardTitle className="text-2xl leading-tight">{service}</CardTitle>
+                        <CardTitle className="text-2xl text-text-white">{service}</CardTitle>
                       </CardHeader>
                     </Card>
 
@@ -94,7 +95,7 @@ const ChooseAction: React.FC = () => {
                                 className="w-full justify-start h-auto py-3 relative overflow-hidden"
                                 onClick={() => {
                                   if (!isServiceConnected(service)) {
-                                    navigate('/connections');
+                                    navigate(AppRoutesPaths.CONNECTIONS);
                                     return;
                                   }
                                   selectAction(service, action.name);
@@ -149,7 +150,7 @@ const ChooseAction: React.FC = () => {
             >
               <Card className="border-primary overflow-hidden">
                 <CardHeader className="bg-primary">
-                  <CardTitle className="text-lg text-card text-center">
+                  <CardTitle className="text-lg text-text-white text-center">
                     {selectedAction.action}
                     {loadingParams && <span className="text-sm font-normal ml-2">(Loading...)</span>}
                   </CardTitle>
@@ -216,7 +217,7 @@ const ChooseAction: React.FC = () => {
 
                       <div className="pt-4 flex gap-3">
                         <Button
-                          className="flex-1"
+                          className="flex-1 text-text-white"
                           onClick={() => {
                             if (!selectedAction) {
                               return;
@@ -241,7 +242,7 @@ const ChooseAction: React.FC = () => {
                             );
 
                             setSelectedAction(null);
-                            navigate('/create');
+                            navigate(AppRoutesPaths.CREATE);
                           }}
                         >
                           Save Configuration
