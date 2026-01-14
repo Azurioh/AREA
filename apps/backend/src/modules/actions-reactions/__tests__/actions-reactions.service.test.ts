@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb';
+import { ServiceManager } from '@/integrations';
 import type { DiscordService } from '@/modules/discord';
 import type { DropboxService } from '@/modules/dropbox';
 import type { GithubService } from '@/modules/github';
@@ -59,6 +60,31 @@ describe('ActionsReactionsService', () => {
       createAction: jest.fn().mockResolvedValue('twitch/trigger/789'),
       createReaction: jest.fn().mockResolvedValue(true),
     } as unknown as jest.Mocked<TwitchService>;
+
+    jest.spyOn(ServiceManager.instance, 'get').mockImplementation((serviceName) => {
+      if (serviceName === 'github')
+        return {
+          name: 'github',
+          actions: [{ name: 'star_repo', params: [] }],
+          reactions: [],
+        };
+      if (serviceName === 'discord')
+        return {
+          name: 'discord',
+          actions: [],
+          reactions: [{ name: 'send_message', params: [] }],
+        };
+      if (serviceName === 'unsplash')
+        return { name: 'unsplash', actions: [{ name: 'random', params: [] }], reactions: [] };
+      if (serviceName === 'dropbox')
+        return { name: 'dropbox', actions: [{ name: 'upload_file', params: [] }], reactions: [] };
+      if (serviceName === 'twitch')
+        return { name: 'twitch', actions: [{ name: 'stream_online', params: [] }], reactions: [] };
+      if (serviceName === 'spotify')
+        return { name: 'spotify', actions: [{ name: 'listening_to_artist', params: [] }], reactions: [] };
+
+      return undefined;
+    });
 
     service = new ActionsReactionsService(
       mockRepository,
@@ -200,8 +226,8 @@ describe('ActionsReactionsService', () => {
 
   describe('createActionReaction', () => {
     it('should create action reaction with trigger', async () => {
-      const action = { service: 'github', type: 'star_repo', params: {} };
-      const reaction = { service: 'discord', type: 'send_message', params: {} };
+      const action = { service: 'github', name: 'star_repo', params: {} };
+      const reaction = { service: 'discord', name: 'send_message', params: {} };
 
       await service.createActionReaction('user-123', action, reaction);
 
@@ -216,6 +242,160 @@ describe('ActionsReactionsService', () => {
           executionState: true,
         }),
       );
+    });
+    it('should throw NOT_FOUND if service not found', async () => {
+      const action = { service: 'unknown', name: 'test', params: {} };
+      const reaction = { service: 'discord', name: 'send_message', params: {} };
+
+      await expect(service.createActionReaction('user-123', action as any, reaction as any)).rejects.toThrow(
+        'Service not found',
+      );
+    });
+
+    it('should throw NOT_FOUND if action not found in service', async () => {
+      const action = { service: 'github', name: 'unknown', params: {} };
+      const reaction = { service: 'discord', name: 'send_message', params: {} };
+
+      // Mock service returning valid service but no matching action
+      jest.spyOn(ServiceManager.instance, 'get').mockImplementation((serviceName) => {
+        if (serviceName === 'github') return { name: 'github', actions: [], reactions: [] };
+        if (serviceName === 'discord') return { name: 'discord', actions: [], reactions: [] };
+        return undefined;
+      });
+
+      await expect(service.createActionReaction('user-123', action as any, reaction as any)).rejects.toThrow(
+        'Action not found',
+      );
+    });
+
+    it('should throw NOT_FOUND if reaction not found in service', async () => {
+      const action = { service: 'github', name: 'star_repo', params: {} };
+      const reaction = { service: 'discord', name: 'unknown', params: {} };
+
+      jest.spyOn(ServiceManager.instance, 'get').mockImplementation((serviceName) => {
+        if (serviceName === 'github')
+          return { name: 'github', actions: [{ name: 'star_repo', params: [] }], reactions: [] };
+        if (serviceName === 'discord') return { name: 'discord', actions: [], reactions: [] };
+        return undefined;
+      });
+
+      await expect(service.createActionReaction('user-123', action as any, reaction as any)).rejects.toThrow(
+        'Reaction not found',
+      );
+    });
+
+    it('should throw BAD_REQUEST if params are invalid (not object)', async () => {
+      const action = { service: 'github', name: 'star_repo', params: 'invalid' };
+      const reaction = { service: 'discord', name: 'send_message', params: {} };
+
+      jest.spyOn(ServiceManager.instance, 'get').mockImplementation((serviceName) => {
+        if (serviceName === 'github')
+          return { name: 'github', actions: [{ name: 'star_repo', params: [] }], reactions: [] };
+        if (serviceName === 'discord')
+          return { name: 'discord', actions: [], reactions: [{ name: 'send_message', params: [] }] };
+        return undefined;
+      });
+
+      await expect(service.createActionReaction('user-123', action as any, reaction as any)).rejects.toThrow(
+        'Action is invalid',
+      );
+    });
+
+    it('should throw BAD_REQUEST if param key missing', async () => {
+      const action = { service: 'github', name: 'star_repo', params: {} }; // missing required param 'repo'
+      const reaction = { service: 'discord', name: 'send_message', params: {} };
+
+      jest.spyOn(ServiceManager.instance, 'get').mockImplementation((serviceName) => {
+        if (serviceName === 'github')
+          return {
+            name: 'github',
+            actions: [{ name: 'star_repo', params: [{ key: 'repo', type: 'string', label: 'Repo' }] }],
+            reactions: [],
+          };
+        if (serviceName === 'discord')
+          return { name: 'discord', actions: [], reactions: [{ name: 'send_message', params: [] }] };
+        return undefined;
+      });
+
+      await expect(service.createActionReaction('user-123', action as any, reaction as any)).rejects.toThrow(
+        'Action is invalid',
+      );
+    });
+
+    it('should allow valid select param input', async () => {
+      const action = { service: 'github', name: 'star_repo', params: { repo: { id: '1', name: 'test' } } };
+      const reaction = { service: 'discord', name: 'send_message', params: {} };
+
+      jest.spyOn(ServiceManager.instance, 'get').mockImplementation((serviceName) => {
+        if (serviceName === 'github')
+          return {
+            name: 'github',
+            actions: [{ name: 'star_repo', params: [{ key: 'repo', type: 'select', label: 'Repo', options: [] }] }],
+            reactions: [],
+          };
+        if (serviceName === 'discord')
+          return { name: 'discord', actions: [], reactions: [{ name: 'send_message', params: [] }] };
+        return undefined;
+      });
+
+      await expect(service.createActionReaction('user-123', action as any, reaction as any)).resolves.not.toThrow();
+    });
+
+    it('should skip input params validation', async () => {
+      const action = { service: 'github', name: 'star_repo', params: { repo: 'some input' } };
+      const reaction = { service: 'discord', name: 'send_message', params: {} };
+
+      jest.spyOn(ServiceManager.instance, 'get').mockImplementation((serviceName) => {
+        if (serviceName === 'github')
+          return {
+            name: 'github',
+            actions: [{ name: 'star_repo', params: [{ key: 'repo', type: 'input', label: 'Repo' }] }],
+            reactions: [],
+          };
+        if (serviceName === 'discord')
+          return { name: 'discord', actions: [], reactions: [{ name: 'send_message', params: [] }] };
+        return undefined;
+      });
+
+      await expect(service.createActionReaction('user-123', action as any, reaction as any)).resolves.not.toThrow();
+    });
+
+    it('should throw BAD_REQUEST if select param is missing id or name', async () => {
+      const action = { service: 'github', name: 'star_repo', params: { repo: { id: '1' } } }; // missing name
+      const reaction = { service: 'discord', name: 'send_message', params: {} };
+
+      jest.spyOn(ServiceManager.instance, 'get').mockImplementation((serviceName) => {
+        if (serviceName === 'github')
+          return {
+            name: 'github',
+            actions: [{ name: 'star_repo', params: [{ key: 'repo', type: 'select', label: 'Repo', options: [] }] }],
+            reactions: [],
+          };
+        if (serviceName === 'discord')
+          return { name: 'discord', actions: [], reactions: [{ name: 'send_message', params: [] }] };
+        return undefined;
+      });
+
+      await expect(service.createActionReaction('user-123', action as any, reaction as any)).rejects.toThrow(ApiError);
+    });
+
+    it('should throw BAD_REQUEST if param type is unknown', async () => {
+      const action = { service: 'github', name: 'star_repo', params: { repo: 'some val' } };
+      const reaction = { service: 'discord', name: 'send_message', params: {} };
+
+      jest.spyOn(ServiceManager.instance, 'get').mockImplementation((serviceName) => {
+        if (serviceName === 'github')
+          return {
+            name: 'github',
+            actions: [{ name: 'star_repo', params: [{ key: 'repo', type: 'unknown_type', label: 'Repo' } as any] }],
+            reactions: [],
+          };
+        if (serviceName === 'discord')
+          return { name: 'discord', actions: [], reactions: [{ name: 'send_message', params: [] }] };
+        return undefined;
+      });
+
+      await expect(service.createActionReaction('user-123', action as any, reaction as any)).rejects.toThrow(ApiError);
     });
   });
 
@@ -273,9 +453,12 @@ describe('ActionsReactionsService', () => {
         matchedCount: 0,
       } as any);
 
-      await expect(service.updateActionReactionExecutionStateById('507f1f77bcf86cd799439011', false)).rejects.toThrow(
-        ApiError,
-      );
+      try {
+        await service.updateActionReactionExecutionStateById('507f1f77bcf86cd799439011', false);
+        fail('Should have thrown ApiError');
+      } catch (error) {
+        expect(error).toBeInstanceOf(ApiError);
+      }
     });
 
     it('should throw NOT_FOUND when no document matches', async () => {

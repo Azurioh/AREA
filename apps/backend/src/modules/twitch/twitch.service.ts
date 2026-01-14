@@ -50,6 +50,9 @@ export class TwitchService {
         trigger = `${action.name}/${action.params.streamer.id}`;
         break;
       }
+      default: {
+        throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action not found');
+      }
     }
 
     const response = await fetch(`https://api.twitch.tv/helix/eventsub/subscriptions`, {

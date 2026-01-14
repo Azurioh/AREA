@@ -1,14 +1,14 @@
-import type { SpotifyAccount, SpotifyAuthorizationResponse } from '@/types/third-parties';
-import type { ThirdPartiesService } from '../third-parties';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import { environment } from '@/utils/environment';
+import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-reactions.schema';
+import { Reaction } from '@/integrations';
+import type { ActionPayload } from '@/types/action-reaction';
+import type { SpotifyPlaylist } from '@/types/spotify';
+import type { SpotifyAccount, SpotifyAuthorizationResponse } from '@/types/third-parties';
 import ApiError from '@/utils/api-error';
 import { decryptString, encryptString } from '@/utils/crypt';
-import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-reactions.schema';
-import type { ActionPayload } from '@/types/action-reaction';
-import { Reaction } from '@/integrations';
+import { environment } from '@/utils/environment';
 import type { PollingService } from '../polling/polling.service';
-import type { SpotifyPlaylist } from '@/types/spotify';
+import type { ThirdPartiesService } from '../third-parties';
 
 /**
  * @class SpotifyService
@@ -41,6 +41,10 @@ export class SpotifyService {
     switch (action.name) {
       case 'listening_to_artist': {
         trigger = await this.listeningToArtist(spotifyAccount, action);
+        break;
+      }
+      default: {
+        throw new ApiError(HttpStatusCode.NOT_FOUND, `Action not found: ${action.name}`);
       }
     }
     return trigger;
