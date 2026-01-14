@@ -18,7 +18,7 @@ const Privacy = lazy(() => import('@/features/privacy/routes/Privacy'));
 const Terms = lazy(() => import('@/features/terms/routes/Terms'));
 const AdminDashboardPage = lazy(() => import('@/features/adminDashboard/routes/AdminDashboardPage'));
 const ConnectionsPage = lazy(() => import('@/features/connections/routes/ConnectionsPage'));
-const OAuthCallbackPage = lazy(() => import('@/features/connections/routes/OAuthCallbackPage'));
+const OAuthCallbackPage = lazy(() => import('@/features/connections/routes/OAuthCallbackPag'));
 const WorkflowsPage = lazy(() => import('@/features/workflows/routes/WorkflowPage'));
 const CreateWorkflowsPage = lazy(() => import('@/features/workflows/routes/CreateWorkflowsPage'));
 const ChooseAction = lazy(() => import('@/features/workflows/routes/ChooseAction'));
