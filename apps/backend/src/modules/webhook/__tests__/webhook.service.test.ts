@@ -61,18 +61,21 @@ describe('WebhookService', () => {
 
   describe('spotifyCallback', () => {
     it('should call handleReactions with correct payload', async () => {
-      const event = 'track_played';
+      const userId = 'user123';
+      const event = 'listening_to_artist';
       const body: any = {
-        ids: 'track-123',
-        track: 'song',
+        artist: {
+          id: 'artist-123',
+          name: 'Artist Name',
+        },
       };
 
-      await webhookService.spotifyCallback(event, body);
+      await webhookService.spotifyCallback(userId, event, body);
 
       const expectedAction: ActionPayload = {
         service: 'spotify',
         name: event,
-        trigger: `${event}/${body.ids}`,
+        trigger: `${event}/${userId}/${body.artist.id}`,
         content: body,
       };
 
