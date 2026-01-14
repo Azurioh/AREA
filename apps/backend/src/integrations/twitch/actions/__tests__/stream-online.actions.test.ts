@@ -27,8 +27,8 @@ describe('TwitchStreamOnlineAction', () => {
       expect(streamerParam).toBeDefined();
       if (streamerParam?.type === 'select') {
         expect(streamerParam.options).toEqual([
-          { label: 'Streamer 1', value: '1' },
-          { label: 'Streamer 2', value: '2' },
+          { name: 'Streamer 1', id: '1' },
+          { name: 'Streamer 2', id: '2' },
         ]);
       }
       expect(mockTwitchService.listFollowedChannels).toHaveBeenCalledWith('user-id');
