@@ -1,10 +1,11 @@
 import fastifyCors from '@fastify/cors';
 import type { FastifyInstance } from 'fastify';
-import { environment } from '@/utils/environment';
-
-const allowedOrigins = (environment.CORS_ORIGINS ?? '').split(',').filter(Boolean);
+import { getEnvironment } from '@/utils/environment';
 
 export const setupCors = (app: FastifyInstance): void => {
+  const environment = getEnvironment();
+  const allowedOrigins = (environment.CORS_ORIGINS ?? '').split(',').filter(Boolean);
+
   app.register(fastifyCors, {
     origin: allowedOrigins,
     credentials: true,

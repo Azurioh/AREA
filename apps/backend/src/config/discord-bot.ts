@@ -1,9 +1,10 @@
 import { Client, Events, GatewayIntentBits, type Message, type OmitPartialGroupDMChannel } from 'discord.js';
-import { environment } from '@/utils/environment';
+import { getEnvironment } from '@/utils/environment';
 
 export let discordClient: Client | null = null;
 
 export const setupDiscordBot = async () => {
+  const environment = getEnvironment();
   const client = new Client({
     intents: [
       GatewayIntentBits.Guilds,
