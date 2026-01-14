@@ -15,11 +15,11 @@ jest.mock('discord.js', () => {
 });
 
 jest.mock('@/utils/environment', () => ({
-  environment: {
+  getEnvironment: jest.fn(() => ({
     DISCORD_CLIENT_ID: 'client-id',
     DISCORD_BOT_TOKEN: 'bot-token',
     BASE_API_URL: 'http://localhost:3000',
-  },
+  })),
 }));
 
 // Mock global fetch

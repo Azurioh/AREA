@@ -1,9 +1,9 @@
 import type { FastifyInstance } from 'fastify';
 
 jest.mock('@/utils/environment', () => ({
-  environment: {
+  getEnvironment: jest.fn(() => ({
     CORS_ORIGINS: 'http://localhost:3000,http://example.com',
-  },
+  })),
 }));
 
 describe('setupCors', () => {
@@ -30,9 +30,9 @@ describe('setupCors', () => {
   it('should handle undefined CORS_ORIGINS', () => {
     jest.resetModules();
     jest.doMock('@/utils/environment', () => ({
-      environment: {
+      getEnvironment: jest.fn(() => ({
         CORS_ORIGINS: undefined,
-      },
+      })),
     }));
 
     const { setupCors } = require('../cors');

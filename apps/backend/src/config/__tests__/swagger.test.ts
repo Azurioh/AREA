@@ -4,10 +4,10 @@ import type { FastifyInstance } from 'fastify';
 import { setupSwagger } from '../swagger';
 
 jest.mock('@/utils/environment', () => ({
-  environment: {
+  getEnvironment: jest.fn(() => ({
     BASE_API_URL: 'http://localhost:3000',
     NODE_ENV: 'development',
-  },
+  })),
 }));
 
 describe('setupSwagger', () => {
@@ -39,10 +39,10 @@ describe('setupSwagger', () => {
   it('should NOT register swagger in non-development environment', () => {
     jest.resetModules();
     jest.doMock('@/utils/environment', () => ({
-      environment: {
+      getEnvironment: jest.fn(() => ({
         BASE_API_URL: 'http://localhost:3000',
         NODE_ENV: 'production',
-      },
+      })),
     }));
     const { setupSwagger: setupSwaggerProd } = require('../swagger');
 
