@@ -9,7 +9,7 @@ import type { GithubService } from '@/modules/github';
 import type { ActionPayload, ActionReaction } from '@/types/action-reaction';
 import ApiError from '@/utils/api-error';
 import type { ActionsReactionsRepository } from './actions-reactions.repository';
-import type { WithId } from 'mongodb';
+import { ObjectId, type WithId } from 'mongodb';
 import type { SpotifyService } from '@/modules/spotify';
 import type { UnsplashService } from '@/modules/unsplash';
 import type { DropboxService } from '@/modules/dropbox';
@@ -23,12 +23,16 @@ import type { IAction, IReaction } from '@area/shared/types/services.types';
  */
 export class ActionsReactionsService {
   private readonly repository: ActionsReactionsRepository;
-  private actionsCreationFunc: Map<string, (userId: string, action: CreateAction) => Promise<string>>;
+  private actionsCreationFunc: Map<
+    string,
+    (actionReactionId: string, userId: string, action: CreateAction) => Promise<string>
+  >;
   private reactionsCreationFunc: Map<
     string,
     (userId: string, reaction: CreateReaction, action: ActionPayload) => Promise<boolean>
   >;
   private actionReceptionFunc: Map<string, (action: ActionPayload) => Promise<ActionPayload[]>>;
+  private actionDeletionFunc: Map<string, (actionReaction: WithId<ActionReaction>) => Promise<void>>;
 
   constructor(
     repository: ActionsReactionsRepository,
@@ -54,23 +58,28 @@ export class ActionsReactionsService {
       ['spotify', spotifyService.createReaction.bind(spotifyService)],
     ]);
     this.actionReceptionFunc = new Map([['dropbox', dropboxService.actionReception.bind(dropboxService)]]);
+    this.actionDeletionFunc = new Map([
+      ['spotify', spotifyService.deleteAction.bind(spotifyService)],
+      ['unsplash', unsplashService.deleteAction.bind(unsplashService)],
+    ]);
   }
 
   /**
    * @function handleActions
    * @description handle the redirection of action creation
    *
+   * @param {string} actionReactionId The id of the action reaction document
    * @param {string} userId The id of the user creating the action reaction
    * @param {CreateAction} action The information about the action to be created
    * @returns {Promise<string>} The trigger action to store in the db
    */
-  async handleActions(userId: string, action: CreateAction): Promise<string> {
+  async handleActions(actionReactionId: string, userId: string, action: CreateAction): Promise<string> {
     const actionCreationFunc = this.actionsCreationFunc.get(action.service);
 
     if (!actionCreationFunc) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, "Requested service doesn't exist");
     }
-    return await actionCreationFunc(userId, action);
+    return await actionCreationFunc(actionReactionId, userId, action);
   }
 
   /**
@@ -132,15 +141,15 @@ export class ActionsReactionsService {
       throw new ApiError(HttpStatusCode.BAD_REQUEST, `${type} is invalid`);
     }
     for (const param of params) {
-      if (Object.hasOwn((paramsToValidate as Object), param.key)) {
+      if (Object.hasOwn(paramsToValidate as Object, param.key)) {
         if (param.type === 'input') {
           continue;
         }
         if (
           param.type === 'select' &&
           typeof paramsToValidate[param.key] === 'object' &&
-          Object.hasOwn((paramsToValidate[param.key] as Object), 'name') &&
-          Object.hasOwn((paramsToValidate[param.key] as Object), 'id')
+          Object.hasOwn(paramsToValidate[param.key] as Object, 'name') &&
+          Object.hasOwn(paramsToValidate[param.key] as Object, 'id')
         ) {
           continue;
         }
@@ -191,9 +200,11 @@ export class ActionsReactionsService {
   async createActionReaction(userId: string, action: CreateAction, reaction: CreateReaction): Promise<void> {
     this.validateActionReaction(action, reaction);
 
-    const trigger = await this.handleActions(userId, action);
+    const actionReactionId = new ObjectId();
+    const trigger = await this.handleActions(actionReactionId.toString(), userId, action);
 
-    const data: ActionReaction = {
+    const data: WithId<ActionReaction> = {
+      _id: actionReactionId,
       userId: userId,
       action: action,
       reaction: reaction,
@@ -242,8 +253,8 @@ export class ActionsReactionsService {
    * @description Update the action reaction execution state by id
    *
    * @param {string} id The id of the action reaction
-   * @param {string} executionState The execution state of the action reaction
-   * @returns {Promise<void[]>} The matched actions reactions
+   * @param {boolean} executionState The execution state of the action reaction
+   * @returns {Promise<void[]>} Nothing
    */
   async updateActionReactionExecutionStateById(id: string, executionState: boolean): Promise<void> {
     const updated = await this.repository.updateActionReactionExecutionStateById(id, executionState);
@@ -256,6 +267,40 @@ export class ActionsReactionsService {
     }
 
     if (updated.matchedCount === 0) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action reaction not found');
+    }
+  }
+
+  /**
+   * @function deleteActionReactionById
+   * @description Delete the action reaction by id
+   *
+   * @param {string} id The id of the action reaction
+   * @returns {Promise<void>} Nothing
+   */
+  async deleteActionReactionById(id: string): Promise<void> {
+    const actionReaction = await this.repository.getActionsReactionsById(id);
+
+    if (!actionReaction) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action reaction not found');
+    }
+
+    const actionDeletionFunc = this.actionDeletionFunc.get(actionReaction.action.service);
+
+    if (actionDeletionFunc) {
+      await actionDeletionFunc(actionReaction);
+    }
+
+    const deleted = await this.repository.deleteActionReactionById(id);
+
+    if (!deleted.acknowledged) {
+      throw new ApiError(
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        'Failed to delete the action reaction, please contact an administrator',
+      );
+    }
+
+    if (deleted.deletedCount === 0) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'Action reaction not found');
     }
   }

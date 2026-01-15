@@ -53,4 +53,15 @@ export class PollingService {
   ): Promise<void> {
     await this.repository.updateUserToPoll(service, userId, type, data);
   }
+
+  /**
+   * @function deleteUserToPollByActionReactionId
+   * @description Delete a user being polled by action reaction id
+   *
+   * @param {string} actionReactionId The id of the action reaction
+   * @returns {Promise<void>} Nothing
+   */
+  async deleteUserToPollByActionReactionId(actionReactionId: string): Promise<void> {
+    await this.repository.deleteUserToPollByActionReactionId(actionReactionId);
+  }
 }

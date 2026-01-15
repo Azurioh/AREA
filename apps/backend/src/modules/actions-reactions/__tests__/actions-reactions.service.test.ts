@@ -45,10 +45,12 @@ describe('ActionsReactionsService', () => {
     mockSpotifyService = {
       createAction: jest.fn().mockResolvedValue('spotify/trigger/789'),
       createReaction: jest.fn().mockResolvedValue(true),
+      deleteAction: jest.fn(),
     } as unknown as jest.Mocked<SpotifyService>;
 
     mockUnsplashService = {
       createAction: jest.fn().mockResolvedValue('unsplash/trigger/abc'),
+      deleteAction: jest.fn(),
     } as unknown as jest.Mocked<UnsplashService>;
 
     mockDropboxService = {
@@ -100,39 +102,46 @@ describe('ActionsReactionsService', () => {
   describe('handleActions', () => {
     it('should call github service for github actions', async () => {
       const action = { service: 'github', type: 'star_repo', params: {} };
-      const result = await service.handleActions('user-123', action);
+      const actionReactionId = 'action-reaction-123';
+      const result = await service.handleActions(actionReactionId, 'user-123', action);
 
-      expect(mockGithubService.createAction).toHaveBeenCalledWith('user-123', action);
+      expect(mockGithubService.createAction).toHaveBeenCalledWith(actionReactionId, 'user-123', action);
       expect(result).toBe('github/trigger/123');
     });
 
     it('should call discord service for discord actions', async () => {
       const action = { service: 'discord', type: 'message', params: {} };
-      const result = await service.handleActions('user-123', action);
+      const actionReactionId = 'action-reaction-123';
+      const result = await service.handleActions(actionReactionId, 'user-123', action);
 
-      expect(mockDiscordService.createAction).toHaveBeenCalledWith('user-123', action);
+      expect(mockDiscordService.createAction).toHaveBeenCalledWith(actionReactionId, 'user-123', action);
       expect(result).toBe('discord/trigger/456');
     });
 
     it('should call spotify service for spotify actions', async () => {
       const action = { service: 'spotify', type: 'play', params: {} };
-      const result = await service.handleActions('user-123', action);
+      const actionReactionId = 'action-reaction-123';
+      const result = await service.handleActions(actionReactionId, 'user-123', action);
 
-      expect(mockSpotifyService.createAction).toHaveBeenCalledWith('user-123', action);
+      expect(mockSpotifyService.createAction).toHaveBeenCalledWith(actionReactionId, 'user-123', action);
       expect(result).toBe('spotify/trigger/789');
     });
 
     it('should call twitch service for twitch actions', async () => {
       const action = { service: 'twitch', type: 'stream_online', params: {} };
-      const result = await service.handleActions('user-123', action);
+      const actionReactionId = 'action-reaction-123';
+      const result = await service.handleActions(actionReactionId, 'user-123', action);
 
-      expect(mockTwitchService.createAction).toHaveBeenCalledWith('user-123', action);
+      expect(mockTwitchService.createAction).toHaveBeenCalledWith(actionReactionId, 'user-123', action);
       expect(result).toBe('twitch/trigger/789');
     });
     it('should throw NOT_FOUND for unknown service', async () => {
       const action = { service: 'unknown', type: 'test', params: {} };
+      const actionReactionId = 'action-reaction-123';
 
-      await expect(service.handleActions('user-123', action)).rejects.toThrow("Requested service doesn't exist");
+      await expect(service.handleActions(actionReactionId, 'user-123', action)).rejects.toThrow(
+        "Requested service doesn't exist",
+      );
     });
   });
 
