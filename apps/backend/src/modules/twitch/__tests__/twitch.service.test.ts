@@ -55,7 +55,11 @@ describe('TwitchService', () => {
         }) // token
         .mockResolvedValueOnce({ status: HttpStatusCode.ACCEPTED }); // subscription
 
-      const result = await service.createAction('user-id', { name: 'new_follower', params: {} } as any);
+      const actionReactionId = 'action-reaction-123';
+      const result = await service.createAction(actionReactionId, 'user-id', {
+        name: 'new_follower',
+        params: {},
+      } as any);
 
       expect(result).toBe('new_follower/123');
       expect(global.fetch).toHaveBeenCalledTimes(2);
@@ -70,7 +74,8 @@ describe('TwitchService', () => {
         }) // token
         .mockResolvedValueOnce({ status: HttpStatusCode.ACCEPTED }); // subscription
 
-      const result = await service.createAction('user-id', {
+      const actionReactionId = 'action-reaction-123';
+      const result = await service.createAction(actionReactionId, 'user-id', {
         name: 'stream_online',
         params: { streamer: { id: 'streamer-id' } },
       } as any);
@@ -87,14 +92,19 @@ describe('TwitchService', () => {
         })
         .mockResolvedValueOnce({ status: HttpStatusCode.BAD_REQUEST });
 
-      await expect(service.createAction('user-id', { name: 'new_follower', params: {} } as any)).rejects.toThrow(
-        ApiError,
-      );
+      const actionReactionId = 'action-reaction-123';
+      await expect(
+        service.createAction(actionReactionId, 'user-id', { name: 'new_follower', params: {} } as any),
+      ).rejects.toThrow(ApiError);
     });
 
     it('should throw NOT_FOUND for unknown action', async () => {
       mockThirdPartiesService.getThirdPartyAccountByUserId.mockResolvedValue({ id: '123' } as any);
-      await expect(service.createAction('user-id', { name: 'unknown', params: {} } as any)).rejects.toThrow(ApiError);
+
+      const actionReactionId = 'action-reaction-123';
+      await expect(
+        service.createAction(actionReactionId, 'user-id', { name: 'unknown', params: {} } as any),
+      ).rejects.toThrow(ApiError);
     });
   });
 
