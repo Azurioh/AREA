@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -15,7 +16,6 @@ import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,51 +36,28 @@ import com.example.area.ui.theme.AppTheme
 data class PasswordCriteria(
     val hasMinLength: Boolean,
     val hasDigit: Boolean,
-    val hasSymbol: Boolean
+    val hasSymbol: Boolean,
+    val hasUppercase: Boolean
 )
 
 fun checkPasswordCriteria(password: String): PasswordCriteria {
     return PasswordCriteria(
         hasMinLength = password.length >= 12,
         hasDigit = password.any { it.isDigit() },
-        hasSymbol = password.any { !it.isLetterOrDigit() }
+        hasSymbol = password.any { !it.isLetterOrDigit() },
+        hasUppercase = password.any { it.isUpperCase() }
     )
-}
-
-fun getPasswordStrength(criteria: PasswordCriteria): Float {
-    var strength = 0f
-    if (criteria.hasMinLength) strength += 0.33f
-    if (criteria.hasDigit) strength += 0.33f
-    if (criteria.hasSymbol) strength += 0.34f
-    return strength
 }
 
 @Composable
 fun PasswordStrengthIndicator(password: String) {
     val criteria = checkPasswordCriteria(password)
-    val strength = getPasswordStrength(criteria)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 32.dp, vertical = 8.dp)
     ) {
-        LinearProgressIndicator(
-            progress = { strength },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp)
-                .clip(RoundedCornerShape(4.dp)),
-            color = when {
-                strength < 0.5f -> Color(0xFFE74C3C)
-                strength < 1f -> Color(0xFFF39C12)
-                else -> Color(0xFF27AE60)
-            },
-            trackColor = AppTheme.colors.textPrimary.copy(alpha = 0.1f)
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
         PasswordCriteriaItem(
             text = "At least 12 characters",
             isMet = criteria.hasMinLength
@@ -93,6 +69,10 @@ fun PasswordStrengthIndicator(password: String) {
         PasswordCriteriaItem(
             text = "Contains a symbol",
             isMet = criteria.hasSymbol
+        )
+        PasswordCriteriaItem(
+            text = "Contains an uppercase letter",
+            isMet = criteria.hasUppercase
         )
     }
 }
@@ -134,8 +114,9 @@ fun RegisterCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
         modifier = Modifier
-            .padding(12.dp)
-            .size(width = 350.dp, height = 750.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(horizontal = 20.dp, vertical = 12.dp)
     ) {
         Text(
             text = "Create Account",
@@ -212,7 +193,9 @@ fun RegisterCard(
             color2 = Accent,
             fontSize = 14.sp,
             onText2Click = onNavigateToLogin,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp)
         )
     }
 }
