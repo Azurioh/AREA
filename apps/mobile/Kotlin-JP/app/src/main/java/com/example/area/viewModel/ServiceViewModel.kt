@@ -219,4 +219,20 @@ class ServiceViewModel : ViewModel() {
             }
         }
     }
+
+    fun deleteActionReaction(
+        workflowId: String,
+        onSuccess: () -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                RetrofitInstance.api.deleteActionReaction(workflowId)
+                onSuccess()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onError(e.message ?: "Unknown error")
+            }
+        }
+    }
 }

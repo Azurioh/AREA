@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.area.components.DisplayCard
+import com.example.area.components.DeleteConfirmationDialog
 import com.example.area.data.models.ActionReactionDisplay
 import com.example.area.ui.theme.Accent
 import com.example.area.ui.theme.AppTheme
@@ -58,6 +59,7 @@ fun HomePage(
     var selectedReactionService by remember { mutableStateOf("All") }
     var expandedAction by remember { mutableStateOf(false) }
     var expandedReaction by remember { mutableStateOf(false) }
+    var workflowToDelete by remember { mutableStateOf<ActionReactionDisplay?>(null) }
 
     val services = remember(aboutJson) {
         val servicesList = aboutJson?.server?.services?.map { it.name.capitalize() } ?: emptyList()
@@ -275,8 +277,43 @@ fun HomePage(
                         Toast.makeText(context, "Error: Workflow ID is null", Toast.LENGTH_LONG).show()
                     }
                 },
-                onMenuClick = {}
+                onMenuClick = {
+                    workflowToDelete = actionReaction
+                }
             )
         }
+    }
+
+    workflowToDelete?.let { workflow ->
+        val title = "${workflow.action.name.replace('_', ' ', ignoreCase = true).capitalize()} → ${workflow.reaction.name.replace('_', ' ', ignoreCase = true).capitalize()}"
+
+        DeleteConfirmationDialog(
+            title = title,
+            onDismiss = {
+                workflowToDelete = null
+            },
+            onConfirm = {
+                val workflowId = workflow.id
+                if (workflowId != null) {
+                    serviceViewModel.deleteActionReaction(
+                        workflowId = workflowId,
+                        onSuccess = {
+                            actionsReactions = actionsReactions.filter { it.id != workflowId }
+                            Toast.makeText(context, "Action-reaction deleted", Toast.LENGTH_SHORT).show()
+                            workflowToDelete = null
+                        },
+                        onError = { error ->
+                            if (!error.contains("401") && !error.contains("Unauthorized")) {
+                                Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                            }
+                            workflowToDelete = null
+                        }
+                    )
+                } else {
+                    Toast.makeText(context, "Error: Workflow ID is null", Toast.LENGTH_LONG).show()
+                    workflowToDelete = null
+                }
+            }
+        )
     }
 }

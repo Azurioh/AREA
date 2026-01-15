@@ -15,6 +15,7 @@ import com.example.area.data.models.StateService
 import com.example.area.data.models.UserInfo
 import com.example.area.data.models.ReturnedValue
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -82,4 +83,7 @@ interface ApiService {
 
     @PATCH("users/v1/me")
     suspend fun updateUserInfo(@Body request: UserInfo)
+
+    @DELETE("actions-reactions/v1/{id}")
+    suspend fun deleteActionReaction(@Path("id") id: String)
 }
