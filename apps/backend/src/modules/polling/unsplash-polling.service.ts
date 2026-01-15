@@ -1,6 +1,7 @@
 import type { Polling, UnsplashDailyRandomImage } from '@/types/polling';
 import type { PollingRepository } from './polling.repository';
 import { environment } from '@/utils/environment';
+import type { UnsplashWebhookPayload } from '@/types/webhook';
 
 /**
  * @class UnsplashPollingService
@@ -49,15 +50,27 @@ export class UnsplashPollingService {
         },
       };
 
-      await fetch(`${environment.BASE_API_URL}/webhook/v1/unsplash`, {
-        method: 'POST',
-        headers: {
-          'x-unsplash-event': 'daily_random_image',
-          'x-user-id': user.userId,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      await this.sendWebhook(user.userId, 'daily_random_image', payload);
     }
+  }
+
+  /**
+   * @function sendWebhook
+   * @description Send the webhook to the API.
+   *
+   * @param {string} userId - The id of the user.
+   * @param {string} event - The event name.
+   * @param {UnsplashWebhookPayload} payload - The payload to send.
+   */
+  private async sendWebhook(userId: string, event: string, payload: UnsplashWebhookPayload) {
+    await fetch(`${environment.BASE_API_URL}/webhook/v1/unsplash`, {
+      method: 'POST',
+      headers: {
+        'x-unsplash-event': event,
+        'Content-Type': 'application/json',
+        'x-user-id': userId,
+      },
+      body: JSON.stringify(payload),
+    });
   }
 }

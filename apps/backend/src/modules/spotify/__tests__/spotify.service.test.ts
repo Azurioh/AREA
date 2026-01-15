@@ -89,7 +89,10 @@ describe('SpotifyService', () => {
         service: 'spotify',
         userId: 'user-id',
         type: 'listening_to_artist',
-        trigger: 'artist-id',
+        trigger: {
+          artistId: 'artist-id',
+          lastTrackId: null,
+        },
       });
     });
 
