@@ -19,8 +19,8 @@ export default async (app: FastifyInstance) => {
   }
 
   const userRepository = new UsersRepository(app.mongo.db);
-  const authRepository = new AuthRepository(app.mongo.db);
-  const service = new AuthService(userRepository, authRepository);
+  const repository = new AuthRepository(app.mongo.db);
+  const service = new AuthService(userRepository, repository);
   const controller = new AuthController(service);
 
   app.route({

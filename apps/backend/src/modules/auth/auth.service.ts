@@ -18,11 +18,11 @@ import type { AuthRepository } from './auth.repository';
  */
 export class AuthService {
   private userRepository: UsersRepository;
-  private authRepository: AuthRepository;
+  private repository: AuthRepository;
 
-  constructor(userRepository: UsersRepository, authRepository: AuthRepository) {
+  constructor(userRepository: UsersRepository, repository: AuthRepository) {
     this.userRepository = userRepository;
-    this.authRepository = authRepository;
+    this.repository = repository;
   }
 
   /**
@@ -125,12 +125,12 @@ export class AuthService {
 
   async storeRefreshTokenInDatabase(userId: string, refreshToken: string, expiresAt: Date): Promise<void> {
     const hashdedToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
-    await this.authRepository.storeRefreshToken(userId, hashdedToken, expiresAt);
+    await this.repository.storeRefreshToken(userId, hashdedToken, expiresAt);
   }
 
   async checkIfRefreshTokenIsValid(refreshToken: string): Promise<boolean> {
     const hashedToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
-    return await this.authRepository.isRefreshTokenValid(hashedToken);
+    return await this.repository.isRefreshTokenValid(hashedToken);
   }
 
   async invalidateAccessToken(request: FastifyRequest, accessToken?: string): Promise<void> {
@@ -147,7 +147,7 @@ export class AuthService {
 
   async invalidateRefreshToken(refreshToken: string): Promise<void> {
     const hashedToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
-    await this.authRepository.deleteRefreshToken(hashedToken);
+    await this.repository.deleteRefreshToken(hashedToken);
   }
 
   async sendTokensToUser(

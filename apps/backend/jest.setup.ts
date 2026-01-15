@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: path.resolve(__dirname, '.env.test') });
 
-// Create a test environment object
 const PORT = randomInt(3000, 8000);
 const testEnvironmentConfig = {
   NODE_ENV: 'test',
@@ -50,12 +49,10 @@ const testEnvironmentConfig = {
   X_CODE_VERIFIER: 'challenge',
 };
 
-// Mock the environment module, exposing actual functions + test environment
 jest.mock('./src/utils/environment', () => ({
   environment: testEnvironmentConfig,
 }));
 
-// Mock Redis client to avoid connection timeouts in tests
 const mockRedisStore = new Map<string, string>();
 const mockRedisClient = {
   get: jest.fn((key: string) => Promise.resolve(mockRedisStore.get(key) || null)),
@@ -75,7 +72,6 @@ const mockRedisClient = {
   disconnect: jest.fn(() => Promise.resolve()),
 };
 
-// Mock @fastify/redis to use in-memory store
 jest.mock('@fastify/redis', () => {
   const fp = require('fastify-plugin');
   return {
@@ -86,7 +82,6 @@ jest.mock('@fastify/redis', () => {
   };
 });
 
-// Clear mock Redis store before each test
 beforeEach(() => {
   mockRedisStore.clear();
   jest.clearAllMocks();

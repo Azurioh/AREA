@@ -15,7 +15,6 @@ jest.mock('@/utils/token', () => ({
   verifyToken: jest.fn(() => ({ _id: '507f1f77bcf86cd799439011' })),
 }));
 
-// Mock environment to allow mutation in tests
 jest.mock('@/utils/environment', () => ({
   environment: {
     NODE_ENV: 'test',
@@ -110,7 +109,6 @@ describe('AuthController', () => {
         mockReply as FastifyReply,
       );
 
-      // The controller delegates to sendTokensToUser which handles cookie settings
       expect(mockService.sendTokensToUser).toHaveBeenCalledWith(
         'encrypted_access_token_dev',
         'encrypted_refresh_token_dev',
@@ -180,7 +178,6 @@ describe('AuthController', () => {
 
       await controller.loginUser(mockRequest as FastifyRequest<{ Body: any }>, mockReply as FastifyReply);
 
-      // The controller delegates to sendTokensToUser which handles cookie settings
       expect(mockService.sendTokensToUser).toHaveBeenCalledWith(
         'encrypted_access_token_dev',
         'encrypted_refresh_token_dev',
