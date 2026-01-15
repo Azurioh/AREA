@@ -1,9 +1,8 @@
-import { HttpStatusCode } from '@area/shared/dist/enums/http-status';
+import { HttpStatusCode } from '@area/shared/enums/http-status';
 import { UserRoles } from '@area/shared/enums/user-enums';
 import type {
   LoginBody,
   LoginHeaders,
-  LogoutBody,
   RefreshTokenHeaders,
   RegisterBody,
   RegisterHeaders,
@@ -127,7 +126,7 @@ export class AuthController {
    * @param request - The Fastify request object.
    * @param reply - The Fastify reply object.
    */
-  async logout(request: FastifyRequest<{ Body: LogoutBody }>, reply: FastifyReply): Promise<void> {
+  async logout(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const accessToken: string | undefined = request.headers.authorization?.replace('Bearer ', '');
     const refreshToken: string | undefined = this.service.getRefreshToken(request);
 
