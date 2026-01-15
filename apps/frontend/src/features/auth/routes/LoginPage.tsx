@@ -28,13 +28,13 @@ const LoginPage: React.FC = () => {
         <Card className="p-8 space-y-6">
           <div className="text-center space-y-2">
             <h1 className="font-bold tracking-tighter text-primary">Welcome Back</h1>
-            <p className="font-text text-foreground">Sign in to your account to continue</p>
+            <p className="text-sm text-muted-foreground">Sign in to your account to continue</p>
           </div>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <label htmlFor="email" className="text-foreground">
+              <Label htmlFor="email" className="text-sm font-medium">
                 Email
-              </label>
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -42,12 +42,14 @@ const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                aria-required="true"
+                className="transition-all hover:border-primary"
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="password" className="text-foreground">
+              <Label htmlFor="password" className="text-sm font-medium">
                 Password
-              </label>
+              </Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -56,14 +58,17 @@ const LoginPage: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  aria-required="true"
+                  className="transition-all hover:border-primary"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   onClick={togglePasswordVisibility}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-inherit"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 hover:bg-muted hover:text-primary transition-colors"
                 >
-                  {showPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  {showPassword ? <Eye className="h-4 w-4" aria-hidden="true" /> : <EyeOff className="h-4 w-4" aria-hidden="true" />}
                 </Button>
               </div>
             </div>
@@ -78,19 +83,16 @@ const LoginPage: React.FC = () => {
                   Remember me
                 </Label>
               </div>
-              <a href="/" className="text-sm text-primary hover:underline">
-                Forgot password?
-              </a>
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading} aria-busy={isLoading}>
               {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
-            <div className="text-center text-sm text-foreground">
-              Don't have an account ?
-              <Link to={AppRoutesPaths.REGISTER} className="text-primary hover:underline">
+            <p className="text-center text-sm">
+              <span className="text-muted-foreground">Don't have an account?</span>{' '}
+              <Link to={AppRoutesPaths.REGISTER} className="font-medium text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                 Sign up
               </Link>
-            </div>
+            </p>
           </form>
         </Card>
       </motion.div>
