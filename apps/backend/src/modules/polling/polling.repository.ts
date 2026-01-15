@@ -1,6 +1,6 @@
 import { MongoCollections } from '@/enums/mongo-collection';
 import type { Polling, ServiceToPoll } from '@/types/polling';
-import type { WithId, Db, UpdateResult } from 'mongodb';
+import type { WithId, Db, UpdateResult, DeleteResult } from 'mongodb';
 
 /**
  * @class PollingRepository
@@ -58,5 +58,18 @@ export class PollingRepository {
     return await this.db
       .collection<Polling>(MongoCollections.POLLING)
       .updateOne({ service: service, userId: userId, type: type }, { $set: data });
+  }
+
+  /**
+   * @function deleteUserToPollByActionReactionId
+   * @description Delete a user that is being polled by action reaction id
+   *
+   * @param {string} actionReactionId The action reaction id
+   * @returns {Promise<DeleteResult>} The delete result
+   */
+  async deleteUserToPollByActionReactionId(actionReactionId: string): Promise<DeleteResult> {
+    return await this.db
+      .collection<Polling>(MongoCollections.POLLING)
+      .deleteOne({ actionReactionId: actionReactionId });
   }
 }
