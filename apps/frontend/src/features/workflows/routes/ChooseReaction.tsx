@@ -193,15 +193,14 @@ const ChooseReaction: React.FC = () => {
                                     Available variables: {returnedValues.map((v) => `\${${v.key}}`).join(', ')}
                                     <HoverCard>
                                       <HoverCardTrigger asChild>
-                                        <CircleQuestionMark className="inline-block ml-1 w-4 h-4 text-primary cursor-help" />
+                                        <CircleQuestionMark className="inline-block ml-1 w-4 h-4 text-primary cursor-pointer" />
                                       </HoverCardTrigger>
                                       <HoverCardContent className="w-80">
                                         <div className="space-y-2">
                                           <h4 className="text-sm font-semibold">How to use variables</h4>
                                           <p className="text-xs text-muted-foreground">
-                                            You can use variables from the action in your reaction parameters. Simply
-                                            type the variable name with the ${'{'}...{'}'} syntax in any input field.
-                                            For example: ${'{'}user.email{'}'} or ${'{'}message.content{'}'}
+                                            You can use variables from the action in your reaction parameters.
+                                            For example, if you have a variable called 'username', you can use it by typing : hello {'${username}'}.
                                           </p>
                                         </div>
                                       </HoverCardContent>
