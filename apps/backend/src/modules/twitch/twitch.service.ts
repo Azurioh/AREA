@@ -30,11 +30,12 @@ export class TwitchService {
    * @function createAction
    * @description Create an action with the unsplash service
    *
+   * @param {string} actionReactionId - The id of the action reaction document
    * @param {string} userId - The id of the user creating the action
    * @param {CreateAction} action - The information about the action
-   * @returns {Promise<boolean>} If the action was created
+   * @returns {Promise<string>} The trigger of the created action
    */
-  async createAction(userId: string, action: CreateAction): Promise<string> {
+  async createAction(_actionReactionId: string, userId: string, action: CreateAction): Promise<string> {
     const twitchAccount = await this.thirdPartiesService.getThirdPartyAccountByUserId<TwitchAccount>('twitch', userId);
     let subscription: TwitchEventSubscription | null = null;
     let trigger = '';
@@ -65,7 +66,7 @@ export class TwitchService {
       body: JSON.stringify(subscription),
     });
 
-    if (response.status !== HttpStatusCode.ACCEPTED) {
+    if (response.status !== HttpStatusCode.ACCEPTED && response.status !== HttpStatusCode.CONFLICT) {
       throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Error when creating Twitch subscription');
     }
     return trigger;
