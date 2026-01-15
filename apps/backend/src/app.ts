@@ -40,7 +40,7 @@ async function build(): Promise<FastifyInstance> {
   await setupDiscordBot();
   setupStaticFiles(app);
   setupPolling(app);
-  setupRedis(app);
+  await setupRedis(app);
 
   // Hooks
   setupAuthHook(app);

@@ -2,7 +2,7 @@ import ApiError from '@/utils/api-error';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 
-const checkAccessTokenBlackList = async (request: FastifyRequest, reply: FastifyReply) => {
+const checkAccessTokenBlackList = async (request: FastifyRequest, _reply: FastifyReply) => {
   const token = request.headers.authorization?.replace('Bearer ', '');
 
   if (!token) {
