@@ -8,6 +8,9 @@ import {
   updateActionReactionExecutionStateBodySchema,
   updateActionReactionExecutionStateParamsSchema,
   updateActionReactionExecutionStateResponseSchema,
+  deleteActionReactionParamsSchema,
+  deleteActionReactionResponseSchema,
+  type DeleteActionReactionParams,
 } from '@area/shared/schemas/actions-reactions.schema';
 import type { FastifyInstance } from 'fastify';
 import { verifyUserAccess } from '@/middlewares/auth';
@@ -91,8 +94,8 @@ export default async (app: FastifyInstance) => {
     method: 'PATCH',
     url: '/v1/:id/execution-state',
     schema: {
-      summary: 'Update workflow execution state',
-      description: 'Enable or disable a workflow execution state.',
+      summary: 'Update an action reaction execution state',
+      description: 'Enable or disable an action reaction execution state.',
       tags: ['Action reactions'],
       params: updateActionReactionExecutionStateParamsSchema,
       body: updateActionReactionExecutionStateBodySchema,
@@ -102,5 +105,21 @@ export default async (app: FastifyInstance) => {
     },
     preHandler: [verifyUserAccess(usersService)],
     handler: controller.updateActionReactionExecutionStateById.bind(controller),
+  });
+
+  app.route<{ Params: DeleteActionReactionParams }>({
+    method: 'DELETE',
+    url: '/v1/:id/',
+    schema: {
+      summary: 'Delete an action reaction',
+      description: 'Delete an action reaction by its ID.',
+      tags: ['Action reactions'],
+      params: deleteActionReactionParamsSchema,
+      response: {
+        200: deleteActionReactionResponseSchema,
+      },
+    },
+    preHandler: [verifyUserAccess(usersService)],
+    handler: controller.deleteActionReactionById.bind(controller),
   });
 };
