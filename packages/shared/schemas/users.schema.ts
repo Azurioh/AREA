@@ -13,11 +13,13 @@ export type GetUserMeResponse = z.infer<typeof getUserMeResponseSchema>;
  * UPDATE USER ME *
  ******************/
 
-export const updateUserMeBodySchema = z.object({
-  name: userFields.name,
-  darkModeEnabled: userFields.darkModeEnabled,
-  dyslexiaEnabled: userFields.dyslexiaEnabled,
-});
+export const updateUserMeBodySchema = z
+  .object({
+    name: userFields.name,
+    darkModeEnabled: userFields.darkModeEnabled,
+    dyslexiaEnabled: userFields.dyslexiaEnabled,
+  })
+  .partial();
 
 /**
  * @type UpdateUserMeBody

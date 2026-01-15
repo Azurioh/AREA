@@ -28,7 +28,9 @@ export class AuthController {
     request: FastifyRequest<{ Body: RegisterBody; Headers: RegisterHeaders }>,
     reply: FastifyReply,
   ): Promise<void> {
+    const headers = request.headers;
     const body = request.body;
+
     const data: User = {
       name: body.name,
       email: body.email,
@@ -44,14 +46,22 @@ export class AuthController {
 
     const { accessToken, refreshToken } = await this.service.registerUser(data);
 
-    reply.setCookie('refresh-token', encryptString(refreshToken, environment.CRYPT_SECRET_KEY), {
+    const encryptedAccessToken = encryptString(accessToken, environment.CRYPT_SECRET_KEY);
+    const encryptedRefreshToken = encryptString(refreshToken, environment.CRYPT_SECRET_KEY);
+
+    if (headers['x-client-type'] && headers['x-client-type'] === 'mobile') {
+      reply.status(201).send({ accessToken: encryptedAccessToken, refreshToken: encryptedRefreshToken });
+      return;
+    }
+
+    reply.setCookie('refresh-token', encryptedRefreshToken, {
       httpOnly: true,
       secure: environment.NODE_ENV !== 'development',
       sameSite: environment.NODE_ENV !== 'development' ? 'lax' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     });
-    reply.status(201).send({ accessToken: encryptString(accessToken, environment.CRYPT_SECRET_KEY) });
+    reply.status(201).send({ accessToken: encryptedAccessToken });
   }
 
   /**
@@ -62,22 +72,38 @@ export class AuthController {
    * @param {FastifyReply} reply - The Fastify reply object for sending the response.
    */
   async loginUser(request: FastifyRequest<{ Body: LoginBody }>, reply: FastifyReply): Promise<void> {
+    const headers = request.headers;
     const body = request.body;
 
     const { accessToken, refreshToken } = await this.service.loginUser(body);
 
-    reply.setCookie('refresh-token', encryptString(refreshToken, environment.CRYPT_SECRET_KEY), {
+    const encryptedAccessToken = encryptString(accessToken, environment.CRYPT_SECRET_KEY);
+    const encryptedRefreshToken = encryptString(refreshToken, environment.CRYPT_SECRET_KEY);
+
+    if (headers['x-client-type'] && headers['x-client-type'] === 'mobile') {
+      reply.status(201).send({ accessToken: encryptedAccessToken, refreshToken: encryptedRefreshToken });
+      return;
+    }
+
+    reply.setCookie('refresh-token', encryptedRefreshToken, {
       httpOnly: true,
       secure: environment.NODE_ENV !== 'development',
       sameSite: environment.NODE_ENV !== 'development' ? 'lax' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     });
-    reply.status(200).send({ accessToken: encryptString(accessToken, environment.CRYPT_SECRET_KEY) });
+    reply.status(200).send({ accessToken: encryptedAccessToken });
   }
 
   async refreshToken(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const refreshToken = request.cookies['refresh-token'];
+    const headers = request.headers;
+    let refreshToken: string | undefined ;
+
+    if (headers['x-client-type'] && headers['x-client-type'] === 'mobile' && headers['x-refresh-token']) {
+      refreshToken = headers['x-refresh-token'] as string;
+    } else {
+      refreshToken = request.cookies['refresh-token'];
+    }
 
     if (!refreshToken) {
       reply.status(401).send({ message: 'Refresh token is missing' });

@@ -1,29 +1,30 @@
 import type { FastifyInstance } from 'fastify';
 import {
   createDiscordService,
-  createGithubService,
-  createUnsplashService,
-  createSpotifyService,
   createDropboxService,
-  ServiceManager,
+  createGithubService,
+  createSpotifyService,
   createTwitchService,
+  createUnsplashService,
+  ServiceManager,
 } from '@/integrations';
 import { DiscordService } from '@/modules/discord';
 import { GithubService } from '@/modules/github';
+import { PollingRepository } from '@/modules/polling/polling.repository';
+import { PollingService } from '@/modules/polling/polling.service';
+import { SpotifyService } from '@/modules/spotify';
 import { ThirdPartiesService } from '@/modules/third-parties';
 import { ThirdPartiesRepository } from '@/modules/third-parties/third-parties.repository';
-import { UsersRepository, UsersService } from '@/modules/users';
-import { SpotifyService } from '@/modules/spotify';
-import { PollingService } from '@/modules/polling/polling.service';
-import { PollingRepository } from '@/modules/polling/polling.repository';
 import { TwitchService } from '@/modules/twitch/twitch.service';
+import { UsersRepository, UsersService } from '@/modules/users';
 
-export const registerServices = (app: FastifyInstance): void => {
+export const registerServices = async (app: FastifyInstance): Promise<void> => {
   if (!app.mongo.db) {
     throw new Error('MongoDB not initialized');
   }
 
   const usersRepository = new UsersRepository(app.mongo.db);
+  await usersRepository.createIndex();
   const thirdPartiesRepository = new ThirdPartiesRepository(app.mongo.db);
   const pollingRepository = new PollingRepository(app.mongo.db);
 

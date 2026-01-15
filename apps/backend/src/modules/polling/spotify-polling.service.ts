@@ -4,7 +4,8 @@ import type { ThirdPartiesService } from '../third-parties';
 import type { PollingRepository } from './polling.repository';
 import { environment } from '@/utils/environment';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type { SpotifyCurrentlyPlayingTrack } from '@/types/polling';
+import type { Polling, SpotifyCurrentlyPlayingTrack } from '@/types/polling';
+import type { SpotifyWebhookPayload } from '@/types/webhook';
 
 /**
  * @class SpotifyPollingService
@@ -56,29 +57,49 @@ export class SpotifyPollingService {
       }
       const formattedResponse = await response.json();
 
+      if (
+        user.trigger.lastTrackId &&
+        user.trigger.lastTrackId === (formattedResponse as SpotifyCurrentlyPlayingTrack).item.id
+      ) {
+        continue;
+      }
+
+      const data: Partial<Omit<Polling, 'service' | 'userId' | 'type'>> = {
+        trigger: {
+          artistId: user.trigger.artistId,
+          lastTrackId: (formattedResponse as SpotifyCurrentlyPlayingTrack).item.id,
+        },
+      };
+      await this.repository.updateUserToPoll('spotify', user.userId, 'listening_to_artist', data);
+
       if (user.type === 'listening_to_artist') {
         const artist = (formattedResponse as SpotifyCurrentlyPlayingTrack).item.artists.find(
-          (artist) => artist.id === user.trigger,
+          (artist) => artist.id === user.trigger.artistId,
         );
 
         if (artist) {
           const payload = {
             artist: {
               name: artist.name,
+              id: artist.id,
             },
-            ids: `${user.userId}/${artist.id}`,
           };
 
-          await fetch(`${environment.BASE_API_URL}/webhook/v1/spotify`, {
-            method: 'POST',
-            headers: {
-              'x-spotify-event': 'listening_to_artist',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-          });
+          await this.sendWebhook(user.userId, 'listening_to_artist', payload);
         }
       }
     }
+  }
+
+  private async sendWebhook(userId: string, event: string, payload: SpotifyWebhookPayload) {
+    await fetch(`${environment.BASE_API_URL}/webhook/v1/spotify`, {
+      method: 'POST',
+      headers: {
+        'x-spotify-event': event,
+        'Content-Type': 'application/json',
+        'x-user-id': userId,
+      },
+      body: JSON.stringify(payload),
+    });
   }
 }

@@ -90,20 +90,16 @@ for (const [key, value] of Object.entries(variables)) {
     console.error(`\r\x1b[31mError:\x1b[0m Variable ${key} is not defined`);
     process.exit(1);
   }
-  if (value === '') {
-    console.error(`\r\x1b[31mError:\x1b[0m Variable ${key} is empty`);
-    process.exit(1);
-  }
 }
 
-const port = Number(variables.PORT);
+const port = Number.parseInt(process.env.PORT as string, 10);
 
 if (Number.isNaN(port)) {
   console.error('\r\x1b[31mError:\x1b[0m Variable PORT is not a number');
   process.exit(1);
 }
 
-export const environment: Environment = {
+export const environment = {
   PORT: port,
   NODE_ENV: process.env.NODE_ENV as string,
   BASE_API_URL: process.env.BASE_API_URL as string,

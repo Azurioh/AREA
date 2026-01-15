@@ -1,14 +1,14 @@
-import type { SpotifyAccount, SpotifyAuthorizationResponse } from '@/types/third-parties';
-import type { ThirdPartiesService } from '../third-parties';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import { environment } from '@/utils/environment';
+import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-reactions.schema';
+import { Reaction } from '@/integrations';
+import type { PollingService } from '@/modules/polling/polling.service';
+import type { ThirdPartiesService } from '@/modules/third-parties';
+import type { ActionPayload } from '@/types/action-reaction';
+import type { SpotifyPlaylist } from '@/types/spotify';
+import type { SpotifyAccount, SpotifyAuthorizationResponse } from '@/types/third-parties';
 import ApiError from '@/utils/api-error';
 import { decryptString, encryptString } from '@/utils/crypt';
-import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-reactions.schema';
-import type { ActionPayload } from '@/types/action-reaction';
-import { Reaction } from '@/integrations';
-import type { PollingService } from '../polling/polling.service';
-import type { SpotifyPlaylist } from '@/types/spotify';
+import { environment } from '@/utils/environment';
 
 /**
  * @class SpotifyService
@@ -41,6 +41,10 @@ export class SpotifyService {
     switch (action.name) {
       case 'listening_to_artist': {
         trigger = await this.listeningToArtist(spotifyAccount, action);
+        break;
+      }
+      default: {
+        throw new ApiError(HttpStatusCode.NOT_FOUND, `Action not found: ${action.name}`);
       }
     }
     return trigger;
@@ -55,27 +59,39 @@ export class SpotifyService {
    * @returns {Promise<string>} The trigger action to store in the db
    */
   async listeningToArtist(spotifyAccount: SpotifyAccount, action: CreateAction): Promise<string> {
-    let response = await this.search(
-      decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY),
-      action.params.artist,
-      'artist',
-    );
+    const { artist } = action.params;
+    const match = artist.match('/artist/([a-zA-Z0-9]+)?');
+    let spotifyArtistId = '';
 
-    if (response.status === HttpStatusCode.UNAUTHORIZED) {
-      const accessToken = await this.refreshTokens(
-        spotifyAccount.userId,
-        decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
+    if (!match) {
+      let response = await this.search(
+        decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY),
+        artist,
+        'artist',
       );
 
-      response = await this.search(accessToken, action.params.artist, 'artist');
+      if (response.status === HttpStatusCode.UNAUTHORIZED) {
+        const accessToken = await this.refreshTokens(
+          spotifyAccount.userId,
+          decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
+        );
+
+        response = await this.search(accessToken, artist, 'artist');
+      }
+      spotifyArtistId = response.search.artists.items[0].id || '';
+    } else {
+      spotifyArtistId = match[1] || '';
     }
     this.pollingService.addUserToPoll({
       service: 'spotify',
       userId: spotifyAccount.userId,
       type: 'listening_to_artist',
-      trigger: response.search.artists.items[0].id,
+      trigger: {
+        artistId: spotifyArtistId,
+        lastTrackId: null,
+      },
     });
-    return `listening_to_artist/${spotifyAccount.userId}/${response.search.artists.items[0].id}`;
+    return `listening_to_artist/${spotifyAccount.userId}/${spotifyArtistId}`;
   }
 
   /**

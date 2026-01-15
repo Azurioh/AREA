@@ -7,7 +7,7 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@area/shared/(.*)$': '<rootDir>/../../packages/shared/$1',
   },
-  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/index.ts', '!src/**/*.routes.ts'],
+  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/index.ts', '!src/**/index.ts'],
   coverageDirectory: 'coverage',
   transform: {
     '^.+\\.[tj]sx?$': [

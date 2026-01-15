@@ -1,4 +1,3 @@
-import { useServicesClient } from '@/features/connections/hooks/useServicesClient';
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,11 +12,13 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/h
 import { Button } from '@/components/wrappers/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/wrappers/Card';
 import { Input } from '@/components/wrappers/Input';
+import { useServicesClient } from '@/features/connections/hooks/useServicesClient';
 import { useActionReaction } from '@/features/workflows/context/ActionReactionContext';
+import { useActionReturnedValues } from '@/features/workflows/hooks/useActionReturnedValues';
 import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceReactions } from '@/features/workflows/hooks/useServiceReactions';
-import { useActionReturnedValues } from '@/features/workflows/hooks/useActionReturnedValues';
+import { AppRoutesPaths } from '@/enums/routes';
 import { CircleQuestionMark, ChevronRight } from 'lucide-react';
 
 const ChooseReaction: React.FC = () => {
@@ -72,9 +73,9 @@ const ChooseReaction: React.FC = () => {
                     transition={{ duration: 0.3 }}
                     className="relative"
                   >
-                    <Card className="bg-primary text-center text-card overflow-hidden">
+                    <Card className="bg-primary text-center text-text-white overflow-hidden">
                       <CardHeader className="p-2">
-                        <CardTitle className="text-2xl leading-tight">{service}</CardTitle>
+                        <CardTitle className="text-2xl text-text-white">{service}</CardTitle>
                       </CardHeader>
                     </Card>
 
@@ -100,7 +101,7 @@ const ChooseReaction: React.FC = () => {
                                 className="w-full justify-start h-auto py-3 relative overflow-hidden"
                                 onClick={() => {
                                   if (!isServiceConnected(service)) {
-                                    navigate('/connections');
+                                    navigate(AppRoutesPaths.CONNECTIONS);
                                     return;
                                   }
                                   selectReaction(service, reaction.name);
@@ -155,7 +156,7 @@ const ChooseReaction: React.FC = () => {
             >
               <Card className="border-primary overflow-hidden">
                 <CardHeader className="bg-primary">
-                  <CardTitle className="text-lg text-card text-center">
+                  <CardTitle className="text-lg text-text-white text-center">
                     {selectedReaction.reaction}
                     {loadingParams && <span className="text-sm font-normal ml-2">(Loading...)</span>}
                   </CardTitle>
@@ -275,7 +276,7 @@ const ChooseReaction: React.FC = () => {
                               );
 
                               setSelectedReaction(null);
-                              navigate('/create');
+                              navigate(AppRoutesPaths.CREATE);
                             }}
                           >
                             Save Configuration

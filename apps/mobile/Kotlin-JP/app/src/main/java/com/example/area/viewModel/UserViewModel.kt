@@ -33,8 +33,11 @@ class UserViewModel : ViewModel() {
                     password = password
                 )
 
-                val token = RetrofitInstance.api.registerUser(request)
-                RetrofitInstance.getTokenManager().saveToken(token.accessToken)
+                val response = RetrofitInstance.api.registerUser(request)
+                RetrofitInstance.getTokenManager().saveToken(response.accessToken)
+                response.refreshToken?.let {
+                    RetrofitInstance.getTokenManager().saveRefreshToken(it)
+                }
                 RetrofitInstance.resetUnauthorizedState()
 
                 fetchUserProfile()
@@ -60,8 +63,11 @@ class UserViewModel : ViewModel() {
                     rememberMe = rememberMe
                 )
 
-                val token = RetrofitInstance.api.loginUser(request)
-                RetrofitInstance.getTokenManager().saveToken(token.accessToken)
+                val response = RetrofitInstance.api.loginUser(request)
+                RetrofitInstance.getTokenManager().saveToken(response.accessToken)
+                response.refreshToken?.let {
+                    RetrofitInstance.getTokenManager().saveRefreshToken(it)
+                }
                 RetrofitInstance.resetUnauthorizedState()
 
                 fetchUserProfile()

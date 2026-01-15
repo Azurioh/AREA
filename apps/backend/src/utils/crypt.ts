@@ -122,7 +122,6 @@ export const safeEqualCheck = (a: string, b: string): boolean => {
   const aBuffer = Buffer.from(a);
   const bBuffer = Buffer.from(b);
   if (aBuffer.length !== bBuffer.length) {
-    crypto.timingSafeEqual(aBuffer, bBuffer);
     return false;
   }
   return crypto.timingSafeEqual(aBuffer, bBuffer);
