@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
+import type React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideBar from '@/components/SideBar';
 import {
@@ -17,17 +17,13 @@ import { useActionReturnedValues } from '@/features/workflows/hooks/useActionRet
 import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceReactions } from '@/features/workflows/hooks/useServiceReactions';
+import { formatActionReactionName } from '@/lib/utils';
 import { AppRoutesPaths } from '@/enums/routes';
 
 const ChooseReaction: React.FC = () => {
-  const { services, fetchServices } = useListServices();
+  const { services } = useListServices();
 
   const servicesStatus = useServicesClient();
-
-  React.useEffect(() => {
-    fetchServices();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const {
     serviceReactions,
@@ -84,7 +80,12 @@ const ChooseReaction: React.FC = () => {
                         <div className="text-center py-8 text-muted-foreground">No reactions available</div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                          {(serviceReactions[service] as { name: string; description?: string }[]).map((reaction) => {
+                          {(
+                            serviceReactions[service] as {
+                              name: string;
+                              description?: string;
+                            }[]
+                          ).map((reaction) => {
                             const lowerName = service.toLowerCase();
                             const logoUrl = `${import.meta.env.VITE_BASE_IMAGE_URL}/${lowerName}.png`;
 
@@ -112,7 +113,7 @@ const ChooseReaction: React.FC = () => {
                                 />
 
                                 <div className="text-left">
-                                  <div className="font-semibold">{reaction.name}</div>
+                                  <div className="font-semibold">{formatActionReactionName(reaction.name)}</div>
                                   {reaction.description && (
                                     <div className="text-xs opacity-80 mt-1 whitespace-normal break-words">
                                       {reaction.description}
@@ -155,7 +156,7 @@ const ChooseReaction: React.FC = () => {
               <Card className="border-primary overflow-hidden">
                 <CardHeader className="bg-primary">
                   <CardTitle className="text-lg text-text-white text-center">
-                    {selectedReaction.reaction}
+                    {formatActionReactionName(selectedReaction.reaction)}
                     {loadingParams && <span className="text-sm font-normal ml-2">(Loading...)</span>}
                   </CardTitle>
                 </CardHeader>
@@ -204,7 +205,12 @@ const ChooseReaction: React.FC = () => {
                                   <DropdownMenuContent className="w-full">
                                     {(param.options && param.options.length > 0
                                       ? param.options
-                                      : [{ name: 'No options available', id: 'none' }]
+                                      : [
+                                          {
+                                            name: 'No options available',
+                                            id: 'none',
+                                          },
+                                        ]
                                     ).map((opt: ParamOption) => (
                                       <DropdownMenuItem
                                         key={opt.id}

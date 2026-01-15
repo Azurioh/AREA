@@ -34,7 +34,7 @@ export default function HomePage() {
               {latestWorkflows.map((wf) => (
                 <WorkflowsCard
                   key={wf._id}
-                  title={wf.action?.service + ' | ' + wf.reaction?.service || 'Unknown'}
+                  title={`${wf.action?.service} | ${wf.reaction?.service}` || 'Unknown'}
                   Description={
                     <span className="inline-flex items-center gap-2">
                       <span>{wf.action?.name || 'Unknown action'}</span>
