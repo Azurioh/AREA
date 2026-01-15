@@ -8,6 +8,7 @@ import {
 } from '@area/shared/schemas/auth.schema';
 import type { FastifyInstance } from 'fastify';
 import { AuthController } from '@/modules/auth/auth.controller';
+import { AuthRepository } from '@/modules/auth/auth.repository';
 import { AuthService } from '@/modules/auth/auth.service';
 import { UsersRepository } from '@/modules/users';
 
@@ -16,8 +17,9 @@ export default async (app: FastifyInstance) => {
     throw new Error('MongoDB not initialized');
   }
 
-  const repository = new UsersRepository(app.mongo.db);
-  const service = new AuthService(repository);
+  const userRepository = new UsersRepository(app.mongo.db);
+  const authRepository = new AuthRepository(app.mongo.db);
+  const service = new AuthService(userRepository, authRepository);
   const controller = new AuthController(service);
 
   app.route({

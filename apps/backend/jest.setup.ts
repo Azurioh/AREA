@@ -21,6 +21,10 @@ const testEnvironmentConfig = {
   MONGO_URI: process.env.MONGO_URI,
   MONGO_DATABASE: 'area-test',
 
+  REDIS_HOST: process.env.REDIS_HOST,
+  REDIS_PORT: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD || '',
+
   JWT_ACCESS_TOKEN_SECRET: 'test',
   JWT_REFRESH_TOKEN_SECRET: 'test',
   JWT_STATE_TOKEN_SECRET: 'test',

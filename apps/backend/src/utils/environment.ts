@@ -22,6 +22,10 @@ export interface Environment {
   MONGO_URI: string;
   MONGO_DATABASE: string;
 
+  REDIS_HOST: string;
+  REDIS_PORT: number;
+  REDIS_PASSWORD: string;
+
   JWT_ACCESS_TOKEN_SECRET: string;
   JWT_REFRESH_TOKEN_SECRET: string;
   JWT_STATE_TOKEN_SECRET: string;
@@ -61,6 +65,10 @@ const variables: Record<string, string | undefined> = {
   MONGO_URI: process.env.MONGO_URI,
   MONGO_DATABASE: process.env.MONGO_DATABASE,
 
+  REDIS_HOST: process.env.REDIS_HOST,
+  REDIS_PORT: process.env.REDIS_PORT,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+
   JWT_ACCESS_TOKEN_SECRET: process.env.JWT_ACCESS_TOKEN_SECRET,
   JWT_REFRESH_TOKEN_SECRET: process.env.JWT_REFRESH_TOKEN_SECRET,
   JWT_STATE_TOKEN_SECRET: process.env.JWT_STATE_TOKEN_SECRET,
@@ -93,9 +101,15 @@ for (const [key, value] of Object.entries(variables)) {
 }
 
 const port = Number.parseInt(process.env.PORT as string, 10);
+const redisPort = Number.parseInt(process.env.REDIS_PORT as string, 10);
 
 if (Number.isNaN(port)) {
   console.error('\r\x1b[31mError:\x1b[0m Variable PORT is not a number');
+  process.exit(1);
+}
+
+if (Number.isNaN(redisPort)) {
+  console.error('\r\x1b[31mError:\x1b[0m Variable REDIS_PORT is not a number');
   process.exit(1);
 }
 
@@ -113,6 +127,10 @@ export const environment = {
 
   MONGO_URI: process.env.MONGO_URI as string,
   MONGO_DATABASE: process.env.MONGO_DATABASE as string,
+
+  REDIS_HOST: process.env.REDIS_HOST as string,
+  REDIS_PORT: redisPort,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD as string,
 
   JWT_ACCESS_TOKEN_SECRET: process.env.JWT_ACCESS_TOKEN_SECRET as string,
   JWT_REFRESH_TOKEN_SECRET: process.env.JWT_REFRESH_TOKEN_SECRET as string,

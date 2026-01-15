@@ -19,6 +19,8 @@ import { servicesRoutes } from './modules/services';
 import { thirdPartiesRoutes } from './modules/third-parties';
 import { usersRoutes } from './modules/users';
 import { webhookRoutes } from './modules/webhook';
+import { setupAuthHook } from './hooks/auth-hook';
+import { setupRedis } from './config/redis';
 
 async function build(): Promise<FastifyInstance> {
   const app: FastifyInstance = fastify({
@@ -27,6 +29,7 @@ async function build(): Promise<FastifyInstance> {
     ignoreTrailingSlash: true,
   });
 
+  // Configuration
   setupCors(app);
   setupCookie(app);
   setupSwagger(app);
@@ -37,6 +40,10 @@ async function build(): Promise<FastifyInstance> {
   await setupDiscordBot();
   setupStaticFiles(app);
   setupPolling(app);
+  setupRedis(app);
+
+  // Hooks
+  setupAuthHook(app);
 
   await registerServices(app);
 

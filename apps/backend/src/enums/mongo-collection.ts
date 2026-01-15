@@ -8,4 +8,5 @@ export enum MongoCollections {
   ACTIONS_REACTIONS = 'actions_reactions',
   POLLING = 'polling',
   DROPBOX_RESOURCES = 'dropbox_resources',
+  REFRESH_TOKENS = 'refresh_tokens',
 }

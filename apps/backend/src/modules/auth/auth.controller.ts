@@ -1,10 +1,20 @@
+import { HttpStatusCode } from '@area/shared/dist/enums/http-status';
 import { UserRoles } from '@area/shared/enums/user-enums';
-import type { LoginBody, RegisterBody, RegisterHeaders } from '@area/shared/schemas/auth.schema';
-import type { User } from '@area/shared/types/users.types';
+import type {
+  LoginBody,
+  LoginHeaders,
+  LogoutBody,
+  RefreshTokenHeaders,
+  RegisterBody,
+  RegisterHeaders,
+} from '@area/shared/schemas/auth.schema';
+import type { AccessToken, User } from '@area/shared/types/users.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { AuthService } from '@/modules/auth/auth.service';
+import ApiError from '@/utils/api-error';
 import { decryptString, encryptString, safeEqualCheck } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
+import { verifyToken } from '@/utils/token';
 
 /**
  * @class AuthController
@@ -28,7 +38,6 @@ export class AuthController {
     request: FastifyRequest<{ Body: RegisterBody; Headers: RegisterHeaders }>,
     reply: FastifyReply,
   ): Promise<void> {
-    const headers = request.headers;
     const body = request.body;
 
     const data: User = {
@@ -49,19 +58,7 @@ export class AuthController {
     const encryptedAccessToken = encryptString(accessToken, environment.CRYPT_SECRET_KEY);
     const encryptedRefreshToken = encryptString(refreshToken, environment.CRYPT_SECRET_KEY);
 
-    if (headers['x-client-type'] && headers['x-client-type'] === 'mobile') {
-      reply.status(201).send({ accessToken: encryptedAccessToken, refreshToken: encryptedRefreshToken });
-      return;
-    }
-
-    reply.setCookie('refresh-token', encryptedRefreshToken, {
-      httpOnly: true,
-      secure: environment.NODE_ENV !== 'development',
-      sameSite: environment.NODE_ENV !== 'development' ? 'lax' : 'none',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 30,
-    });
-    reply.status(201).send({ accessToken: encryptedAccessToken });
+    await this.service.sendTokensToUser(encryptedAccessToken, encryptedRefreshToken, request, reply, true);
   }
 
   /**
@@ -71,8 +68,10 @@ export class AuthController {
    * @param {FastifyRequest} request - The Fastify request object.
    * @param {FastifyReply} reply - The Fastify reply object for sending the response.
    */
-  async loginUser(request: FastifyRequest<{ Body: LoginBody }>, reply: FastifyReply): Promise<void> {
-    const headers = request.headers;
+  async loginUser(
+    request: FastifyRequest<{ Body: LoginBody; Headers: LoginHeaders }>,
+    reply: FastifyReply,
+  ): Promise<void> {
     const body = request.body;
 
     const { accessToken, refreshToken } = await this.service.loginUser(body);
@@ -80,38 +79,64 @@ export class AuthController {
     const encryptedAccessToken = encryptString(accessToken, environment.CRYPT_SECRET_KEY);
     const encryptedRefreshToken = encryptString(refreshToken, environment.CRYPT_SECRET_KEY);
 
-    if (headers['x-client-type'] && headers['x-client-type'] === 'mobile') {
-      reply.status(201).send({ accessToken: encryptedAccessToken, refreshToken: encryptedRefreshToken });
-      return;
-    }
+    const accessTokenPayload = verifyToken<AccessToken>(accessToken, environment.JWT_ACCESS_TOKEN_SECRET);
+    await this.service.storeRefreshTokenInDatabase(
+      accessTokenPayload._id,
+      encryptedRefreshToken,
+      new Date(Date.now() + (body.rememberMe ? 30 : 1) * 24 * 60 * 60 * 1000),
+    );
 
-    reply.setCookie('refresh-token', encryptedRefreshToken, {
-      httpOnly: true,
-      secure: environment.NODE_ENV !== 'development',
-      sameSite: environment.NODE_ENV !== 'development' ? 'lax' : 'none',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 30,
-    });
-    reply.status(200).send({ accessToken: encryptedAccessToken });
+    await this.service.sendTokensToUser(encryptedAccessToken, encryptedRefreshToken, request, reply, false);
   }
 
-  async refreshToken(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const headers = request.headers;
-    let refreshToken: string | undefined ;
-
-    if (headers['x-client-type'] && headers['x-client-type'] === 'mobile' && headers['x-refresh-token']) {
-      refreshToken = headers['x-refresh-token'] as string;
-    } else {
-      refreshToken = request.cookies['refresh-token'];
-    }
+  /**
+   * @method refreshToken
+   * @description Refresh the access and refresh tokens.
+   *
+   * @param request - The Fastify request object.
+   * @param reply - The Fastify reply object.
+   */
+  async refreshToken(request: FastifyRequest<{ Headers: RefreshTokenHeaders }>, reply: FastifyReply): Promise<void> {
+    const accessToken: string | undefined = request.headers.authorization?.replace('Bearer ', '');
+    const refreshToken: string | undefined = this.service.getRefreshToken(request);
 
     if (!refreshToken) {
-      reply.status(401).send({ message: 'Refresh token is missing' });
-      return;
+      throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Refresh token is missing');
     }
 
-    const { accessToken } = await this.service.refreshToken(decryptString(refreshToken, environment.CRYPT_SECRET_KEY));
+    if (!(await this.service.checkIfRefreshTokenIsValid(refreshToken))) {
+      throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Token has been revoked');
+    }
 
-    reply.status(200).send({ accessToken: encryptString(accessToken, environment.CRYPT_SECRET_KEY) });
+    const { newAccessToken, newRefreshToken } = await this.service.refreshToken(
+      decryptString(refreshToken, environment.CRYPT_SECRET_KEY),
+    );
+
+    await this.service.invalidateAccessToken(request, accessToken);
+    await this.service.invalidateRefreshToken(refreshToken);
+
+    const encryptedAccessToken = encryptString(newAccessToken, environment.CRYPT_SECRET_KEY);
+    const encryptedRefreshToken = encryptString(newRefreshToken, environment.CRYPT_SECRET_KEY);
+    await this.service.sendTokensToUser(encryptedAccessToken, encryptedRefreshToken, request, reply, false);
+  }
+
+  /**
+   * @method logout
+   * @description Invalidate user tokens.
+   *
+   * @param request - The Fastify request object.
+   * @param reply - The Fastify reply object.
+   */
+  async logout(request: FastifyRequest<{ Body: LogoutBody }>, reply: FastifyReply): Promise<void> {
+    const accessToken: string | undefined = request.headers.authorization?.replace('Bearer ', '');
+    const refreshToken: string | undefined = this.service.getRefreshToken(request);
+
+    if (accessToken) {
+      this.service.invalidateAccessToken(request, accessToken);
+    }
+    if (refreshToken) {
+      this.service.invalidateRefreshToken(refreshToken);
+    }
+    reply.status(HttpStatusCode.NO_CONTENT).send();
   }
 }
