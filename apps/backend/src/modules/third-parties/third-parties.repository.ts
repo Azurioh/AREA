@@ -1,5 +1,5 @@
 import { MongoCollections } from '@/enums/mongo-collection';
-import type { OAuthServiceType, ThirdPartyAccount } from '@/types/third-parties';
+import type { ServiceType, ThirdPartyAccount } from '@/types/third-parties';
 import type { MaybeNull } from '@area/shared/utils/common';
 import type { UpdateResult, Db, WithId } from 'mongodb';
 
@@ -39,7 +39,7 @@ export class ThirdPartiesRepository {
    */
   async getThirdPartyAccountByUserId<T extends ThirdPartyAccount>(
     userId: string,
-    service: OAuthServiceType,
+    service: ServiceType,
   ): Promise<MaybeNull<WithId<T>>> {
     return (await this.db
       .collection<ThirdPartyAccount>(MongoCollections.THIRD_PARTIES_ACCOUNT)
@@ -56,7 +56,7 @@ export class ThirdPartiesRepository {
    */
   async getThirdPartyAccountByServiceAccountId<T extends ThirdPartyAccount>(
     id: string,
-    service: OAuthServiceType,
+    service: ServiceType,
   ): Promise<MaybeNull<WithId<T>>> {
     return (await this.db
       .collection<ThirdPartyAccount>(MongoCollections.THIRD_PARTIES_ACCOUNT)
@@ -74,7 +74,7 @@ export class ThirdPartiesRepository {
    */
   async updateThirdPartyAccount(
     userId: string,
-    service: OAuthServiceType,
+    service: ServiceType,
     account: Partial<ThirdPartyAccount>,
   ): Promise<UpdateResult<ThirdPartyAccount>> {
     return await this.db

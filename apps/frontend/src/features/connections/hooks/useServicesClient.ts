@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useApp } from '@/hooks/useApp';
+import { useReload } from '@/hooks/useReload';
 
 interface Service {
   name: string;
@@ -8,6 +9,7 @@ interface Service {
 
 export function useServicesClient() {
   const { servicesClient, thirdPartiesInformation } = useApp();
+  const { serviceConnectionReload } = useReload();
   const [services, setServices] = useState<Service[]>([]);
 
   useEffect(() => {
@@ -32,7 +34,7 @@ export function useServicesClient() {
     };
 
     fetchServices();
-  }, [servicesClient, thirdPartiesInformation]);
+  }, [serviceConnectionReload]);
 
   return services;
 }
