@@ -62,15 +62,16 @@ export class WebhookService {
    * @function spotifyCallback
    * @description Handle the spotify callback.
    *
+   * @param {string} userId The id of the user.
    * @param {string} event The event who triggered the callback.
    * @param {DiscordWebhookPayload} body The body of the callback.
    * @returns {Promise<void>}
    */
-  async spotifyCallback(event: string, body: SpotifyWebhookPayload): Promise<void> {
+  async spotifyCallback(userId: string, event: string, body: SpotifyWebhookPayload): Promise<void> {
     const action: ActionPayload = {
       service: 'spotify',
       name: event,
-      trigger: `${event}/${body.ids}`,
+      trigger: `${event}/${userId}/${body.artist.id}`,
       content: body,
     };
 

@@ -27,6 +27,7 @@ describe('SpotifyPollingService', () => {
 
     mockRepository = {
       getUsersToPoll: jest.fn(),
+      updateUserToPoll: jest.fn(),
     } as any;
 
     mockThirdPartiesService = {
@@ -45,7 +46,10 @@ describe('SpotifyPollingService', () => {
       {
         userId: 'user1',
         type: 'listening_to_artist',
-        trigger: 'artist1',
+        trigger: {
+          artistId: 'artist1',
+          lastTrackId: null,
+        },
       },
     ];
 
@@ -122,7 +126,18 @@ describe('SpotifyPollingService', () => {
       await service.pollCurrentlyPlayingTrack();
 
       expect(global.fetch).toHaveBeenCalledTimes(2);
-      expect(global.fetch).toHaveBeenLastCalledWith(
+      expect(global.fetch).toHaveBeenNthCalledWith(
+        1,
+        'https://api.spotify.com/v1/me/player/currently-playing',
+        expect.objectContaining({
+          headers: {
+            Authorization: 'Bearer encrypted_access',
+          },
+          method: 'GET',
+        }),
+      );
+      expect(global.fetch).toHaveBeenNthCalledWith(
+        2,
         'http://test-api/webhook/v1/spotify',
         expect.objectContaining({
           method: 'POST',
@@ -130,8 +145,7 @@ describe('SpotifyPollingService', () => {
             'x-spotify-event': 'listening_to_artist',
           }),
           body: JSON.stringify({
-            artist: { name: 'Artist Name' },
-            ids: 'user1/artist1',
+            artist: { name: 'Artist Name', id: 'artist1' },
           }),
         }),
       );

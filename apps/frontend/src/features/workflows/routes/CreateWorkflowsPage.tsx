@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useActionReaction } from '@/features/workflows/context/ActionReactionContext';
 import { formatActionReactionName } from '@/lib/utils';
+import { AppRoutesPaths } from '@/enums/routes';
 
 export default function CreateWorkflows() {
   const navigate = useNavigate();
@@ -58,10 +59,10 @@ export default function CreateWorkflows() {
           <div className="mt-16 flex flex-col items-center justify-center w-full max-w-3xl px-4">
             <div className="w-full h-36 relative">
               <Button
-                className="w-full h-full flex items-center justify-center bg-primary rounded-[var(--small-radius)]"
-                onClick={() => navigate('/workflows/choose-action')}
+                className="w-full h-full flex items-center justify-center bg-primary rounded-[var(--small-radius)] text-text-white"
+                onClick={() => navigate(AppRoutesPaths.CHOOSEACTION)}
               >
-                <span className="text-5xl font-bold text-card">
+                <span className="text-5xl font-bold">
                   {action?.name ? formatActionReactionName(action.name) : 'Action'}
                 </span>
               </Button>
@@ -81,17 +82,17 @@ export default function CreateWorkflows() {
             <div className="w-full h-36 relative">
               <Button
                 className={`w-full h-full flex items-center justify-center rounded-[var(--small-radius)] transition-colors ${
-                  action?.name ? 'bg-primary' : 'bg-muted cursor-not-allowed'
+                  action?.name ? 'bg-primary' : 'bg-reaction-muted cursor-not-allowed'
                 }`}
                 onClick={() => {
                   if (!action?.name) {
                     return;
                   }
-                  navigate('/workflows/choose-reaction');
+                  navigate(AppRoutesPaths.CHOOSEREACTION);
                 }}
                 disabled={!action?.name}
               >
-                <span className="text-5xl font-bold text-card">
+                <span className="text-5xl font-bold">
                   {reaction?.name ? formatActionReactionName(reaction.name) : 'Reaction'}
                 </span>
               </Button>

@@ -77,10 +77,13 @@ describe('Webhook Routes', () => {
     it('should return 204 if request is valid', async () => {
       const response = await request(app.server)
         .post('/webhook/v1/spotify/')
-        .set('x-spotify-event', 'track_played')
+        .set('x-spotify-event', 'listening_to_artist')
+        .set('x-user-id', 'user123')
         .send({
-          ids: '123',
-          track: 'song',
+          artist: {
+            id: 'artist-123',
+            name: 'Artist Name',
+          },
         });
 
       expect(response.status).toBe(204);

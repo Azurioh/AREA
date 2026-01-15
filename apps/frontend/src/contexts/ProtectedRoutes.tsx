@@ -16,7 +16,6 @@ export const ProtectedRoute = () => {
 export const AdminProtectedRoute = () => {
   const { authState } = useApp();
 
-  console.log('Auth State in AdminProtectedRoute:', authState.user?.role);
   if (!authState.isAuthenticated || authState.user?.role !== UserRoles.ADMIN) {
     return <Navigate to={AppRoutesPaths.HOME} replace />;
   }

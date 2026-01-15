@@ -1,4 +1,4 @@
 import ConnectionsPage from './routes/ConnectionsPage';
-import OauthCallbackPage from './routes/OauthCallbackPage';
+import OAuthCallbackPage from './routes/OAuthCallbackPage';
 
-export { ConnectionsPage, OauthCallbackPage };
+export { ConnectionsPage, OAuthCallbackPage };

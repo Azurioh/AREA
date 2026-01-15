@@ -86,6 +86,7 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-40"
             onClick={onClose}
+            aria-hidden="true"
           />
         )}
       </AnimatePresence>
@@ -98,42 +99,49 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
             exit={{ opacity: 0, x: -20, y: 20 }}
             transition={{ duration: 0.2 }}
             className="fixed bottom-8 left-28 z-50"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="profile-title"
           >
             <Card className="w-80 shadow-xl border-2 border-border">
               <CardContent className="p-0">
                 <div className="p-4 border-b border-border bg-muted/50">
                   <div className="flex items-center gap-3">
-                    <Avatar className="w-12 h-12 bg-primary">
+                    <Avatar className="w-12 h-12 bg-primary" aria-hidden="true">
                       <div className="w-full h-full flex items-center justify-center text-lg font-bold text-primary-foreground">
                         {getInitials(username)}
                       </div>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-base truncate">{username}</p>
+                      <p id="profile-title" className="font-semibold text-base truncate">
+                        {username}
+                      </p>
                       <p className="text-sm text-muted-foreground truncate">{email}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-2">
-                  <button
-                    type="button"
+                <nav className="p-2" aria-label="Profile menu">
+                  <Button
+                    variant="ghost"
                     onClick={() => setIsSettingsOpen(true)}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-muted transition-colors text-left"
+                    className="w-full justify-start gap-3 px-3 py-2.5 h-auto font-medium"
+                    aria-label="Open settings"
                   >
-                    <Settings className="w-5 h-5" />
-                    <span className="font-medium">Settings</span>
-                  </button>
+                    <Settings className="w-5 h-5" aria-hidden="true" />
+                    <span>Settings</span>
+                  </Button>
 
-                  <button
-                    type="button"
+                  <Button
+                    variant="ghost"
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-destructive/10 text-destructive transition-colors text-left"
+                    className="w-full justify-start gap-3 px-3 py-2.5 h-auto font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    aria-label="Log out of your account"
                   >
-                    <LogOut className="w-5 h-5" />
-                    <span className="font-medium">LogOut</span>
-                  </button>
-                </div>
+                    <LogOut className="w-5 h-5" aria-hidden="true" />
+                    <span>Log Out</span>
+                  </Button>
+                </nav>
               </CardContent>
             </Card>
           </motion.div>
@@ -148,6 +156,9 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleCancelEdit}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="settings-title"
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
@@ -159,7 +170,9 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
             >
               <Card className="border-primary overflow-hidden">
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold mb-6 text-center">Settings</h3>
+                  <h2 id="settings-title" className="text-xl font-semibold mb-6 text-center">
+                    Settings
+                  </h2>
 
                   <div className="space-y-4">
                     <div className="space-y-2">
@@ -171,12 +184,18 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
                         value={editedUsername}
                         onChange={(e) => setEditedUsername(e.target.value)}
                         placeholder="Enter username"
+                        aria-label="Edit username"
+                        className="transition-all hover:border-primary"
                       />
                     </div>
 
                     <div className="flex items-center justify-between p-3 rounded-lg border border-border">
                       <div className="flex items-center gap-3">
-                        {darkMode ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+                        {darkMode ? (
+                          <Moon className="w-5 h-5" aria-hidden="true" />
+                        ) : (
+                          <Sun className="w-5 h-5" aria-hidden="true" />
+                        )}
                         <span className="font-medium">Dark Mode</span>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -185,14 +204,15 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
                           checked={darkMode}
                           onChange={(e) => setDarkMode(e.target.checked)}
                           className="sr-only peer"
+                          aria-label="Toggle dark mode"
                         />
-                        <div className="w-11 h-6 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                       </label>
                     </div>
 
                     <div className="flex items-center justify-between p-3 rounded-lg border border-border">
                       <div className="flex items-center gap-3">
-                        <Type className="w-5 h-5" />
+                        <Type className="w-5 h-5" aria-hidden="true" />
                         <span className="font-medium">Dyslexia Font</span>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -201,16 +221,17 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
                           checked={dyslexiaMode}
                           onChange={(e) => setDyslexiaMode(e.target.checked)}
                           className="sr-only peer"
+                          aria-label="Toggle dyslexia-friendly font"
                         />
-                        <div className="w-11 h-6 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary peer-focus:ring-offset-2 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                       </label>
                     </div>
 
                     <div className="pt-4 flex gap-3">
-                      <Button className="flex-1" onClick={handleSaveUsername}>
+                      <Button className="flex-1" onClick={handleSaveUsername} aria-label="Save settings">
                         Save
                       </Button>
-                      <Button variant="outline" onClick={handleCancelEdit}>
+                      <Button variant="outline" onClick={handleCancelEdit} aria-label="Cancel and close settings">
                         Cancel
                       </Button>
                     </div>

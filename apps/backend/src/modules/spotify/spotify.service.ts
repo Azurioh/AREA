@@ -59,27 +59,39 @@ export class SpotifyService {
    * @returns {Promise<string>} The trigger action to store in the db
    */
   async listeningToArtist(spotifyAccount: SpotifyAccount, action: CreateAction): Promise<string> {
-    let response = await this.search(
-      decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY),
-      action.params.artist,
-      'artist',
-    );
+    const { artist } = action.params;
+    const match = artist.match('/artist/([a-zA-Z0-9]+)?');
+    let spotifyArtistId = '';
 
-    if (response.status === HttpStatusCode.UNAUTHORIZED) {
-      const accessToken = await this.refreshTokens(
-        spotifyAccount.userId,
-        decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
+    if (!match) {
+      let response = await this.search(
+        decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY),
+        artist,
+        'artist',
       );
 
-      response = await this.search(accessToken, action.params.artist, 'artist');
+      if (response.status === HttpStatusCode.UNAUTHORIZED) {
+        const accessToken = await this.refreshTokens(
+          spotifyAccount.userId,
+          decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
+        );
+
+        response = await this.search(accessToken, artist, 'artist');
+      }
+      spotifyArtistId = response.search.artists.items[0].id || '';
+    } else {
+      spotifyArtistId = match[1] || '';
     }
     this.pollingService.addUserToPoll({
       service: 'spotify',
       userId: spotifyAccount.userId,
       type: 'listening_to_artist',
-      trigger: response.search.artists.items[0].id,
+      trigger: {
+        artistId: spotifyArtistId,
+        lastTrackId: null,
+      },
     });
-    return `listening_to_artist/${spotifyAccount.userId}/${response.search.artists.items[0].id}`;
+    return `listening_to_artist/${spotifyAccount.userId}/${spotifyArtistId}`;
   }
 
   /**

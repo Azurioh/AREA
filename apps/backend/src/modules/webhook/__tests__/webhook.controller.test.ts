@@ -79,12 +79,12 @@ describe('WebhookController', () => {
     });
 
     it('should call service.spotifyCallback and send 204 on success', async () => {
-      mockRequest.headers = { 'x-spotify-event': 'track_played' };
+      mockRequest.headers = { 'x-spotify-event': 'track_played', 'x-user-id': 'user123' };
       mockRequest.body = { some: 'data' };
 
       await webhookController.spotifyCallback(mockRequest, mockReply);
 
-      expect(mockWebhookService.spotifyCallback).toHaveBeenCalledWith('track_played', mockRequest.body);
+      expect(mockWebhookService.spotifyCallback).toHaveBeenCalledWith('user123', 'track_played', mockRequest.body);
       expect(mockReply.send).toHaveBeenCalled();
     });
   });

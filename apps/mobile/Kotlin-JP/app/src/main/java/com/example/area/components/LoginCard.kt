@@ -2,7 +2,7 @@ package com.example.area.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
@@ -33,8 +33,9 @@ fun LoginCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.elevatedCardColors(containerColor = AppTheme.colors.secondary),
         modifier = Modifier
-            .padding(12.dp)
-            .size(width = 350.dp, height = 490.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(horizontal = 20.dp, vertical = 12.dp)
     ) {
         Text(
             text = "Welcome Back",
@@ -96,7 +97,9 @@ fun LoginCard(
             color2 = Accent,
             fontSize = 14.sp,
             onText2Click = onNavigateToRegister,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp)
         )
     }
 }

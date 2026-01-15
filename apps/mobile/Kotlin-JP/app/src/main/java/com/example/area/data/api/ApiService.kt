@@ -24,10 +24,22 @@ import retrofit2.http.Path
 
 interface ApiService {
     @POST("auth/v1/register")
-    suspend fun registerUser(@Body request: Register) : AuthResponse
+    suspend fun registerUser(
+        @Body request: Register,
+        @Header("x-client-type") clientType: String = "mobile"
+    ) : AuthResponse
 
     @POST("auth/v1/login")
-    suspend fun loginUser(@Body request: Login) : AuthResponse
+    suspend fun loginUser(
+        @Body request: Login,
+        @Header("x-client-type") clientType: String = "mobile"
+    ) : AuthResponse
+
+    @POST("auth/v1/refresh")
+    suspend fun refreshToken(
+        @Header("x-refresh-token") refreshToken: String,
+        @Header("x-client-type") clientType: String = "mobile"
+    ) : AuthResponse
 
     @GET("users/v1/me")
     suspend fun getUserProfile() : User

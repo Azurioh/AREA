@@ -18,6 +18,7 @@ import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReac
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceReactions } from '@/features/workflows/hooks/useServiceReactions';
 import { formatActionReactionName } from '@/lib/utils';
+import { AppRoutesPaths } from '@/enums/routes';
 
 const ChooseReaction: React.FC = () => {
   const { services } = useListServices();
@@ -66,9 +67,9 @@ const ChooseReaction: React.FC = () => {
                     transition={{ duration: 0.3 }}
                     className="relative"
                   >
-                    <Card className="bg-primary text-center text-card overflow-hidden">
+                    <Card className="bg-primary text-center text-text-white overflow-hidden">
                       <CardHeader className="p-2">
-                        <CardTitle className="text-2xl leading-tight">{service}</CardTitle>
+                        <CardTitle className="text-2xl text-text-white">{service}</CardTitle>
                       </CardHeader>
                     </Card>
 
@@ -99,7 +100,7 @@ const ChooseReaction: React.FC = () => {
                                 className="w-full justify-start h-auto py-3 relative overflow-hidden"
                                 onClick={() => {
                                   if (!isServiceConnected(service)) {
-                                    navigate('/connections');
+                                    navigate(AppRoutesPaths.CONNECTIONS);
                                     return;
                                   }
                                   selectReaction(service, reaction.name);
@@ -154,7 +155,7 @@ const ChooseReaction: React.FC = () => {
             >
               <Card className="border-primary overflow-hidden">
                 <CardHeader className="bg-primary">
-                  <CardTitle className="text-lg text-card text-center">
+                  <CardTitle className="text-lg text-text-white text-center">
                     {formatActionReactionName(selectedReaction.reaction)}
                     {loadingParams && <span className="text-sm font-normal ml-2">(Loading...)</span>}
                   </CardTitle>
@@ -233,7 +234,7 @@ const ChooseReaction: React.FC = () => {
 
                       <div className="pt-4 flex gap-3">
                         <Button
-                          className="flex-1"
+                          className="flex-1 text-text-white"
                           onClick={() => {
                             if (!selectedReaction) {
                               return;
@@ -258,7 +259,7 @@ const ChooseReaction: React.FC = () => {
                             );
 
                             setSelectedReaction(null);
-                            navigate('/create');
+                            navigate(AppRoutesPaths.CREATE);
                           }}
                         >
                           Save Configuration
