@@ -54,3 +54,40 @@ const testEnvironmentConfig = {
 jest.mock('./src/utils/environment', () => ({
   environment: testEnvironmentConfig,
 }));
+
+// Mock Redis client to avoid connection timeouts in tests
+const mockRedisStore = new Map<string, string>();
+const mockRedisClient = {
+  get: jest.fn((key: string) => Promise.resolve(mockRedisStore.get(key) || null)),
+  set: jest.fn((key: string, value: string) => {
+    mockRedisStore.set(key, value);
+    return Promise.resolve('OK');
+  }),
+  setex: jest.fn((key: string, _seconds: number, value: string) => {
+    mockRedisStore.set(key, value);
+    return Promise.resolve('OK');
+  }),
+  del: jest.fn((key: string) => {
+    mockRedisStore.delete(key);
+    return Promise.resolve(1);
+  }),
+  quit: jest.fn(() => Promise.resolve('OK')),
+  disconnect: jest.fn(() => Promise.resolve()),
+};
+
+// Mock @fastify/redis to use in-memory store
+jest.mock('@fastify/redis', () => {
+  const fp = require('fastify-plugin');
+  return {
+    __esModule: true,
+    default: fp(async (fastify: { decorate: (name: string, value: unknown) => void }) => {
+      fastify.decorate('redis', mockRedisClient);
+    }),
+  };
+});
+
+// Clear mock Redis store before each test
+beforeEach(() => {
+  mockRedisStore.clear();
+  jest.clearAllMocks();
+});
