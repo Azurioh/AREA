@@ -1,6 +1,6 @@
 import z from 'zod';
 
-const refreshTokenValidatorSchema = z.object({
+export const refreshTokenValidatorSchema = z.object({
   userId: z.string().min(1).trim().meta({
     description: 'The ID of the user associated with the refresh token.',
     example: '64b8f0c2e1d3f2a5b6c7d8e9',

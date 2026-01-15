@@ -1,6 +1,7 @@
 import {
   loginBodyResponseSchema,
   loginBodySchema,
+  logoutResponseSchema,
   refreshTokenResponseSchema,
   registerBodyResponseSchema,
   registerBodySchema,
@@ -63,6 +64,20 @@ export default async (app: FastifyInstance) => {
       tags: ['Auth'],
       response: {
         200: refreshTokenResponseSchema,
+      },
+    },
+  });
+
+  app.route({
+    method: 'POST',
+    url: '/v1/logout',
+    handler: controller.logout.bind(controller),
+    schema: {
+      summary: 'Logout a user',
+      description: 'Invalidates the access and refresh tokens.',
+      tags: ['Auth'],
+      response: {
+        204: logoutResponseSchema,
       },
     },
   });

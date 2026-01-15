@@ -118,16 +118,6 @@ export const refreshTokenResponseSchema = z.object({
 
 export type RefreshTokenResponse = z.infer<typeof refreshTokenResponseSchema>;
 
-export const logoutBodySchema = z.object({
-  refreshToken: z.string().min(1).trim().meta({
-    description: 'The refresh token of the user',
-    example:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-  }),
-});
-
-export type LogoutBody = z.infer<typeof logoutBodySchema>;
-
 export const logoutResponseSchema = z.object({});
 
 export type LogoutResponse = z.infer<typeof logoutResponseSchema>;
