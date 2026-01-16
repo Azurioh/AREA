@@ -1,6 +1,6 @@
 import type { Db, InsertOneResult } from 'mongodb';
 import { MongoCollections } from '@/enums/mongo-collection';
-import type { RefreshTokenValidator } from './auth.types';
+import type { RefreshTokenValidator } from '@/types/auth';
 
 export class AuthRepository {
   private db: Db;
