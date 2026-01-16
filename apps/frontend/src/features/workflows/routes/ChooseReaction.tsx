@@ -172,79 +172,87 @@ const ChooseReaction: React.FC = () => {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {reactionParams.map((param, index) => {
-                        const id = `param-${param.key}-${index}`;
-                        return (
-                          <div key={param.key} className="space-y-2">
-                            <label htmlFor={id} className="text-sm font-medium">
-                              {param.label} <span className="text-destructive">*</span>
-                            </label>
+                      {reactionParams.length === 0 ? (
+                        <div className="text-center py-4 text-muted-foreground">
+                          No parameters required for this reaction
+                        </div>
+                      ) : (
+                        reactionParams.map((param, index) => {
+                          const id = `param-${param.key}-${index}`;
+                          return (
+                            <div key={param.key} className="space-y-2">
+                              <label htmlFor={id} className="text-sm font-medium">
+                                {param.label}
+                              </label>
 
-                            {param.type === 'input' ? (
-                              <div className="space-y-1">
-                                <Input
-                                  id={id}
-                                  placeholder={param.placeholder}
-                                  value={typeof param.value === 'string' ? param.value : ''}
-                                  onChange={(e) => updateParam(index, e.target.value)}
-                                  required
-                                />
-                                {returnedValues.length > 0 && (
-                                  <div className="text-xs text-muted-foreground">
-                                    Available variables: {returnedValues.map((v) => `\${${v.key}}`).join(', ')}
-                                    <HoverCard>
-                                      <HoverCardTrigger asChild>
-                                        <CircleQuestionMark className="inline-block ml-1 w-4 h-4 text-primary cursor-pointer" />
-                                      </HoverCardTrigger>
-                                      <HoverCardContent className="w-80">
-                                        <div className="space-y-2">
-                                          <h4 className="text-sm font-semibold">How to use variables</h4>
-                                          <p className="text-xs text-muted-foreground">
-                                            You can use variables from the action in your reaction parameters. For
-                                            example, if you have a variable called 'username', you can use it by typing
-                                            : hello {'${username}'}.
-                                          </p>
-                                        </div>
-                                      </HoverCardContent>
-                                    </HoverCard>
-                                  </div>
-                                )}
-                              </div>
-                            ) : (
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="outline" className="w-full justify-start relative" id={id}>
-                                    {typeof param.value === 'object' && (param.value as ParamOption)?.name
-                                      ? (param.value as ParamOption).name
-                                      : param.placeholder}
-                                    <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="start" className="w-full">
-                                  {(param.options && param.options.length > 0
-                                    ? param.options
-                                    : [{ name: 'No options available', id: 'none' }]
-                                  ).map((opt: ParamOption) => (
-                                    <DropdownMenuItem
-                                      className="cursor-pointer"
-                                      key={opt.id}
-                                      onClick={() =>
-                                        updateParam(index, {
-                                          name: opt.name,
-                                          id: opt.id,
-                                        })
-                                      }
-                                    >
-                                      {opt.name}
-                                    </DropdownMenuItem>
-                                  ))}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            )}
-                          </div>
-                        );
-                      })}
-
+                              {param.type === 'input' ? (
+                                <div className="space-y-1">
+                                  <Input
+                                    id={id}
+                                    placeholder={param.placeholder}
+                                    value={typeof param.value === 'string' ? param.value : ''}
+                                    onChange={(e) => updateParam(index, e.target.value)}
+                                  />
+                                  {returnedValues.length > 0 && (
+                                    <div className="text-xs text-muted-foreground">
+                                      Available variables: {returnedValues.map((v) => `\${${v.key}}`).join(', ')}
+                                      <HoverCard>
+                                        <HoverCardTrigger asChild>
+                                          <CircleQuestionMark className="inline-block ml-1 w-4 h-4 text-primary cursor-pointer" />
+                                        </HoverCardTrigger>
+                                        <HoverCardContent className="w-80">
+                                          <div className="space-y-2">
+                                            <h4 className="text-sm font-semibold">How to use variables</h4>
+                                            <p className="text-xs text-muted-foreground">
+                                              You can use variables from the action in your reaction parameters. For
+                                              example, if you have a variable called 'username', you can use it by
+                                              typing : hello {'${username}'}.
+                                            </p>
+                                          </div>
+                                        </HoverCardContent>
+                                      </HoverCard>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" className="w-full justify-start relative" id={id}>
+                                      {typeof param.value === 'object' && (param.value as ParamOption)?.name
+                                        ? (param.value as ParamOption).name
+                                        : param.placeholder}
+                                      <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent className="w-full">
+                                    {(param.options && param.options.length > 0
+                                      ? param.options
+                                      : [
+                                          {
+                                            name: 'No options available',
+                                            id: 'none',
+                                          },
+                                        ]
+                                    ).map((opt: ParamOption) => (
+                                      <DropdownMenuItem
+                                        key={opt.id}
+                                        onClick={() =>
+                                          updateParam(index, {
+                                            name: opt.name,
+                                            id: opt.id,
+                                          })
+                                        }
+                                      >
+                                        {opt.name}
+                                      </DropdownMenuItem>
+                                    ))}
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
                       <div className="pt-4 space-y-3">
                         <div className="text-[10px] text-muted-foreground italic">* All fields are required</div>
                         <div className="flex gap-3">
