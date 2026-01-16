@@ -309,7 +309,7 @@ describe('AuthService', () => {
 // Test auth.types.ts schema for coverage
 describe('refreshTokenValidatorSchema', () => {
   it('should validate correct token data', () => {
-    const { refreshTokenValidatorSchema } = require('../auth.types');
+    const { refreshTokenValidatorSchema } = require('../../../types/auth');
 
     const validData = {
       userId: '64b8f0c2e1d3f2a5b6c7d8e9',
@@ -322,7 +322,7 @@ describe('refreshTokenValidatorSchema', () => {
   });
 
   it('should reject invalid token data', () => {
-    const { refreshTokenValidatorSchema } = require('../auth.types');
+    const { refreshTokenValidatorSchema } = require('../../../types/auth');
 
     const invalidData = {
       userId: '',
