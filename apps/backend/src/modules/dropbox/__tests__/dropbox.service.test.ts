@@ -39,7 +39,8 @@ describe('DropboxService', () => {
       thirdPartiesService.getThirdPartyAccountByUserId.mockResolvedValue(mockAccount as any);
 
       const action = { name: 'file_created', params: { path: '/path2' } };
-      const result = await service.createAction('user1', action as any);
+      const actionReactionId = 'action-reaction-123';
+      const result = await service.createAction(actionReactionId, 'user1', action as any);
 
       expect(result).toBe('file_created/(/path2)/acc123');
       expect(thirdPartiesService.updateThirdPartyAccount).toHaveBeenCalledWith('dropbox', 'user1', {
@@ -52,7 +53,8 @@ describe('DropboxService', () => {
       thirdPartiesService.getThirdPartyAccountByUserId.mockResolvedValue(mockAccount as any);
 
       const action = { name: 'file_created', params: { path: '/path1' } };
-      await service.createAction('user1', action as any);
+      const actionReactionId = 'action-reaction-123';
+      await service.createAction(actionReactionId, 'user1', action as any);
 
       expect(thirdPartiesService.updateThirdPartyAccount).toHaveBeenCalledWith('dropbox', 'user1', {
         cursor: { ref: 'ref1', paths: ['/path1'] },

@@ -1,6 +1,7 @@
 import { HttpStatusCode } from '@area/shared/enums/http-status';
 import type {
   CreateActionReactionBody,
+  DeleteActionReactionParams,
   UpdateActionReactionExecutionStateBody,
   UpdateActionReactionExecutionStateParams,
 } from '@area/shared/schemas/actions-reactions.schema';
@@ -66,6 +67,25 @@ export class ActionsReactionsController {
     reply: FastifyReply,
   ): Promise<void> {
     await this.service.updateActionReactionExecutionStateById(request.params.id, request.body.executionState);
+
+    return reply.status(HttpStatusCode.NO_CONTENT).send();
+  }
+
+  /**
+   * @function deleteActionReactionById
+   * @description Delete the action reaction by id
+   *
+   * @param {FastifyRequest<{ Params: DeleteActionReactionParams }>} request The FastifyRequest object
+   * @param {FastifyReply} reply The FastifyReply object
+   * @returns {Promise<void>} Nothing
+   */
+  async deleteActionReactionById(
+    request: FastifyRequest<{
+      Params: DeleteActionReactionParams;
+    }>,
+    reply: FastifyReply,
+  ): Promise<void> {
+    await this.service.deleteActionReactionById(request.params.id);
 
     return reply.status(HttpStatusCode.NO_CONTENT).send();
   }

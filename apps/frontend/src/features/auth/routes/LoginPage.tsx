@@ -68,7 +68,11 @@ const LoginPage: React.FC = () => {
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute right-0 top-1/2 -translate-y-1/2 hover:bg-muted hover:text-primary transition-colors"
                 >
-                  {showPassword ? <Eye className="h-4 w-4" aria-hidden="true" /> : <EyeOff className="h-4 w-4" aria-hidden="true" />}
+                  {showPassword ? (
+                    <Eye className="h-4 w-4" aria-hidden="true" />
+                  ) : (
+                    <EyeOff className="h-4 w-4" aria-hidden="true" />
+                  )}
                 </Button>
               </div>
             </div>
@@ -89,7 +93,10 @@ const LoginPage: React.FC = () => {
             </Button>
             <p className="text-center text-sm">
               <span className="text-muted-foreground">Don't have an account?</span>{' '}
-              <Link to={AppRoutesPaths.REGISTER} className="font-medium text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+              <Link
+                to={AppRoutesPaths.REGISTER}
+                className="font-medium text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
                 Sign up
               </Link>
             </p>

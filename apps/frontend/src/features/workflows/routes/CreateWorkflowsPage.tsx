@@ -5,6 +5,7 @@ import SideBar from '@/components/SideBar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useActionReaction } from '@/features/workflows/context/ActionReactionContext';
+import { formatActionReactionName } from '@/lib/utils';
 import { AppRoutesPaths } from '@/enums/routes';
 
 export default function CreateWorkflows() {
@@ -61,7 +62,9 @@ export default function CreateWorkflows() {
                 className="w-full h-full flex items-center justify-center bg-primary rounded-[var(--small-radius)] text-text-white"
                 onClick={() => navigate(AppRoutesPaths.CHOOSEACTION)}
               >
-                <span className="text-5xl font-bold">{action?.name ? action.name : 'Action'}</span>
+                <span className="text-5xl font-bold">
+                  {action?.name ? formatActionReactionName(action.name) : 'Action'}
+                </span>
               </Button>
 
               {action?.name && (
@@ -89,7 +92,9 @@ export default function CreateWorkflows() {
                 }}
                 disabled={!action?.name}
               >
-                <span className="text-5xl font-bold">{reaction?.name ? reaction.name : 'Reaction'}</span>
+                <span className="text-5xl font-bold">
+                  {reaction?.name ? formatActionReactionName(reaction.name) : 'Reaction'}
+                </span>
               </Button>
 
               {action?.name && reaction?.name && (

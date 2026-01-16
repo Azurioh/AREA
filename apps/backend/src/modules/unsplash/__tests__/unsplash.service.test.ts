@@ -21,12 +21,13 @@ describe('UnsplashService', () => {
         name: 'daily_random_image',
         params: { topic: { id: 'cats' } },
       };
-
-      const result = await service.createAction('user123', action as any);
+      const actionReactionId = 'action-reaction-123';
+      const result = await service.createAction(actionReactionId, 'user123', action as any);
 
       expect(result).toBe('daily_random_image/cats/user123');
       expect(pollingService.addUserToPoll).toHaveBeenCalledWith({
         service: 'unsplash',
+        actionReactionId,
         userId: 'user123',
         type: 'daily_random_image',
         trigger: {
@@ -41,10 +42,11 @@ describe('UnsplashService', () => {
         name: 'unknown_action',
         params: {},
       };
+      const actionReactionId = 'action-reaction-123';
 
       let error: any;
       try {
-        await service.createAction('user123', action as any);
+        await service.createAction(actionReactionId, 'user123', action as any);
       } catch (e) {
         error = e;
       }

@@ -24,11 +24,12 @@ export class DiscordService {
    * @function createAction
    * @description Create an action with the discord service
    *
-   * @param {string} _userId - The id of the user creating the action
+   * @param {string} actionReactionId - The id of the action reaction document
+   * @param {string} userId - The id of the user creating the action
    * @param {CreateAction} action - The information about the action
    * @returns {Promise<boolean>} If the action was created
    */
-  async createAction(_userId: string, action: CreateAction): Promise<string> {
+  async createAction(_actionReactionId: string, _userId: string, action: CreateAction): Promise<string> {
     const trigger = `${action.name}/${action.params.channel.id}`;
 
     return trigger;

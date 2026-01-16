@@ -3,12 +3,13 @@ import type { CreateAction, CreateReaction } from '@area/shared/schemas/actions-
 import { Reaction } from '@/integrations';
 import type { PollingService } from '@/modules/polling/polling.service';
 import type { ThirdPartiesService } from '@/modules/third-parties';
-import type { ActionPayload } from '@/types/action-reaction';
+import type { ActionPayload, ActionReaction } from '@/types/action-reaction';
 import type { SpotifyPlaylist } from '@/types/spotify';
 import type { SpotifyAccount, SpotifyAuthorizationResponse } from '@/types/third-parties';
 import ApiError from '@/utils/api-error';
 import { decryptString, encryptString } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
+import type { WithId } from 'mongodb';
 
 /**
  * @class SpotifyService
@@ -25,13 +26,14 @@ export class SpotifyService {
 
   /**
    * @function createAction
-   * @description Create an action with the github service
+   * @description Create an action with the spotify service
    *
+   * @param {ObjectId} actionReactionId - The id of the action reaction document
    * @param {string} userId - The id of the user creating the action
    * @param {CreateAction} action - The information about the action
-   * @returns {Promise<boolean>} If the action was created
+   * @returns {Promise<string>} The trigger of the created action
    */
-  async createAction(userId: string, action: CreateAction): Promise<string> {
+  async createAction(actionReactionId: string, userId: string, action: CreateAction): Promise<string> {
     const spotifyAccount = await this.thirdPartiesService.getThirdPartyAccountByUserId<SpotifyAccount>(
       'spotify',
       userId,
@@ -40,7 +42,7 @@ export class SpotifyService {
 
     switch (action.name) {
       case 'listening_to_artist': {
-        trigger = await this.listeningToArtist(spotifyAccount, action);
+        trigger = await this.listeningToArtist(actionReactionId, spotifyAccount, action);
         break;
       }
       default: {
@@ -54,11 +56,16 @@ export class SpotifyService {
    * @function listeningToArtist
    * @description Create a listening to artist action
    *
+   * @param {string} actionReactionId - The id of the action reaction document
    * @param {SpotifyAccount} spotifyAccount - The spotify account of the user
    * @param {CreateAction} action - The information about the action
    * @returns {Promise<string>} The trigger action to store in the db
    */
-  async listeningToArtist(spotifyAccount: SpotifyAccount, action: CreateAction): Promise<string> {
+  async listeningToArtist(
+    actionReactionId: string,
+    spotifyAccount: SpotifyAccount,
+    action: CreateAction,
+  ): Promise<string> {
     const { artist } = action.params;
     const match = artist.match('/artist/([a-zA-Z0-9]+)?');
     let spotifyArtistId = '';
@@ -84,6 +91,7 @@ export class SpotifyService {
     }
     this.pollingService.addUserToPoll({
       service: 'spotify',
+      actionReactionId,
       userId: spotifyAccount.userId,
       type: 'listening_to_artist',
       trigger: {
@@ -391,5 +399,16 @@ export class SpotifyService {
         };
       });
     return playlists;
+  }
+
+  /**
+   * @function deleteAction
+   * @description Delete an action reaction
+   *
+   * @param {WithId<ActionReaction>} actionReaction - The action reaction to delete
+   * @returns {Promise<void>} Nothing
+   */
+  async deleteAction(actionReaction: WithId<ActionReaction>): Promise<void> {
+    await this.pollingService.deleteUserToPollByActionReactionId(actionReaction._id.toString());
   }
 }

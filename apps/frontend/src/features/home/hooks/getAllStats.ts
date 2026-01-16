@@ -31,9 +31,9 @@ export function useListWorkflows() {
     const totalWorkflows = workflows.length;
     const activeWorkflows = workflows.filter((workflow) => workflow.executionState === true).length;
     let totalActions = 0;
-    workflows.forEach((workflow) => {
+    for (const workflow of workflows) {
       totalActions += workflow.numberOfExecution || 0;
-    });
+    }
 
     return {
       totalWorkflows,

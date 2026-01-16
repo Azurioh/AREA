@@ -50,8 +50,16 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
       </Card>
 
       {isDialogOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={closeDialog}>
-          <div className="bg-card p-6 rounded-lg shadow-lg max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+        <button
+          type="button"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={closeDialog}
+        >
+          <button
+            type="button"
+            className="bg-card p-6 rounded-lg shadow-lg max-w-md w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-primary">Confirm Deletion</h2>
               <Button variant="ghost" size="icon" onClick={closeDialog} className="h-8 w-8">
@@ -81,8 +89,8 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
                 Delete User
               </Button>
             </div>
-          </div>
-        </div>
+          </button>
+        </button>
       )}
     </>
   );

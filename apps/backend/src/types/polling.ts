@@ -8,13 +8,15 @@ export type ServiceToPoll = 'spotify' | 'unsplash';
  * @type Polling
  * @description A polling document.
  *
- * @property {PollingService} service - The name of the service for which to poll.
+ * @property {ServiceToPoll} service - The name of the service for which to poll.
+ * @property {string} actionReactionId - The id of the action reaction document.
  * @property {string} userId - The id of the user for which to poll.
  * @property {string} type - The type of the poll.
  * @property {string} trigger - What will trigger the polling and send call the api.
  */
 export type Polling = {
   service: ServiceToPoll;
+  actionReactionId: string;
   userId: string;
   type: string;
   trigger: any;

@@ -58,7 +58,8 @@ describe('GithubService', () => {
         json: jest.fn().mockResolvedValue({}),
       });
 
-      const result = await githubService.createAction(userId, action);
+      const actionReactionId = 'action-reaction-123';
+      const result = await githubService.createAction(actionReactionId, userId, action);
 
       expect(result).toBe('push/repo-id');
       expect(global.fetch).toHaveBeenCalledWith(
@@ -78,7 +79,8 @@ describe('GithubService', () => {
         }),
       });
 
-      const result = await githubService.createAction(userId, action);
+      const actionReactionId = 'action-reaction-123';
+      const result = await githubService.createAction(actionReactionId, userId, action);
       expect(result).toBe('push/repo-id');
     });
 
@@ -90,7 +92,8 @@ describe('GithubService', () => {
         }),
       });
 
-      const result = await githubService.createAction(userId, action);
+      const actionReactionId = 'action-reaction-123';
+      const result = await githubService.createAction(actionReactionId, userId, action);
       expect(result).toBe('push/repo-id');
     });
 
@@ -102,7 +105,8 @@ describe('GithubService', () => {
         }),
       });
 
-      await expect(githubService.createAction(userId, action)).rejects.toThrow(ApiError);
+      const actionReactionId = 'action-reaction-123';
+      await expect(githubService.createAction(actionReactionId, userId, action)).rejects.toThrow(ApiError);
     });
 
     it('should throw ApiError if webhook creation fails with empty errors', async () => {
@@ -111,7 +115,8 @@ describe('GithubService', () => {
         json: jest.fn().mockResolvedValue({}),
       });
 
-      await expect(githubService.createAction(userId, action)).rejects.toThrow(ApiError);
+      const actionReactionId = 'action-reaction-123';
+      await expect(githubService.createAction(actionReactionId, userId, action)).rejects.toThrow(ApiError);
     });
   });
 
