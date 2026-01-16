@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Dehaze
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -112,8 +112,8 @@ fun DisplayCard(
                 )
 
                 Icon(
-                    imageVector = Icons.Filled.Dehaze,
-                    contentDescription = "Menu",
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Close",
                     tint = AppTheme.colors.textPrimary,
                     modifier = Modifier
                         .size(20.dp)
