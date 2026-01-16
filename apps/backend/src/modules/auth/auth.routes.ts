@@ -1,6 +1,7 @@
 import {
   loginBodyResponseSchema,
   loginBodySchema,
+  logoutResponseSchema,
   refreshTokenResponseSchema,
   registerBodyResponseSchema,
   registerBodySchema,
@@ -8,6 +9,7 @@ import {
 } from '@area/shared/schemas/auth.schema';
 import type { FastifyInstance } from 'fastify';
 import { AuthController } from '@/modules/auth/auth.controller';
+import { AuthRepository } from '@/modules/auth/auth.repository';
 import { AuthService } from '@/modules/auth/auth.service';
 import { UsersRepository } from '@/modules/users';
 
@@ -16,8 +18,9 @@ export default async (app: FastifyInstance) => {
     throw new Error('MongoDB not initialized');
   }
 
-  const repository = new UsersRepository(app.mongo.db);
-  const service = new AuthService(repository);
+  const userRepository = new UsersRepository(app.mongo.db);
+  const repository = new AuthRepository(app.mongo.db);
+  const service = new AuthService(userRepository, repository);
   const controller = new AuthController(service);
 
   app.route({
@@ -61,6 +64,20 @@ export default async (app: FastifyInstance) => {
       tags: ['Auth'],
       response: {
         200: refreshTokenResponseSchema,
+      },
+    },
+  });
+
+  app.route({
+    method: 'POST',
+    url: '/v1/logout',
+    handler: controller.logout.bind(controller),
+    schema: {
+      summary: 'Logout a user',
+      description: 'Invalidates the access and refresh tokens.',
+      tags: ['Auth'],
+      response: {
+        204: logoutResponseSchema,
       },
     },
   });

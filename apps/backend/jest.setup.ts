@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: path.resolve(__dirname, '.env.test') });
 
-// Create a test environment object
 const PORT = randomInt(3000, 8000);
 const testEnvironmentConfig = {
   NODE_ENV: 'test',
@@ -20,6 +19,10 @@ const testEnvironmentConfig = {
 
   MONGO_URI: process.env.MONGO_URI,
   MONGO_DATABASE: 'area-test',
+
+  REDIS_HOST: process.env.REDIS_HOST,
+  REDIS_PORT: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD || '',
 
   JWT_ACCESS_TOKEN_SECRET: 'test',
   JWT_REFRESH_TOKEN_SECRET: 'test',
@@ -46,7 +49,40 @@ const testEnvironmentConfig = {
   X_CODE_VERIFIER: 'challenge',
 };
 
-// Mock the environment module, exposing actual functions + test environment
 jest.mock('./src/utils/environment', () => ({
   environment: testEnvironmentConfig,
 }));
+
+const mockRedisStore = new Map<string, string>();
+const mockRedisClient = {
+  get: jest.fn((key: string) => Promise.resolve(mockRedisStore.get(key) || null)),
+  set: jest.fn((key: string, value: string) => {
+    mockRedisStore.set(key, value);
+    return Promise.resolve('OK');
+  }),
+  setex: jest.fn((key: string, _seconds: number, value: string) => {
+    mockRedisStore.set(key, value);
+    return Promise.resolve('OK');
+  }),
+  del: jest.fn((key: string) => {
+    mockRedisStore.delete(key);
+    return Promise.resolve(1);
+  }),
+  quit: jest.fn(() => Promise.resolve('OK')),
+  disconnect: jest.fn(() => Promise.resolve()),
+};
+
+jest.mock('@fastify/redis', () => {
+  const fp = require('fastify-plugin');
+  return {
+    __esModule: true,
+    default: fp(async (fastify: { decorate: (name: string, value: unknown) => void }) => {
+      fastify.decorate('redis', mockRedisClient);
+    }),
+  };
+});
+
+beforeEach(() => {
+  mockRedisStore.clear();
+  jest.clearAllMocks();
+});

@@ -43,13 +43,12 @@ export const generateStateToken = (payload: StateToken): string => {
  *
  * @param {string} token - The token to verify
  * @param {string} secret - The secret to verify the token with
- * @returns {T} The decoded token.
  */
 export const verifyToken = <T>(token: string, secret: string) => {
   try {
-    const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
+    const decoded = jwt.verify(token, secret);
 
-    return decoded as T;
+    return decoded as T & jwt.JwtPayload;
   } catch (error: unknown) {
     if (error instanceof jwt.JsonWebTokenError) {
       throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Provided token is invalid');

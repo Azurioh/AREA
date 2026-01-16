@@ -11,12 +11,16 @@ jest.mock('@/utils/crypt', () => ({
   safeEqualCheck: jest.fn(() => false),
 }));
 
-// Mock environment to allow mutation in tests
+jest.mock('@/utils/token', () => ({
+  verifyToken: jest.fn(() => ({ _id: '507f1f77bcf86cd799439011' })),
+}));
+
 jest.mock('@/utils/environment', () => ({
   environment: {
     NODE_ENV: 'test',
     CRYPT_SECRET_KEY: 'secret',
     ADMIN_SECRET: 'admin_secret',
+    JWT_ACCESS_TOKEN_SECRET: 'access_secret',
   },
 }));
 
@@ -31,6 +35,12 @@ describe('AuthController', () => {
       registerUser: jest.fn(),
       loginUser: jest.fn(),
       refreshToken: jest.fn(),
+      sendTokensToUser: jest.fn(),
+      getRefreshToken: jest.fn(),
+      checkIfRefreshTokenIsValid: jest.fn().mockResolvedValue(true),
+      storeRefreshTokenInDatabase: jest.fn(),
+      invalidateAccessToken: jest.fn(),
+      invalidateRefreshToken: jest.fn(),
     } as any;
 
     controller = new AuthController(mockService);
@@ -77,26 +87,16 @@ describe('AuthController', () => {
           role: UserRoles.USER,
         }),
       );
-      expect(mockReply.setCookie).toHaveBeenCalledWith(
-        'refresh-token',
+      expect(mockService.sendTokensToUser).toHaveBeenCalledWith(
+        'encrypted_access_token_123',
         'encrypted_refresh_token_123',
-        expect.objectContaining({
-          httpOnly: true,
-          sameSite: 'lax',
-          secure: true,
-        }),
+        mockRequest,
+        mockReply,
+        true,
       );
-      expect(mockReply.status).toHaveBeenCalledWith(201);
-      expect(mockReply.send).toHaveBeenCalledWith({
-        accessToken: 'encrypted_access_token_123',
-      });
     });
 
     it('should register user with development cookie settings when NODE_ENV is development', async () => {
-      // Mock environment as development
-      const originalEnv = environment.NODE_ENV;
-      (environment as any).NODE_ENV = 'development';
-
       const tokens = {
         accessToken: 'access_token_dev',
         refreshToken: 'refresh_token_dev',
@@ -104,24 +104,18 @@ describe('AuthController', () => {
 
       mockService.registerUser.mockResolvedValueOnce(tokens);
 
-      try {
-        await controller.registerUser(
-          mockRequest as FastifyRequest<{ Body: any; Headers: any }>,
-          mockReply as FastifyReply,
-        );
+      await controller.registerUser(
+        mockRequest as FastifyRequest<{ Body: any; Headers: any }>,
+        mockReply as FastifyReply,
+      );
 
-        expect(mockReply.setCookie).toHaveBeenCalledWith(
-          'refresh-token',
-          'encrypted_refresh_token_dev',
-          expect.objectContaining({
-            httpOnly: true,
-            sameSite: 'none',
-            secure: false, // In development, secure is false
-          }),
-        );
-      } finally {
-        (environment as any).NODE_ENV = originalEnv;
-      }
+      expect(mockService.sendTokensToUser).toHaveBeenCalledWith(
+        'encrypted_access_token_dev',
+        'encrypted_refresh_token_dev',
+        mockRequest,
+        mockReply,
+        true,
+      );
     });
 
     it('should register admin user if admin secret matches', async () => {
@@ -143,6 +137,7 @@ describe('AuthController', () => {
           role: UserRoles.ADMIN,
         }),
       );
+      expect(mockService.sendTokensToUser).toHaveBeenCalled();
     });
   });
 
@@ -163,21 +158,17 @@ describe('AuthController', () => {
       await controller.loginUser(mockRequest as FastifyRequest<{ Body: any }>, mockReply as FastifyReply);
 
       expect(mockService.loginUser).toHaveBeenCalledWith(mockRequest.body);
-      expect(mockReply.setCookie).toHaveBeenCalledWith(
-        'refresh-token',
+      expect(mockService.storeRefreshTokenInDatabase).toHaveBeenCalled();
+      expect(mockService.sendTokensToUser).toHaveBeenCalledWith(
+        'encrypted_access_token_123',
         'encrypted_refresh_token_123',
-        expect.any(Object),
+        mockRequest,
+        mockReply,
+        false,
       );
-      expect(mockReply.status).toHaveBeenCalledWith(200);
-      expect(mockReply.send).toHaveBeenCalledWith({
-        accessToken: 'encrypted_access_token_123',
-      });
     });
 
     it('should login user with development cookie settings when NODE_ENV is development', async () => {
-      const originalEnv = environment.NODE_ENV;
-      (environment as any).NODE_ENV = 'development';
-
       const tokens = {
         accessToken: 'access_token_dev',
         refreshToken: 'refresh_token_dev',
@@ -185,21 +176,15 @@ describe('AuthController', () => {
 
       mockService.loginUser.mockResolvedValueOnce(tokens);
 
-      try {
-        await controller.loginUser(mockRequest as FastifyRequest<{ Body: any }>, mockReply as FastifyReply);
+      await controller.loginUser(mockRequest as FastifyRequest<{ Body: any }>, mockReply as FastifyReply);
 
-        expect(mockReply.setCookie).toHaveBeenCalledWith(
-          'refresh-token',
-          'encrypted_refresh_token_dev',
-          expect.objectContaining({
-            httpOnly: true,
-            sameSite: 'none',
-            secure: false,
-          }),
-        );
-      } finally {
-        (environment as any).NODE_ENV = originalEnv;
-      }
+      expect(mockService.sendTokensToUser).toHaveBeenCalledWith(
+        'encrypted_access_token_dev',
+        'encrypted_refresh_token_dev',
+        mockRequest,
+        mockReply,
+        false,
+      );
     });
   });
 
@@ -208,28 +193,93 @@ describe('AuthController', () => {
       mockRequest.cookies = {
         'refresh-token': 'encrypted_valid_refresh_token',
       };
+      mockRequest.headers = {
+        ...mockRequest.headers,
+        authorization: 'Bearer old_access_token',
+      };
 
+      mockService.getRefreshToken.mockReturnValueOnce('encrypted_valid_refresh_token');
       mockService.refreshToken.mockResolvedValueOnce({
-        accessToken: 'new_access_token',
+        newAccessToken: 'new_access_token',
+        newRefreshToken: 'new_refresh_token',
       });
 
-      await controller.refreshToken(mockRequest as FastifyRequest, mockReply as FastifyReply);
+      await controller.refreshToken(mockRequest as FastifyRequest<{ Headers: any }>, mockReply as FastifyReply);
 
+      expect(mockService.getRefreshToken).toHaveBeenCalledWith(mockRequest);
+      expect(mockService.checkIfRefreshTokenIsValid).toHaveBeenCalledWith('encrypted_valid_refresh_token');
       expect(mockService.refreshToken).toHaveBeenCalledWith('valid_refresh_token');
-      expect(mockReply.status).toHaveBeenCalledWith(200);
-      expect(mockReply.send).toHaveBeenCalledWith({
-        accessToken: 'encrypted_new_access_token',
-      });
+      expect(mockService.invalidateAccessToken).toHaveBeenCalled();
+      expect(mockService.invalidateRefreshToken).toHaveBeenCalled();
+      expect(mockService.sendTokensToUser).toHaveBeenCalledWith(
+        'encrypted_new_access_token',
+        'encrypted_new_refresh_token',
+        mockRequest,
+        mockReply,
+        false,
+      );
     });
 
     it('should return 401 if refresh token cookie is missing', async () => {
       mockRequest.cookies = {};
+      mockService.getRefreshToken.mockReturnValueOnce(undefined);
 
-      await controller.refreshToken(mockRequest as FastifyRequest, mockReply as FastifyReply);
+      await expect(
+        controller.refreshToken(mockRequest as FastifyRequest<{ Headers: any }>, mockReply as FastifyReply),
+      ).rejects.toThrow('Refresh token is missing');
+    });
+  });
 
-      expect(mockService.refreshToken).not.toHaveBeenCalled();
-      expect(mockReply.status).toHaveBeenCalledWith(401);
-      expect(mockReply.send).toHaveBeenCalledWith({ message: 'Refresh token is missing' });
+  describe('logout', () => {
+    it('should invalidate both tokens when present', async () => {
+      mockRequest.headers = {
+        ...mockRequest.headers,
+        authorization: 'Bearer access_token_123',
+      };
+      mockService.getRefreshToken.mockReturnValueOnce('refresh_token_123');
+
+      await controller.logout(mockRequest as FastifyRequest<{ Body: any }>, mockReply as FastifyReply);
+
+      expect(mockService.invalidateAccessToken).toHaveBeenCalledWith(mockRequest, 'access_token_123');
+      expect(mockService.invalidateRefreshToken).toHaveBeenCalledWith('refresh_token_123');
+      expect(mockReply.status).toHaveBeenCalledWith(204);
+      expect(mockReply.send).toHaveBeenCalled();
+    });
+
+    it('should handle logout when refresh token is missing', async () => {
+      mockRequest.headers = {
+        ...mockRequest.headers,
+        authorization: 'Bearer access_token_123',
+      };
+      mockService.getRefreshToken.mockReturnValueOnce(undefined);
+
+      await controller.logout(mockRequest as FastifyRequest<{ Body: any }>, mockReply as FastifyReply);
+
+      expect(mockService.invalidateAccessToken).toHaveBeenCalledWith(mockRequest, 'access_token_123');
+      expect(mockService.invalidateRefreshToken).not.toHaveBeenCalled();
+      expect(mockReply.status).toHaveBeenCalledWith(204);
+    });
+
+    it('should handle logout when access token is missing', async () => {
+      mockRequest.headers = {};
+      mockService.getRefreshToken.mockReturnValueOnce('refresh_token_123');
+
+      await controller.logout(mockRequest as FastifyRequest<{ Body: any }>, mockReply as FastifyReply);
+
+      expect(mockService.invalidateAccessToken).not.toHaveBeenCalled();
+      expect(mockService.invalidateRefreshToken).toHaveBeenCalledWith('refresh_token_123');
+      expect(mockReply.status).toHaveBeenCalledWith(204);
+    });
+
+    it('should handle logout when both tokens are missing', async () => {
+      mockRequest.headers = {};
+      mockService.getRefreshToken.mockReturnValueOnce(undefined);
+
+      await controller.logout(mockRequest as FastifyRequest<{ Body: any }>, mockReply as FastifyReply);
+
+      expect(mockService.invalidateAccessToken).not.toHaveBeenCalled();
+      expect(mockService.invalidateRefreshToken).not.toHaveBeenCalled();
+      expect(mockReply.status).toHaveBeenCalledWith(204);
     });
   });
 });

@@ -142,7 +142,7 @@ describe('AuthService', () => {
 
       const result = await authService.refreshToken(refreshToken);
 
-      expect(result).toHaveProperty('accessToken');
+      expect(result).toHaveProperty('newAccessToken');
       expect(verifyToken).toHaveBeenCalledWith(refreshToken, environment.JWT_REFRESH_TOKEN_SECRET);
       expect(mockRepository.getUserById).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
     });
@@ -153,5 +153,184 @@ describe('AuthService', () => {
 
       await expect(authService.refreshToken(refreshToken)).rejects.toThrow('User not found.');
     });
+  });
+
+  describe('getRefreshToken', () => {
+    it('should return cookie refresh token when x-client-type is not set', () => {
+      const mockRequest = {
+        headers: {},
+        cookies: { 'refresh-token': 'cookie_token' },
+      } as any;
+
+      const result = authService.getRefreshToken(mockRequest);
+      expect(result).toBe('cookie_token');
+    });
+
+    it('should return header refresh token when x-client-type is mobile and x-refresh-token is string', () => {
+      const mockRequest = {
+        headers: {
+          'x-client-type': 'mobile',
+          'x-refresh-token': 'mobile_refresh_token',
+        },
+        cookies: { 'refresh-token': 'cookie_token' },
+      } as any;
+
+      const result = authService.getRefreshToken(mockRequest);
+      expect(result).toBe('mobile_refresh_token');
+    });
+
+    it('should return cookie when x-client-type is not mobile', () => {
+      const mockRequest = {
+        headers: {
+          'x-client-type': 'web',
+          'x-refresh-token': 'header_token',
+        },
+        cookies: { 'refresh-token': 'cookie_token' },
+      } as any;
+
+      const result = authService.getRefreshToken(mockRequest);
+      expect(result).toBe('cookie_token');
+    });
+  });
+
+  describe('invalidateAccessToken', () => {
+    it('should return early when accessToken is undefined', async () => {
+      const mockRequest = { server: { redis: { setex: jest.fn() } } } as any;
+
+      await authService.invalidateAccessToken(mockRequest, undefined);
+
+      expect(mockRequest.server.redis.setex).not.toHaveBeenCalled();
+    });
+
+    it('should return early when token is expired', async () => {
+      const mockRequest = { server: { redis: { setex: jest.fn() } } } as any;
+      // Mock an expired token
+      (verifyToken as jest.Mock).mockReturnValue({ exp: Math.floor(Date.now() / 1000) - 100 });
+
+      await authService.invalidateAccessToken(mockRequest, 'expired_token');
+
+      expect(mockRequest.server.redis.setex).not.toHaveBeenCalled();
+    });
+
+    it('should blacklist token when it is valid and not expired', async () => {
+      const mockRequest = { server: { redis: { setex: jest.fn() } } } as any;
+      const futureExp = Math.floor(Date.now() / 1000) + 3600;
+      (verifyToken as jest.Mock).mockReturnValue({ exp: futureExp });
+
+      await authService.invalidateAccessToken(mockRequest, 'valid_token');
+
+      expect(mockRequest.server.redis.setex).toHaveBeenCalled();
+    });
+  });
+
+  describe('sendTokensToUser', () => {
+    it('should send tokens in body for mobile clients', async () => {
+      const mockRequest = {
+        headers: { 'x-client-type': 'mobile' },
+      } as any;
+      const mockReply = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(),
+        setCookie: jest.fn(),
+      } as any;
+
+      await authService.sendTokensToUser('access_token', 'refresh_token', mockRequest, mockReply);
+
+      expect(mockReply.status).toHaveBeenCalledWith(200);
+      expect(mockReply.send).toHaveBeenCalledWith({ accessToken: 'access_token', refreshToken: 'refresh_token' });
+      expect(mockReply.setCookie).not.toHaveBeenCalled();
+    });
+
+    it('should set cookie for web clients with CREATED status when registering', async () => {
+      const mockRequest = {
+        headers: {},
+      } as any;
+      const mockReply = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(),
+        setCookie: jest.fn(),
+      } as any;
+
+      await authService.sendTokensToUser('access_token', 'refresh_token', mockRequest, mockReply, true);
+
+      expect(mockReply.setCookie).toHaveBeenCalledWith('refresh-token', 'refresh_token', expect.any(Object));
+      expect(mockReply.status).toHaveBeenCalledWith(201);
+      expect(mockReply.send).toHaveBeenCalledWith({ accessToken: 'access_token' });
+    });
+
+    it('should set cookie for web clients with OK status when logging in', async () => {
+      const mockRequest = {
+        headers: {},
+      } as any;
+      const mockReply = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(),
+        setCookie: jest.fn(),
+      } as any;
+
+      await authService.sendTokensToUser('access_token', 'refresh_token', mockRequest, mockReply, false);
+
+      expect(mockReply.setCookie).toHaveBeenCalled();
+      expect(mockReply.status).toHaveBeenCalledWith(200);
+    });
+
+    it('should set development cookie options when NODE_ENV is development', async () => {
+      // Temporarily change NODE_ENV
+      const originalEnv = environment.NODE_ENV;
+      (environment as any).NODE_ENV = 'development';
+
+      const mockRequest = {
+        headers: {},
+      } as any;
+      const mockReply = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(),
+        setCookie: jest.fn(),
+      } as any;
+
+      try {
+        await authService.sendTokensToUser('access_token', 'refresh_token', mockRequest, mockReply, false);
+
+        expect(mockReply.setCookie).toHaveBeenCalledWith(
+          'refresh-token',
+          'refresh_token',
+          expect.objectContaining({
+            secure: false,
+            sameSite: 'none',
+          }),
+        );
+      } finally {
+        (environment as any).NODE_ENV = originalEnv;
+      }
+    });
+  });
+});
+
+// Test auth.types.ts schema for coverage
+describe('refreshTokenValidatorSchema', () => {
+  it('should validate correct token data', () => {
+    const { refreshTokenValidatorSchema } = require('../../../types/auth');
+
+    const validData = {
+      userId: '64b8f0c2e1d3f2a5b6c7d8e9',
+      hashedToken: 'abc123hashedtoken',
+      expiresAt: new Date(),
+    };
+
+    const result = refreshTokenValidatorSchema.safeParse(validData);
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject invalid token data', () => {
+    const { refreshTokenValidatorSchema } = require('../../../types/auth');
+
+    const invalidData = {
+      userId: '',
+      hashedToken: '',
+      expiresAt: 'not-a-date',
+    };
+
+    const result = refreshTokenValidatorSchema.safeParse(invalidData);
+    expect(result.success).toBe(false);
   });
 });
