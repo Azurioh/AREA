@@ -47,7 +47,8 @@ describe('DiscordService', () => {
         },
       };
 
-      const result = await discordService.createAction(userId, action);
+      const actionReactionId = 'action-reaction-123';
+      const result = await discordService.createAction(actionReactionId, userId, action);
       expect(result).toBe('test_action/channel123');
     });
   });

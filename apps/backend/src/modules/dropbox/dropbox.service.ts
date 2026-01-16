@@ -26,11 +26,12 @@ export class DropboxService {
    * @function createAction
    * @description Create an action with the github service
    *
+   * @param {string} actionReactionId - The id of the action reaction document
    * @param {string} userId - The id of the user creating the action
    * @param {CreateAction} action - The information about the action
    * @returns {Promise<boolean>} If the action was created
    */
-  async createAction(userId: string, action: CreateAction): Promise<string> {
+  async createAction(_actionReactionId: string, userId: string, action: CreateAction): Promise<string> {
     const dropboxAccount = await this.thirdPartiesService.getThirdPartyAccountByUserId<DropboxAccount>(
       'dropbox',
       userId,

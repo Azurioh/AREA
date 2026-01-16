@@ -13,6 +13,7 @@ import { useFilter } from '@/features/workflows/hooks/useFilter';
 import { useListWorkflows } from '@/features/workflows/hooks/useListWorkflows';
 import { useToggleExecutionState } from '@/shared/hooks/useToggleExecutionState';
 import { MoveRight } from 'lucide-react';
+import { formatActionReactionName } from '@/lib/utils';
 
 const WorkflowPage: React.FC = () => {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const WorkflowPage: React.FC = () => {
   return (
     <div className="flex h-screen bg-background">
       <SideBar />
-      <main className="flex-1 ml-24 pr-4 pt-4" role="main" aria-label="Workflows management">
+      <main className="flex-1 ml-24 pr-4 pt-4" aria-label="Workflows management">
         <Card className="h-full w-full rounded-b-none flex flex-col items-center justify-start">
           <CardContent className="p-6 h-full w-full overflow-y-auto">
             <div className="text-center space-y-2 mb-6">
@@ -76,34 +77,37 @@ const WorkflowPage: React.FC = () => {
               </div>
             </div>
             <div className="w-full flex justify-center">
-              <div
+              <section
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 px-4 mb-12"
-                role="region"
                 aria-label="Workflows list"
                 aria-live="polite"
                 aria-busy={loading}
               >
                 {loading && (
-                  <div className="col-span-3 text-center text-lg" role="status">
+                  <output className="col-span-3 text-center text-lg">
                     <span>Loading workflows...</span>
-                  </div>
+                  </output>
                 )}
                 {!loading && filteredWorkflows.length === 0 && (
-                  <div className="col-span-3 text-center text-lg text-muted-foreground" role="status">
+                  <output className="col-span-3 text-center text-lg text-muted-foreground">
                     No workflows found. Create your first workflow to get started!
-                  </div>
+                  </output>
                 )}
                 {!loading &&
                   filteredWorkflows.map((wf) => (
                     <WorkflowsCard
                       key={wf._id}
                       workflowId={wf._id}
-                      title={wf.action?.service + ' | ' + wf.reaction?.service || 'Unknown'}
+                      title={
+                        formatActionReactionName(wf.action?.service) +
+                          ' | ' +
+                          formatActionReactionName(wf.reaction?.service) || 'Unknown'
+                      }
                       Description={
                         <span className="inline-flex items-center gap-2">
-                          <span>{wf.action?.name || 'Unknown action'}</span>
+                          <span>{formatActionReactionName(wf.action?.name) || 'Unknown action'}</span>
                           <MoveRight className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                          <span>{wf.reaction?.name || 'Unknown reaction'}</span>
+                          <span>{formatActionReactionName(wf.reaction?.name) || 'Unknown reaction'}</span>
                         </span>
                       }
                       Value={wf.numberOfExecution}
@@ -116,7 +120,7 @@ const WorkflowPage: React.FC = () => {
                       isToggling={isUpdating(wf._id)}
                     />
                   ))}
-              </div>
+              </section>
             </div>
             <div className="w-full flex justify-center">
               <div className="fixed bottom-8">

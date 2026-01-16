@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useApp } from '@/hooks/useApp';
 
 export const useListServices = () => {
@@ -6,7 +6,7 @@ export const useListServices = () => {
   const [services, setServices] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const fetchServices = async () => {
+  const fetchServices = useCallback(async () => {
     setLoading(true);
     try {
       const servicesFetched = await servicesClient.listServices();
@@ -20,7 +20,11 @@ export const useListServices = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [servicesClient]);
+
+  useEffect(() => {
+    fetchServices();
+  }, [fetchServices]);
 
   return {
     services,

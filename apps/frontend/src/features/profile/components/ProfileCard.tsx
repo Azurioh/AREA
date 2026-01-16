@@ -113,7 +113,9 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
                       </div>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <p id="profile-title" className="font-semibold text-base truncate">{username}</p>
+                      <p id="profile-title" className="font-semibold text-base truncate">
+                        {username}
+                      </p>
                       <p className="text-sm text-muted-foreground truncate">{email}</p>
                     </div>
                   </div>
@@ -168,7 +170,9 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
             >
               <Card className="border-primary overflow-hidden">
                 <CardContent className="p-6">
-                  <h2 id="settings-title" className="text-xl font-semibold mb-6 text-center">Settings</h2>
+                  <h2 id="settings-title" className="text-xl font-semibold mb-6 text-center">
+                    Settings
+                  </h2>
 
                   <div className="space-y-4">
                     <div className="space-y-2">
@@ -187,7 +191,11 @@ const ProfileCard: React.FC<ProfileDropdownProps> = ({
 
                     <div className="flex items-center justify-between p-3 rounded-lg border border-border">
                       <div className="flex items-center gap-3">
-                        {darkMode ? <Moon className="w-5 h-5" aria-hidden="true" /> : <Sun className="w-5 h-5" aria-hidden="true" />}
+                        {darkMode ? (
+                          <Moon className="w-5 h-5" aria-hidden="true" />
+                        ) : (
+                          <Sun className="w-5 h-5" aria-hidden="true" />
+                        )}
                         <span className="font-medium">Dark Mode</span>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">

@@ -53,20 +53,22 @@ describe('SpotifyService', () => {
     it('should call listeningToArtist for listening_to_artist action', async () => {
       const action = { name: 'listening_to_artist', params: { artist: 'Artist Name' } };
       thirdPartiesService.getThirdPartyAccountByUserId.mockResolvedValue(mockSpotifyAccount as any);
+      const actionReactionId = 'action-reaction-123';
 
       const spotifyServiceSpy = jest.spyOn(spotifyService, 'listeningToArtist').mockResolvedValue('action-id');
 
-      const result = await spotifyService.createAction('user-id', action as any);
+      const result = await spotifyService.createAction(actionReactionId, 'user-id', action as any);
 
       expect(result).toBe('action-id');
-      expect(spotifyServiceSpy).toHaveBeenCalledWith(mockSpotifyAccount, action);
+      expect(spotifyServiceSpy).toHaveBeenCalledWith(actionReactionId, mockSpotifyAccount, action);
     });
 
     it('should throw ApiError if action is not found', async () => {
       thirdPartiesService.getThirdPartyAccountByUserId.mockResolvedValue(mockSpotifyAccount as any);
       const action = { name: 'unknown_action', params: {} };
+      const actionReactionId = 'action-reaction-123';
 
-      await expect(spotifyService.createAction('user-id', action as any)).rejects.toThrow(ApiError);
+      await expect(spotifyService.createAction(actionReactionId, 'user-id', action as any)).rejects.toThrow(ApiError);
     });
   });
 
@@ -82,11 +84,13 @@ describe('SpotifyService', () => {
         }),
       });
 
-      const result = await spotifyService.listeningToArtist(mockSpotifyAccount as any, action as any);
+      const actionReactionId = 'action-reaction-123';
+      const result = await spotifyService.listeningToArtist(actionReactionId, mockSpotifyAccount as any, action as any);
 
       expect(result).toBe('listening_to_artist/user-id/artist-id');
       expect(pollingService.addUserToPoll).toHaveBeenCalledWith({
         service: 'spotify',
+        actionReactionId,
         userId: 'user-id',
         type: 'listening_to_artist',
         trigger: {
@@ -117,7 +121,8 @@ describe('SpotifyService', () => {
           }),
         });
 
-      const result = await spotifyService.listeningToArtist(mockSpotifyAccount as any, action as any);
+      const actionReactionId = 'action-reaction-123';
+      const result = await spotifyService.listeningToArtist(actionReactionId, mockSpotifyAccount as any, action as any);
 
       expect(result).toBe('listening_to_artist/user-id/artist-id');
       expect(thirdPartiesService.updateThirdPartyAccount).toHaveBeenCalled();
@@ -135,7 +140,8 @@ describe('SpotifyService', () => {
           json: async () => ({ artists: { items: [{ id: 'id' }] } }),
         });
 
-      await spotifyService.listeningToArtist(accountWithoutRefresh as any, action as any);
+      const actionReactionId = 'action-reaction-123';
+      await spotifyService.listeningToArtist(actionReactionId, accountWithoutRefresh as any, action as any);
       expect(decryptString).toHaveBeenCalledWith('', environment.CRYPT_SECRET_KEY);
     });
   });

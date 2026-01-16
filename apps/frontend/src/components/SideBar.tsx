@@ -21,8 +21,18 @@ const SideBar = () => {
 
   const menuItems = [
     { icon: House, label: 'Home', path: AppRoutesPaths.HOME, name: 'Home' },
-    { icon: Workflow, label: 'Workflows', path: AppRoutesPaths.WORKFLOWS, name: 'Workflows' },
-    { icon: Link, label: 'Connections', path: AppRoutesPaths.CONNECTIONS, name: 'Connections' },
+    {
+      icon: Workflow,
+      label: 'Workflows',
+      path: AppRoutesPaths.WORKFLOWS,
+      name: 'Workflows',
+    },
+    {
+      icon: Link,
+      label: 'Connections',
+      path: AppRoutesPaths.CONNECTIONS,
+      name: 'Connections',
+    },
     {
       icon: LayoutDashboard,
       label: 'Dashboard',
@@ -41,7 +51,10 @@ const SideBar = () => {
 
   return (
     <>
-      <aside className="fixed left-0 top-0 h-screen w-24 bg-background flex flex-col items-center py-8 gap-4" role="navigation" aria-label="Main navigation">
+      <nav
+        className="fixed left-0 top-0 h-screen w-24 bg-background flex flex-col items-center py-8 gap-4"
+        aria-label="Main navigation"
+      >
         <div className="mb-4">
           <img src={areaLogo} alt="Area application logo" className="w-16 h-6" />
         </div>
@@ -54,7 +67,9 @@ const SideBar = () => {
           >
             <Plus className="h-16 w-16 scale-[2]" aria-hidden="true" />
           </Button>
-          <span className="text-xs mt-1" aria-hidden="true">Create</span>
+          <span className="text-xs mt-1" aria-hidden="true">
+            Create
+          </span>
         </div>
 
         <nav className="flex flex-col items-center gap-4" aria-label="Main menu">
@@ -72,7 +87,9 @@ const SideBar = () => {
                 >
                   <item.icon className="h-10 w-10 scale-150" aria-hidden="true" />
                 </Button>
-                <span className="text-xs mt-1" aria-hidden="true">{item.name}</span>
+                <span className="text-xs mt-1" aria-hidden="true">
+                  {item.name}
+                </span>
               </div>
             );
           })}
@@ -89,11 +106,13 @@ const SideBar = () => {
             className="rounded-full w-16 h-16 bg-primary hover:bg-primary/90 border-card border-4 p-0"
           >
             <Avatar className="w-10 h-10 flex items-center justify-center">
-              <span className="text-2xl text-primary-foreground" aria-hidden="true">{name}</span>
+              <span className="text-2xl text-primary-foreground" aria-hidden="true">
+                {name}
+              </span>
             </Avatar>
           </Button>
         </div>
-      </aside>
+      </nav>
 
       <Profile
         username={user?.name || 'User'}

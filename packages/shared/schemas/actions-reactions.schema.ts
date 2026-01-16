@@ -77,3 +77,18 @@ export const updateActionReactionExecutionStateParamsSchema = z.object({
 export type UpdateActionReactionExecutionStateParams = z.infer<typeof updateActionReactionExecutionStateParamsSchema>;
 
 export const updateActionReactionExecutionStateResponseSchema = z.object({});
+
+/**************************
+ * DELETE ACTION REACTION *
+ **************************/
+
+export const deleteActionReactionParamsSchema = z.object({
+  id: z.string().meta({
+    description: 'The id of the action reaction',
+    example: '183749832987',
+  }),
+});
+
+export type DeleteActionReactionParams = z.infer<typeof deleteActionReactionParamsSchema>;
+
+export const deleteActionReactionResponseSchema = z.object({});
