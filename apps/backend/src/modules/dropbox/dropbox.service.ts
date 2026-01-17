@@ -108,7 +108,7 @@ export class DropboxService {
         id,
       );
 
-      if (dropboxAccount.cursor == null) {
+      if (!dropboxAccount || dropboxAccount.cursor == null) {
         continue;
       }
       const tryToAccessCursors = async (accessToken: string, cursor: string) => {
