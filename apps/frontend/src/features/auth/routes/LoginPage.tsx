@@ -106,9 +106,6 @@ const LoginPage: React.FC = () => {
                 type="button"
                 className="w-full flex items-center justify-center gap-3 hover:border-primary hover:bg-input-background hover:text-forground bg-input-background"
                 aria-label="Continue with GitHub"
-                onClick={() => {
-                  window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
-                }}
               >
                 <img src={`${import.meta.env.VITE_BASE_IMAGE_URL}/github.png`} alt="GitHub logo" className="h-5 w-5" />
                 <span>GitHub</span>
