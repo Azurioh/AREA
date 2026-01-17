@@ -22,7 +22,16 @@ export const generateAccessToken = (payload: AccessToken): string => {
  * @param {RefreshToken} payload - The payload to add in the refresh token
  * @returns {string} The created refresh token.
  */
-export const generateRefreshToken = (payload: RefreshToken, rememberMe: boolean = false): string => {
+export const generateRefreshToken = (payload: RefreshToken, rememberMe: boolean = false, expiresAt?: Date): string => {
+  if (expiresAt) {
+    const remainingTimeInSeconds = Math.floor((expiresAt.getTime() - Date.now()) / 1000);
+
+    if (remainingTimeInSeconds <= 0) {
+      throw new Error('Cannot generate refresh token: expiration date is in the past');
+    }
+
+    return jwt.sign(payload, environment.JWT_REFRESH_TOKEN_SECRET, { expiresIn: remainingTimeInSeconds });
+  }
   return jwt.sign(payload, environment.JWT_REFRESH_TOKEN_SECRET, { expiresIn: rememberMe ? '30d' : '1d' });
 };
 

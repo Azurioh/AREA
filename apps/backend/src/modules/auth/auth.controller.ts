@@ -57,6 +57,13 @@ export class AuthController {
     const encryptedAccessToken = encryptString(accessToken, environment.CRYPT_SECRET_KEY);
     const encryptedRefreshToken = encryptString(refreshToken, environment.CRYPT_SECRET_KEY);
 
+    const accessTokenPayload = verifyToken<AccessToken>(accessToken, environment.JWT_ACCESS_TOKEN_SECRET);
+    await this.service.storeRefreshTokenInDatabase(
+      accessTokenPayload._id,
+      encryptedRefreshToken,
+      new Date(Date.now() + 24 * 60 * 60 * 1000),
+    );
+
     await this.service.sendTokensToUser(encryptedAccessToken, encryptedRefreshToken, request, reply, true);
   }
 
@@ -103,16 +110,18 @@ export class AuthController {
       throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Refresh token is missing');
     }
 
-    if (!(await this.service.checkIfRefreshTokenIsValid(refreshToken))) {
-      throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Token has been revoked');
-    }
+    const tokenValidator = await this.service.checkIfRefreshTokenIsValid(refreshToken);
 
     const { newAccessToken, newRefreshToken } = await this.service.refreshToken(
       decryptString(refreshToken, environment.CRYPT_SECRET_KEY),
+      tokenValidator.expiresAt,
     );
 
     await this.service.invalidateAccessToken(request, accessToken);
     await this.service.invalidateRefreshToken(refreshToken);
+
+    const accessTokenPayload = verifyToken<AccessToken>(newAccessToken, environment.JWT_ACCESS_TOKEN_SECRET);
+    await this.service.storeRefreshTokenInDatabase(accessTokenPayload._id, newRefreshToken, tokenValidator.expiresAt);
 
     const encryptedAccessToken = encryptString(newAccessToken, environment.CRYPT_SECRET_KEY);
     const encryptedRefreshToken = encryptString(newRefreshToken, environment.CRYPT_SECRET_KEY);
