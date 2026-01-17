@@ -12,12 +12,13 @@ import { environment } from '@/utils/environment';
 import { generateAccessToken, generateRefreshToken, verifyToken } from '@/utils/token';
 import type { ServiceType } from '@/types/third-parties';
 import { UserRoles } from '@area/shared/enums/user-enums';
-import type { ThirdPartiesService } from '../third-parties';
+import type { ThirdPartiesService } from '@/modules/third-parties';
+import type { RefreshTokenValidator } from '@/types/auth';
 import type { AuthRepository } from './auth.repository';
 
 /**
  * @class AuthService
- * @description Service for managing webhooks.
+ * @description Service for managing authentication.
  */
 export class AuthService {
   private usersService: UsersService;
@@ -151,7 +152,10 @@ export class AuthService {
     return { accessToken, refreshToken, clientType: decoded.clientType };
   }
 
-  async refreshToken(refreshToken: string): Promise<{ newAccessToken: string; newRefreshToken: string }> {
+  async refreshToken(
+    refreshToken: string,
+    expiresAt: Date,
+  ): Promise<{ newAccessToken: string; newRefreshToken: string }> {
     const decoded = verifyToken<{ _id: string }>(refreshToken, environment.JWT_REFRESH_TOKEN_SECRET);
     const user = await this.usersService.getUserById(decoded._id);
 
@@ -166,9 +170,13 @@ export class AuthService {
       dyslexiaEnabled: user.dyslexiaEnabled,
     });
 
-    const newRefreshToken = generateRefreshToken({
-      _id: user._id.toString(),
-    });
+    const newRefreshToken = generateRefreshToken(
+      {
+        _id: user._id.toString(),
+      },
+      false,
+      expiresAt,
+    );
 
     return { newAccessToken, newRefreshToken };
   }
@@ -185,13 +193,18 @@ export class AuthService {
   }
 
   async storeRefreshTokenInDatabase(userId: string, refreshToken: string, expiresAt: Date): Promise<void> {
-    const hashdedToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
-    await this.repository.storeRefreshToken(userId, hashdedToken, expiresAt);
+    const hashedToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
+    await this.repository.storeRefreshToken(userId, hashedToken, expiresAt);
   }
 
-  async checkIfRefreshTokenIsValid(refreshToken: string): Promise<boolean> {
+  async checkIfRefreshTokenIsValid(refreshToken: string): Promise<RefreshTokenValidator> {
     const hashedToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
-    return await this.repository.isRefreshTokenValid(hashedToken);
+    const validator = await this.repository.isRefreshTokenValid(hashedToken);
+
+    if (!validator) {
+      throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Token has been revoked');
+    }
+    return validator;
   }
 
   async invalidateAccessToken(request: FastifyRequest, accessToken?: string): Promise<void> {

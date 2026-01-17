@@ -25,14 +25,14 @@ export const setupErrorHandler = (app: FastifyInstance) => {
       });
     } else if (error instanceof Error) {
       if (environment.NODE_ENV === 'development' || environment.NODE_ENV === 'test') {
-        console.log(error);
+        console.error(error);
       }
       reply.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send({
         data: error.message,
         ...(environment.NODE_ENV === 'development' && { stack: error.stack }),
       });
     } else {
-      console.log(error);
+      console.error(error);
       reply.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send({
         data: 'An unknown error occurred, please contact administrator.',
       });
