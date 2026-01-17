@@ -24,13 +24,23 @@ export type ThirdPartyAuthorizationQueryString = z.infer<typeof thirdPartyAuthor
 export type ThirdPartyAuthorizationParams = z.infer<typeof thirdPartyAuthorizationParamsSchema>;
 
 /**
- * @type ThirdPartyAuthorization
- * @description ThirdPartyAuthorization type.
+ * @type AuthorizeTo
+ * @description AuthorizeTo type.
  *
- * @property {string} code The code provided by the service to authenticate the user
- * @property {string} state A state given by the client when making the authorization request
+ * @property {Object} redirect The redirect information
+ * @property {string} redirect.url The url to redirect to
+ * @property {string} redirect.status The status of the redirection
+ * @property {string} redirect.clientType The client type making the authorization request
+ * @property {'service' | 'app'} type The type of authorization
  */
-export type ThirdPartyAuthorization = ThirdPartyAuthorizationQueryString;
+export type AuthorizeTo = {
+  redirect: {
+    url: string;
+    status: string;
+    clientType: string;
+  };
+  type: 'service' | 'app';
+};
 
 export type NoOAuthServiceType = 'unsplash';
 export type ServiceType = 'github' | 'discord' | 'spotify' | 'dropbox' | 'twitch' | NoOAuthServiceType;
@@ -61,6 +71,7 @@ export type BaseAccount = {
 export type GithubAccount = BaseAccount & {
   service: 'github';
   username: string;
+  id: string;
 };
 
 /**

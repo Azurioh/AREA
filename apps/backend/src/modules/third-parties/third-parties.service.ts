@@ -3,6 +3,7 @@ import type { StateToken } from '@area/shared/types/users.types';
 import type { WithId } from 'mongodb';
 import type { UsersService } from '@/modules/users';
 import type {
+  AuthorizeTo,
   ClientType,
   DiscordAccount,
   DiscordAuthorizationResponse,
@@ -43,23 +44,23 @@ export class ThirdPartiesService {
     this.authorizationUrls = new Map([
       [
         'github',
-        `https://github.com/login/oauth/authorize?client_id=${environment.GITHUB_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/github&response_type=code&scope=user%2Crepo&state={state}`,
+        `https://github.com/login/oauth/authorize?client_id=${environment.GITHUB_CLIENT_ID}&redirect_uri={redirectUri}&response_type=code&scope=user%2Crepo&state={state}`,
       ],
       [
         'discord',
-        `https://discord.com/oauth2/authorize?client_id=${environment.DISCORD_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/discord&response_type=code&scope=identify+guilds+bot&state={state}&permissions=536870912`,
+        `https://discord.com/oauth2/authorize?client_id=${environment.DISCORD_CLIENT_ID}&redirect_uri={redirectUri}&response_type=code&scope=identify+guilds+bot&state={state}&permissions=536870912`,
       ],
       [
         'spotify',
-        `https://accounts.spotify.com/authorize?response_type=code&client_id=${environment.SPOTIFY_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/spotify&scope=playlist-read-private%20playlist-read-collaborative%20playlist-modify-private%20playlist-modify-public%20user-library-read%20user-library-modify%20user-read-currently-playing&state={state}`,
+        `https://accounts.spotify.com/authorize?response_type=code&client_id=${environment.SPOTIFY_CLIENT_ID}&redirect_uri={redirectUri}&scope=playlist-read-private%20playlist-read-collaborative%20playlist-modify-private%20playlist-modify-public%20user-library-read%20user-library-modify%20user-read-currently-playing&state={state}`,
       ],
       [
         'dropbox',
-        `https://www.dropbox.com/oauth2/authorize?response_type=code&client_id=${environment.DROPBOX_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/dropbox&token_access_type=offline&state={state}`,
+        `https://www.dropbox.com/oauth2/authorize?response_type=code&client_id=${environment.DROPBOX_CLIENT_ID}&redirect_uri={redirectUri}&token_access_type=offline&state={state}`,
       ],
       [
         'twitch',
-        `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${environment.TWITCH_CLIENT_ID}&redirect_uri=${environment.BASE_API_URL}/third-parties/v1/authorize/twitch&scope=moderator:read:followers%20user:read:follows&state={state}`,
+        `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${environment.TWITCH_CLIENT_ID}&redirect_uri={redirectUri}&scope=moderator:read:followers%20user:read:follows&state={state}`,
       ],
       ['unsplash', 'no_oauth'],
     ]);
@@ -70,6 +71,21 @@ export class ThirdPartiesService {
       ['dropbox', this.authorizeToDropbox],
       ['twitch', this.authorizeToTwitch],
     ]);
+  }
+
+  /**
+   * @function createThirdPartyAccount
+   * @description Create a third party account
+   *
+   * @param {ThirdPartyAccount} data - The third party account data
+   * @returns {Promise<void>} Nothing
+   */
+  async createThirdPartyAccount(data: ThirdPartyAccount): Promise<void> {
+    const inserted = await this.repository.createThirdPartyAccount(data);
+
+    if (!inserted) {
+      throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Failed to create third party account');
+    }
   }
 
   /**
@@ -95,15 +111,19 @@ export class ThirdPartiesService {
   }
 
   /**
-   * @function getThirdPartyAuthorizationUrl
-   * @description Get a third party authorization url
+   * @function getThirdPartyAuthorizationUrlService
+   * @description Get the authorization url to connect to a third party service
    *
    * @param {ServiceType} service - The service name
    * @param {string} userId - The id of the user authenticating
    * @param {ClientType} clientType - The type of the client
    * @returns {Promise<string>} The authorization url to the given third party
    */
-  async getThirdPartyAuthorizationUrl(service: ServiceType, userId: string, clientType: ClientType): Promise<string> {
+  async getThirdPartyAuthorizationUrlService(
+    service: ServiceType,
+    userId: string,
+    clientType: ClientType,
+  ): Promise<string> {
     const authorizationUrl = this.authorizationUrls.get(service);
 
     if (!authorizationUrl) {
@@ -115,8 +135,37 @@ export class ThirdPartiesService {
       return authorizationUrl;
     }
 
-    const stateToken = generateStateToken({ _id: userId, clientType: clientType });
-    const url = authorizationUrl.replace('{state}', stateToken);
+    const stateToken = generateStateToken({ _id: userId, clientType });
+    const url = authorizationUrl
+      .replace('{state}', stateToken)
+      .replace('{redirectUri}', `${environment.BASE_API_URL}/third-parties/v1/authorize/${service}`);
+
+    return url;
+  }
+
+  /**
+   * @function getThirdPartyAuthorizationUrlApp
+   * @description Get the authorization url to connect to app via a third party service
+   *
+   * @param {ServiceType} service - The service name
+   * @param {ClientType} clientType - The type of the client
+   * @returns {Promise<string>} The authorization url to the given third party
+   */
+  async getThirdPartyAuthorizationUrlApp(service: ServiceType, clientType: ClientType): Promise<string> {
+    const authorizationUrl = this.authorizationUrls.get(service);
+
+    if (!authorizationUrl) {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, "Requested third party service doesn't exist");
+    }
+
+    if (authorizationUrl === 'no_oauth') {
+      return authorizationUrl;
+    }
+
+    const stateToken = generateStateToken({ clientType, authType: 'app' });
+    const url = authorizationUrl
+      .replace('{state}', stateToken)
+      .replace('{redirectUri}', `${environment.BASE_API_URL}/third-parties/v1/authorize/${service}`);
 
     return url;
   }
@@ -152,13 +201,27 @@ export class ThirdPartiesService {
   async getThirdPartyAccountByServiceAccountId<T extends ThirdPartyAccount>(
     service: ServiceType,
     id: string,
-  ): Promise<WithId<T>> {
+    thorwIfNotFound = true,
+  ): Promise<WithId<T> | null> {
     const result = await this.repository.getThirdPartyAccountByServiceAccountId<T>(id, service);
 
-    if (!result) {
+    if (!result && thorwIfNotFound) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'Third party account was not found');
     }
     return result;
+  }
+
+  /**
+   * @function getAuthorizationFunction
+   * @description Get the authorization function for a service
+   *
+   * @param {ServiceType} service - The service name
+   * @returns {Promise<((userId: string, code: string) => Promise<ThirdPartyAccount | null>) | undefined>} The authorization function
+   */
+  async getAuthorizationFunction(
+    service: ServiceType,
+  ): Promise<((userId: string, code: string) => Promise<ThirdPartyAccount | null>) | undefined> {
+    return this.servicesAuthorizationFunc.get(service);
   }
 
   /**
@@ -167,45 +230,61 @@ export class ThirdPartiesService {
    *
    * @param {ServiceType} service - The service name
    * @param {string} code - The code provided by the service to get the tokens
-   * @param {state} state - A string to protect against threats
-   * @returns {Promise<{ success: boolean, clientType: string }>} If the authorization was a success and the client type
+   * @param {string} state - A string to protect against threats
+   * @returns {Promise<boolean>} If the authorization was a success
    */
-  async authorizeToService(
-    service: ServiceType,
-    code: string,
-    state: string,
-  ): Promise<{ success: boolean; clientType: string }> {
-    const decoded = verifyToken<StateToken>(state, environment.JWT_STATE_TOKEN_SECRET);
-
-    if (!(await this.usersService.checkIfUserExist(decoded._id))) {
+  async authorizeToService(service: ServiceType, code: string, stateToken: StateToken): Promise<boolean> {
+    if (!stateToken._id || !(await this.usersService.checkIfUserExist(stateToken._id))) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'User does not exist');
     }
     try {
       const serviceAuthorizationFunc = this.servicesAuthorizationFunc.get(service);
 
       if (!serviceAuthorizationFunc) {
-        return { success: false, clientType: decoded.clientType };
+        return false;
       }
 
-      const data = await serviceAuthorizationFunc(decoded._id, code);
+      const data = await serviceAuthorizationFunc(stateToken._id, code);
       let success = false;
 
       if (data) {
-        const account = await this.repository.getThirdPartyAccountByUserId(decoded._id, service);
+        const account = await this.repository.getThirdPartyAccountByUserId(stateToken._id, service);
 
         if (account) {
-          const update = await this.repository.updateThirdPartyAccount(decoded._id, service, data);
+          const update = await this.repository.updateThirdPartyAccount(stateToken._id, service, data);
 
           success = update.acknowledged && update.matchedCount > 0;
         } else {
           success = await this.repository.createThirdPartyAccount(data);
         }
       }
-      return { success, clientType: decoded.clientType };
+      return success;
     } catch (err: unknown) {
       console.error('Third-party authorization failed:', err);
-      return { success: false, clientType: decoded.clientType };
+      return false;
     }
+  }
+
+  async authorizeTo(service: ServiceType, code: string, state: string): Promise<AuthorizeTo> {
+    const decoded = verifyToken<StateToken>(state, environment.JWT_STATE_TOKEN_SECRET);
+    let callbackUrl = '';
+    let success = false;
+
+    if (decoded.clientType === 'mobile') {
+      callbackUrl = environment.MOBILE_OAUTH_CALLBACK_URL;
+    } else {
+      callbackUrl = environment.WEB_OAUTH_CALLBACK_URL;
+    }
+    if (decoded.authType && decoded.authType === 'app') {
+      return { redirect: { url: callbackUrl, status: '', clientType: '' }, type: 'app' };
+    } else {
+      callbackUrl = `${callbackUrl}/service`;
+      success = await this.authorizeToService(service, code, decoded);
+    }
+    return {
+      redirect: { url: callbackUrl, status: success ? 'success' : 'error', clientType: decoded.clientType },
+      type: decoded.authType || 'service',
+    };
   }
 
   /**
@@ -236,7 +315,7 @@ export class ThirdPartiesService {
 
     const formattedResponse = (await response.json()) as GitHubAuthorizationResponse;
 
-    const getUsername = async () => {
+    const getUser = async () => {
       const response = await fetch('https://api.github.com/user', {
         method: 'GET',
         headers: {
@@ -248,17 +327,19 @@ export class ThirdPartiesService {
       if (response.status !== HttpStatusCode.OK) {
         throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Failed to get github user information');
       }
-      const data = (await response.json()) as { login: string };
+      const data = (await response.json()) as { login: string; id: number };
 
-      return data.login;
+      return { username: data.login, id: data.id };
     };
 
+    const githubUser = await getUser();
     const data: GithubAccount = {
       userId,
       service: 'github',
       accessToken: encryptString(formattedResponse.access_token, environment.CRYPT_SECRET_KEY),
       refreshToken: null,
-      username: await getUsername(),
+      username: githubUser.username,
+      id: githubUser.id.toString(),
     };
     return data;
   }
