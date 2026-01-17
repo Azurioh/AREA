@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
+import type React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideBar from '@/components/SideBar';
 import {
@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Button } from '@/components/wrappers/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/wrappers/Card';
 import { Input } from '@/components/wrappers/Input';
@@ -17,17 +18,14 @@ import { useActionReturnedValues } from '@/features/workflows/hooks/useActionRet
 import type { ParamOption } from '@/features/workflows/hooks/useCreateActionReaction';
 import { useListServices } from '@/features/workflows/hooks/useListServices';
 import { useServiceReactions } from '@/features/workflows/hooks/useServiceReactions';
+import { formatActionReactionName } from '@/lib/utils';
 import { AppRoutesPaths } from '@/enums/routes';
+import { CircleQuestionMark, ChevronRight } from 'lucide-react';
 
 const ChooseReaction: React.FC = () => {
-  const { services, fetchServices } = useListServices();
+  const { services } = useListServices();
 
   const servicesStatus = useServicesClient();
-
-  React.useEffect(() => {
-    fetchServices();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const {
     serviceReactions,
@@ -84,7 +82,12 @@ const ChooseReaction: React.FC = () => {
                         <div className="text-center py-8 text-muted-foreground">No reactions available</div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                          {(serviceReactions[service] as { name: string; description?: string }[]).map((reaction) => {
+                          {(
+                            serviceReactions[service] as {
+                              name: string;
+                              description?: string;
+                            }[]
+                          ).map((reaction) => {
                             const lowerName = service.toLowerCase();
                             const logoUrl = `${import.meta.env.VITE_BASE_IMAGE_URL}/${lowerName}.png`;
 
@@ -112,7 +115,7 @@ const ChooseReaction: React.FC = () => {
                                 />
 
                                 <div className="text-left">
-                                  <div className="font-semibold">{reaction.name}</div>
+                                  <div className="font-semibold">{formatActionReactionName(reaction.name)}</div>
                                   {reaction.description && (
                                     <div className="text-xs opacity-80 mt-1 whitespace-normal break-words">
                                       {reaction.description}
@@ -155,7 +158,7 @@ const ChooseReaction: React.FC = () => {
               <Card className="border-primary overflow-hidden">
                 <CardHeader className="bg-primary">
                   <CardTitle className="text-lg text-text-white text-center">
-                    {selectedReaction.reaction}
+                    {formatActionReactionName(selectedReaction.reaction)}
                     {loadingParams && <span className="text-sm font-normal ml-2">(Loading...)</span>}
                   </CardTitle>
                 </CardHeader>
@@ -163,6 +166,10 @@ const ChooseReaction: React.FC = () => {
                 <CardContent className="mt-6">
                   {loadingParams ? (
                     <div className="text-center py-8 text-muted-foreground">Loading parameters...</div>
+                  ) : reactionParams.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No parameters required for this reaction
+                    </div>
                   ) : (
                     <div className="space-y-4">
                       {reactionParams.length === 0 ? (
@@ -189,22 +196,43 @@ const ChooseReaction: React.FC = () => {
                                   {returnedValues.length > 0 && (
                                     <div className="text-xs text-muted-foreground">
                                       Available variables: {returnedValues.map((v) => `\${${v.key}}`).join(', ')}
+                                      <HoverCard>
+                                        <HoverCardTrigger asChild>
+                                          <CircleQuestionMark className="inline-block ml-1 w-4 h-4 text-primary cursor-pointer" />
+                                        </HoverCardTrigger>
+                                        <HoverCardContent className="w-80">
+                                          <div className="space-y-2">
+                                            <h4 className="text-sm font-semibold">How to use variables</h4>
+                                            <p className="text-xs text-muted-foreground">
+                                              You can use variables from the action in your reaction parameters. For
+                                              example, if you have a variable called 'username', you can use it by
+                                              typing : hello {'${username}'}.
+                                            </p>
+                                          </div>
+                                        </HoverCardContent>
+                                      </HoverCard>
                                     </div>
                                   )}
                                 </div>
                               ) : (
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" className="w-full justify-start" id={id}>
+                                    <Button variant="outline" className="w-full justify-start relative" id={id}>
                                       {typeof param.value === 'object' && (param.value as ParamOption)?.name
                                         ? (param.value as ParamOption).name
                                         : param.placeholder}
+                                      <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4" />
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent className="w-full">
                                     {(param.options && param.options.length > 0
                                       ? param.options
-                                      : [{ name: 'No options available', id: 'none' }]
+                                      : [
+                                          {
+                                            name: 'No options available',
+                                            id: 'none',
+                                          },
+                                        ]
                                     ).map((opt: ParamOption) => (
                                       <DropdownMenuItem
                                         key={opt.id}
@@ -225,48 +253,52 @@ const ChooseReaction: React.FC = () => {
                           );
                         })
                       )}
+                      <div className="pt-4 space-y-3">
+                        <div className="text-[10px] text-muted-foreground italic">* All fields are required</div>
+                        <div className="flex gap-3">
+                          <Button
+                            className="flex-1"
+                            disabled={reactionParams.some(
+                              (p) => !p.value || (typeof p.value === 'string' && p.value.trim() === ''),
+                            )}
+                            onClick={() => {
+                              if (!selectedReaction) {
+                                return;
+                              }
 
-                      <div className="pt-4 flex gap-3">
-                        <Button
-                          className="flex-1 text-text-white"
-                          onClick={() => {
-                            if (!selectedReaction) {
-                              return;
-                            }
+                              const paramsObj = reactionParams.reduce(
+                                (acc, p) => {
+                                  acc[p.key] = p.value;
+                                  return acc;
+                                },
+                                {} as Record<string, unknown>,
+                              );
 
-                            const paramsObj = reactionParams.reduce(
-                              (acc, p) => {
-                                acc[p.key] = p.value;
-                                return acc;
-                              },
-                              {} as Record<string, unknown>,
-                            );
+                              setReaction(
+                                selectedReaction.service,
+                                {
+                                  service: selectedReaction.service,
+                                  name: selectedReaction.reaction,
+                                  params: paramsObj,
+                                },
+                                reactionParams,
+                              );
 
-                            setReaction(
-                              selectedReaction.service,
-                              {
-                                service: selectedReaction.service,
-                                name: selectedReaction.reaction,
-                                params: paramsObj,
-                              },
-                              reactionParams,
-                            );
-
-                            setSelectedReaction(null);
-                            navigate(AppRoutesPaths.CREATE);
-                          }}
-                        >
-                          Save Configuration
-                        </Button>
-
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedReaction(null);
-                          }}
-                        >
-                          Cancel
-                        </Button>
+                              setSelectedReaction(null);
+                              navigate(AppRoutesPaths.CREATE);
+                            }}
+                          >
+                            Save Configuration
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedReaction(null);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   )}

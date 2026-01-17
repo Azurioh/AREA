@@ -24,6 +24,11 @@ export const registerHeadersSchema = z.looseObject({
   }),
   'x-admin-secret': z.string().optional().meta({
     description: 'The admin secret',
+    example: 'secret',
+  }),
+  'x-client-type': z.enum(['web', 'mobile']).optional().meta({
+    description: 'The client type (web or mobile)',
+    example: 'web',
   }),
 });
 
@@ -65,6 +70,18 @@ export const loginBodySchema = z.object({
  */
 export type LoginBody = z.infer<typeof loginBodySchema>;
 
+export const loginHeadersSchema = z.looseObject({
+  'content-type': z.literal('application/json').meta({
+    description: 'The content type of the request body',
+  }),
+  'x-client-type': z.enum(['web', 'mobile']).optional().meta({
+    description: 'The client type (web or mobile)',
+    example: 'web',
+  }),
+});
+
+export type LoginHeaders = z.infer<typeof loginHeadersSchema>;
+
 export const loginResponseSchema = z.object({
   accessToken: z.string().meta({
     description: 'Access token',
@@ -82,6 +99,15 @@ export const loginResponseSchema = z.object({
 });
 
 export type LoginResponse = z.infer<typeof loginResponseSchema>;
+
+export const refreshTokenHeadersSchema = z.looseObject({
+  'x-client-type': z.enum(['web', 'mobile']).optional().meta({
+    description: 'The client type (web or mobile)',
+    example: 'web',
+  }),
+});
+
+export type RefreshTokenHeaders = z.infer<typeof refreshTokenHeadersSchema>;
 
 export const refreshTokenResponseSchema = z.object({
   accessToken: z.string().meta({
@@ -119,3 +145,7 @@ export const loginWithServiceQueryStringSchema = thirdPartyAuthorizationQueryStr
 export type LoginWithServiceQueryString = z.infer<typeof loginWithServiceQueryStringSchema>;
 
 export const loginWithServiceResponseSchema = loginResponseSchema;
+
+export const logoutResponseSchema = z.object({});
+
+export type LogoutResponse = z.infer<typeof logoutResponseSchema>;

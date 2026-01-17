@@ -7,151 +7,157 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 206 65% 95%;
-    --foreground: 0 0% 10%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-    --primary: 220 90% 48%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 206 50% 90%;
-    --secondary-foreground: 0 0% 10%;
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 35%;
-    --reaction-muted: 0 0% 85%;
-    --accent: 220 90% 48%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 40%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 85%;
-    --input: 0 0% 96%;
-    --input-background: 0 0% 96%;
-    --ring: 220 90% 48%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --large-radius: 20px;
-    --small-radius: 10px;
-    --font-sans: system-ui, sans-serif;
-    --font-button: system-ui, sans-serif;
-    --font-text: system-ui, sans-serif;
-    --button-disabled-text: 0 0% 100%;
-    --switch-disabled: #5E5E5E;
-    --radius: 0.5rem;
-    --text-white: 0 0% 100%;
-  }
-  .dark {
-    --background: 220 15% 10%;
-    --background-gradient: linear-gradient(135deg, hsl(220, 15%, 15%) 0%, hsl(220, 15%, 10%) 100%);
-    --foreground: 0 0% 95%;
-    --card: 220 15% 18%;
-    --card-foreground: 0 0% 95%;
-    --popover: 220 15% 18%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 220 90% 60%;
-    --primary-foreground: 0 0% 10%;
-    --secondary: 220 15% 20%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 220 15% 20%;
-    --muted-foreground: 0 0% 70%;
-    --reaction-muted: 220 15% 30%;
-    --accent: 220 90% 60%;
-    --accent-foreground: 0 0% 10%;
-    --destructive: 0 84% 65%;
-    --destructive-foreground: 0 0% 10%;
-    --border: 220 15% 25%;
-    --input: 220 15% 20%;
-    --input-background: 220 15% 20%;
-    --ring: 220 90% 60%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --large-radius: 20px;
-    --small-radius: 10px;
-    --font-sans: system-ui, sans-serif;
-    --font-button: system-ui, sans-serif;
-    --font-text: system-ui, sans-serif;
-    --button-disabled-text: 0 0% 100%;
-    --text-white: 0 0% 100%;
-  }
+    :root {
+        --background: 206 65% 95%;
+        --foreground: 0 0% 10%;
+        --card: 0 0% 100%;
+        --card-foreground: 0 0% 10%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 0 0% 10%;
+        --primary: 220 90% 48%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 206 50% 90%;
+        --secondary-foreground: 0 0% 10%;
+        --muted: 0 0% 96%;
+        --muted-foreground: 0 0% 35%;
+        --reaction-muted: 0 0% 85%;
+        --accent: 220 90% 48%;
+        --accent-foreground: 0 0% 100%;
+        --destructive: 0 84% 40%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 0 0% 85%;
+        --input: 0 0% 96%;
+        --input-background: 0 0% 96%;
+        --ring: 220 90% 48%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+        --large-radius: 20px;
+        --small-radius: 10px;
+        --font-sans: system-ui, sans-serif;
+        --font-button: system-ui, sans-serif;
+        --font-text: system-ui, sans-serif;
+        --button-disabled-text: 0 0% 100%;
+        --switch-disabled: #5e5e5e;
+        --radius: 0.5rem;
+        --text-white: 0 0% 100%;
+    }
+    .dark {
+        --background: 220 15% 10%;
+        --background-gradient: linear-gradient(
+            135deg,
+            hsl(220, 15%, 15%) 0%,
+            hsl(220, 15%, 10%) 100%
+        );
+        --foreground: 0 0% 95%;
+        --card: 220 15% 18%;
+        --card-foreground: 0 0% 95%;
+        --popover: 220 15% 18%;
+        --popover-foreground: 0 0% 95%;
+        --primary: 220 90% 60%;
+        --primary-foreground: 0 0% 10%;
+        --secondary: 220 15% 20%;
+        --secondary-foreground: 0 0% 95%;
+        --muted: 220 15% 20%;
+        --muted-foreground: 0 0% 70%;
+        --reaction-muted: 220 15% 30%;
+        --accent: 220 90% 60%;
+        --accent-foreground: 0 0% 10%;
+        --destructive: 0 84% 65%;
+        --destructive-foreground: 0 0% 10%;
+        --border: 220 15% 25%;
+        --input: 220 15% 20%;
+        --input-background: 220 15% 20%;
+        --ring: 220 90% 60%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+        --large-radius: 20px;
+        --small-radius: 10px;
+        --font-sans: system-ui, sans-serif;
+        --font-button: system-ui, sans-serif;
+        --font-text: system-ui, sans-serif;
+        --button-disabled-text: 0 0% 100%;
+        --text-white: 0 0% 100%;
+    }
 }
 
 @font-face {
-  font-family: "OpenDyslexic";
-  src: url("./assets/fonts/OpenDyslexic-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+    font-family: "OpenDyslexic";
+    src: url("./assets/fonts/OpenDyslexic-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
-  font-family: "OpenDyslexic";
-  src: url("./assets/fonts/OpenDyslexic-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+    font-family: "OpenDyslexic";
+    src: url("./assets/fonts/OpenDyslexic-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
-  font-family: "OpenDyslexic";
-  src: url("./assets/fonts/OpenDyslexic-Italic.woff2") format("woff2");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-
-body.theme-dyslexia,
-body.theme-dyslexia * {
-  font-family: "OpenDyslexic", system-ui, sans-serif !important;
+    font-family: "OpenDyslexic";
+    src: url("./assets/fonts/OpenDyslexic-Italic.woff2") format("woff2");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-    font-family: 'Poppins', system-ui, sans-serif;
-  }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: "Poppins", system-ui, sans-serif;
-  }
-  h1 {
-    @apply text-5xl;
-  }
-  span {
-    font-family: 'Poppins', system-ui, sans-serif;
-  }
-  p {
-    font-family: 'Poppins', system-ui, sans-serif;
-  }
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+        font-family: "Poppins", system-ui, sans-serif;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: "Poppins", system-ui, sans-serif;
+    }
+    h1 {
+        @apply text-5xl;
+    }
+    span {
+        font-family: "Poppins", system-ui, sans-serif;
+    }
+    p {
+        font-family: "Poppins", system-ui, sans-serif;
+    }
+}
+
+body.theme-dyslexia,
+body.theme-dyslexia * {
+    /* biome-ignore lint/complexity/noImportantStyles: accessibility feature requires font override */
+    font-family: "OpenDyslexic", system-ui, sans-serif !important;
 }
 
 .font-button {
-  font-family: "Poppins", system-ui, sans-serif;
+    font-family: "Poppins", system-ui, sans-serif;
 }
 
 .font-text {
-  font-family: 'Poppins', system-ui, sans-serif;
+    font-family: "Poppins", system-ui, sans-serif;
 }
 
 @layer utilities {
-  .bg-switch-disabled {
-    background-color: var(--switch-disabled) !important;
-  }
-  .border-switch-disabled {
-    border-color: var(--switch-disabled) !important;
-  }
+    .bg-switch-disabled {
+        /* biome-ignore lint/complexity/noImportantStyles: switch disabled state requires override */
+        background-color: var(--switch-disabled) !important;
+    }
+    .border-switch-disabled {
+        /* biome-ignore lint/complexity/noImportantStyles: switch disabled state requires override */
+        border-color: var(--switch-disabled) !important;
+    }
 }

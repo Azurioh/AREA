@@ -72,28 +72,23 @@ export default function WorkflowsCard({
         </div>
 
         <div className="flex flex-col">
-          <div className="flex items-center space-x-2" role="group" aria-label="Workflow services">
+          <fieldset className="flex items-center space-x-2" aria-label="Workflow services">
             <div className="w-10 h-10 flex items-center justify-center p-1">
-              <img
-                src={Service1}
-                alt={`${Service1Name} logo`}
-                className="max-h-full max-w-full object-contain"
-              />
+              <img src={Service1} alt={`${Service1Name} logo`} className="max-h-full max-w-full object-contain" />
             </div>
             <MoveRight className="text-muted-foreground" aria-hidden="true" />
             <div className="w-10 h-10 flex items-center justify-center p-1">
-              <img
-                src={Service2}
-                alt={`${Service2Name} logo`}
-                className="max-h-full max-w-full object-contain"
-              />
+              <img src={Service2} alt={`${Service2Name} logo`} className="max-h-full max-w-full object-contain" />
             </div>
-          </div>
+          </fieldset>
           <div className="text-sm text-muted-foreground mt-2">{title}</div>
           <div className="text-sm mt-1">{Description}</div>
           <p className="mt-2">
             <span className="text-sm font-medium">{Value}</span>
-            <span className="text-sm text-muted-foreground"> execution{typeof Value === 'number' && Value !== 1 ? 's' : ''}</span>
+            <span className="text-sm text-muted-foreground">
+              {' '}
+              execution{typeof Value === 'number' && Value !== 1 ? 's' : ''}
+            </span>
           </p>
         </div>
       </Card>
