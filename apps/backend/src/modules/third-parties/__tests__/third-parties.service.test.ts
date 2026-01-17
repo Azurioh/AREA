@@ -32,7 +32,7 @@ describe('ThirdPartiesService', () => {
   describe('getThirdPartyAuthorizationUrl', () => {
     it('should return authorization url for github', async () => {
       (generateStateToken as jest.Mock).mockReturnValue('state-token');
-      const url = await service.getThirdPartyAuthorizationUrl('github', 'user-id', 'web');
+      const url = await service.getThirdPartyAuthorizationUrlService('github', 'user-id', 'web');
 
       expect(url).toContain('https://github.com/login/oauth/authorize');
       expect(url).toContain('state=state-token');
@@ -41,12 +41,12 @@ describe('ThirdPartiesService', () => {
 
     it('should return authorization url for discord', async () => {
       (generateStateToken as jest.Mock).mockReturnValue('state-token');
-      const url = await service.getThirdPartyAuthorizationUrl('discord', 'user-id', 'mobile');
+      const url = await service.getThirdPartyAuthorizationUrlService('discord', 'user-id', 'mobile');
       expect(url).toContain('https://discord.com/oauth2/authorize');
     });
 
     it('should throw error for unknown service', async () => {
-      await expect(service.getThirdPartyAuthorizationUrl('unknown' as any, 'uid', 'web')).rejects.toThrow();
+      await expect(service.getThirdPartyAuthorizationUrlService('unknown' as any, 'uid', 'web')).rejects.toThrow();
     });
   });
 
@@ -84,24 +84,21 @@ describe('ThirdPartiesService', () => {
 
   describe('authorizeToService', () => {
     it('should return success and client type on successful authorization (create)', async () => {
-      (verifyToken as jest.Mock).mockReturnValue({ _id: 'user-id', clientType: 'web' });
       usersService.checkIfUserExist.mockResolvedValue(true);
 
       const data = { userId: 'user-id', service: 'github' };
-      // Directly mock the function in the map because references are captured in constructor
       (service as any).servicesAuthorizationFunc.set('github', jest.fn().mockResolvedValue(data));
 
       repository.getThirdPartyAccountByUserId.mockResolvedValue(null);
       repository.createThirdPartyAccount.mockResolvedValue(true);
 
-      const result = await service.authorizeToService('github', 'code', 'state');
+      const result = await service.authorizeToService('github', 'code', { _id: 'user-id', clientType: 'web' });
 
-      expect(result).toEqual({ success: true, clientType: 'web' });
+      expect(result).toEqual(true);
       expect(repository.createThirdPartyAccount).toHaveBeenCalledWith(data);
     });
 
     it('should return success and client type on successful authorization (update)', async () => {
-      (verifyToken as jest.Mock).mockReturnValue({ _id: 'user-id', clientType: 'web' });
       usersService.checkIfUserExist.mockResolvedValue(true);
 
       const data = { userId: 'user-id', service: 'github' };
@@ -111,30 +108,24 @@ describe('ThirdPartiesService', () => {
       repository.getThirdPartyAccountByUserId.mockResolvedValue({ _id: mockId } as any);
       repository.updateThirdPartyAccount.mockResolvedValue({ acknowledged: true, matchedCount: 1 } as any);
 
-      const result = await service.authorizeToService('github', 'code', 'state');
+      const result = await service.authorizeToService('github', 'code', { _id: 'user-id', clientType: 'web' });
 
-      expect(result).toEqual({ success: true, clientType: 'web' });
+      expect(result).toEqual(true);
       expect(repository.updateThirdPartyAccount).toHaveBeenCalledWith('user-id', 'github', data);
     });
 
     it('should throw NOT_FOUND if user does not exist', async () => {
-      (verifyToken as jest.Mock).mockReturnValue({ _id: 'user-id', clientType: 'web' });
       usersService.checkIfUserExist.mockResolvedValue(false);
-      await expect(service.authorizeToService('github', 'code', 'state')).rejects.toThrow(ApiError);
-    });
-
-    it('should throw if state is invalid (verifyToken throws)', async () => {
-      (verifyToken as jest.Mock).mockImplementation(() => {
-        throw new Error('Invalid token');
-      });
-      await expect(service.authorizeToService('github', 'code', 'invalid-state')).rejects.toThrow('Invalid token');
+      await expect(service.authorizeToService('github', 'code', { _id: 'user-id', clientType: 'web' })).rejects.toThrow(
+        ApiError,
+      );
     });
 
     it('should return failure if service authorization function not found', async () => {
       (verifyToken as jest.Mock).mockReturnValue({ _id: 'user-id', clientType: 'web' });
       usersService.checkIfUserExist.mockResolvedValue(true);
-      const result = await service.authorizeToService('unknown' as any, 'code', 'state');
-      expect(result.success).toBe(false);
+      const result = await service.authorizeToService('unknown' as any, 'code', { _id: 'user-id', clientType: 'web' });
+      expect(result).toBe(false);
     });
 
     it('should return success false if update matchedCount is 0', async () => {
@@ -145,8 +136,8 @@ describe('ThirdPartiesService', () => {
       repository.getThirdPartyAccountByUserId.mockResolvedValue({ _id: new ObjectId() } as any);
       repository.updateThirdPartyAccount.mockResolvedValue({ acknowledged: true, matchedCount: 0 } as any);
 
-      const result = await service.authorizeToService('github', 'code', 'state');
-      expect(result.success).toBe(false);
+      const result = await service.authorizeToService('github', 'code', { _id: 'user-id', clientType: 'web' });
+      expect(result).toBe(false);
     });
 
     it('should return failure if service authorization function returns null', async () => {
@@ -154,9 +145,8 @@ describe('ThirdPartiesService', () => {
       usersService.checkIfUserExist.mockResolvedValue(true);
       (service as any).servicesAuthorizationFunc.set('github', jest.fn().mockResolvedValue(null));
 
-      const result = await service.authorizeToService('github', 'code', 'state');
-      expect(result.success).toBe(false);
-      expect(result.clientType).toBe('web');
+      const result = await service.authorizeToService('github', 'code', { _id: 'user-id', clientType: 'web' });
+      expect(result).toBe(false);
     });
 
     it('should return failure and catch error if service authorization function throws', async () => {
@@ -166,8 +156,8 @@ describe('ThirdPartiesService', () => {
 
       (service as any).servicesAuthorizationFunc.set('github', jest.fn().mockRejectedValue(new Error('Auth failed')));
 
-      const result = await service.authorizeToService('github', 'code', 'state');
-      expect(result).toEqual({ success: false, clientType: 'web' });
+      const result = await service.authorizeToService('github', 'code', { _id: 'user-id', clientType: 'web' });
+      expect(result).toBe(false);
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
@@ -184,7 +174,7 @@ describe('ThirdPartiesService', () => {
         .mockResolvedValueOnce({
           // User info
           status: HttpStatusCode.OK,
-          json: async () => ({ login: 'gh-user' }),
+          json: async () => ({ login: 'gh-user', id: 'gh-id' }),
         });
 
       const result = await (service as any).authorizeToGithub('user-id', 'code');
@@ -195,6 +185,7 @@ describe('ThirdPartiesService', () => {
           service: 'github',
           accessToken: 'encrypted-at',
           username: 'gh-user',
+          id: 'gh-id',
         }),
       );
     });

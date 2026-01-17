@@ -16,7 +16,7 @@ describe('UsersService', () => {
 
   describe('getUserByEmail', () => {
     it('should return user if found', async () => {
-      const mockUser = { _id: 'id', email: 'test@test.com' };
+      const mockUser = { _id: 'id', email: 'test@test.com', authType: 'classic' };
       repository.getUserByEmail.mockResolvedValue(mockUser as any);
 
       const result = await service.getUserByEmail('test@test.com');
@@ -37,7 +37,7 @@ describe('UsersService', () => {
       repository.getUserByEmail.mockResolvedValue(null);
       repository.createUser.mockResolvedValue({ acknowledged: true } as any);
 
-      const user = { name: 'Test', email: 'new@test.com', password: 'pwd' } as any;
+      const user = { name: 'Test', email: 'new@test.com', password: 'pwd', authType: 'classic' } as any;
       await service.createUser(user);
 
       expect(repository.createUser).toHaveBeenCalledWith(user);
@@ -46,7 +46,7 @@ describe('UsersService', () => {
     it('should throw CONFLICT if email already taken', async () => {
       repository.getUserByEmail.mockResolvedValue({} as any);
 
-      const user = { name: 'Test', email: 'exist@test.com', password: 'pwd' } as any;
+      const user = { name: 'Test', email: 'new@test.com', password: 'pwd', authType: 'classic' } as any;
       await expect(service.createUser(user)).rejects.toThrow(
         new ApiError(HttpStatusCode.CONFLICT, 'User with same email already exists'),
       );
@@ -56,7 +56,7 @@ describe('UsersService', () => {
       repository.getUserByEmail.mockResolvedValue(null);
       repository.createUser.mockResolvedValue({ acknowledged: false } as any);
 
-      const user = { name: 'Test', email: 'new@test.com', password: 'pwd' } as any;
+      const user = { name: 'Test', email: 'new@test.com', password: 'pwd', authType: 'classic' } as any;
       await expect(service.createUser(user)).rejects.toThrow(
         new ApiError(
           HttpStatusCode.INTERNAL_SERVER_ERROR,
@@ -69,16 +69,16 @@ describe('UsersService', () => {
   describe('getAllUsers', () => {
     it('should return all users with string ids', async () => {
       const mockUsers = [
-        { _id: { toString: () => 'id1' }, name: 'User 1', email: 'user1@test.com' },
-        { _id: { toString: () => 'id2' }, name: 'User 2', email: 'user2@test.com' },
+        { _id: { toString: () => 'id1' }, name: 'User 1', email: 'user1@test.com', authType: 'classic' },
+        { _id: { toString: () => 'id2' }, name: 'User 2', email: 'user2@test.com', authType: 'classic' },
       ];
       repository.getAllUsers.mockResolvedValue(mockUsers as any);
 
       const result = await service.getAllUsers();
 
       expect(result).toEqual([
-        { _id: 'id1', name: 'User 1', email: 'user1@test.com' },
-        { _id: 'id2', name: 'User 2', email: 'user2@test.com' },
+        { _id: 'id1', name: 'User 1', email: 'user1@test.com', authType: 'classic' },
+        { _id: 'id2', name: 'User 2', email: 'user2@test.com', authType: 'classic' },
       ]);
     });
   });

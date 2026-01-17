@@ -276,7 +276,7 @@ export class ThirdPartiesService {
       callbackUrl = environment.WEB_OAUTH_CALLBACK_URL;
     }
     if (decoded.authType && decoded.authType === 'app') {
-      return { redirect: { url: callbackUrl, status: '', clientType: '' }, type: 'app' };
+      return { redirect: { url: `${callbackUrl}/app`, status: '', clientType: '' }, type: 'app' };
     } else {
       callbackUrl = `${callbackUrl}/service`;
       success = await this.authorizeToService(service, code, decoded);

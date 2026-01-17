@@ -116,7 +116,7 @@ describe('AuthController', () => {
           expect.objectContaining({
             httpOnly: true,
             sameSite: 'none',
-            secure: false, // In development, secure is false
+            secure: true,
           }),
         );
       } finally {
@@ -194,7 +194,7 @@ describe('AuthController', () => {
           expect.objectContaining({
             httpOnly: true,
             sameSite: 'none',
-            secure: false,
+            secure: true,
           }),
         );
       } finally {

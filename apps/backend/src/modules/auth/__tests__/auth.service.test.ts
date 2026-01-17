@@ -1,22 +1,26 @@
 import { UserRoles } from '@area/shared/enums/user-enums';
 import type { User } from '@area/shared/types/users.types';
 import { MongoServerError, ObjectId } from 'mongodb';
-import type { UsersRepository } from '@/modules/users';
+import { type UsersRepository, UsersService } from '@/modules/users';
 import ApiError from '@/utils/api-error';
 import { comparePasswords, hashPassword } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
 import { generateAccessToken, generateRefreshToken, verifyToken } from '@/utils/token';
 import { AuthService } from '../auth.service';
+import { type ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
 
 jest.mock('@/utils/crypt');
 jest.mock('@/utils/token');
 
 describe('AuthService', () => {
   let authService: AuthService;
-  let mockRepository: jest.Mocked<UsersRepository>;
+  let mockUsersRepository: jest.Mocked<UsersRepository>;
+  let usersService: UsersService;
+  let mockThirdPartiesRepository: jest.Mocked<ThirdPartiesRepository>;
+  let thirdPartiesService: ThirdPartiesService;
 
   beforeEach(() => {
-    mockRepository = {
+    mockUsersRepository = {
       createIndex: jest.fn(),
       createUser: jest.fn(),
       getUserById: jest.fn(),
@@ -25,7 +29,12 @@ describe('AuthService', () => {
       deleteUser: jest.fn(),
     } as any;
 
-    authService = new AuthService(mockRepository);
+    mockThirdPartiesRepository = {} as any;
+
+    usersService = new UsersService(mockUsersRepository);
+    thirdPartiesService = new ThirdPartiesService(mockThirdPartiesRepository, usersService);
+
+    authService = new AuthService(usersService, thirdPartiesService);
 
     // Default mock implementations
     (hashPassword as jest.Mock).mockResolvedValue('hashed_password');
@@ -36,7 +45,7 @@ describe('AuthService', () => {
   });
 
   describe('registerUser', () => {
-    const newUser: User = {
+    const newUser: Required<User> = {
       name: 'John Doe',
       email: 'john@example.com',
       password: 'password123',
@@ -45,10 +54,11 @@ describe('AuthService', () => {
       dyslexiaEnabled: false,
       createdAt: new Date(),
       updatedAt: new Date(),
+      authType: 'classic',
     };
 
     it('should successfully register a new user', async () => {
-      mockRepository.createUser.mockResolvedValue({
+      mockUsersRepository.createUser.mockResolvedValue({
         acknowledged: true,
         insertedId: new ObjectId('507f1f77bcf86cd799439011'),
       } as any);
@@ -61,7 +71,7 @@ describe('AuthService', () => {
     });
 
     it('should throw error if user creation is not acknowledged', async () => {
-      mockRepository.createUser.mockResolvedValue({
+      mockUsersRepository.createUser.mockResolvedValue({
         acknowledged: false,
       } as any);
 
@@ -72,14 +82,14 @@ describe('AuthService', () => {
       const mongoError = new MongoServerError({ errmsg: 'E11000 duplicate key error' });
       mongoError.code = 11000;
 
-      mockRepository.createUser.mockRejectedValue(mongoError);
+      mockUsersRepository.createUser.mockRejectedValue(mongoError);
 
       await expect(authService.registerUser(newUser)).rejects.toThrow('Failed to create user, user already exists.');
     });
 
     it('should rethrow other errors', async () => {
       const error = new Error('Database connection failed');
-      mockRepository.createUser.mockRejectedValue(error);
+      mockUsersRepository.createUser.mockRejectedValue(error);
 
       await expect(authService.registerUser(newUser)).rejects.toThrow('Database connection failed');
     });
@@ -99,31 +109,32 @@ describe('AuthService', () => {
       role: UserRoles.USER,
       darkModeEnabled: false,
       dyslexiaEnabled: false,
+      authType: 'classic',
     };
 
     it('should successfully login user', async () => {
-      mockRepository.getUserByEmail.mockResolvedValue(mockUser as any);
+      mockUsersRepository.getUserByEmail.mockResolvedValue(mockUser as any);
       (comparePasswords as jest.Mock).mockResolvedValue(true);
 
       const result = await authService.loginUser(loginData);
 
       expect(result).toHaveProperty('accessToken');
       expect(result).toHaveProperty('refreshToken');
-      expect(mockRepository.getUserByEmail).toHaveBeenCalledWith(loginData.email);
+      expect(mockUsersRepository.getUserByEmail).toHaveBeenCalledWith(loginData.email);
       expect(generateRefreshToken).toHaveBeenCalledWith({ _id: mockUser._id.toString() }, true);
     });
 
     it('should throw NOT_FOUND if user does not exist', async () => {
-      mockRepository.getUserByEmail.mockResolvedValue(null);
+      mockUsersRepository.getUserByEmail.mockResolvedValue(null);
 
-      await expect(authService.loginUser(loginData)).rejects.toThrow('User not found.');
+      await expect(authService.loginUser(loginData)).rejects.toThrow('User not found');
     });
 
     it('should throw UNAUTHORIZED if password is invalid', async () => {
-      mockRepository.getUserByEmail.mockResolvedValue(mockUser as any);
+      mockUsersRepository.getUserByEmail.mockResolvedValue(mockUser as any);
       (comparePasswords as jest.Mock).mockResolvedValue(false);
 
-      await expect(authService.loginUser(loginData)).rejects.toThrow('Password is invalid.');
+      await expect(authService.loginUser(loginData)).rejects.toThrow('Invalid credentials.');
     });
   });
 
@@ -138,20 +149,20 @@ describe('AuthService', () => {
 
     it('should successfully refresh access token', async () => {
       (verifyToken as jest.Mock).mockReturnValue({ _id: '507f1f77bcf86cd799439011' });
-      mockRepository.getUserById.mockResolvedValue(mockUser as any);
+      mockUsersRepository.getUserById.mockResolvedValue(mockUser as any);
 
       const result = await authService.refreshToken(refreshToken);
 
       expect(result).toHaveProperty('accessToken');
       expect(verifyToken).toHaveBeenCalledWith(refreshToken, environment.JWT_REFRESH_TOKEN_SECRET);
-      expect(mockRepository.getUserById).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
+      expect(mockUsersRepository.getUserById).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
     });
 
     it('should throw NOT_FOUND if user does not exist', async () => {
       (verifyToken as jest.Mock).mockReturnValue({ _id: '507f1f77bcf86cd799439011' });
-      mockRepository.getUserById.mockResolvedValue(null);
+      mockUsersRepository.getUserById.mockResolvedValue(null);
 
-      await expect(authService.refreshToken(refreshToken)).rejects.toThrow('User not found.');
+      await expect(authService.refreshToken(refreshToken)).rejects.toThrow('User not found');
     });
   });
 });

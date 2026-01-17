@@ -11,8 +11,8 @@ describe('ThirdPartiesController', () => {
 
   beforeEach(() => {
     service = {
-      getThirdPartyAuthorizationUrl: jest.fn(),
-      authorizeToService: jest.fn(),
+      getThirdPartyAuthorizationUrlService: jest.fn(),
+      authorizeTo: jest.fn(),
       getThirdPartyStatus: jest.fn(),
     } as any;
 
@@ -32,23 +32,23 @@ describe('ThirdPartiesController', () => {
     };
   });
 
-  describe('getThirdPartyAuthorizationUrl', () => {
+  describe('getThirdPartyAuthorizationUrlService', () => {
     it('should send authorization url and 200 status', async () => {
       mockRequest.params.service = 'GITHUB'; // Test toLowerCase()
       mockRequest.headers['x-client-type'] = 'web';
-      service.getThirdPartyAuthorizationUrl.mockResolvedValue('http://auth.url');
+      service.getThirdPartyAuthorizationUrlService.mockResolvedValue('http://auth.url');
 
-      await controller.getThirdPartyAuthorizationUrl(mockRequest, mockReply);
+      await controller.getThirdPartyAuthorizationUrlService(mockRequest, mockReply);
 
-      expect(service.getThirdPartyAuthorizationUrl).toHaveBeenCalledWith('github', 'user-id', 'web');
+      expect(service.getThirdPartyAuthorizationUrlService).toHaveBeenCalledWith('github', 'user-id', 'web');
       expect(mockReply.status).toHaveBeenCalledWith(HttpStatusCode.OK);
       expect(mockReply.send).toHaveBeenCalledWith({ url: 'http://auth.url' });
     });
 
     it('should default client type to web if missing or invalid', async () => {
       mockRequest.params.service = 'github';
-      await controller.getThirdPartyAuthorizationUrl(mockRequest, mockReply);
-      expect(service.getThirdPartyAuthorizationUrl).toHaveBeenCalledWith('github', 'user-id', 'web');
+      await controller.getThirdPartyAuthorizationUrlService(mockRequest, mockReply);
+      expect(service.getThirdPartyAuthorizationUrlService).toHaveBeenCalledWith('github', 'user-id', 'web');
     });
   });
 
@@ -56,38 +56,56 @@ describe('ThirdPartiesController', () => {
     it('should redirect back with success status on successful authorization', async () => {
       mockRequest.params.service = 'github';
       mockRequest.query.code = 'code123';
-      service.authorizeToService.mockResolvedValue({ success: true, clientType: 'web' });
+      service.authorizeTo.mockResolvedValue({
+        redirect: {
+          url: `${environment.WEB_OAUTH_CALLBACK_URL}/service`,
+          status: 'success',
+          clientType: 'web',
+        },
+        type: 'service',
+      });
 
-      await controller.authorizeToService(mockRequest, mockReply);
+      await controller.authorizeTo(mockRequest, mockReply);
 
-      expect(service.authorizeToService).toHaveBeenCalledWith('github', 'code123', undefined);
-      expect(mockReply.redirect).toHaveBeenCalledWith(`${environment.WEB_OAUTH_CALLBACK_URL}?status=success`);
+      expect(service.authorizeTo).toHaveBeenCalledWith('github', 'code123', undefined);
+      expect(mockReply.redirect).toHaveBeenCalledWith(`${environment.WEB_OAUTH_CALLBACK_URL}/service?status=success`);
     });
 
     it('should redirect back with error status on failed authorization', async () => {
       mockRequest.params.service = 'github';
       mockRequest.query.code = 'code123';
-      service.authorizeToService.mockResolvedValue({ success: false, clientType: 'web' });
 
-      await controller.authorizeToService(mockRequest, mockReply);
+      service.authorizeTo.mockResolvedValue({
+        redirect: {
+          url: `${environment.WEB_OAUTH_CALLBACK_URL}/service`,
+          status: 'error',
+          clientType: 'web',
+        },
+        type: 'service',
+      });
 
-      expect(mockReply.redirect).toHaveBeenCalledWith(`${environment.WEB_OAUTH_CALLBACK_URL}?status=error`);
+      await controller.authorizeTo(mockRequest, mockReply);
+
+      expect(mockReply.redirect).toHaveBeenCalledWith(`${environment.WEB_OAUTH_CALLBACK_URL}/service?status=error`);
     });
 
     it('should use mobile callback URL for mobile client type', async () => {
       mockRequest.params.service = 'github';
       mockRequest.query.code = 'code123';
-      service.authorizeToService.mockResolvedValue({ success: true, clientType: 'mobile' });
+      service.authorizeTo.mockResolvedValue({
+        redirect: {
+          url: `${environment.MOBILE_OAUTH_CALLBACK_URL}/service`,
+          status: 'success',
+          clientType: 'mobile',
+        },
+        type: 'service',
+      });
 
-      await controller.authorizeToService(mockRequest, mockReply);
+      await controller.authorizeTo(mockRequest, mockReply);
 
-      expect(mockReply.redirect).toHaveBeenCalledWith(`${environment.MOBILE_OAUTH_CALLBACK_URL}?status=success`);
-    });
-
-    it('should default to error if no code is provided', async () => {
-      mockRequest.params.service = 'github';
-      await controller.authorizeToService(mockRequest, mockReply);
-      expect(mockReply.redirect).toHaveBeenCalledWith(`${environment.WEB_OAUTH_CALLBACK_URL}?status=error`);
+      expect(mockReply.redirect).toHaveBeenCalledWith(
+        `${environment.MOBILE_OAUTH_CALLBACK_URL}/service?status=success`,
+      );
     });
   });
 

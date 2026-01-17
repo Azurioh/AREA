@@ -4,7 +4,7 @@ import type {
 } from '@area/shared/schemas/third-parties.schema';
 import type z from 'zod';
 
-export type ClientType = 'web' | 'client';
+export type ClientType = 'web' | 'mobile';
 
 /**
  * @type ThirdPartyAuthorizationQueryString

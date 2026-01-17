@@ -64,7 +64,7 @@ export class AuthController {
 
     reply.setCookie('refresh-token', encryptedRefreshToken, {
       httpOnly: true,
-      secure: environment.NODE_ENV !== 'development',
+      secure: true,
       sameSite: environment.NODE_ENV !== 'development' ? 'lax' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,

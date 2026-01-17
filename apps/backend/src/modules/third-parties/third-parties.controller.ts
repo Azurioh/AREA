@@ -100,7 +100,7 @@ export class ThirdPartiesController {
     authorization = await this.service.authorizeTo(params.service as ServiceType, query.code, query.state);
 
     if (authorization.type === 'app') {
-      reply.redirect(`${authorization.redirect.url}/app?code=${query.code}&state=${query.state}`);
+      reply.redirect(`${authorization.redirect.url}?code=${query.code}&state=${query.state}`);
       return;
     }
 

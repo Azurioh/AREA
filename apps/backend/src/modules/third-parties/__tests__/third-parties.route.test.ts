@@ -60,15 +60,15 @@ describe('Third Parties Integration Tests', () => {
     await closeDiscordBot();
   });
 
-  describe('GET /third-parties/v1/authorization-url/:service', () => {
+  describe('GET /third-parties/v1/authorization-url/:service/service', () => {
     it('should return 401 if not authenticated', async () => {
-      const response = await supertest(app.server).get('/third-parties/v1/authorization-url/github');
+      const response = await supertest(app.server).get('/third-parties/v1/authorization-url/github/service');
       expect(response.status).toBe(400); // verifyUserAccess returns 400 for missing token
     });
 
     it('should return 200 and authorization URL if authenticated', async () => {
       const response = await supertest(app.server)
-        .get('/third-parties/v1/authorization-url/github')
+        .get('/third-parties/v1/authorization-url/github/service')
         .set('Authorization', `Bearer ${accessToken}`);
 
       if (response.status !== 200) {
@@ -83,8 +83,7 @@ describe('Third Parties Integration Tests', () => {
     it('should redirect back with error if no code provided', async () => {
       // This route requires 'state' in query string according to schema
       const response = await supertest(app.server).get('/third-parties/v1/authorize/github?state=some-state');
-      expect(response.status).toBe(302);
-      expect(response.header.location).toContain('status=error');
+      expect(response.status).toBe(400);
     });
 
     it('should return 400 if state is missing', async () => {

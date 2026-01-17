@@ -21,16 +21,22 @@ export class UsersRepository {
    * @returns {Promise<void>} Nothing
    */
   async createIndex(): Promise<void> {
-    await this.db.collection<User>(MongoCollections.USERS).createIndex(
-      { email: 1 },
-      {
-        unique: true,
-        partialFilterExpression: {
-          email: { $exists: true },
+    const collection = this.db.collection<User>(MongoCollections.USERS);
+    const indexes = await collection.indexes();
+    const indexExists = indexes.some((index) => index.name === 'no_duplicate_user');
+
+    if (!indexExists) {
+      await this.db.collection<User>(MongoCollections.USERS).createIndex(
+        { email: 1 },
+        {
+          unique: true,
+          partialFilterExpression: {
+            email: { $exists: true },
+          },
+          name: 'no_duplicate_user',
         },
-        name: 'no_duplicate_user',
-      },
-    );
+      );
+    }
   }
 
   /**
