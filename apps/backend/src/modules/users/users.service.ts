@@ -19,9 +19,15 @@ export class UsersService {
    * @returns {Promise<InsertOneResult<User>>} The created user
    */
   async createUser(user: User): Promise<InsertOneResult<User>> {
-    const userAlreadyExist = await this.repository.getUserByEmail(user.email);
-    if (userAlreadyExist) {
-      throw new ApiError(HttpStatusCode.CONFLICT, 'User with same email already exists');
+    if (user.authType === 'classic') {
+      if (!user.email) {
+        throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Email is required to create a user');
+      }
+      const userAlreadyExist = await this.repository.getUserByEmail(user.email.toLowerCase());
+
+      if (userAlreadyExist) {
+        throw new ApiError(HttpStatusCode.CONFLICT, 'User with same email already exists');
+      }
     }
 
     const userCreated = await this.repository.createUser(user);
@@ -56,13 +62,12 @@ export class UsersService {
    * @param {string} email The email of the user
    * @returns {Promise<User>} The user
    */
-  async getUserByEmail(email: string): Promise<User> {
+  async getUserByEmail(email: string): Promise<WithId<User>> {
     const user = await this.repository.getUserByEmail(email);
 
     if (!user) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'User not found');
     }
-
     return user;
   }
 
@@ -88,9 +93,9 @@ export class UsersService {
    * @description Get a user by id
    *
    * @param {string} id The id of the user
-   * @returns {Promise<User>} The user
+   * @returns {Promise<WithId<User>>} The user
    */
-  async getUserById(id: string): Promise<User> {
+  async getUserById(id: string): Promise<WithId<User>> {
     const user = await this.repository.getUserById(id);
 
     if (!user) {

@@ -9,7 +9,7 @@ export const useUserFilter = (users: GetAllUsers) => {
     return users.filter((user) => {
       const matchesSearch =
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchQuery.toLowerCase());
+        (user.email || '').toLowerCase().includes(searchQuery.toLowerCase());
 
       let matchesRole = true;
       if (roleFilter === 'Admin') {

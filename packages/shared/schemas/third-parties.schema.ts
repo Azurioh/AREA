@@ -38,7 +38,7 @@ export const thirdPartyAuthorizationParamsSchema = z.object({
 });
 
 export const thirdPartyAuthorizationQueryStringSchema = z.object({
-  code: z.string().optional().meta({
+  code: z.string().meta({
     description: 'The code provided by the service to authenticate the user',
     example: '679d8c9b3c9b3c9b3c9b3c9b',
   }),

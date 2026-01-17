@@ -27,7 +27,11 @@ export const useRegister = () => {
     const formattedEmail = email.toLowerCase().trim();
     const formattedName = name.trim();
     const formattedPassword = password.trim();
-    const response = await authClient.register({ name: formattedName, email: formattedEmail, password: formattedPassword });
+    const response = await authClient.register({
+      name: formattedName,
+      email: formattedEmail,
+      password: formattedPassword,
+    });
     setIsLoading(false);
 
     if (response !== undefined) {

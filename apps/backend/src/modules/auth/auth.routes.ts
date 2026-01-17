@@ -1,26 +1,33 @@
 import {
-  loginBodyResponseSchema,
+  loginResponseSchema,
   loginBodySchema,
   logoutResponseSchema,
   refreshTokenResponseSchema,
   registerBodyResponseSchema,
   registerBodySchema,
   registerHeadersSchema,
+  loginWithServiceResponseSchema,
+  loginWithServiceQueryStringSchema,
+  loginWithServiceParamsSchema,
 } from '@area/shared/schemas/auth.schema';
 import type { FastifyInstance } from 'fastify';
 import { AuthController } from '@/modules/auth/auth.controller';
 import { AuthRepository } from '@/modules/auth/auth.repository';
 import { AuthService } from '@/modules/auth/auth.service';
-import { UsersRepository } from '@/modules/users';
+import { UsersRepository, UsersService } from '@/modules/users';
+import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
     throw new Error('MongoDB not initialized');
   }
-
-  const userRepository = new UsersRepository(app.mongo.db);
+  const thirdPartiesRepository = new ThirdPartiesRepository(app.mongo.db);
+  const usersRepository = new UsersRepository(app.mongo.db);
   const repository = new AuthRepository(app.mongo.db);
-  const service = new AuthService(userRepository, repository);
+
+  const usersService = new UsersService(usersRepository);
+  const thirdPartiesService = new ThirdPartiesService(thirdPartiesRepository, usersService);
+  const service = new AuthService(usersService, thirdPartiesService, repository);
   const controller = new AuthController(service);
 
   app.route({
@@ -49,7 +56,23 @@ export default async (app: FastifyInstance) => {
       tags: ['Auth'],
       body: loginBodySchema,
       response: {
-        200: loginBodyResponseSchema,
+        200: loginResponseSchema,
+      },
+    },
+  });
+
+  app.route({
+    method: 'POST',
+    url: '/v1/login/:service',
+    handler: controller.loginWithService.bind(controller),
+    schema: {
+      summary: 'Login a user with a third party service',
+      description: 'Returns an array with the users token.',
+      tags: ['Auth'],
+      params: loginWithServiceParamsSchema,
+      querystring: loginWithServiceQueryStringSchema,
+      response: {
+        200: loginWithServiceResponseSchema,
       },
     },
   });

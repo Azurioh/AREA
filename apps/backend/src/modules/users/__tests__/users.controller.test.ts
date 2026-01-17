@@ -73,15 +73,6 @@ describe('UsersController', () => {
     });
   });
 
-  describe('createUserMeState', () => {
-    it('should create state token and return 200', async () => {
-      await controller.createUserMeState(request as FastifyRequest, reply as FastifyReply);
-
-      expect(reply.status).toHaveBeenCalledWith(200);
-      expect(reply.send).toHaveBeenCalledWith(expect.objectContaining({ stateToken: expect.any(String) }));
-    });
-  });
-
   describe('getAllUsers', () => {
     it('should return all users', async () => {
       const mockUsers = [

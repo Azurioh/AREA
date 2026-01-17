@@ -11,7 +11,7 @@ import { useDeleteUser } from '@/features/adminDashboard/hooks/useDeleteUser';
 interface User {
   _id: string;
   name: string;
-  email: string;
+  email?: string;
   role: UserRoles;
 }
 
@@ -32,7 +32,7 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
             {user.name}
           </Label>
           <Label htmlFor={`user-${user._id}`} className="truncate text-sm">
-            {user.email}
+            {user.email || ''}
           </Label>
           <Label htmlFor={`user-${user._id}`} className="truncate text-sm">
             {user.role === UserRoles.ADMIN ? 'Admin' : 'User'}

@@ -7,7 +7,6 @@ import type {
   UpdateUserMeBody,
 } from '@area/shared/schemas/users.schema';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { generateStateToken } from '@/utils/token';
 import type { UsersService } from './users.service';
 
 /**
@@ -19,20 +18,6 @@ export class UsersController {
 
   constructor(service: UsersService) {
     this.service = service;
-  }
-
-  /**
-   * @function createUserMeState
-   * @description Create the current user state
-   *
-   * @param {FastifyRequest} request The FastifyRequest object
-   * @param {FastifyReply} reply The FastifyReply object
-   * @returns {Promise<void>} Nothing
-   */
-  async createUserMeState(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const stateToken = generateStateToken({ _id: request.user._id, clientType: 'web' });
-
-    return reply.status(HttpStatusCode.OK).send({ stateToken: stateToken });
   }
 
   /**

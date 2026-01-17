@@ -5,6 +5,7 @@ import type {
 } from '@area/shared/schemas/third-parties.schema';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type {
+  AuthorizeTo,
   ClientType,
   ServiceType,
   ThirdPartyAuthorizationParams,
@@ -25,14 +26,14 @@ export class ThirdPartiesController {
   }
 
   /**
-   * @function getThirdPartyAuthorizationUrl
-   * @description Connect the current user to a thid party service
+   * @function getThirdPartyAuthorizationUrlService
+   * @description Get the authorization url to connect to a third party service
    *
    * @param {FastifyRequest} request The FastifyRequest object
    * @param {FastifyReply} reply The FastifyReply object
    * @returns {Promise<void>} Nothing
    */
-  async getThirdPartyAuthorizationUrl(
+  async getThirdPartyAuthorizationUrlService(
     request: FastifyRequest<{ Params: GetThirdPartyAuthorizationUrlParams }>,
     reply: FastifyReply,
   ): Promise<void> {
@@ -41,9 +42,34 @@ export class ThirdPartiesController {
     if (headers['x-client-type'] !== 'web' && headers['x-client-type'] !== 'mobile') {
       headers['x-client-type'] = 'web';
     }
-    const url = await this.service.getThirdPartyAuthorizationUrl(
+    const url = await this.service.getThirdPartyAuthorizationUrlService(
       request.params.service.toLowerCase() as ServiceType,
       request.user._id,
+      headers['x-client-type'] as ClientType,
+    );
+
+    reply.status(HttpStatusCode.OK).send({ url: url });
+  }
+
+  /**
+   * @function getThirdPartyAuthorizationUrlApp
+   * @description Get the authorization url to connect to the app via a third party service
+   *
+   * @param {FastifyRequest} request The FastifyRequest object
+   * @param {FastifyReply} reply The FastifyReply object
+   * @returns {Promise<void>} Nothing
+   */
+  async getThirdPartyAuthorizationUrlApp(
+    request: FastifyRequest<{ Params: GetThirdPartyAuthorizationUrlParams }>,
+    reply: FastifyReply,
+  ): Promise<void> {
+    const headers = request.headers;
+
+    if (headers['x-client-type'] !== 'web' && headers['x-client-type'] !== 'mobile') {
+      headers['x-client-type'] = 'web';
+    }
+    const url = await this.service.getThirdPartyAuthorizationUrlApp(
+      request.params.service.toLowerCase() as ServiceType,
       headers['x-client-type'] as ClientType,
     );
 
@@ -57,30 +83,28 @@ export class ThirdPartiesController {
    * @param {FastifyRequest} request The Fastify request object.
    * @param {FastifyReply} reply The Fastify reply object for sending the response.
    */
-  async authorizeToService(
+  async authorizeTo(
     request: FastifyRequest<{ Params: ThirdPartyAuthorizationParams; Querystring: ThirdPartyAuthorizationQueryString }>,
     reply: FastifyReply,
   ): Promise<void> {
     const query = request.query;
-    const status = { code: HttpStatusCode.BAD_REQUEST, text: 'error' };
-    let callbackUrl = environment.WEB_OAUTH_CALLBACK_URL;
+    const params = request.params;
+    let authorization: AuthorizeTo = {
+      redirect: {
+        url: environment.WEB_OAUTH_CALLBACK_URL,
+        status: 'error',
+        clientType: 'web',
+      },
+      type: 'service',
+    };
+    authorization = await this.service.authorizeTo(params.service as ServiceType, query.code, query.state);
 
-    if (query.code) {
-      const result = await this.service.authorizeToService(
-        request.params.service as ServiceType,
-        query.code,
-        query.state,
-      );
-
-      if (result.clientType === 'mobile') {
-        callbackUrl = environment.MOBILE_OAUTH_CALLBACK_URL;
-      }
-      if (result.success) {
-        status.code = HttpStatusCode.NO_CONTENT;
-        status.text = 'success';
-      }
+    if (authorization.type === 'app') {
+      reply.redirect(`${authorization.redirect.url}?code=${query.code}&state=${query.state}`);
+      return;
     }
-    reply.redirect(`${callbackUrl}?status=${status.text}`);
+
+    reply.redirect(`${authorization.redirect.url}?status=${authorization.redirect.status}`);
   }
 
   /**
