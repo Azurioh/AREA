@@ -88,11 +88,31 @@ const LoginPage: React.FC = () => {
                 </Label>
               </div>
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading} aria-busy={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign in'}
-            </Button>
+            <div className="space-y-3">
+              <Button type="submit" className="w-full" disabled={isLoading} aria-busy={isLoading}>
+                {isLoading ? 'Signing in...' : 'Sign in'}
+              </Button>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                </div>
+              </div>
+
+              <Button
+                variant="outline"
+                type="button"
+                className="w-full flex items-center justify-center gap-3 hover:border-primary hover:bg-input-background hover:text-forground bg-input-background"
+                aria-label="Continue with GitHub"
+              >
+                <img src={`${import.meta.env.VITE_BASE_IMAGE_URL}/github.png`} alt="GitHub logo" className="h-5 w-5" />
+                <span>GitHub</span>
+              </Button>
+            </div>
             <p className="text-center text-sm">
-              <span className="text-muted-foreground">Don't have an account?</span>{' '}
+              <span className="text-muted-foreground">Don't have an account ?</span>{' '}
               <Link
                 to={AppRoutesPaths.REGISTER}
                 className="font-medium text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
