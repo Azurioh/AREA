@@ -1,5 +1,6 @@
 import z from 'zod';
 import { userFields } from '../types/users.types';
+import { thirdPartyAuthorizationParamsSchema, thirdPartyAuthorizationQueryStringSchema } from './third-parties.schema';
 
 /************
  * REGISTER *
@@ -50,8 +51,8 @@ export type RegisterResponse = z.infer<typeof registerBodyResponseSchema>;
  * LOGIN *
  *********/
 export const loginBodySchema = z.object({
-  email: userFields.email,
-  password: userFields.password,
+  email: userFields.email.nonoptional(),
+  password: userFields.password.nonoptional(),
   rememberMe: z.boolean().meta({
     description: 'Remember me',
     example: true,
@@ -64,7 +65,7 @@ export const loginBodySchema = z.object({
  */
 export type LoginBody = z.infer<typeof loginBodySchema>;
 
-export const loginBodyResponseSchema = z.object({
+export const loginResponseSchema = z.object({
   accessToken: z.string().meta({
     description: 'Access token',
     example:
@@ -80,7 +81,7 @@ export const loginBodyResponseSchema = z.object({
     .or(z.undefined()),
 });
 
-export type LoginResponse = z.infer<typeof loginBodyResponseSchema>;
+export type LoginResponse = z.infer<typeof loginResponseSchema>;
 
 export const refreshTokenResponseSchema = z.object({
   accessToken: z.string().meta({
@@ -91,3 +92,30 @@ export const refreshTokenResponseSchema = z.object({
 });
 
 export type RefreshTokenResponse = z.infer<typeof refreshTokenResponseSchema>;
+
+/**********************
+ * LOGIN WITH SERVICE *
+ **********************/
+
+export const loginWithServiceParamsSchema = thirdPartyAuthorizationParamsSchema;
+
+/**
+ * @type LoginWithServiceParams
+ * @description Params required to login with a third party service.
+ *
+ * @property {string} service The service to login with
+ */
+export type LoginWithServiceParams = z.infer<typeof loginWithServiceParamsSchema>;
+
+export const loginWithServiceQueryStringSchema = thirdPartyAuthorizationQueryStringSchema;
+
+/**
+ * @type LoginWithServiceQueryString
+ * @description Query string required to login with a third party service.
+ *
+ * @property {string} code The code provided by the service to authenticate the user
+ * @property {string} state A state given by the client when making the authorization request
+ */
+export type LoginWithServiceQueryString = z.infer<typeof loginWithServiceQueryStringSchema>;
+
+export const loginWithServiceResponseSchema = loginResponseSchema;

@@ -1,10 +1,17 @@
 import { UserRoles } from '@area/shared/enums/user-enums';
-import type { LoginBody, RegisterBody, RegisterHeaders } from '@area/shared/schemas/auth.schema';
+import type {
+  LoginBody,
+  LoginWithServiceParams,
+  LoginWithServiceQueryString,
+  RegisterBody,
+  RegisterHeaders,
+} from '@area/shared/schemas/auth.schema';
 import type { User } from '@area/shared/types/users.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { AuthService } from '@/modules/auth/auth.service';
 import { decryptString, encryptString, safeEqualCheck } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
+import type { ServiceType } from '@/types/third-parties';
 
 /**
  * @class AuthController
@@ -31,7 +38,7 @@ export class AuthController {
     const headers = request.headers;
     const body = request.body;
 
-    const data: User = {
+    const data: Required<User> = {
       name: body.name,
       email: body.email,
       password: body.password,
@@ -42,6 +49,7 @@ export class AuthController {
       dyslexiaEnabled: false,
       createdAt: new Date(),
       updatedAt: new Date(),
+      authType: 'classic',
     };
 
     const { accessToken, refreshToken } = await this.service.registerUser(data);
@@ -87,7 +95,45 @@ export class AuthController {
 
     reply.setCookie('refresh-token', encryptedRefreshToken, {
       httpOnly: true,
-      secure: environment.NODE_ENV !== 'development',
+      secure: true,
+      sameSite: environment.NODE_ENV !== 'development' ? 'lax' : 'none',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30,
+    });
+    reply.status(200).send({ accessToken: encryptedAccessToken });
+  }
+
+  /**
+   * @function loginWithService
+   * @description Handle the login of a user with a third party service.
+   *
+   * @param {FastifyRequest} request - The Fastify request object.
+   * @param {FastifyReply} reply - The Fastify reply object for sending the response.
+   */
+  async loginWithService(
+    request: FastifyRequest<{ Params: LoginWithServiceParams; Querystring: LoginWithServiceQueryString }>,
+    reply: FastifyReply,
+  ): Promise<void> {
+    const params = request.params;
+    const query = request.query;
+
+    const { accessToken, refreshToken, clientType } = await this.service.loginWithService(
+      params.service as ServiceType,
+      query.code,
+      query.state,
+    );
+
+    const encryptedAccessToken = encryptString(accessToken, environment.CRYPT_SECRET_KEY);
+    const encryptedRefreshToken = encryptString(refreshToken, environment.CRYPT_SECRET_KEY);
+
+    if (clientType === 'mobile') {
+      reply.status(201).send({ accessToken: encryptedAccessToken, refreshToken: encryptedRefreshToken });
+      return;
+    }
+
+    reply.setCookie('refresh-token', encryptedRefreshToken, {
+      httpOnly: true,
+      secure: true,
       sameSite: environment.NODE_ENV !== 'development' ? 'lax' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
@@ -97,7 +143,7 @@ export class AuthController {
 
   async refreshToken(request: FastifyRequest, reply: FastifyReply): Promise<void> {
     const headers = request.headers;
-    let refreshToken: string | undefined ;
+    let refreshToken: string | undefined;
 
     if (headers['x-client-type'] && headers['x-client-type'] === 'mobile' && headers['x-refresh-token']) {
       refreshToken = headers['x-refresh-token'] as string;
