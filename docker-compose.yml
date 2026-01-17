@@ -1,6 +1,7 @@
 services:
   mongodb:
     image: mongo:latest
+    restart: unless-stopped
     ports:
       - "27017:27017"
     environment:
@@ -12,22 +13,36 @@ services:
     networks:
       - area-network
 
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - area-network
+
   server:
     build:
       context: .
-      dockerfile: apps/backend/.docker/Dockerfile.prod
-    depends_on:
-      - mongodb
+      dockerfile: apps/backend/.docker/Dockerfile.dev
     ports:
-      - "8080:${PORT}"
+      - "3000:${PORT}"
+    restart: unless-stopped
     environment:
       - NODE_ENV=${NODE_ENV}
       - BASE_API_URL=${BASE_API_URL}
       - PORT=${PORT}
       - CRYPT_SECRET_KEY=${CRYPT_SECRET_KEY}
-      - FRONTEND_AUTHORIZE_CALLBACK_URL=${FRONTEND_AUTHORIZE_CALLBACK_URL}
+      - WEB_OAUTH_CALLBACK_URL=${WEB_OAUTH_CALLBACK_URL}
+      - MOBILE_OAUTH_CALLBACK_URL=${MOBILE_OAUTH_CALLBACK_URL}
       - MONGO_URI=${MONGO_URI}
       - MONGO_DATABASE=${MONGO_INITDB_DATABASE}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
       - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
       - JWT_STATE_TOKEN_SECRET=${JWT_STATE_TOKEN_SECRET}
@@ -36,6 +51,20 @@ services:
       - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
       - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
       - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - DROPBOX_CLIENT_ID=${DROPBOX_CLIENT_ID}
+      - DROPBOX_CLIENT_SECRET=${DROPBOX_CLIENT_SECRET}
+      - UNSPLASH_CLIENT_ID=${UNSPLASH_CLIENT_ID}
+      - TWITCH_CLIENT_ID=${TWITCH_CLIENT_ID}
+      - TWITCH_CLIENT_SECRET=${TWITCH_CLIENT_SECRET}
+      - TWITCH_WEBHOOK_SECRET=${TWITCH_WEBHOOK_SECRET}
+    volumes:
+      - ./apps/backend/src:/app/apps/backend/src
+      - ./packages:/app/packages
+    depends_on:
+      - mongodb
+      - redis
     networks:
       - area-network
 
@@ -61,6 +90,7 @@ services:
 volumes:
   shared_volume:
   mongo_data:
+  redis_data:
 
 networks:
   area-network:
