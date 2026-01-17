@@ -51,10 +51,29 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleOAuthCallback(intent: Intent?) {
-        val data = intent?.data
-        if (data != null && data.scheme == "area" && data.host == "oauth" && data.path == "/callback") {
+        val data = intent?.data ?: return
+
+        if (data.scheme == "area" && data.host == "oauth" && data.path?.startsWith("/callback") == true) {
             val status = data.getQueryParameter("status")
             val service = data.getQueryParameter("service")
+            val code = data.getQueryParameter("code")
+            val state = data.getQueryParameter("state")
+
+            if (data.path == "/callback/app" && code != null && state != null) {
+                val loginService = service ?: "github"
+                userViewModel.loginWithService(
+                    service = loginService,
+                    code = code,
+                    state = state,
+                    onSuccess = {
+                        Toast.makeText(this, "Logged in with $loginService successfully!", Toast.LENGTH_SHORT).show()
+                    },
+                    onError = { error ->
+                        Toast.makeText(this, "Login error: $error", Toast.LENGTH_LONG).show()
+                    }
+                )
+                return
+            }
 
             when (status) {
                 "success" -> {
