@@ -6,11 +6,11 @@ export const userFields = {
     description: 'User name',
     example: 'John Doe',
   }),
-  email: z.email().meta({
+  email: z.email().optional().meta({
     description: 'User email',
     example: 'john.doe@example.com',
   }),
-  password: z.string().meta({
+  password: z.string().optional().meta({
     description: 'User password (hashed)',
     example: 'pbkdf2$sha256$150000$...',
   }),
@@ -33,6 +33,10 @@ export const userFields = {
   updatedAt: z.date().meta({
     description: 'User update date',
     example: '2025-01-01T00:00:00.000Z',
+  }),
+  authType: z.enum(['classic', 'github']).meta({
+    description: 'Authentication type',
+    example: 'classic',
   }),
 };
 
@@ -65,15 +69,15 @@ export const refreshTokenSchema = z.object({
 
 export type RefreshToken = z.infer<typeof refreshTokenSchema>;
 
-export const stateTokenSchema = z.object({
-  _id: z.string().meta({
-    description: 'The user id',
-    example: '679d3c8b4b8c9d3c8b4b8c9d',
-  }),
-  clientType: z.string().meta({
-    description: 'The type of the client',
-    example: 'web',
-  }),
-});
-
-export type StateToken = z.infer<typeof stateTokenSchema>;
+/**
+ * @type StateToken
+ * @description State token type used in third party authentication
+ *
+ * @param {string} _id - The user id
+ * @param {string} clientType - The client type (web or mobile)
+ */
+export type StateToken = {
+  _id?: string;
+  clientType: string;
+  authType?: 'app';
+};

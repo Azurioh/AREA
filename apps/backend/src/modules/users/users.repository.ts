@@ -18,11 +18,19 @@ export class UsersRepository {
    * @function createIndex
    * @description Creates an index to avoid user duplication.
    *
+   * @returns {Promise<void>} Nothing
    */
   async createIndex(): Promise<void> {
-    await this.db
-      .collection<User>(MongoCollections.USERS)
-      .createIndex({ email: 1 }, { unique: true, name: 'no_duplicate_user' });
+    await this.db.collection<User>(MongoCollections.USERS).createIndex(
+      { email: 1 },
+      {
+        unique: true,
+        partialFilterExpression: {
+          email: { $exists: true },
+        },
+        name: 'no_duplicate_user',
+      },
+    );
   }
 
   /**
