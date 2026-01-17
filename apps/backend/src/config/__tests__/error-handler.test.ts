@@ -52,7 +52,7 @@ describe('setupErrorHandler', () => {
     setupErrorHandler(mockApp);
     const error = new Error('Something went wrong');
     const mockReply = { status: jest.fn().mockReturnThis(), send: jest.fn() };
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     errorHandler(error, {}, mockReply);
 
@@ -67,7 +67,7 @@ describe('setupErrorHandler', () => {
     setupErrorHandler(mockApp);
     const error = 'Just a string error';
     const mockReply = { status: jest.fn().mockReturnThis(), send: jest.fn() };
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     errorHandler(error, {}, mockReply);
 
@@ -93,7 +93,7 @@ describe('setupErrorHandler', () => {
     error.stack = 'Error stack trace';
 
     const mockReply = { status: jest.fn().mockReturnThis(), send: jest.fn() };
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     const handler = (mockApp.setErrorHandler as jest.Mock).mock.calls[0][0];
 

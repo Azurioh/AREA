@@ -37,7 +37,7 @@ describe('AuthController', () => {
       refreshToken: jest.fn(),
       sendTokensToUser: jest.fn(),
       getRefreshToken: jest.fn(),
-      checkIfRefreshTokenIsValid: jest.fn().mockResolvedValue(true),
+      checkIfRefreshTokenIsValid: jest.fn().mockResolvedValue({ expiresAt: new Date('2026-01-18T00:00:00Z') }),
       storeRefreshTokenInDatabase: jest.fn(),
       invalidateAccessToken: jest.fn(),
       invalidateRefreshToken: jest.fn(),
@@ -208,7 +208,7 @@ describe('AuthController', () => {
 
       expect(mockService.getRefreshToken).toHaveBeenCalledWith(mockRequest);
       expect(mockService.checkIfRefreshTokenIsValid).toHaveBeenCalledWith('encrypted_valid_refresh_token');
-      expect(mockService.refreshToken).toHaveBeenCalledWith('valid_refresh_token');
+      expect(mockService.refreshToken).toHaveBeenCalledWith('valid_refresh_token', new Date('2026-01-18T00:00:00Z'));
       expect(mockService.invalidateAccessToken).toHaveBeenCalled();
       expect(mockService.invalidateRefreshToken).toHaveBeenCalled();
       expect(mockService.sendTokensToUser).toHaveBeenCalledWith(
