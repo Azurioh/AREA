@@ -85,7 +85,7 @@ export class AuthService {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'Invalid credentials.');
     }
     if (!(await comparePasswords(data.password, user.password))) {
-      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Invalid credentials.');
+      throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Invalid credentials.');
     }
 
     const accessToken = generateAccessToken({

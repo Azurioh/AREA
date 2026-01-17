@@ -96,7 +96,7 @@ export class AuthController {
       new Date(Date.now() + (body.rememberMe ? 30 : 1) * 24 * 60 * 60 * 1000),
     );
 
-    await this.service.sendTokensToUser(encryptedAccessToken, encryptedRefreshToken, request, reply, true);
+    await this.service.sendTokensToUser(encryptedAccessToken, encryptedRefreshToken, request, reply, false);
   }
 
   /**
