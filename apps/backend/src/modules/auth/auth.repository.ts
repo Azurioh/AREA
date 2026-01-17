@@ -1,3 +1,4 @@
+import type { MaybeNull } from '@area/shared/utils';
 import type { Db, InsertOneResult } from 'mongodb';
 import { MongoCollections } from '@/enums/mongo-collection';
 import type { RefreshTokenValidator } from '@/types/auth';
@@ -21,11 +22,12 @@ export class AuthRepository {
     });
   }
 
-  async isRefreshTokenValid(hashedToken: string): Promise<boolean> {
+  async isRefreshTokenValid(hashedToken: string): Promise<MaybeNull<RefreshTokenValidator>> {
     const token = await this.db
       .collection<RefreshTokenValidator>(MongoCollections.REFRESH_TOKENS)
       .findOne({ hashedToken, expiresAt: { $gt: new Date() } });
-    return !!token;
+
+    return token;
   }
 
   async deleteRefreshToken(hashedToken: string): Promise<void> {

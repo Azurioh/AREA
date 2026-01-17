@@ -14,6 +14,9 @@ const checkAccessTokenBlackList = async (request: FastifyRequest, _reply: Fastif
       throw new ApiError(HttpStatusCode.UNAUTHORIZED, 'Token has been revoked');
     }
   } catch (err: unknown) {
+    if (err instanceof ApiError) {
+      throw err;
+    }
     console.error(err);
     throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Error checking token blacklist');
   }
