@@ -49,7 +49,10 @@ fun ButtonRegisterComponent(
                         name = textFieldName,
                         email = textFieldEmail,
                         password = textFieldPassword,
-                        onSuccess = onSuccess
+                        onSuccess = onSuccess,
+                        onError = { error ->
+                            Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show()
+                        }
                     )
                 }
             }
