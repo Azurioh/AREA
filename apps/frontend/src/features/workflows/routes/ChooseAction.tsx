@@ -252,7 +252,9 @@ const ChooseAction: React.FC = () => {
                               (p) => !p.value || (typeof p.value === 'string' && p.value.trim() === ''),
                             )}
                             onClick={() => {
-                              if (!selectedAction) return;
+                              if (!selectedAction) {
+                                return;
+                              }
 
                               const paramsObj = actionParams.reduce(
                                 (acc, p) => {

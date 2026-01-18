@@ -255,7 +255,9 @@ const ChooseReaction: React.FC = () => {
                               (p) => !p.value || (typeof p.value === 'string' && p.value.trim() === ''),
                             )}
                             onClick={() => {
-                              if (!selectedReaction) return;
+                              if (!selectedReaction) {
+                                return;
+                              }
 
                               const paramsObj = reactionParams.reduce(
                                 (acc, p) => {
