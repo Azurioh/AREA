@@ -22,7 +22,13 @@ export class SpotifyPollingService {
     this.spotifyService = spotifyService;
   }
 
-  async pollCurrentlyPlayingTrack() {
+  /**
+   * @function pollCurrentlyPlayingTrack
+   * @description Poll the currently playing track.
+   *
+   * @returns {Promise<void>} Nothing
+   */
+  async pollCurrentlyPlayingTrack(): Promise<void> {
     const usersToPoll = await this.repository.getUsersToPoll('spotify', ['listening_to_artist']);
 
     for (const user of usersToPoll) {
@@ -91,7 +97,16 @@ export class SpotifyPollingService {
     }
   }
 
-  private async sendWebhook(userId: string, event: string, payload: SpotifyWebhookPayload) {
+  /**
+   * @function sendWebhook
+   * @description Send the webhook to the API.
+   *
+   * @param {string} userId - The id of the user.
+   * @param {string} event - The event name.
+   * @param {SpotifyWebhookPayload} payload - The payload to send.
+   * @returns {Promise<void>} Nothing
+   */
+  private async sendWebhook(userId: string, event: string, payload: SpotifyWebhookPayload): Promise<void> {
     await fetch(`${environment.BASE_API_URL}/webhook/v1/spotify`, {
       method: 'POST',
       headers: {

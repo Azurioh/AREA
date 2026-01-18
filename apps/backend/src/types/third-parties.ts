@@ -42,7 +42,7 @@ export type AuthorizeTo = {
   type: 'service' | 'app';
 };
 
-export type NoOAuthServiceType = 'unsplash';
+export type NoOAuthServiceType = 'unsplash' | 'nasa';
 export type ServiceType = 'github' | 'discord' | 'spotify' | 'dropbox' | 'twitch' | NoOAuthServiceType;
 
 /**
@@ -129,13 +129,13 @@ export type TwitchAccount = BaseAccount & {
 };
 
 /**
- * @type UnsplashAccount
- * @description UnsplashAccount type.
+ * @type NoOAuthAccount
+ * @description NoOAuthAccount type.
  *
- * @property {'unsplash'} service The name of the service
+ * @property {NoOAuthServiceType} service The name of the service
  */
 export type NoOAuthAccount = BaseAccount & {
-  service: 'unsplash';
+  service: NoOAuthServiceType;
 };
 
 export type ThirdPartyAccount =
