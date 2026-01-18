@@ -6,6 +6,7 @@ import { UnsplashPollingService } from '@/modules/polling/unsplash-polling.servi
 import { SpotifyService } from '@/modules/spotify';
 import { ThirdPartiesRepository, ThirdPartiesService } from '@/modules/third-parties';
 import { UsersRepository, UsersService } from '@/modules/users';
+import { NasaPollingService } from '@/modules/polling/nasa-polling.service';
 
 export const setupPolling = async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -24,6 +25,7 @@ export const setupPolling = async (app: FastifyInstance) => {
   const spotifyService = new SpotifyService(thirdPartiesService, pollingService);
   const spotifyPolling = new SpotifyPollingService(pollingRepository, thirdPartiesService, spotifyService);
   const unsplashPolling = new UnsplashPollingService(pollingRepository);
+  const nasaPolling = new NasaPollingService(pollingRepository);
 
   if (process.env.NODE_ENV !== 'test') {
     const spotifyIntervalId = setInterval(async () => {
@@ -32,19 +34,31 @@ export const setupPolling = async (app: FastifyInstance) => {
       } catch (error) {
         console.error('Error polling Spotify:', error);
       }
-    }, 30000);
+    }, 40000);
 
-    const unsplashIntervalId = setInterval(async () => {
+    const unsplashIntervalId = setInterval(
+      async () => {
+        try {
+          await unsplashPolling.pollDailyRandomImage();
+        } catch (error) {
+          console.error('Error polling Unsplash:', error);
+        }
+      },
+      60 * 60 * 1000,
+    );
+
+    const nasaIntervalId = setInterval(async () => {
       try {
-        await unsplashPolling.pollDailyRandomImage();
+        await nasaPolling.pollNewAstronomyPictureOfTheDay();
       } catch (error) {
-        console.error('Error polling Unsplash:', error);
+        console.error('Error polling NASA:', error);
       }
-    }, 30000);
+    }, 30);
 
     app.addHook('onClose', (_instance, done) => {
       clearInterval(spotifyIntervalId);
       clearInterval(unsplashIntervalId);
+      clearInterval(nasaIntervalId);
       done();
     });
   }

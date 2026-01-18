@@ -6,6 +6,7 @@ import {
   createSpotifyService,
   createTwitchService,
   createUnsplashService,
+  createNasaService,
   ServiceManager,
 } from '@/integrations';
 import { DiscordService } from '@/modules/discord';
@@ -42,4 +43,5 @@ export const registerServices = async (app: FastifyInstance): Promise<void> => {
   ServiceManager.instance.register(createUnsplashService());
   ServiceManager.instance.register(createDropboxService());
   ServiceManager.instance.register(createTwitchService(twitchService));
+  ServiceManager.instance.register(createNasaService());
 };

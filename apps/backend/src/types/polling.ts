@@ -2,7 +2,7 @@
  * @type ServiceToPoll
  * @description The name of the different service to poll
  */
-export type ServiceToPoll = 'spotify' | 'unsplash';
+export type ServiceToPoll = 'spotify' | 'unsplash' | 'nasa';
 
 /**
  * @type Polling
@@ -64,4 +64,18 @@ export type UnsplashDailyRandomImage = {
     username: string;
     bio: string;
   };
+};
+
+/**
+ * @type NasaNewAstronomyPictureOfTheDay
+ * @description The return of the new astronomy picture of the day.
+ *
+ * @property {string} title The title of the picture
+ * @property {string} explanation The explanation of the picture
+ * @property {string} url The url of the picture
+ */
+export type NasaNewAstronomyPictureOfTheDay = {
+  title: string;
+  explanation: string;
+  url: string;
 };

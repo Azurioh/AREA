@@ -22,6 +22,7 @@ jest.mock('@/integrations', () => ({
   createUnsplashService: jest.fn(),
   createDropboxService: jest.fn(),
   createTwitchService: jest.fn(),
+  createNasaService: jest.fn(),
   ServiceManager: { instance: { register: jest.fn() } },
 }));
 
@@ -43,6 +44,6 @@ describe('registerServices', () => {
   it('should register all services successfully', async () => {
     await registerServices(mockApp);
 
-    expect(ServiceManager.instance.register).toHaveBeenCalledTimes(6);
+    expect(ServiceManager.instance.register).toHaveBeenCalledTimes(7);
   });
 });

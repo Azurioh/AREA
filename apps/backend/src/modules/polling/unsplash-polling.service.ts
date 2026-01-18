@@ -14,7 +14,13 @@ export class UnsplashPollingService {
     this.repository = repository;
   }
 
-  async pollDailyRandomImage() {
+  /**
+   * @function pollDailyRandomImage
+   * @description Poll the daily random image.
+   *
+   * @returns {Promise<void>} Nothing
+   */
+  async pollDailyRandomImage(): Promise<void> {
     const usersToPoll = await this.repository.getUsersToPoll('unsplash', ['daily_random_image']);
 
     if (usersToPoll.length === 0) {
@@ -61,8 +67,9 @@ export class UnsplashPollingService {
    * @param {string} userId - The id of the user.
    * @param {string} event - The event name.
    * @param {UnsplashWebhookPayload} payload - The payload to send.
+   * @returns {Promise<void>} Nothing
    */
-  private async sendWebhook(userId: string, event: string, payload: UnsplashWebhookPayload) {
+  private async sendWebhook(userId: string, event: string, payload: UnsplashWebhookPayload): Promise<void> {
     await fetch(`${environment.BASE_API_URL}/webhook/v1/unsplash`, {
       method: 'POST',
       headers: {

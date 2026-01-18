@@ -16,6 +16,7 @@ import type { DropboxService } from '@/modules/dropbox';
 import type { TwitchService } from '../twitch/twitch.service';
 import { ServiceManager } from '@/integrations';
 import type { IAction, IReaction } from '@area/shared/types/services.types';
+import type { NasaService } from '../nasa/nasa.service';
 
 /**
  * @class ActionsReactionsService
@@ -42,6 +43,7 @@ export class ActionsReactionsService {
     unsplashService: UnsplashService,
     dropboxService: DropboxService,
     twitchService: TwitchService,
+    nasaService: NasaService,
   ) {
     this.repository = repository;
     this.actionsCreationFunc = new Map([
@@ -51,6 +53,7 @@ export class ActionsReactionsService {
       ['unsplash', unsplashService.createAction.bind(unsplashService)],
       ['dropbox', dropboxService.createAction.bind(dropboxService)],
       ['twitch', twitchService.createAction.bind(twitchService)],
+      ['nasa', nasaService.createAction.bind(nasaService)],
     ]);
     this.reactionsCreationFunc = new Map([
       ['github', githubService.createReaction.bind(githubService)],

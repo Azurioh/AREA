@@ -59,6 +59,7 @@ services:
       - TWITCH_CLIENT_ID=${TWITCH_CLIENT_ID}
       - TWITCH_CLIENT_SECRET=${TWITCH_CLIENT_SECRET}
       - TWITCH_WEBHOOK_SECRET=${TWITCH_WEBHOOK_SECRET}
+      - NASA_API_KEY=${NASA_API_KEY}
     volumes:
       - ./src:/app/apps/backend/src
       - ../../packages:/app/packages

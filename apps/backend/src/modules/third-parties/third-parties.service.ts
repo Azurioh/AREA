@@ -63,6 +63,7 @@ export class ThirdPartiesService {
         `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${environment.TWITCH_CLIENT_ID}&redirect_uri={redirectUri}&scope=moderator:read:followers%20user:read:follows&state={state}`,
       ],
       ['unsplash', 'no_oauth'],
+      ['nasa', 'no_oauth'],
     ]);
     this.servicesAuthorizationFunc = new Map([
       ['github', this.authorizeToGithub],
