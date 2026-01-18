@@ -35,7 +35,7 @@
                 <data
                     android:scheme="area"
                     android:host="oauth"
-                    android:path="/callback" />
+                    android:pathPrefix="/callback" />
             </intent-filter>
         </activity>
     </application>
