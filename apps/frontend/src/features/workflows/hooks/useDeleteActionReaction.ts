@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { deleteActionReaction } from '@/features/workflows/api/deleteActionReaction';
+import { useApp } from '@/hooks/useApp';
 
 interface UseDeleteActionReactionResult {
   deleteById: (id?: string) => Promise<void>;
@@ -11,21 +11,26 @@ export function useDeleteActionReaction(): UseDeleteActionReactionResult {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<unknown>(null);
 
-  const deleteById = useCallback(async (id?: string) => {
-    if (!id) return;
+  const { actionReactionClient } = useApp();
 
-    setIsLoading(true);
-    setError(null);
+  const deleteById = useCallback(
+    async (id?: string) => {
+      if (!id) return;
 
-    try {
-      await deleteActionReaction(id);
-    } catch (err) {
-      setError(err);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        await actionReactionClient.deleteWorkflow(id);
+      } catch (err) {
+        setError(err);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [actionReactionClient],
+  );
 
   return {
     deleteById,

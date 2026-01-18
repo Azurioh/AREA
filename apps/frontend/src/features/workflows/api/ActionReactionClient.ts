@@ -44,4 +44,18 @@ export class ActionReactionClient extends ApiClient {
 
     return response;
   }
+
+  /**
+   * @function deleteWorkflow
+   * @description Deletes an action-reaction workflow by its ID.
+   *
+   * @param {string} id - The workflow ID
+   * @returns {Promise<void>} A promise that resolves when the workflow is deleted.
+   */
+  async deleteWorkflow(id: string): Promise<void> {
+    await this.fetch<void>(`/actions-reactions/v1/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+  }
 }
