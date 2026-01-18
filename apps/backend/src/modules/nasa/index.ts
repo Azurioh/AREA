@@ -1,3 +1,3 @@
-import { UnsplashService } from './nasa.service';
+import { NasaService } from './nasa.service';
 
-export { UnsplashService };
+export { NasaService };
