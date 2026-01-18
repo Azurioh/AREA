@@ -47,13 +47,16 @@ export const setupPolling = async (app: FastifyInstance) => {
       60 * 60 * 1000,
     );
 
-    const nasaIntervalId = setInterval(async () => {
-      try {
-        await nasaPolling.pollNewAstronomyPictureOfTheDay();
-      } catch (error) {
-        console.error('Error polling NASA:', error);
-      }
-    }, 30);
+    const nasaIntervalId = setInterval(
+      async () => {
+        try {
+          await nasaPolling.pollNewAstronomyPictureOfTheDay();
+        } catch (error) {
+          console.error('Error polling NASA:', error);
+        }
+      },
+      60 * 60 * 1000,
+    );
 
     app.addHook('onClose', (_instance, done) => {
       clearInterval(spotifyIntervalId);

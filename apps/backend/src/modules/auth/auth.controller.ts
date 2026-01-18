@@ -8,6 +8,7 @@ import type {
   RegisterHeaders,
   LoginHeaders,
   RefreshTokenHeaders,
+  LoginWithServiceHeaders,
 } from '@area/shared/schemas/auth.schema';
 import type { AccessToken, User } from '@area/shared/types/users.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
@@ -107,7 +108,11 @@ export class AuthController {
    * @param {FastifyReply} reply - The Fastify reply object for sending the response.
    */
   async loginWithService(
-    request: FastifyRequest<{ Params: LoginWithServiceParams; Querystring: LoginWithServiceQueryString }>,
+    request: FastifyRequest<{
+      Params: LoginWithServiceParams;
+      Querystring: LoginWithServiceQueryString;
+      Headers: LoginWithServiceHeaders;
+    }>,
     reply: FastifyReply,
   ): Promise<void> {
     const params = request.params;
@@ -122,19 +127,15 @@ export class AuthController {
     const encryptedAccessToken = encryptString(accessToken, environment.CRYPT_SECRET_KEY);
     const encryptedRefreshToken = encryptString(refreshToken, environment.CRYPT_SECRET_KEY);
 
-    if (clientType === 'mobile') {
-      reply.status(201).send({ accessToken: encryptedAccessToken, refreshToken: encryptedRefreshToken });
-      return;
-    }
+    const accessTokenPayload = verifyToken<AccessToken>(accessToken, environment.JWT_ACCESS_TOKEN_SECRET);
+    await this.service.storeRefreshTokenInDatabase(
+      accessTokenPayload._id,
+      encryptedRefreshToken,
+      new Date(Date.now() + 24 * 60 * 60 * 1000),
+    );
 
-    reply.setCookie('refresh-token', encryptedRefreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: environment.NODE_ENV !== 'development' ? 'lax' : 'none',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 30,
-    });
-    reply.status(200).send({ accessToken: encryptedAccessToken });
+    request.headers['x-client-type'] = clientType as 'web' | 'mobile';
+    await this.service.sendTokensToUser(encryptedAccessToken, encryptedRefreshToken, request, reply, false);
   }
 
   /**
