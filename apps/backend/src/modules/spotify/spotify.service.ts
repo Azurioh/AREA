@@ -119,7 +119,7 @@ export class SpotifyService {
 
     switch (reaction.name) {
       case 'save_track_to_playlist':
-        return this.saveTrackToPlayList(spotifyAccount, reaction, action);
+        return this.saveTrackToPlaylist(spotifyAccount, reaction, action);
       case 'save_episode':
         return this.saveEpisode(spotifyAccount, reaction, action);
       case 'save_show':
@@ -129,7 +129,7 @@ export class SpotifyService {
   }
 
   /**
-   * @function saveTrackToPlayList
+   * @function saveTrackToPlaylist
    * @description Save a track to a playlist
    *
    * @param {WithId<SpotifyAccount>} spotifyAccount - The spotify account of the user
@@ -137,7 +137,7 @@ export class SpotifyService {
    * @param {ActionPayload} action - The information about the issued action
    * @returns {Promise<boolean>} If the reaction was created
    */
-  async saveTrackToPlayList(
+  async saveTrackToPlaylist(
     spotifyAccount: SpotifyAccount,
     reaction: CreateReaction,
     action: ActionPayload,
@@ -147,7 +147,7 @@ export class SpotifyService {
     if (!track) {
       return false;
     }
-    const tryToAddTrackToPlayList = async (accessToken: string) => {
+    const tryToSaveTrackToPlaylist = async (accessToken: string) => {
       let spotifyTrack = '';
       const match = track.match('/track/([a-zA-Z0-9]+)?');
 
@@ -174,7 +174,7 @@ export class SpotifyService {
       return response;
     };
 
-    let response = await tryToAddTrackToPlayList(
+    let response = await tryToSaveTrackToPlaylist(
       decryptString(spotifyAccount.accessToken, environment.CRYPT_SECRET_KEY),
     );
 
@@ -184,7 +184,7 @@ export class SpotifyService {
         decryptString(spotifyAccount.refreshToken || '', environment.CRYPT_SECRET_KEY),
       );
 
-      response = await tryToAddTrackToPlayList(accessToken);
+      response = await tryToSaveTrackToPlaylist(accessToken);
     }
     return response.ok;
   }

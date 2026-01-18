@@ -147,13 +147,13 @@ describe('SpotifyService', () => {
   });
 
   describe('createReaction', () => {
-    it('should return addTrackToPlayList result for add_track_to_playlist', async () => {
+    it('should return saveTrackToPlaylist result for save_track_to_playlist', async () => {
       const spotifyAccount = { ...mockSpotifyAccount };
       thirdPartiesService.getThirdPartyAccountByUserId.mockResolvedValue(spotifyAccount as any);
-      const reaction = { name: 'add_track_to_playlist' };
+      const reaction = { name: 'save_track_to_playlist' };
       const actionPayload = { service: 'github', name: 'push', content: {} };
 
-      const spy = jest.spyOn(spotifyService, 'addTrackToPlayList').mockResolvedValue(true);
+      const spy = jest.spyOn(spotifyService, 'saveTrackToPlaylist').mockResolvedValue(true);
 
       const result = await spotifyService.createReaction('user-id', reaction as any, actionPayload as any);
 
@@ -190,12 +190,12 @@ describe('SpotifyService', () => {
     });
   });
 
-  describe('addTrackToPlayList', () => {
+  describe('saveTrackToPlaylist', () => {
     it('should add track directly if it is a URI link', async () => {
       (Reaction.parseActionVariables as jest.Mock).mockReturnValue(['https://open.spotify.com/track/123']);
       (global.fetch as jest.Mock).mockResolvedValue({ status: HttpStatusCode.OK, ok: true });
 
-      const result = await spotifyService.addTrackToPlayList(
+      const result = await spotifyService.saveTrackToPlaylist(
         mockSpotifyAccount as any,
         { params: { track: 'link', playlist: { id: 'plist' } } } as any,
         {} as any,
@@ -220,7 +220,7 @@ describe('SpotifyService', () => {
         })
         .mockResolvedValueOnce({ status: HttpStatusCode.OK, ok: true });
 
-      const result = await spotifyService.addTrackToPlayList(
+      const result = await spotifyService.saveTrackToPlaylist(
         mockSpotifyAccount as any,
         { params: { track: 'name', playlist: { id: 'plist' } } } as any,
         {} as any,
@@ -232,7 +232,7 @@ describe('SpotifyService', () => {
 
     it('should return false if track is not found by parseActionVariables', async () => {
       (Reaction.parseActionVariables as jest.Mock).mockReturnValue([undefined]);
-      const result = await spotifyService.addTrackToPlayList(
+      const result = await spotifyService.saveTrackToPlaylist(
         mockSpotifyAccount as any,
         { params: {} } as any,
         {} as any,
@@ -251,7 +251,7 @@ describe('SpotifyService', () => {
         }) // Search succeeds
         .mockResolvedValueOnce({ status: HttpStatusCode.OK, ok: true }); // Add track succeeds
 
-      const result = await spotifyService.addTrackToPlayList(
+      const result = await spotifyService.saveTrackToPlaylist(
         mockSpotifyAccount as any,
         { params: { track: 'name', playlist: { id: 'plist' } } } as any,
         {} as any,
@@ -264,7 +264,7 @@ describe('SpotifyService', () => {
       (Reaction.parseActionVariables as jest.Mock).mockReturnValue(['/track/']);
       (global.fetch as jest.Mock).mockResolvedValue({ status: HttpStatusCode.OK, ok: true });
 
-      await spotifyService.addTrackToPlayList(
+      await spotifyService.saveTrackToPlaylist(
         mockSpotifyAccount as any,
         { params: { track: 'link', playlist: { id: 'plist' } } } as any,
         {} as any,
@@ -277,7 +277,7 @@ describe('SpotifyService', () => {
       );
     });
 
-    it('should handle missing refresh token in addTrackToPlayList', async () => {
+    it('should handle missing refresh token in saveTrackToPlaylist', async () => {
       (Reaction.parseActionVariables as jest.Mock).mockReturnValue(['/track/123']);
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({ status: HttpStatusCode.UNAUTHORIZED })
@@ -285,7 +285,7 @@ describe('SpotifyService', () => {
         .mockResolvedValueOnce({ status: HttpStatusCode.OK, ok: true });
 
       const accountWithoutRefresh = { ...mockSpotifyAccount, refreshToken: undefined };
-      await spotifyService.addTrackToPlayList(
+      await spotifyService.saveTrackToPlaylist(
         accountWithoutRefresh as any,
         { params: { track: 'link', playlist: { id: 'plist' } } } as any,
         {} as any,
