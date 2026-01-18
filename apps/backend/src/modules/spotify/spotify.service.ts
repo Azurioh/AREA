@@ -118,8 +118,8 @@ export class SpotifyService {
     );
 
     switch (reaction.name) {
-      case 'add_track_to_playlist':
-        return this.addTrackToPlayList(spotifyAccount, reaction, action);
+      case 'save_track_to_playlist':
+        return this.saveTrackToPlayList(spotifyAccount, reaction, action);
       case 'save_episode':
         return this.saveEpisode(spotifyAccount, reaction, action);
       case 'save_show':
@@ -129,15 +129,15 @@ export class SpotifyService {
   }
 
   /**
-   * @function addTrackToPlayList
-   * @description Add a track to a playlist
+   * @function saveTrackToPlayList
+   * @description Save a track to a playlist
    *
    * @param {WithId<SpotifyAccount>} spotifyAccount - The spotify account of the user
    * @param {CreateReaction} reaction - The information about the reaction
    * @param {ActionPayload} action - The information about the issued action
    * @returns {Promise<boolean>} If the reaction was created
    */
-  async addTrackToPlayList(
+  async saveTrackToPlayList(
     spotifyAccount: SpotifyAccount,
     reaction: CreateReaction,
     action: ActionPayload,
