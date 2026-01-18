@@ -245,7 +245,6 @@ const ChooseReaction: React.FC = () => {
                         })
                       )}
 
-                      {/* Boutons Save/Cancel toujours affichés */}
                       <div className="pt-4 space-y-3">
                         <div className="text-[10px] text-muted-foreground italic">* All fields are required</div>
                         <div className="flex gap-3">
