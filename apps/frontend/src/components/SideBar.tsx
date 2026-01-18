@@ -116,7 +116,7 @@ const SideBar = () => {
 
       <Profile
         username={user?.name || 'User'}
-        email={user?.email || 'email@example.com'}
+        email={user?.email || ''}
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         onLogout={() => {
