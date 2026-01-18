@@ -11,6 +11,7 @@ import { AppRoutesPaths } from '@/enums/routes';
 import { useLogin } from '@/features/auth/hooks/useLogin';
 import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
 import { useClearUserData } from '@/shared/hooks/useClearUserData';
+import { ContinueWith } from '@/features/auth/components/ContinueWith';
 
 const LoginPage: React.FC = () => {
   const { showPassword, togglePasswordVisibility } = useShowPassword();
@@ -92,24 +93,7 @@ const LoginPage: React.FC = () => {
               <Button type="submit" className="w-full" disabled={isLoading} aria-busy={isLoading}>
                 {isLoading ? 'Signing in...' : 'Sign in'}
               </Button>
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-border" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-                </div>
-              </div>
-
-              <Button
-                variant="outline"
-                type="button"
-                className="w-full flex items-center justify-center gap-3 hover:border-primary hover:bg-input-background hover:text-forground bg-input-background"
-                aria-label="Continue with GitHub"
-              >
-                <img src={`${import.meta.env.VITE_BASE_IMAGE_URL}/github.png`} alt="GitHub logo" className="h-5 w-5" />
-                <span>GitHub</span>
-              </Button>
+              <ContinueWith service="GitHub" />
             </div>
             <p className="text-center text-sm">
               <span className="text-muted-foreground">Don't have an account ?</span>{' '}

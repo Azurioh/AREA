@@ -1,4 +1,10 @@
-import type { LoginBody, LoginResponse, RegisterBody, RegisterResponse } from '@area/shared/schemas/auth.schema';
+import type {
+  LoginBody,
+  LoginResponse,
+  LoginWithServiceResponse,
+  RegisterBody,
+  RegisterResponse,
+} from '@area/shared/schemas/auth.schema';
 import type { MaybeUndefined } from '@area/shared/utils/common';
 import { ApiClient } from '@/lib/ApiClient';
 
@@ -12,7 +18,7 @@ export class AuthClient extends ApiClient {
    * @description Login a user
    *
    * @param {LoginBody} data The login data
-   * @returns {Promise<LoginResponse>} The response from the server
+   * @returns {Promise<MaybeUndefined<LoginResponse>>} The response from the server
    */
   async login(data: LoginBody): Promise<MaybeUndefined<LoginResponse>> {
     const response = await this.fetch<LoginResponse>(`/auth/v1/login`, {
@@ -33,7 +39,7 @@ export class AuthClient extends ApiClient {
    * @description Register a new user
    *
    * @param {RegisterBody} data The registration data
-   * @returns {Promise<any>} The response from the server
+   * @returns {Promise<MaybeUndefined<RegisterResponse>>} The response from the server
    */
   async register(data: RegisterBody): Promise<MaybeUndefined<RegisterResponse>> {
     const response = await this.fetch<RegisterResponse>('/auth/v1/register', {
@@ -45,6 +51,32 @@ export class AuthClient extends ApiClient {
       body: JSON.stringify(data),
       skipAuth: true,
     });
+
+    return response;
+  }
+
+  /**
+   * @function loginWithService
+   * @description Login a user with a third party service
+   *
+   * @param {string} service The service to login with
+   * @param {string} code The code received from the service
+   * @param {string} state The state received from the service
+   * @returns {Promise<MaybeUndefined<LoginWithServiceResponse>>} The response from the server
+   */
+  async loginWithService(
+    service: string,
+    code: string,
+    state: string,
+  ): Promise<MaybeUndefined<LoginWithServiceResponse>> {
+    const response = await this.fetch<LoginWithServiceResponse>(
+      `/auth/v1/login/${service}?code=${code}&state=${state}`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        skipAuth: true,
+      },
+    );
 
     return response;
   }
