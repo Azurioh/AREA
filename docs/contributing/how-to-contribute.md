@@ -170,3 +170,519 @@ The repository is organized as a Monorepo (likely using Turborepo, Nx, or Yarn W
   * **apps/client**: User interface for web browsers.
   * **apps/mobile**: Native experience for Android users.
   * **packages/shared**: The "Source of Truth" for types used by both Server and Client to ensure type safety across the network.
+
+## Adding A New Service
+
+### Service Authorization
+
+1. Add your service to the `ServiceType` type located at `app/backend/src/types/third-parties.ts`. If your service does not need OAuth, add it to the `NonOAuthServiceType` type.
+
+```typescript
+export type NoOAuthServiceType = 'your_no_oauth_service'';
+export type ServiceType = 'your_oauth_service' | NoOAuthServiceType;
+```
+
+2. Then go in the third parties service located at `apps/backend/src/modules/third-parties/third-parties.service.ts`.
+
+Add your service and the authorization URL, that will be used to redirect the user to the service's authorization page, to the `authorizationUrls` map:
+
+```typescript
+this.authorizationUrls = new Map([
+  [
+    'your_oauth_service',
+    'https://your-service.com/oauth/authorize?redirect_uri={redirectUri}&state={state}'
+  ]
+]);
+```
+
+The `redirect_uri` and `state` parameters will be replaced automatically when generating the URL, so they must appear as shown in the example above.
+
+If your service does not use OAuth, you can replace the authorization URL by `no_oauth`.
+
+```typescript
+this.authorizationUrls = new Map([
+  [
+    'your_no_oauth_service',
+    'no_oauth'
+  ]
+]);
+```
+3. Finally in the same file, implement the logic to handle the service's authorization in a new private method named `authorizeTo<YourServiceName>`. This method parameters should be the following and it should return a `Promise<ThirdPartyAccount | null>`:
+
+```typescript
+export class ThirdPartiesService {
+  private async authorizeToYourServiceName(
+    userId: string, code: string
+  ): Promise<ThirdPartyAccount | null> {
+    // Your implementation here
+  }
+}
+```
+
+This function must return a `ThirdPartyAccount` on success, this account will be automatically added to the `third_parties_account` collection. If the authorization fails, return `null`.
+
+If your service third party account need additional information from the user, you can create a custome type:
+
+```typescript
+export type TwitchAccount = BaseAccount & {
+  service: 'your_service_name';
+};
+```
+
+In this type you can add any additional property you need, as long as your authorization method fills them
+
+IMPORTANT: When storing access and refresh tokens in the db, make sure to encrypt them using the provided `encryptString` utility function to ensure security.
+
+### Implementing Your Service Actions
+
+1. Create a new module in the `apps/backend/src/modules/` directory named after your service (e.g., `your-service-name`).
+
+2. Inside this new module, create a service file (e.g., `your-service-name.service.ts`) where you will implement your actions logic.
+
+3. In your service file, create a class named `YourServiceNameService` and implement the methods needed to interact with your service's API.
+
+Your class should store a `ThirdPartiesService` instance to retrieve the third party accounts and their tokens and if your service actions requires polling, a `PollingService` instance to add user to poll.
+
+```typescript
+import { ThirdPartiesService } from '../third-parties/third-parties.service';
+import { PollingService } from '../polling/polling.service';
+
+export class YourServiceNameService {
+  private thirdPartiesService: ThirdPartiesService;
+  private pollingService: PollingService; // Only if polling is needed
+
+  constructor(
+    thirdPartiesService: ThirdPartiesService,
+    pollingService: PollingService // Only if polling is needed
+  ) {
+    this.thirdPartiesService = thirdPartiesService;
+    this.pollingService = pollingService; // Only if polling is needed
+  }
+}
+```
+
+4. Implement the method needed to create your actions. Your method should be named `createAction`. This method parameters should be the following and it should return a `Promise<string>`:
+
+```typescript
+export class YourServiceNameService {
+  /**
+   * @function createAction
+   * @description Create an action for the service
+   *
+   * @param {string} actionReactionId - The id of the action reaction document
+   * @param {string} userId - The id of the user creating the action
+   * @param {CreateAction} action - The information about the action
+   * @returns {Promise<string>} The trigger of the created action
+   */
+  async createAction(
+    actionReactionId: string, userId: string, action: CreateAction
+  ): Promise<string> {
+    // Your implementation here
+    return 'a_trigger_for_your_action_reaction';
+  }
+}
+```
+
+This method must return a string that will be used as a trigger to identify when the reaction associated to your action should be executed.
+
+5. Once your method has been implemented, you need to register it in the `ActionReactionService` located at `apps/backend/src/modules/action-reaction/action-reaction.service.ts`.
+
+In the constructor of the `ActionReactionService`, add your service to the parameters to then correctly add your `createAction` method to the `actionsCreationFunc` map:
+
+```typescript
+export class ActionsReactionsService {
+  constructor(
+    yourServiceNameService: YourServiceNameService
+    // Other services...
+  ) {
+    this.actionsCreationFunc = new Map([
+      [
+        'your_service_name',
+        this.yourServiceNameService.createAction.bind(this.yourServiceNameService)
+      ]
+    ]);
+  }
+}
+```
+
+Don't forget to bind your service instance to the method to keep the correct context.
+
+### Implementing Your Service Actions In The Integrations
+
+1. In the integrations module located at `apps/backend/src/modules/integrations/`, create a new directory named after your service (e.g., `your-service-name`).
+
+2. Inside this new directory, create a new directory named `actions`. Inside this directory, create a new file for each action you implemented in your service (e.g., `your-action-name.action.ts`). and create a `index.ts` file to export all your actions.
+
+3. In each action file, implement the action logic by creating a class that implements the `Action` interface located at `apps/backend/src/modules/integrations/_definitions/action.interface.ts`. Here is an example of how your action class should look like:
+
+```typescript
+import { Action } from '@/integrations/_definitions/action.interface';
+
+export class YourServiceNameYourActionNameAction extends Action {
+  constructor() {
+    super(
+      'your_action_name',
+      'description_of_your_action',
+      [
+        {
+          type: 'input',
+          key: 'key_for_your_input_param',
+          label: 'label_for_your_input_param',
+          placeholder: 'placeholder_for_your_input_param',
+        },
+        {
+          type: 'select',
+          key: 'key_for_your_select_param',
+          label: 'label_for_your_select_param',
+          placeholder: 'placeholder_for_your_select_param',
+          options: [],
+        },
+      ],
+      [
+        {
+          key: 'your_action_variable',
+          description: 'short_description_of_your_variable',
+          type: 'type_of_your_variable',
+          path: 'path.to.your.variable',
+        },
+      ],
+    );
+  }
+
+  /**
+   * @function refreshParams
+   * @description Refresh the parameters of the action
+   *
+   * @param {string} userId The id of the user
+   * @returns {Promise<void>} Nothing
+   */
+  override async refreshParams(_userId: string): Promise<void> {
+    return Promise.resolve();
+  }
+}
+```
+
+### Implementing Your Service Reactions
+
+1. If you have done the steps to implement your service actions, you already have a module and a service file created for your service. If not, follow steps 1 to 3 of the "Implementing Your Service Actions" section and come back here.
+
+2. Implement the method needed to create your actions. Your method should be named `createReaction`. This method parameters should be the following and it should return a `Promise<boolean>`:
+
+```typescript
+export class YourServiceNameService {
+  /**
+   * @function createReaction
+   * @description Create a reaction for the service
+   *
+   * @param {string} userId - The id of the user creating the reaction
+   * @param {CreateReaction} reaction - The information about the reaction
+   * @param {ActionPayload} action - The information about the issued action
+   * @returns {Promise<boolean>} If the reaction was created
+   */
+  async createReaction(
+    userId: string, reaction: CreateReaction, action: ActionPayload
+  ): Promise<boolean> {
+    // Your implementation here
+    return false; // or true if the reaction was successfully created
+  }
+}
+```
+
+This method must return a string that will be used as a trigger to identify when the reaction associated to your action should be executed.
+
+3. Once your method has been implemented, you need to register it in the `ActionReactionService` located at `apps/backend/src/modules/action-reaction/action-reaction.service.ts`.
+
+In the constructor of the `ActionReactionService`, add your service to the parameters to then correctly add your `createReaction` method to the `reactionsCreationFunc` map:
+
+```typescript
+export class ActionsReactionsService {
+  constructor(
+    yourServiceNameService: YourServiceNameService
+    // Other services...
+  ) {
+    this.reactionsCreationFunc = new Map([
+      [
+        'your_service_name',
+        this.yourServiceNameService.createReaction.bind(this.yourServiceNameService)
+      ]
+    ]);
+  }
+}
+```
+
+Don't forget to bind your service instance to the method to keep the correct context.
+
+
+### Implementing Your Service Reactions In The Integrations
+
+1. If you have implement an action for your service in the inrgrations part you already have your folder create, if not follow the step from the "Implementing Your Service Actions In The Integrations" section.
+
+2. Inside this new directory, create a new directory named `reactions`. Inside this directory, create a new file for each action you implemented in your service (e.g., `your-reaction-name.reaction.ts`). and create a `index.ts` file to export all your reactions.
+
+3. In each reaction file, implement the action logic by creating a class that implements the `Reaction` interface located at `apps/backend/src/modules/integrations/_definitions/reaction.interface.ts`. Here is an example of how your action class should look like:
+
+```typescript
+import { Reaction } from '@/integrations/_definitions/reaction.interface';
+
+export class YourServiceNameYourReactionNameReaction extends Reaction {
+  constructor() {
+    super('your_reaction_name', 'description_of_your_reaction', [
+      {
+        type: 'input',
+        key: 'key_for_your_input_param',
+        label: 'label_for_your_input_param',
+        placeholder: 'placeholder_for_your_input_param',
+      },
+      {
+        type: 'select',
+        key: 'key_for_your_select_param',
+        label: 'label_for_your_select_param',
+        placeholder: 'placeholder_for_your_select_param',
+        options: [],
+      },
+    ]);
+  }
+
+  /**
+   * @function refreshParams
+   * @description Refresh the parameters of the reaction
+   *
+   * @param {string} userId The id of the user
+   * @returns {Promise<void>} Nothing
+   */
+  override async refreshParams(_userId: string): Promise<void> {
+    return Promise.resolve();
+  }
+}
+```
+
+### Implementing Your Service Action Reception (if needed)
+
+Some service require there action to pass through a kind of middleware before being treated by the `handleReactions` method.
+
+1. In your service module, create a new method in your service file named `actionReception`. This method parameters should be the following and it should return a `Promise<ActionPayload[]>`:
+
+```typescript
+export class YourServiceNameService {
+  /**
+   * @function actionReception
+   * @description The action reception for the service
+   *
+   * @param {ActionPayload} action - The payload of the action
+   * @returns {Promise<ActionPayload[]>} A list of action payloads to handle
+   */
+  async actionReception(
+    action: ActionPayload
+  ): Promise<ActionPayload[]> {
+    // Your implementation here
+    return [];
+  }
+}
+```
+
+The array returned by this method will be passed to the `handleReactions` method to execute the reactions associated to the action stored in the `ActionPayload`.
+
+2. Once your method has been implemented, you need to register it in the `ActionReactionService` located at `apps/backend/src/modules/action-reaction/action-reaction.service.ts`.
+
+In the constructor of the `ActionReactionService`, add your service to the parameters to then correctly add your `actionReception` method to the `actionReceptionFunc` map:
+
+```typescript
+export class ActionsReactionsService {
+  constructor(
+    yourServiceNameService: YourServiceNameService
+    // Other services...
+  ) {
+    this.actionReceptionFunc = new Map([
+      [
+        'your_service_name',
+        this.yourServiceNameService.actionReception.bind(this.yourServiceNameService)
+      ]
+    ]);
+  }
+}
+```
+
+Don't forget to bind your service instance to the method to keep the correct context.
+
+### Implementing Your Service Action Deletion (if needed)
+
+Some services require cleaning up resources when an action is deleted.
+
+1. In your service module, create a new method in your service file named `deleteAction`. This method parameters should be the following and it should return a `Promise<void>`:
+
+```typescript
+export class YourServiceNameService {
+  /**
+   * @function deleteAction
+   * @description Delete an action reaction
+   *
+   * @param {WithId<ActionReaction>} actionReaction - The action reaction to delete
+   * @returns {Promise<void>} Nothing
+   */
+  async deleteAction(
+    actionReaction: WithId<ActionReaction>
+  ): Promise<void> {
+    // Your implementation here
+  }
+}
+```
+
+2. Once your method has been implemented, you need to register it in the `ActionReactionService` located at `apps/backend/src/modules/action-reaction/action-reaction.service.ts`.
+
+In the constructor of the `ActionReactionService`, add your service to the parameters to then correctly add your `deleteAction` method to the `deleteActionFunc` map:
+
+```typescript
+export class ActionsReactionsService {
+  constructor(
+    yourServiceNameService: YourServiceNameService
+    // Other services...
+  ) {
+    this.deleteActionFunc = new Map([
+      [
+        'your_service_name',
+        this.yourServiceNameService.deleteAction.bind(this.yourServiceNameService)
+      ]
+    ]);
+  }
+}
+```
+
+Don't forget to bind your service instance to the method to keep the correct context.
+
+### Implementing Webhooks Reception
+
+Action will need to call those webhooks route to notify our application when an event occur.
+
+1. In the webhook module located at `apps/backend/src/modules/webhook/`, create a new route that will receive your service webhook. This route should point to a new method in the webhook controller located at `apps/backend/src/modules/webhook/webhook.controller.ts`.
+
+```typescript
+export default async (app: FastifyInstance) => {
+  app.route({
+    method: 'POST',
+    url: '/v1/your-service-name/',
+    handler: controller.yourServiceNameCallback.bind(controller),
+    schema: {
+      summary: 'The callback of the your service name webhook',
+      description: 'Handle the callback of the your service name webhook.',
+      tags: ['Webhooks'],
+    },
+  });
+}
+```
+
+2. In the webhook controller located at `apps/backend/src/modules/webhook/webhook.controller.ts`, implement the method that will handle the webhook reception. This method should extract the necessary information from the request, validate it, and then call the appropriate service methods to process the webhook data.
+
+```typescript
+
+export class WebhookController {
+  /**
+   * @function yourServiceNameCallback
+   * @description The callback of the your service name webhook
+   *
+   * @param {FastifyRequest} request - The Fastify request
+   * @param {FastifyReply} reply - The Fastify reply
+   * @returns {Promise<void>} Nothing
+   */
+  async yourServiceNameCallback(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ): Promise<void> {
+    // Your implementation here
+    const body = request.body;
+
+    this.service.yourServiceNameCallback(body as YourServiceNameWebhookPayload);
+    reply.status(HttpStatusCode.NO_CONTENT).send();
+  }
+}
+```
+
+The method located in the service can take any parameters you need to process the webhook data, just make sure to send the body in which the action informations are stored.
+
+3. In the webhook service located at `apps/backend/src/modules/webhook/webhook.service.ts`, implement the method that will handle the webhook data processing.
+
+```typescript
+export class WebhookService {
+  /**
+   * @function yourServiceNameCallback
+   * @description Handle the your service name callback.
+   *
+   * @param {YourServiceNameWebhookPayload} body The body of the callback.
+   * @returns {Promise<void>}
+   */
+  async yourServiceNameCallback(body: YourServiceNameWebhookPayload): Promise<void> {
+    const action: ActionPayload = {
+      service: 'your_service_name',
+      name: 'your_action_name',
+      trigger: 'your_action_trigger',
+      content: {
+        ...body
+      },
+    };
+
+    this.actionsReactionsService.handleActionReception(action);
+  }
+}
+```
+
+This method will be in charge of creating the `ActionPayload` that will be sent to the `handleActionReception` method of the `ActionsReactionsService`. The `handleActionReception` method must be called in order to correctly process the action.
+
+### Implement Polling (if needed)
+
+If your service require polling to check for new events, you will need to implement a polling service for your service.
+
+1. In the polling module located at `apps/backend/src/modules/polling/`, create a new file named `your-service-name.polling.ts`. In this file, implement a class named `YourServiceNamePollingService`, the class constructor should take the `PollingRepository` as parameter and any additional parameters you need.
+
+```typescript
+export class YourServiceNamePollingService {
+  private readonly repository: PollingRepository;
+
+  constructor(repository: PollingRepository) {
+    this.repository = repository;
+  }
+}
+```
+
+2. Then, implement your polling method, the name of your method should start with `poll` followed by what your want to poll (e.g., `pollCurrentlyPlayingTrack` for spotify). The method should not take any parameters and should return a `Promise<void>`.
+
+When your polling method triggers an event, it must create a `YourServiceNameWebhookPayload` and fetch the webhook route you have implemented in the "Implementing Webhooks Reception" section to notify our application of the event.
+
+3. Finally, you need to register your polling service in the `setupPolling` function located at `apps/backend/src/config/setup-polling.ts`.
+
+```typescript
+const yourServiceNameIntervalId = setInterval(async () => {
+  try {
+    await yourServiceNamePolling.pollYourPollingMethod();
+  } catch (error) {
+    console.error('Error polling YourServiceName:', error);
+  }
+}, yourPollingIntervalInMilliseconds);
+
+app.addHook('onClose', (_instance, done) => {
+  clearInterval(yourServiceNameIntervalId);
+  done();
+});
+```
+
+### Register Your Service Integration
+
+1. In the `index.ts` file located at `apps/backend/src/modules/integrations/your-service-name`, create a function that will create your service instance:
+
+```typescript
+import type { Service } from '@/integrations/_definitions/service.interface';
+import * as actions from './actions';
+import * as reactions from './reactions';
+
+export const createYourServiceNameService = (): Service => {
+  return {
+    name: 'your_service_name',
+    actions: Object.values(actions).map((Action) => new Action()),
+    reactions: Object.values(reactions).map((Reaction) => new Reaction()),
+  };
+};
+```
+
+2. In the `register-service.ts` file located at `apps/backend/src/config/register-service.ts`, use the `ServiceManager` the following way to register your service:
+
+```typescript
+ServiceManager.instance.register(createYourServiceNameService());
+```
