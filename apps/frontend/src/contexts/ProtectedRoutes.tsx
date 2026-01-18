@@ -7,7 +7,7 @@ export const ProtectedRoute = () => {
   const { authState } = useApp();
 
   if (!authState.isAuthenticated) {
-    return <Navigate to={AppRoutesPaths.LOGIN} replace />;
+    return <Navigate to={AppRoutesPaths.LANDING} replace />;
   }
 
   return <Outlet />;
