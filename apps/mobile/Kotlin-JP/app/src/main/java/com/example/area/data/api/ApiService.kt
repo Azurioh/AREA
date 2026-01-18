@@ -28,12 +28,14 @@ interface ApiService {
     @POST("auth/v1/register")
     suspend fun registerUser(
         @Body request: Register,
+        @Header("Content-Type") contentType: String = "application/json",
         @Header("x-client-type") clientType: String = "mobile"
     ) : AuthResponse
 
     @POST("auth/v1/login")
     suspend fun loginUser(
         @Body request: Login,
+        @Header("Content-Type") contentType: String = "application/json",
         @Header("x-client-type") clientType: String = "mobile"
     ) : AuthResponse
 
@@ -85,7 +87,10 @@ interface ApiService {
     suspend fun getActionReturnedValues(@Path("service") service: String, @Path("action") action: String) : List<ReturnedValue>
 
     @POST("actions-reactions/v1")
-    suspend fun createActionReaction(@Body request: ActionReactionRequest)
+    suspend fun createActionReaction(
+        @Body request: ActionReactionRequest,
+        @Header("Content-Type") contentType: String = "application/json"
+    )
 
     @GET("actions-reactions/v1/me")
     suspend fun getAllActionsReactions() : List<ActionReactionDisplay>
@@ -94,10 +99,17 @@ interface ApiService {
     suspend fun getAboutJson() : AboutJson
 
     @PATCH("actions-reactions/v1/{id}/execution-state")
-    suspend fun updateStateWorkflow(@Path("id") service: String, @Body request: State)
+    suspend fun updateStateWorkflow(
+        @Path("id") service: String,
+        @Body request: State,
+        @Header("Content-Type") contentType: String = "application/json"
+    )
 
     @PATCH("users/v1/me")
-    suspend fun updateUserInfo(@Body request: UserInfo)
+    suspend fun updateUserInfo(
+        @Body request: UserInfo,
+        @Header("Content-Type") contentType: String = "application/json"
+    )
 
     @DELETE("actions-reactions/v1/{id}")
     suspend fun deleteActionReaction(@Path("id") id: String)

@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.example.area.data.api.RetrofitInstance
+import retrofit2.HttpException
 import com.example.area.data.models.Register
 import com.example.area.data.models.Login
 import com.example.area.data.models.User
@@ -26,22 +27,22 @@ class UserViewModel : ViewModel() {
     ) {
         viewModelScope.launch {
             try {
-
                 val request = Register(
                     name = name,
                     email = email.toLowerCase(),
                     password = password
                 )
-
                 val response = RetrofitInstance.api.registerUser(request)
                 RetrofitInstance.getTokenManager().saveToken(response.accessToken)
                 response.refreshToken?.let {
                     RetrofitInstance.getTokenManager().saveRefreshToken(it)
                 }
                 RetrofitInstance.resetUnauthorizedState()
-
                 fetchUserProfile()
                 onSuccess()
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                onError(errorBody ?: "HTTP ${e.code()}")
             } catch (e: Exception) {
                 onError(e.message ?: "Unknown error")
             }
@@ -121,7 +122,6 @@ class UserViewModel : ViewModel() {
                 }
                 RetrofitInstance.resetUnauthorizedState()
                 RetrofitInstance.notifyLoginSuccess()
-
                 fetchUserProfile()
                 onSuccess()
             } catch (e: Exception) {
