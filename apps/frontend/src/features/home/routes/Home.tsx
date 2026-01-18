@@ -1,3 +1,4 @@
+import { formatActionReactionName } from '@/lib/utils';
 import SideBar from '@/components/SideBar';
 import { Card, CardContent } from '@/components/ui/card';
 import WorkflowsCard from '@/components/WorkflowsCard';
@@ -34,12 +35,14 @@ export default function HomePage() {
               {latestWorkflows.map((wf) => (
                 <WorkflowsCard
                   key={wf._id}
-                  title={`${wf.action?.service} | ${wf.reaction?.service}` || 'Unknown'}
+                  title={`${formatActionReactionName(wf.action?.service || 'Unknown')} | ${formatActionReactionName(
+                    wf.reaction?.service || 'Unknown',
+                  )}`}
                   Description={
                     <span className="inline-flex items-center gap-2">
-                      <span>{wf.action?.name || 'Unknown action'}</span>
+                      <span>{formatActionReactionName(wf.action?.name || 'Unknown action')}</span>
                       <MoveRight className="h-4 w-4 text-muted-foreground" />
-                      <span>{wf.reaction?.name || 'Unknown reaction'}</span>
+                      <span>{formatActionReactionName(wf.reaction?.name || 'Unknown reaction')}</span>
                     </span>
                   }
                   Value={wf.numberOfExecution}

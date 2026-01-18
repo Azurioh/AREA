@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { formatActionReactionName } from '@/lib/utils';
 import type { ReactNode } from 'react';
 import { Card } from '@/components/ui/card';
 import { MoveRight, Trash2, X } from 'lucide-react';
@@ -103,8 +104,12 @@ export default function WorkflowsCard({
                 <img src={Service2} alt={`${Service2Name} logo`} className="max-h-full max-w-full object-contain" />
               </div>
             </fieldset>
-            <div className="text-sm text-muted-foreground mt-2">{title}</div>
-            <div className="text-sm mt-1">{Description}</div>
+            <div className="text-sm text-muted-foreground mt-2">
+              {typeof title === 'string' ? formatActionReactionName(title) : title}
+            </div>
+            <div className="text-sm mt-1">
+              {typeof Description === 'string' ? formatActionReactionName(Description) : Description}
+            </div>
             <p className="mt-2">
               <span className="text-sm font-medium">{Value}</span>
               <span className="text-sm text-muted-foreground">
