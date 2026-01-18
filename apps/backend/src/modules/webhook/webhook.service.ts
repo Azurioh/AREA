@@ -5,6 +5,7 @@ import type {
   UnsplashWebhookPayload,
   DropboxWebhookPayload,
   TwitchWebhookPayload,
+  NasaWebhookPayload,
 } from '@/types/webhook';
 import type { ActionPayload } from '@/types/action-reaction';
 import type { ActionsReactionsService } from '@/modules/actions-reactions';
@@ -148,5 +149,25 @@ export class WebhookService {
     };
 
     this.actionsReactionsService.handleActionReception(action);
+  }
+
+  /**
+   * @function nasaCallback
+   * @description Handle the nasa callback.
+   *
+   * @param {string} userId The id of the user.
+   * @param {string} event The event who triggered the callback.
+   * @param {NasaWebhookPayload} body The body of the callback.
+   * @returns {Promise<void>}
+   */
+  async nasaCallback(userId: string, event: string, body: NasaWebhookPayload): Promise<void> {
+    const action: ActionPayload = {
+      service: 'nasa',
+      name: event,
+      trigger: `${event}/${userId}`,
+      content: body,
+    };
+
+    this.actionsReactionsService.handleReactions(action);
   }
 }

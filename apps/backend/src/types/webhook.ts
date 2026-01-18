@@ -93,3 +93,16 @@ export type TwitchWebhookPayload = {
     user_name: string;
   };
 };
+
+/**
+ * @type NasaWebhookPayload
+ * @description The payload of the nasa webhook.
+ *
+ * @property {Object} image The information about the image
+ * @property {string} image.url The url of the image
+ */
+export type NasaWebhookPayload = {
+  image: {
+    url: string;
+  };
+};

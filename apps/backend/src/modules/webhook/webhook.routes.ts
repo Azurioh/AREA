@@ -11,6 +11,7 @@ import { PollingRepository, PollingService } from '@/modules/polling';
 import { UnsplashService } from '@/modules/unsplash';
 import { DropboxRepository, DropboxService } from '@/modules/dropbox';
 import { TwitchService } from '../twitch/twitch.service';
+import { NasaService } from '../nasa/nasa.service';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -32,6 +33,8 @@ export default async (app: FastifyInstance) => {
   const unsplashService = new UnsplashService(pollingService);
   const dropboxService = new DropboxService(dropboxRepository, thirdPartiesService);
   const twitchService = new TwitchService(thirdPartiesService);
+  const nasaService = new NasaService(pollingService);
+
   const actionsReactionsService = new ActionsReactionsService(
     actionsReactionsRepository,
     githubService,
@@ -40,6 +43,7 @@ export default async (app: FastifyInstance) => {
     unsplashService,
     dropboxService,
     twitchService,
+    nasaService,
   );
   const service = new WebhookService(actionsReactionsService);
 
@@ -118,6 +122,17 @@ export default async (app: FastifyInstance) => {
     schema: {
       summary: 'The callback of the twitch webhook',
       description: 'Handle the callback of the twitch webhook.',
+      tags: ['Webhooks'],
+    },
+  });
+
+  app.route({
+    method: 'POST',
+    url: '/v1/nasa/',
+    handler: controller.nasaCallback.bind(controller),
+    schema: {
+      summary: 'The callback of the nasa webhook',
+      description: 'Handle the callback of the nasa webhook.',
       tags: ['Webhooks'],
     },
   });

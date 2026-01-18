@@ -8,6 +8,7 @@ import type {
   SpotifyWebhookPayload,
   UnsplashWebhookPayload,
   TwitchWebhookPayload,
+  NasaWebhookPayload,
 } from '@/types/webhook';
 import ApiError from '@/utils/api-error';
 
@@ -152,6 +153,27 @@ export class WebhookController {
     const event = request.headers['twitch-eventsub-subscription-type'] as string;
 
     this.service.twitchCallback(event, body as TwitchWebhookPayload);
+    reply.status(HttpStatusCode.NO_CONTENT).send();
+  }
+
+  /**
+   * @function nasaCallback
+   * @description Handles the callback for the nasa service.
+   *
+   * @param {FastifyRequest} request The Fastify request object containing the webhook data.
+   * @param {FastifyReply} reply The Fastify reply object for sending the response.
+   * @returns {Promise<void>}
+   */
+  async nasaCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    if (!request.headers['x-nasa-event'] || !request.headers['x-user-id']) {
+      throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Webhook informations are missing');
+    }
+
+    const body = request.body;
+    const event = request.headers['x-nasa-event'] as string;
+    const userId = request.headers['x-user-id'] as string;
+
+    this.service.nasaCallback(userId, event, body as NasaWebhookPayload);
     reply.status(HttpStatusCode.NO_CONTENT).send();
   }
 }
