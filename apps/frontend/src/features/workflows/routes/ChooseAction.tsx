@@ -164,8 +164,6 @@ const ChooseAction: React.FC = () => {
                 <CardContent className="mt-6">
                   {loadingParams ? (
                     <div className="text-center py-8 text-muted-foreground">Loading parameters...</div>
-                  ) : actionParams.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">No parameters required for this action</div>
                   ) : (
                     <div className="space-y-4">
                       {actionParams.length === 0 ? (
@@ -180,7 +178,6 @@ const ChooseAction: React.FC = () => {
                               <label htmlFor={id} className="text-sm font-medium">
                                 {param.label}
                               </label>
-
                               {param.type === 'input' ? (
                                 <div className="space-y-1">
                                   <Input
@@ -223,12 +220,7 @@ const ChooseAction: React.FC = () => {
                                   <DropdownMenuContent className="w-full">
                                     {(param.options && param.options.length > 0
                                       ? param.options
-                                      : [
-                                          {
-                                            name: 'No options available',
-                                            id: 'none',
-                                          },
-                                        ]
+                                      : [{ name: 'No options available', id: 'none' }]
                                     ).map((opt: ParamOption) => (
                                       <DropdownMenuItem
                                         key={opt.id}
@@ -249,6 +241,8 @@ const ChooseAction: React.FC = () => {
                           );
                         })
                       )}
+
+                      {/* Boutons Save/Cancel toujours affichés */}
                       <div className="pt-4 space-y-3">
                         <div className="text-[10px] text-muted-foreground italic">* All fields are required</div>
                         <div className="flex gap-3">
@@ -286,12 +280,8 @@ const ChooseAction: React.FC = () => {
                           >
                             Save Configuration
                           </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedAction(null);
-                            }}
-                          >
+
+                          <Button variant="outline" onClick={() => setSelectedAction(null)}>
                             Cancel
                           </Button>
                         </div>
