@@ -15,7 +15,6 @@
 ## 📖 Table des matières
 
 - [✨ Fonctionnalités](#-fonctionnalités)
-- [🏗️ Architecture](#️-architecture)
 - [🛠️ Stack Technique](#️-stack-technique)
 - [🚀 Démarrage Rapide](#-démarrage-rapide)
 - [📁 Structure du Projet](#-structure-du-projet)
@@ -34,48 +33,6 @@
 - 🔗 **Intégrations multiples** - GitHub, Discord, Spotify, Dropbox, Twitch, Unsplash, NASA
 - 🌍 **Multilingue** - Support Français/Anglais
 - 🎨 **Interface moderne** - Design responsive avec thème sombre/clair
-
----
-
-## 🏗️ Architecture
-
-Le projet utilise une architecture **monorepo** gérée par [Turborepo](https://turbo.build/) et [pnpm](https://pnpm.io/).
-
-```mermaid
-graph TB
-    subgraph Clients
-        WEB[🌐 Web Client<br/>React + Vite]
-        MOBILE[📱 Mobile Client<br/>Kotlin/Android]
-    end
-
-    subgraph Backend
-        API[⚡ API Server<br/>Fastify]
-        MONGO[(🍃 MongoDB)]
-        REDIS[(⚡ Redis)]
-    end
-
-    subgraph "Services Externes"
-        GITHUB[GitHub]
-        DISCORD[Discord]
-        SPOTIFY[Spotify]
-        DROPBOX[Dropbox]
-        TWITCH[Twitch]
-        UNSPLASH[Unsplash]
-        NASA[NASA]
-    end
-
-    WEB --> API
-    MOBILE --> API
-    API --> MONGO
-    API --> REDIS
-    API --> GITHUB
-    API --> DISCORD
-    API --> SPOTIFY
-    API --> DROPBOX
-    API --> TWITCH
-    API --> UNSPLASH
-    API --> NASA
-```
 
 ---
 
@@ -202,8 +159,9 @@ docker compose logs -f
 **Services disponibles :**
 | Service | URL |
 |---------|-----|
-| API Backend | http://localhost:3000 |
+| API Backend | http://localhost:8080 |
 | Client Web | http://localhost:8081 |
+| Android APK | http://localhost:8081/client.apk |
 | MongoDB | localhost:27017 |
 | Redis | localhost:6379 |
 
@@ -284,18 +242,21 @@ AREA/
 ### Actions (Déclencheurs)
 | Service | Actions disponibles |
 |---------|---------------------|
-| **GitHub** | Nouveau commit, Nouvelle issue, Pull request |
-| **Discord** | Nouveau message, Reaction ajoutée |
-| **Spotify** | Nouvelle chanson jouée, Playlist modifiée |
-| **Twitch** | Stream démarré, Nouveau follower |
+| **Discord** | Nouveau message |
+| **GitHub** | Nouveau watch, Nouveau push, Nouvelle pull request |
+| **Dropbox** | Fichier upload, Fichier modifié, Dossier upload, Dossier modifié |
 | **NASA** | Nouvelle image APOD (Astronomy Picture of the Day) |
+| **Spotify** | Artiste écouté |
+| **Twitch** | Stream démarré, Nouveau follower |
+| **Unsplash** | Nouvelle image random du jour |
 
 ### Réactions (Conséquences)
 | Service | Réactions disponibles |
 |---------|----------------------|
-| **Discord** | Envoyer un message, Créer un embed |
-| **Spotify** | Ajouter à une playlist |
+| **Discord** | Envoyer un message |
 | **Dropbox** | Créer un fichier, Upload |
+| **GitHub** | Créer une issue |
+| **Spotify** | Ajouter à une playlist, sauvegarder le podcast, sauvegarder le concert |
 | **Unsplash** | Télécharger une image aléatoire |
 
 ---
@@ -312,7 +273,7 @@ Une documentation complète est disponible dans le dossier [`docs/`](./docs/) :
 
 Swagger UI est disponible en mode développement à l'adresse :
 ```
-http://localhost:3000/documentation
+http://localhost:3000/docs
 ```
 
 ---
