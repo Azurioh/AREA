@@ -23,15 +23,34 @@ export class ThirdPartiesInformation extends ApiClient {
   }
 
   /**
-   * @function getAuthorizationUrl
-   * @description Fetch the authorization url for a third party service
+   * @function getAuthorizationUrlService
+   * @description Fetch the authorization url to connect a third party service
    *
    * @param {string} service - The third party service
    * @returns {Promise<MaybeUndefined<GetThirdPartyAuthorizationUrlResponse>>} The authorization url
    */
-  async getAuthorizationUrl(service: string): Promise<MaybeUndefined<GetThirdPartyAuthorizationUrlResponse>> {
+  async getAuthorizationUrlService(service: string): Promise<MaybeUndefined<GetThirdPartyAuthorizationUrlResponse>> {
     const response = await this.fetch<GetThirdPartyAuthorizationUrlResponse>(
-      `/third-parties/v1/authorization-url/${service}`,
+      `/third-parties/v1/authorization-url/${service}/service`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+    );
+
+    return response;
+  }
+
+  /**
+   * @function getAuthorizationUrlApp
+   * @description Fetch the authorization url to connect to the app via a third party service
+   *
+   * @param {string} service - The third party service
+   * @returns {Promise<MaybeUndefined<GetThirdPartyAuthorizationUrlResponse>>} The authorization url
+   */
+  async getAuthorizationUrlApp(service: string): Promise<MaybeUndefined<GetThirdPartyAuthorizationUrlResponse>> {
+    const response = await this.fetch<GetThirdPartyAuthorizationUrlResponse>(
+      `/third-parties/v1/authorization-url/${service}/app`,
       {
         method: 'GET',
         credentials: 'include',

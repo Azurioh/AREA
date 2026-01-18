@@ -3,7 +3,7 @@ import type React from 'react';
 import { createContext, type ReactNode, useEffect, useMemo, useState } from 'react';
 import { UserAdminManagementClient } from '@/features/adminDashboard/api/UserAdminManagement';
 import { AuthClient } from '@/features/auth/api/AuthClient';
-import { ThirdPartiesInformation } from '@/features/connections/api/ThirdPartiesInformation';
+import { ThirdPartiesInformation } from '@/shared/api/ThirdPartiesInformation';
 import { UpdateUser } from '@/features/profile/api/UpdateProfile';
 import { ActionReactionClient, ServicesClient } from '@/features/workflows';
 import { TokenManager } from '@/lib/TokenManager';

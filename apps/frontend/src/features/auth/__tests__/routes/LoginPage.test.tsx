@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { useLogin } from '@/features/auth/hooks/useLogin';
 import LoginPage from '@/features/auth/routes/LoginPage';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 jest.mock('@/features/auth/hooks/useLogin');
 jest.mock('@/shared/hooks/useClearUserData', () => ({
@@ -49,7 +50,9 @@ describe('LoginPage UI', () => {
   it('must display the fields and react to typing', () => {
     render(
       <BrowserRouter>
-        <LoginPage />
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
       </BrowserRouter>,
     );
 
@@ -64,7 +67,9 @@ describe('LoginPage UI', () => {
   it('must call handleSubmit on button click', () => {
     render(
       <BrowserRouter>
-        <LoginPage />
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
       </BrowserRouter>,
     );
 
@@ -89,7 +94,9 @@ describe('LoginPage UI', () => {
 
     render(
       <BrowserRouter>
-        <LoginPage />
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
       </BrowserRouter>,
     );
 
