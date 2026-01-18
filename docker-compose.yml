@@ -9,6 +9,7 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
       - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
     volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/init.js:ro
       - mongo_data:/data/db
     networks:
       - area-network
@@ -29,7 +30,7 @@ services:
       context: .
       dockerfile: apps/backend/.docker/Dockerfile.dev
     ports:
-      - "3000:${PORT}"
+      - "8080:${PORT}"
     restart: unless-stopped
     environment:
       - NODE_ENV=${NODE_ENV}
@@ -59,6 +60,7 @@ services:
       - TWITCH_CLIENT_ID=${TWITCH_CLIENT_ID}
       - TWITCH_CLIENT_SECRET=${TWITCH_CLIENT_SECRET}
       - TWITCH_WEBHOOK_SECRET=${TWITCH_WEBHOOK_SECRET}
+      - NODE_OPTIONS=--dns-result-order=ipv4first
     volumes:
       - ./apps/backend/src:/app/apps/backend/src
       - ./packages:/app/packages
