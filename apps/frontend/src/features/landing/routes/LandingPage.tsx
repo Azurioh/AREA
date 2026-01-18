@@ -79,7 +79,7 @@ export default function LandingPage() {
         <div className="mt-24">
           <Button
             className="rounded-[var(--small-radius)] text-2xl !py-8 mt-40"
-            onClick={() => navigate(AppRoutesPaths.HOME)}
+            onClick={() => navigate(AppRoutesPaths.LOGIN)}
           >
             Try it now <ArrowRight className="!w-8 !h-8" />
           </Button>
