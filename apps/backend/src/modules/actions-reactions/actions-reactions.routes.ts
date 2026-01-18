@@ -26,6 +26,7 @@ import { UsersRepository, UsersService } from '@/modules/users';
 import { ActionsReactionsController } from './actions-reactions.controller';
 import { ActionsReactionsRepository } from './actions-reactions.repository';
 import { ActionsReactionsService } from './actions-reactions.service';
+import { NasaService } from '../nasa/nasa.service';
 
 export default async (app: FastifyInstance) => {
   if (!app.mongo.db) {
@@ -46,6 +47,7 @@ export default async (app: FastifyInstance) => {
   const unsplashService = new UnsplashService(pollingService);
   const dropboxService = new DropboxService(dropboxRepository, thirdPartiesService);
   const twitchService = new TwitchService(thirdPartiesService);
+  const nasaService = new NasaService(pollingService);
 
   const repository = new ActionsReactionsRepository(app.mongo.db);
   const service = new ActionsReactionsService(
@@ -56,6 +58,7 @@ export default async (app: FastifyInstance) => {
     unsplashService,
     dropboxService,
     twitchService,
+    nasaService,
   );
   const controller = new ActionsReactionsController(service);
 

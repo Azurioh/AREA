@@ -9,6 +9,7 @@ import type { UnsplashService } from '@/modules/unsplash';
 import ApiError from '@/utils/api-error';
 import type { ActionsReactionsRepository } from '../actions-reactions.repository';
 import { ActionsReactionsService } from '../actions-reactions.service';
+import type { NasaService } from '@/modules/nasa/nasa.service';
 
 describe('ActionsReactionsService', () => {
   let service: ActionsReactionsService;
@@ -19,6 +20,7 @@ describe('ActionsReactionsService', () => {
   let mockUnsplashService: jest.Mocked<UnsplashService>;
   let mockDropboxService: jest.Mocked<DropboxService>;
   let mockTwitchService: jest.Mocked<TwitchService>;
+  let mockNasaService: jest.Mocked<NasaService>;
 
   beforeEach(() => {
     mockRepository = {
@@ -63,6 +65,10 @@ describe('ActionsReactionsService', () => {
       createReaction: jest.fn().mockResolvedValue(true),
     } as unknown as jest.Mocked<TwitchService>;
 
+    mockNasaService = {
+      createAction: jest.fn().mockResolvedValue('nasa/789'),
+    } as unknown as jest.Mocked<NasaService>;
+
     jest.spyOn(ServiceManager.instance, 'get').mockImplementation((serviceName) => {
       if (serviceName === 'github')
         return {
@@ -96,6 +102,7 @@ describe('ActionsReactionsService', () => {
       mockUnsplashService,
       mockDropboxService,
       mockTwitchService,
+      mockNasaService,
     );
   });
 
