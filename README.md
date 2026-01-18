@@ -254,10 +254,8 @@ AREA/
 | Service | Réactions disponibles |
 |---------|----------------------|
 | **Discord** | Envoyer un message |
-| **Dropbox** | Créer un fichier, Upload |
 | **GitHub** | Créer une issue |
 | **Spotify** | Ajouter à une playlist, sauvegarder le podcast, sauvegarder le concert |
-| **Unsplash** | Télécharger une image aléatoire |
 
 ---
 
