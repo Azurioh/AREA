@@ -28,7 +28,7 @@ export class SpotifyService {
    * @function createAction
    * @description Create an action with the spotify service
    *
-   * @param {ObjectId} actionReactionId - The id of the action reaction document
+   * @param {string} actionReactionId - The id of the action reaction document
    * @param {string} userId - The id of the user creating the action
    * @param {CreateAction} action - The information about the action
    * @returns {Promise<string>} The trigger of the created action

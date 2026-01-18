@@ -123,6 +123,18 @@ export type RefreshTokenResponse = z.infer<typeof refreshTokenResponseSchema>;
  * LOGIN WITH SERVICE *
  **********************/
 
+export const loginWithServiceHeadersSchema = z.looseObject({
+  'content-type': z.literal('application/json').meta({
+    description: 'The content type of the request body',
+  }),
+  'x-client-type': z.enum(['web', 'mobile']).optional().meta({
+    description: 'The client type (web or mobile)',
+    example: 'web',
+  }),
+});
+
+export type LoginWithServiceHeaders = z.infer<typeof loginWithServiceHeadersSchema>;
+
 export const loginWithServiceParamsSchema = thirdPartyAuthorizationParamsSchema;
 
 /**

@@ -1,6 +1,12 @@
 import crypto from 'node:crypto';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
-import type { LoginBody, LoginHeaders, RefreshTokenHeaders, RegisterHeaders } from '@area/shared/schemas/auth.schema';
+import type {
+  LoginBody,
+  LoginHeaders,
+  LoginWithServiceHeaders,
+  RefreshTokenHeaders,
+  RegisterHeaders,
+} from '@area/shared/schemas/auth.schema';
 import type { Tokens } from '@area/shared/types/auth.types';
 import type { StateToken, AccessToken, User } from '@area/shared/types/users.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
@@ -241,7 +247,9 @@ export class AuthService {
   async sendTokensToUser(
     accessToken: string,
     refreshToken: string,
-    request: FastifyRequest<{ Headers: LoginHeaders | RegisterHeaders | RefreshTokenHeaders }>,
+    request: FastifyRequest<{
+      Headers: LoginHeaders | RegisterHeaders | RefreshTokenHeaders | LoginWithServiceHeaders;
+    }>,
     reply: FastifyReply,
     isRegistering: boolean = false,
   ) {
