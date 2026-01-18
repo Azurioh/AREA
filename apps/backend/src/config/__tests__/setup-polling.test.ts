@@ -13,6 +13,11 @@ jest.mock('@/modules/polling/unsplash-polling.service', () => ({
     pollDailyRandomImage: jest.fn(),
   })),
 }));
+jest.mock('@/modules/polling/nasa-polling.service', () => ({
+  NasaPollingService: jest.fn(() => ({
+    pollNewAstronomyPictureOfTheDay: jest.fn(),
+  })),
+}));
 jest.mock('@/modules/spotify', () => ({ SpotifyService: jest.fn() }));
 jest.mock('@/modules/third-parties', () => ({
   ThirdPartiesRepository: jest.fn(),
@@ -51,7 +56,7 @@ describe('setupPolling', () => {
 
     expect(mockApp.addHook).toHaveBeenCalledWith('onClose', expect.any(Function));
 
-    jest.advanceTimersByTime(30000);
+    jest.advanceTimersByTime(40000);
 
     const { SpotifyPollingService } = require('@/modules/polling/spotify-polling.service');
     const mockInstance = SpotifyPollingService.mock.results[0].value;
@@ -87,7 +92,7 @@ describe('setupPolling', () => {
 
     await setupPolling(mockApp);
 
-    jest.advanceTimersByTime(30000);
+    jest.advanceTimersByTime(60 * 60 * 1000);
 
     // Give time for the promises in the interval to resolve/reject
     await Promise.resolve();
