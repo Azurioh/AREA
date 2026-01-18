@@ -22,6 +22,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
     @POST("auth/v1/register")
@@ -36,6 +37,14 @@ interface ApiService {
         @Header("x-client-type") clientType: String = "mobile"
     ) : AuthResponse
 
+    @POST("auth/v1/login/{service}")
+    suspend fun loginWithService(
+        @Path("service") service: String,
+        @Query("code") code: String,
+        @Query("state") state: String,
+        @Header("x-client-type") clientType: String = "mobile"
+    ) : AuthResponse
+
     @POST("auth/v1/refresh")
     suspend fun refreshToken(
         @Header("x-refresh-token") refreshToken: String,
@@ -45,8 +54,14 @@ interface ApiService {
     @GET("users/v1/me")
     suspend fun getUserProfile() : User
 
-    @GET("third-parties/v1/authorization-url/{third_party_service}")
+    @GET("third-parties/v1/authorization-url/{third_party_service}/service")
     suspend fun getAuthorizationUrl(
+        @Path("third_party_service") service: String,
+        @Header("x-client-type") clientType: String = "mobile"
+    ) : ServicesUrl
+
+    @GET("third-parties/v1/authorization-url/{third_party_service}/app")
+    suspend fun getLoginAuthorizationUrl(
         @Path("third_party_service") service: String,
         @Header("x-client-type") clientType: String = "mobile"
     ) : ServicesUrl

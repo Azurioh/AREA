@@ -114,7 +114,7 @@ export class AuthController {
     const query = request.query;
 
     const { accessToken, refreshToken, clientType } = await this.service.loginWithService(
-      params.service as ServiceType,
+      params.service.toLowerCase() as ServiceType,
       query.code,
       query.state,
     );

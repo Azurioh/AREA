@@ -146,6 +146,12 @@ export type LoginWithServiceQueryString = z.infer<typeof loginWithServiceQuerySt
 
 export const loginWithServiceResponseSchema = loginResponseSchema;
 
+export type LoginWithServiceResponse = z.infer<typeof loginWithServiceResponseSchema>;
+
+/**********
+ * LOGOUT *
+ **********/
+
 export const logoutResponseSchema = z.object({});
 
 export type LogoutResponse = z.infer<typeof logoutResponseSchema>;

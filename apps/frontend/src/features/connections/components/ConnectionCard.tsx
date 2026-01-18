@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/wrappers/Button';
-import { useAuthorization } from '../hooks/useAuthorization';
+import { useServiceAuthorization } from '../hooks/useServiceAuthorization';
 
 interface ConnectionCardProps {
   image: string;
@@ -11,7 +11,7 @@ interface ConnectionCardProps {
 }
 
 const ConnectionCard: React.FC<ConnectionCardProps> = ({ image, serviceName, status }) => {
-  const { handleSubmit } = useAuthorization();
+  const { handleSubmit } = useServiceAuthorization();
 
   return (
     <motion.div
@@ -30,12 +30,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ image, serviceName, sta
           </div>
           <div>
             {status ? (
-              <Button
-                className="text-[20px] bg-destructive hover:bg-destructive/80"
-                onClick={() => handleSubmit(serviceName)}
-              >
-                Disconnect
-              </Button>
+              <Button className="text-[20px] bg-destructive hover:bg-destructive/80">Disconnect</Button>
             ) : (
               <Button className="text-[20px]" onClick={() => handleSubmit(serviceName)}>
                 Connect

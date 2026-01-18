@@ -27,13 +27,23 @@ fun AppNavigation(
     navController: NavHostController = rememberNavController(),
     userViewModel: UserViewModel = viewModel()
 ) {
-    val isLoggedIn = RetrofitInstance.getTokenManager().isLoggedIn()
-    val startDestination = if (isLoggedIn) Screen.Main.route else Screen.Login.route
+    val isLoggedInInitial = RetrofitInstance.getTokenManager().isLoggedIn()
+    val startDestination = if (isLoggedInInitial) Screen.Main.route else Screen.Login.route
     val isUnauthorized by RetrofitInstance.isUnauthorized.collectAsState()
+    val isLoggedIn by RetrofitInstance.isLoggedIn.collectAsState()
+
+    LaunchedEffect(isLoggedInInitial) {
+        if (isLoggedInInitial) {
+            userViewModel.fetchUserProfile()
+        }
+    }
 
     LaunchedEffect(isLoggedIn) {
-        if (isLoggedIn) {
+        if (isLoggedIn && navController.currentDestination?.route == Screen.Login.route) {
             userViewModel.fetchUserProfile()
+            navController.navigate(Screen.Main.route) {
+                popUpTo(Screen.Login.route) { inclusive = true }
+            }
         }
     }
 
@@ -83,6 +93,7 @@ fun AppNavigation(
                 userViewModel = userViewModel,
                 onLogout = {
                     RetrofitInstance.getTokenManager().clearToken()
+                    RetrofitInstance.notifyLogout()
                     navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.Main.route) { inclusive = true }
                     }

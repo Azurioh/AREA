@@ -91,6 +91,45 @@ class UserViewModel : ViewModel() {
         }
     }
 
+    fun getLoginWithGitHubUrl(
+        onSuccess: (String) -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val url = RetrofitInstance.api.getLoginAuthorizationUrl("github", "mobile")
+                onSuccess(url.url)
+            } catch (e: Exception) {
+                onError(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun loginWithService(
+        service: String,
+        code: String,
+        state: String,
+        onSuccess: () -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.api.loginWithService(service, code, state)
+                RetrofitInstance.getTokenManager().saveToken(response.accessToken)
+                response.refreshToken?.let {
+                    RetrofitInstance.getTokenManager().saveRefreshToken(it)
+                }
+                RetrofitInstance.resetUnauthorizedState()
+                RetrofitInstance.notifyLoginSuccess()
+
+                fetchUserProfile()
+                onSuccess()
+            } catch (e: Exception) {
+                onError(e.message ?: "Unknown error")
+            }
+        }
+    }
+
     fun updateUser(
         name: String,
         darkModeEnabled: Boolean,

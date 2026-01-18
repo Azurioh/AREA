@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export const useOAuthCallback = () => {
+export const useOAuthServiceCallback = () => {
   useEffect(() => {
     const handleMount = async () => {
       const searchParams = new URLSearchParams(window.location.search);
@@ -8,7 +8,7 @@ export const useOAuthCallback = () => {
       if (searchParams.has('status')) {
         const status = searchParams.get('status');
 
-        window.opener.dispatchEvent(new CustomEvent('oauth-ended', { detail: { error: status === 'error' } }));
+        window.opener.dispatchEvent(new CustomEvent('oauth-service-ended', { detail: { error: status === 'error' } }));
       }
     };
 

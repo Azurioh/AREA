@@ -19,13 +19,25 @@ object RetrofitInstance {
     private val _isUnauthorized = MutableStateFlow(false)
     val isUnauthorized: StateFlow<Boolean> = _isUnauthorized.asStateFlow()
 
+    private val _isLoggedIn = MutableStateFlow(false)
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
+
     fun initialize(context: Context) {
         tokenManager = TokenManager(context)
         currentBaseUrl = getBaseUrl()
+        _isLoggedIn.value = tokenManager?.isLoggedIn() ?: false
     }
 
     fun resetUnauthorizedState() {
         _isUnauthorized.value = false
+    }
+
+    fun notifyLoginSuccess() {
+        _isLoggedIn.value = true
+    }
+
+    fun notifyLogout() {
+        _isLoggedIn.value = false
     }
 
     private fun getBaseUrl(): String {

@@ -109,19 +109,24 @@ export class AuthService {
     }
 
     const data = await authorizatonFunction('', code);
-    let userId: string = '';
 
     if (!data || !('id' in data)) {
       throw new ApiError(HttpStatusCode.BAD_REQUEST, 'Failed to authenticate user to the service.');
     }
 
     const account = await this.thirdPartiesService.getThirdPartyAccountByServiceAccountId(service, data.id, false);
+    let payload: AccessToken | null = null;
 
     if (account) {
       const user = await this.usersService.getUserById(account.userId);
-      userId = user._id.toString();
+      payload = {
+        _id: user._id.toString(),
+        role: user.role,
+        darkModeEnabled: user.darkModeEnabled,
+        dyslexiaEnabled: user.dyslexiaEnabled,
+      };
 
-      data.userId = userId;
+      data.userId = payload._id;
       await this.thirdPartiesService.updateThirdPartyAccount(service, account.userId, data);
     } else if ('username' in data && service === 'github') {
       const user: User = {
@@ -135,19 +140,28 @@ export class AuthService {
       };
       const insertedUser = await this.usersService.createUser(user);
 
-      userId = insertedUser.insertedId.toString();
+      payload = {
+        _id: insertedUser.insertedId.toString(),
+        role: user.role,
+        darkModeEnabled: user.darkModeEnabled,
+        dyslexiaEnabled: user.dyslexiaEnabled,
+      };
 
-      data.userId = userId;
+      data.userId = payload._id;
       await this.thirdPartiesService.createThirdPartyAccount(data);
     }
 
+    if (!payload) {
+      throw new ApiError(HttpStatusCode.INTERNAL_SERVER_ERROR, 'Failed to login with service.');
+    }
+
     const accessToken = generateAccessToken({
-      _id: userId,
-      role: UserRoles.USER,
-      darkModeEnabled: false,
-      dyslexiaEnabled: false,
+      _id: payload._id,
+      role: payload.role,
+      darkModeEnabled: payload.darkModeEnabled,
+      dyslexiaEnabled: payload.dyslexiaEnabled,
     });
-    const refreshToken = generateRefreshToken({ _id: userId }, true);
+    const refreshToken = generateRefreshToken({ _id: payload._id }, true);
 
     return { accessToken, refreshToken, clientType: decoded.clientType };
   }

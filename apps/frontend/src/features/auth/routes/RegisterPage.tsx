@@ -10,6 +10,7 @@ import { useRegister } from '@/features/auth/hooks/useRegister';
 import { useShowPassword } from '@/features/auth/hooks/useShowPassword';
 import { usePasswordValidation } from '@/features/auth/hooks/usePasswordValidation';
 import { PasswordStrengthBar } from '@/features/auth/components/PasswordStrengthBar';
+import { ContinueWith } from '@/features/auth/components/ContinueWith';
 import { useClearUserData } from '@/shared/hooks/useClearUserData';
 
 const RegisterPage: React.FC = () => {
@@ -123,15 +124,21 @@ const RegisterPage: React.FC = () => {
                 </Button>
               </div>
             </div>
-            <Button type="submit" className="w-full !mt-7" disabled={isLoading || !isValid}>
-              {isLoading ? 'Creating account...' : 'Sign up'}
-            </Button>
-            <div className="text-center text-sm text-foreground">
-              Already have an account ?
-              <Link to={AppRoutesPaths.LOGIN} className="text-primary hover:underline">
+            <div className="space-y-3">
+              <Button type="submit" className="w-full !mt-7" disabled={isLoading || !isValid}>
+                {isLoading ? 'Creating account...' : 'Sign up'}
+              </Button>
+              <ContinueWith service="GitHub" />
+            </div>
+            <p className="text-center text-sm">
+              <span className="text-muted-foreground">Already have an account ?</span>{' '}
+              <Link
+                to={AppRoutesPaths.LOGIN}
+                className="font-medium text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
                 Sign in
               </Link>
-            </div>
+            </p>
           </form>
         </Card>
       </motion.div>
