@@ -18,7 +18,7 @@ const ConnectionsPage: React.FC = () => {
               <p className="text-foreground">Sign in to the services you want to link to your automations</p>
             </div>
             <div className="flex w-full justify-center mt-20">
-              <div className="grid grid-cols-2 gap-12">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {services.map((service) => (
                   <ConnectionCard
                     key={service.name}
