@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { HttpStatusCode } from '@area/shared/enums/http-status';
+import { UserRoles } from '@area/shared/enums/user-enums';
 import type {
   LoginBody,
   LoginHeaders,
@@ -8,18 +9,17 @@ import type {
   RegisterHeaders,
 } from '@area/shared/schemas/auth.schema';
 import type { Tokens } from '@area/shared/types/auth.types';
-import type { StateToken, AccessToken, User } from '@area/shared/types/users.types';
+import type { AccessToken, StateToken, User } from '@area/shared/types/users.types';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { type InsertOneResult, MongoServerError } from 'mongodb';
+import type { ThirdPartiesService } from '@/modules/third-parties';
 import type { UsersService } from '@/modules/users';
+import type { RefreshTokenValidator } from '@/types/auth';
+import type { ServiceType } from '@/types/third-parties';
 import ApiError from '@/utils/api-error';
 import { comparePasswords, decryptString, hashPassword } from '@/utils/crypt';
 import { environment } from '@/utils/environment';
 import { generateAccessToken, generateRefreshToken, verifyToken } from '@/utils/token';
-import type { ServiceType } from '@/types/third-parties';
-import { UserRoles } from '@area/shared/enums/user-enums';
-import type { ThirdPartiesService } from '@/modules/third-parties';
-import type { RefreshTokenValidator } from '@/types/auth';
 import type { AuthRepository } from './auth.repository';
 
 /**
@@ -86,7 +86,9 @@ export class AuthService {
    * @returns {Promise<Tokens>} Array of webhooks.
    */
   async loginUser(data: LoginBody): Promise<Tokens> {
-    const user = await this.usersService.getUserByEmail(data.email.toLowerCase());
+    const user = await this.usersService.getUserByEmail(data.email.toLowerCase()).catch(() => {
+      throw new ApiError(HttpStatusCode.NOT_FOUND, 'Invalid credentials.');
+    });
 
     if (user.authType !== 'classic' || !user.password) {
       throw new ApiError(HttpStatusCode.NOT_FOUND, 'Invalid credentials.');
